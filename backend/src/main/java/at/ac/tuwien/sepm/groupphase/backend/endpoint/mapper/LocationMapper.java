@@ -7,5 +7,5 @@ import org.mapstruct.Mapper;
 public interface LocationMapper {
 
     Location locationDtoToLocation(LocationDto location);
-    Location locationToLocationDto(Location location);
+    LocationDto locationToLocationDto(Location location);
 }
