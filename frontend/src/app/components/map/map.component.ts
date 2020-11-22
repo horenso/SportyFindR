@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy} from '@angular/core';
 import * as Leaflet from 'leaflet';
 
 @Component({
@@ -14,18 +14,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.map = Leaflet.map('map', {
       center: [ 48.208174, 16.37819 ],
-      zoom: 3
+      zoom: 13
     });
-    const tiles = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
+    const tiles = Leaflet.tileLayer('https://maps{s}.wien.gv.at/basemap/bmaphidpi/{type}/google3857/{z}/{y}/{x}.{format}', {
+      minZoom: 1,
+      maxZoom: 20,
+      attribution: 'Datenquelle: <a href="https://www.basemap.at">basemap.at</a>',
+      subdomains: ['', '1', '2', '3', '4'],
+      type: 'normal',
+      format: 'jpg',
+      bounds: [[46.35877, 8.782379], [49.037872, 17.189532]]
+    });
 
-tiles.addTo(this.map);
+    tiles.addTo(this.map);
   }
 
   ngOnDestroy(): void {
-
+    this.map.clearAllEventListeners();
+    this.map.remove();
   }
 
 }
