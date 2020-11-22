@@ -28,7 +28,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.css"
+              "node_modules/bootstrap/dist/css/bootstrap.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.slim.min.js",
@@ -139,5 +140,8 @@
       }
     }
   },
-  "defaultProject": "sepm-group-phase"
+  "defaultProject": "sepm-group-phase",
+  "cli": {
+    "analytics": "35b1c06f-7513-42c2-8075-7e14a18de426"
+  }
 }
