@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
+
 import lombok.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -8,9 +10,9 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class LocationDto {
+public class MessageDto {
 
     private Long id;
-    private double latitude;
-    private double longitude;
+    private LocalDateTime publishedAt;
+    private String content;
 }
