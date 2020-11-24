@@ -14,12 +14,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.map = Leaflet.map('map', {
       center: [ 48.208174, 16.37819 ],
-      zoom: 13
+      zoom: 13,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 90,
+      zoomSnap: 0,
     });
     const tiles = Leaflet.tileLayer('https://maps{s}.wien.gv.at/basemap/bmaphidpi/{type}/google3857/{z}/{y}/{x}.{format}', {
       minZoom: 1,
       maxZoom: 20,
-      attribution: 'Datenquelle: <a href="https://www.basemap.at">basemap.at</a>',
+      attribution: 'Data Source: <a href="https://www.basemap.at">basemap.at</a>',
       subdomains: ['', '1', '2', '3', '4'],
       type: 'normal',
       format: 'jpg',
@@ -27,6 +30,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     tiles.addTo(this.map);
+
+    Leaflet.control.scale({
+      metric: true,
+      imperial: false
+    }).addTo(this.map);
   }
 
   ngOnDestroy(): void {
