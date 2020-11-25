@@ -9,10 +9,10 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface MessageMapper {
 
-    @Mapping(target = "spot", source = "spotId")
+    @Mapping(source = "spotId", target = "spot.id")
     Message messageDtoToMessage(MessageDto message);
 
-    @Mapping(target = "spotId", source = "spot.id")
+    @Mapping(source = "spot.id", target = "spotId")
     MessageDto messageToMessageDto(Message message);
 }
 
