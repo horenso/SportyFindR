@@ -35,16 +35,18 @@ public class MessageEndpoint {
     @GetMapping
     @ApiOperation(value = "Get list of messages without details", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleMessageDto> findAll() {
-        LOGGER.info("GET /api/v1/messages");
-        return messageMapper.messageToSimpleMessageDto(messageService.findAll());
+        return null;
+//        LOGGER.info("GET /api/v1/messages");
+//        return messageMapper.messageToSimpleMessageDto(messageService.findAll());
     }
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get detailed information about a specific message",
         authorizations = {@Authorization(value = "apiKey")})
     public DetailedMessageDto find(@PathVariable Long id) {
-        LOGGER.info("GET /api/v1/messages/{}", id);
-        return messageMapper.messageToDetailedMessageDto(messageService.findOne(id));
+        return null;
+//        LOGGER.info("GET /api/v1/messages/{}", id);
+//        return messageMapper.messageToDetailedMessageDto(messageService.findOne(id));
     }
 
     @Secured("ROLE_ADMIN")
@@ -52,8 +54,9 @@ public class MessageEndpoint {
     @PostMapping
     @ApiOperation(value = "Publish a new message", authorizations = {@Authorization(value = "apiKey")})
     public DetailedMessageDto create(@Valid @RequestBody MessageInquiryDto messageDto) {
-        LOGGER.info("POST /api/v1/messages body: {}", messageDto);
-        return messageMapper.messageToDetailedMessageDto(
-            messageService.publishMessage(messageMapper.messageInquiryDtoToMessage(messageDto)));
+        return null;
+//        LOGGER.info("POST /api/v1/messages body: {}", messageDto);
+//        return messageMapper.messageToDetailedMessageDto(
+//            messageService.publishMessage(messageMapper.messageInquiryDtoToMessage(messageDto)));
     }
 }

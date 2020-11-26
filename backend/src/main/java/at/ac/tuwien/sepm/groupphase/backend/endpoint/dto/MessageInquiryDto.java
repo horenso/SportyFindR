@@ -4,6 +4,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+// THIS IS FROM THE TEMPLATE AND WILL BE REMOVED IN THE FUTURE
+
 public class MessageInquiryDto {
 
     @NotNull(message = "Title must not be null")

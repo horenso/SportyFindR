@@ -25,4 +25,5 @@ public class Spot {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
+
 }
