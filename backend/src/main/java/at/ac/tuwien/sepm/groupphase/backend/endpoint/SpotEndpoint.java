@@ -38,4 +38,15 @@ public class SpotEndpoint {
         return spotMapper.spotToSpotDto(
             spotService.create(spotMapper.spotDtoToSpot(spotDto)));
     }
+
+
+
+        @Secured("ROLE_ADMIN")
+        @ResponseStatus(HttpStatus.OK)
+        @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+        @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
+        public void delete(@PathVariable("id") Long id) {
+        LOGGER.info("DELETE /api/v1/spots id: {}", id);
+        spotService.deleteById(id);
+    }
 }

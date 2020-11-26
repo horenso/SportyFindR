@@ -23,4 +23,10 @@ public class SimpleSpotService implements SpotService {
         LOGGER.debug("Create new Spot {}", spot);
         return spotRepository.save(spot);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        LOGGER.debug("Delete Spot with id {}", id);
+        spotRepository.deleteById(id);
+    }
 }

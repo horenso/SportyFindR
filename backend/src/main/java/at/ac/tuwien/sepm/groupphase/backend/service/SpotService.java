@@ -11,4 +11,6 @@ public interface SpotService {
      * @return created spot entry
      */
     Spot create(Spot spot);
+
+    void deleteById(Long id);
 }
