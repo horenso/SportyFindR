@@ -1,9 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -25,8 +28,12 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws NotFoundInDatabaseException {
         LOGGER.debug("Delete Spot with id {}", id);
-        spotRepository.deleteById(id);
+        try {
+            spotRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new NotFoundInDatabaseException("Spot does not exist");
+        }
     }
 }
