@@ -25,7 +25,7 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime publishedAt;
 
-    @Length(min = 10, max = 500)
+    @Length(min = 1, max = 500)
     @Column(nullable = false)
     private String content;
 

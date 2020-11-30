@@ -13,6 +13,7 @@ import {MessageComponent} from './components/message/message.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { MapComponent } from './components/map/map.component';
+import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MapComponent } from './components/map/map.component';
     HomeComponent,
     LoginComponent,
     MessageComponent,
+    SpotMessagesComponent,
     MapComponent,
   ],
   imports: [

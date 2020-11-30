@@ -34,7 +34,7 @@ public class SpotEndpoint {
     @PostMapping
     @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
     public SpotDto create(@Valid @RequestBody SpotDto spotDto) {
-        LOGGER.info("POST /api/v1/messages body: {}", spotDto);
+        LOGGER.info("POST /api/v1/spots body: {}", spotDto);
         return spotMapper.spotToSpotDto(
             spotService.create(spotMapper.spotDtoToSpot(spotDto)));
     }

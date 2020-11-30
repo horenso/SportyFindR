@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,5 +16,4 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @return ordered list of all message entries
      */
     List<Message> findBySpotIdOrderByPublishedAtDesc(Long spotId);
-
 }

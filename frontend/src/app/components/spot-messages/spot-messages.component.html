@@ -1,1 +1,12 @@
-<p>spot-messages works!</p>
+<p>Messages</p>
+
+<div *ngFor="let message of messageList">
+  date: {{message.publishedAt | date:'short'}}
+  content: {{message.content}}
+</div>
+
+<form [formGroup]="messageForm">
+  <input formControlName="content" placeholder="New message">
+  <button class="btn btn-primary" (click)="submitDialog()" [disabled]='!messageForm.valid'>
+    Send</button>
+</form>

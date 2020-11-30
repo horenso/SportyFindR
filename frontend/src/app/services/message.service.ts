@@ -16,8 +16,19 @@ export class MessageService {
 
   /**
    * Loads all messages from one spot
+   * @param spotId spot to get messages from
+   * @returns list of messages
    */
   getMessagesBySpot(spotId: number): Observable<Message[]> {
     return this.httpClient.get<Message[]>(this.messageBaseUri + '?spot=' + spotId);
+  }
+
+  /**
+   * Saves a new message in a spesific spot
+   * @param message to be saved
+   * @returns message entity
+   */
+  saveMessage(message: Message): Observable<Message> {
+    return this.httpClient.post<Message>(this.messageBaseUri, message);
   }
 }
