@@ -7,7 +7,6 @@ import lombok.*;
 @Setter
 @ToString
 @EqualsAndHashCode
-@Builder
 public class LocationDto {
 
     private Long id;
