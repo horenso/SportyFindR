@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.basetest;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public interface TestData {
     };
     String NAME = "Jannis Favourite Parkour Spot";
     String DESCRIPTION = "The best Spot in Town";
-    Location LOCATION = null;
+    Location LOCATION = new Location();
+    Category CATEGORY = new Category();
 
 }

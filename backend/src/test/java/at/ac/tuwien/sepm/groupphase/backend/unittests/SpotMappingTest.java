@@ -1,8 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.unittests;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.CategoryDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.CategoryMapper;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,19 +25,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SpotMappingTest implements TestData {
     private final Spot spot = Spot.SpotBuilder.aSpot()
         .withId(ID)
-        .withName(TEST_NEWS_TEXT)
+        .withName(NAME)
+        .withDescription(DESCRIPTION)
+        .withLocation(LOCATION)
+        .withCategory(CATEGORY)
         .build();
+
     @Autowired
     private SpotMapper spotMapper;
+    @Autowired
+    private LocationMapper locationMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
+
     @Test
-    public void testtest() {
+    public void spotToSpotDtoMapperTest() {
         SpotDto spotDto = spotMapper.spotToSpotDto(spot);
+        LocationDto locationDto = locationMapper.locationToLocationDto(spot.getLocation());
+        CategoryDto categoryDto = categoryMapper.categoryToCategoryDto(spot.getCategory());
         assertAll(
             () -> assertEquals(ID, spotDto.getId()),
             () -> assertEquals(NAME, spotDto.getName()),
-            () -> assertEquals(TEST_NEWS_TEXT, spotDto.getDescription()),
-            () -> assertEquals(TEST_NEWS_SUMMARY, spotDto.getLocation()),
-            () -> assertEquals(TEST_NEWS_PUBLISHED_AT, spotDto.getCategory())
+            () -> assertEquals(DESCRIPTION, spotDto.getDescription()),
+            () -> assertEquals(locationDto, spotDto.getLocation()),
+            () -> assertEquals(categoryDto, spotDto.getCategory())
         );
     }
 }
