@@ -1,4 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
+
 import lombok.*;
 
 @NoArgsConstructor
@@ -8,13 +9,8 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class SpotDto {
+public class CategoryDto {
 
     private Long id;
     private String name;
-    private String description;
-    private LocationDto location;
-    private CategoryDto category;
-
 }
-

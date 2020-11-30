@@ -28,16 +28,32 @@ public class SimpleSpotService implements SpotService {
     @Override
     public Spot create(Spot spot) throws ServiceException {
         LOGGER.debug("Create new Spot {}", spot);
-        Location location = spot.getLocation();
         if (spot.getName()==null){
             throw new ServiceException("Name must not be Empty");
+        }
+        if(spot.getLocation()==null){
+            throw new ServiceException("Spot must have a location");
+        }
+        if(spot.getLocation().getId()==null){
+            try {
+                spot.setLocation(locationService.create(spot.getLocation()));
+            }catch (ServiceException e){
+                throw new ServiceException(e.getMessage());
+            }
+        }
+        if(spot.getCategory()==null||spot.getCategory().getId()==null){
+            throw new ServiceException("Spot must have a Category");
         }
         try {
             return spotRepository.save(spot);
         }catch (Exception e){
-            throw new ServiceException("The Spot must have a valid Location");
+            if (e.getCause().getCause().getMessage().contains("CATEGORY")) {
+                throw new ServiceException("The Spot must have a valid Category");
+            }else if (e.getCause().getCause().getMessage().contains("LOCATION")) {
+                throw new ServiceException("The Spot must have a valid Location");
+            }else{
+                throw new ServiceException("Something went wrong when entering the values into the DB");
+            }
         }
     }
-
-
 }
