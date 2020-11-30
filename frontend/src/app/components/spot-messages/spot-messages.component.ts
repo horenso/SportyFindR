@@ -47,11 +47,12 @@ export class SpotMessagesComponent implements OnInit {
   }
 
   submitDialog() {
-    var newMessage = new Message(null, this.messageForm.value.content, new Date(Date.now()), this.currentSpot);
+    var newMessage = new Message(null, this.messageForm.value.content, null, this.currentSpot);
     this.messageService.saveMessage(newMessage).subscribe(
       (result: Message) => {
-        this.messageList.push(result);
+        this.messageList.unshift(result);
         console.log(this.messageList);
+        this.messageForm.reset();
       }
       //,
       //  (error) => {

@@ -33,6 +33,7 @@ public class SimpleMessageService implements MessageService {
     @Override
     public Message create(Message message) {
         LOGGER.debug("create message in spot with id {}", message.getSpot().getId());
+        message.setPublishedAt(LocalDateTime.now());
         return messageRepository.save(message);
     }
 }

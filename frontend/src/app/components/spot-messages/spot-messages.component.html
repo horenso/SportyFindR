@@ -1,8 +1,14 @@
-<p>Messages</p>
+<h3>Messages</h3>
 
-<div *ngFor="let message of messageList">
-  date: {{message.publishedAt | date:'short'}}
-  content: {{message.content}}
+<div *ngFor="let message of messageList" class="message">
+  <div class="row">
+    <div class="col">
+      {{message.content}}
+    </div>
+    <div class="col date">
+      {{message.publishedAt | date:'short'}}
+    </div>
+  </div>
 </div>
 
 <form [formGroup]="messageForm">
