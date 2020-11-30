@@ -48,11 +48,8 @@ export class MessageComponent implements OnInit {
     this.submitted = true;
     if (this.messageForm.valid) {
       const message: Message = new Message(null,
-        this.messageForm.controls.title.value,
-        this.messageForm.controls.summary.value,
         this.messageForm.controls.text.value,
-        new Date().toISOString()
-      );
+        null);
       this.createMessage(message);
       this.clearForm();
     } else {
@@ -84,7 +81,7 @@ export class MessageComponent implements OnInit {
    * @param id the id of the message which details should be shown
    */
   getMessageDetails(id: number) {
-    if (_.isEmpty(this.message.find(x => x.id === id).text)) {
+    if (_.isEmpty(this.message.find(x => x.id === id).content)) {
       this.loadMessageDetails(id);
     }
   }
@@ -97,7 +94,7 @@ export class MessageComponent implements OnInit {
     this.messageService.getMessageById(id).subscribe(
       (message: Message) => {
         const result = this.message.find(x => x.id === id);
-        result.text = message.text;
+        result.content = message.content;
       },
       error => {
         this.defaultServiceErrorHandling(error);

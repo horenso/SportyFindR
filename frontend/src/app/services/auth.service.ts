@@ -3,7 +3,7 @@ import {AuthRequest} from '../dtos/auth-request';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
-import * as jwt_decode from 'jwt-decode';
+import jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
 
 @Injectable({

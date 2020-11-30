@@ -35,7 +35,6 @@ export class MessageService {
    * @param message to persist
    */
   createMessage(message: Message): Observable<Message> {
-    console.log('Create message with title ' + message.title);
     return this.httpClient.post<Message>(this.messageBaseUri, message);
   }
 }
