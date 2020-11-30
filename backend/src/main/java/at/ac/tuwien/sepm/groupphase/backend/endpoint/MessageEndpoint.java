@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.DetailedMessageDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageInquiryDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SimpleMessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -34,10 +37,14 @@ public class MessageEndpoint {
 
     @GetMapping
     @ApiOperation(value = "Get list of messages without details", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleMessageDto> findAll() {
-        return null;
-//        LOGGER.info("GET /api/v1/messages");
-//        return messageMapper.messageToSimpleMessageDto(messageService.findAll());
+    public List<MessageDto> findBySpot(
+        @RequestParam(required = true, name = "spot") Long spotId) {
+        LOGGER.trace("GET /api/v1/messages");
+        List<Message> messages = this.messageService.findBySpot(spotId);
+        List<MessageDto> messageDtoList = new LinkedList<>();
+
+        messages.forEach(messageDto -> { messageDtoList.add(this.messageMapper.messageToMessageDto(messageDto)); });
+        return messageDtoList;
     }
 
     @GetMapping(value = "/{id}")

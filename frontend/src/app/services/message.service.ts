@@ -15,27 +15,9 @@ export class MessageService {
   }
 
   /**
-   * Loads all messages from the backend
+   * Loads all messages from one spot
    */
-  getMessage(): Observable<Message[]> {
-    return this.httpClient.get<Message[]>(this.messageBaseUri);
-  }
-
-  /**
-   * Loads specific message from the backend
-   * @param id of message to load
-   */
-  getMessageById(id: number): Observable<Message> {
-    console.log('Load message details for ' + id);
-    return this.httpClient.get<Message>(this.messageBaseUri + '/' + id);
-  }
-
-  /**
-   * Persists message to the backend
-   * @param message to persist
-   */
-  createMessage(message: Message): Observable<Message> {
-    console.log('Create message with title ' + message.title);
-    return this.httpClient.post<Message>(this.messageBaseUri, message);
+  getMessagesBySpot(spotId: number): Observable<Message[]> {
+    return this.httpClient.get<Message[]>(this.messageBaseUri + '?spot=' + spotId);
   }
 }

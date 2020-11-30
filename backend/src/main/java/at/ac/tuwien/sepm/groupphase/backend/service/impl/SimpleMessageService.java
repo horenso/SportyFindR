@@ -24,9 +24,9 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findAll() {
+    public List<Message> findBySpot(Long spotId) {
         LOGGER.debug("Find all messages");
-        return messageRepository.findAllByOrderByPublishedAtDesc();
+        return messageRepository.findBySpotIdOrderByPublishedAtDesc(spotId);
     }
 
     @Override

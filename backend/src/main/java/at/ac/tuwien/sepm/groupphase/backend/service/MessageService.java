@@ -7,11 +7,11 @@ import java.util.List;
 public interface MessageService {
 
     /**
-     * Find all message entries ordered by published at date (descending).
-     *
+     * Find all message from one spot ordered by published at date (descending).
+     * @param spotId id of the spot
      * @return ordered list of al message entries
      */
-    List<Message> findAll();
+    List<Message> findBySpot(Long spotId);
 
 
     /**
