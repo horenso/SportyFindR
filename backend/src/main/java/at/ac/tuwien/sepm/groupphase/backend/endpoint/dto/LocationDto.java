@@ -10,6 +10,6 @@ import lombok.*;
 public class LocationDto {
 
     private Long id;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 }

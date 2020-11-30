@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @Service
 public class SimpleLocationService implements LocationService {
@@ -16,6 +17,11 @@ public class SimpleLocationService implements LocationService {
 
     public SimpleLocationService(LocationRepository locationRepository) {
         this.locationRepository = locationRepository;
+    }
+
+    @Override
+    public List<Location> findAll() {
+        return locationRepository.findAll();
     }
 
     @Override
