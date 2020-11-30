@@ -28,6 +28,18 @@ public class SimpleLocationService implements LocationService {
         if(location.getLongitude()==null){
             throw new ServiceException("Longitude must not be Null");
         }
+        if(location.getLatitude()<-90){
+            throw new ServiceException("Latitude can not be below -90");
+        }
+        if(location.getLatitude()>90){
+            throw new ServiceException("Latitude can not be above 90");
+        }
+        if(location.getLongitude()<-180){
+            throw new ServiceException("Longitude can not be below -180");
+        }
+        if(location.getLongitude()>180){
+            throw new ServiceException("Longitude can not be above 180");
+        }
         return locationRepository.save(location);
     }
 }
