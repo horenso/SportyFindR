@@ -1,6 +1,4 @@
-export class LocationModel {
-
-
+export class Location {
   constructor(
      public id: number,
      public longitude: number,
