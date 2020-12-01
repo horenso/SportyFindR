@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 public interface SpotService {
 
@@ -10,5 +11,5 @@ public interface SpotService {
      * @param spot to create
      * @return created spot entry
      */
-    Spot create(Spot spot);
+    Spot create(Spot spot) throws ServiceException;
 }

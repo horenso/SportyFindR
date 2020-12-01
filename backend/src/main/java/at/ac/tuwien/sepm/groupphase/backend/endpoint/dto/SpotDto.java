@@ -14,6 +14,7 @@ public class SpotDto {
     private String name;
     private String description;
     private LocationDto location;
+    private CategoryDto category;
 
 }
 
