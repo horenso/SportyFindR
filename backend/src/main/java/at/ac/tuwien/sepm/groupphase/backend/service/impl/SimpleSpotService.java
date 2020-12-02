@@ -65,4 +65,18 @@ public class SimpleSpotService implements SpotService {
             throw new NotFoundInDatabaseException("Spot does not exist");
         }
     }
+
+    @Override
+    public Spot update(Spot spot) throws ServiceException {
+        if (spotRepository.findById(spot.getId()).isEmpty()){
+            throw new ServiceException("No spot corresponding to this id exists.");
+        }
+        try {
+            return spotRepository.save(spot);
+        } catch (Exception e){
+            throw new ServiceException("Something went wrong when entering the values into the DB");
+        }
+    }
+
+
 }

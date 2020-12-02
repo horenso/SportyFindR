@@ -15,4 +15,6 @@ public interface SpotService {
     Spot create(Spot spot) throws ServiceException;
 
     void deleteById(Long id) throws NotFoundInDatabaseException;
+
+    Spot update(Spot spot) throws ServiceException;
 }

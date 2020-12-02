@@ -44,25 +44,39 @@ public class SpotEndpoint {
         try {
             return spotMapper.spotToSpotDto(
                 spotService.create(spotMapper.spotDtoToSpot(spotDto)));
-        }catch (ServiceException e){
+        } catch (ServiceException e) {
             LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
 
-
-        @Secured("ROLE_ADMIN")
-        @ResponseStatus(HttpStatus.OK)
-        @DeleteMapping(value = "/{id}")
-        @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
-        public void delete(@PathVariable("id") Long id) {
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{id}")
+    @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
+    public void delete(@PathVariable("id") Long id) {
         LOGGER.info("DELETE /api/v1/spots id: {}", id);
         try {
             spotService.deleteById(id);
-        }catch (NotFoundInDatabaseException e){
-            LOGGER.error(HttpStatus.NOT_FOUND +" "+e.getMessage());
+        } catch (NotFoundInDatabaseException e) {
+            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping
+    @ApiOperation(value = "Update an spot", authorizations = {@Authorization(value = "apiKey")})
+    public SpotDto update(@Valid @RequestBody SpotDto spotDto) {
+        LOGGER.info("PUT /api/v1/spots body: {}", spotDto);
+        try {
+            return spotMapper.spotToSpotDto(
+                spotService.update(spotMapper.spotDtoToSpot(spotDto)));
+        } catch (ServiceException e) {
+            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }
