@@ -30,7 +30,7 @@ export class SpotService {
   }
 
   updateSpot(spot: SpotModel): Observable<SpotModel> {
-    console.log('Create spot with name ' + spot.name);
+    console.log('Update spot with name ' + spot.name);
     return this.httpClient.put<SpotModel>(this.spotBaseUri, spot);
   }
 }
