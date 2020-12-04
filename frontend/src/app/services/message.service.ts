@@ -15,26 +15,20 @@ export class MessageService {
   }
 
   /**
-   * Loads all messages from the backend
+   * Loads all messages from one spot
+   * @param spotId spot to get messages from
+   * @returns list of messages
    */
-  getMessage(): Observable<Message[]> {
-    return this.httpClient.get<Message[]>(this.messageBaseUri);
+  getMessagesBySpot(spotId: number): Observable<Message[]> {
+    return this.httpClient.get<Message[]>(this.messageBaseUri + '?spot=' + spotId);
   }
 
   /**
-   * Loads specific message from the backend
-   * @param id of message to load
+   * Saves a new message in a spesific spot
+   * @param message to be saved
+   * @returns message entity
    */
-  getMessageById(id: number): Observable<Message> {
-    console.log('Load message details for ' + id);
-    return this.httpClient.get<Message>(this.messageBaseUri + '/' + id);
-  }
-
-  /**
-   * Persists message to the backend
-   * @param message to persist
-   */
-  createMessage(message: Message): Observable<Message> {
+  saveMessage(message: Message): Observable<Message> {
     return this.httpClient.post<Message>(this.messageBaseUri, message);
   }
 }
