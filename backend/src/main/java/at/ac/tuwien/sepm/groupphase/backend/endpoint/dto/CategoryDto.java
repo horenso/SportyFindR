@@ -1,4 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
+
 import lombok.*;
 
 @NoArgsConstructor
@@ -7,10 +8,9 @@ import lombok.*;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class LocationDto {
+@Builder
+public class CategoryDto {
 
     private Long id;
-    private Double latitude;
-    private Double longitude;
-
+    private String name;
 }

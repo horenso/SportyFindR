@@ -1,15 +1,24 @@
-import { AfterViewInit, Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import * as Leaflet from 'leaflet';
+import {LocationService} from 'src/app/services/location.service';
+import {Location} from '../../dtos/location';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit, OnDestroy {
-  private map;
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor() { }
+  private map;
+  locationList: Location[];
+
+  constructor(
+    private locationService: LocationService
+  ) { }
+
+  ngOnInit(): void {
+  }
 
   ngAfterViewInit(): void {
     this.map = Leaflet.map('map', {
@@ -18,7 +27,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       zoomDelta: 0.5,
       wheelPxPerZoomLevel: 90,
       zoomSnap: 0,
+      cursor: true
     });
+
     const tiles = Leaflet.tileLayer('https://maps{s}.wien.gv.at/basemap/bmaphidpi/{type}/google3857/{z}/{y}/{x}.{format}', {
       minZoom: 1,
       maxZoom: 20,
@@ -35,11 +46,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       metric: true,
       imperial: false
     }).addTo(this.map);
+
+    this.locationService.getAllLocations().subscribe(
+      (result: Location[]) => {
+        this.locationList = result;
+        console.log(this.locationList)
+        this.addMarkers();
+      }
+    );
   }
 
   ngOnDestroy(): void {
     this.map.clearAllEventListeners();
     this.map.remove();
+  }
+
+  private addMarkers(): void {
+    this.locationList.forEach(
+      (location: Location) => {
+        Leaflet.marker([location.latitude, location.longitude]).addTo(this.map);
+      }
+    );
   }
 
 }

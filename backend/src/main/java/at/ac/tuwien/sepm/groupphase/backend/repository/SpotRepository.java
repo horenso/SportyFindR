@@ -5,6 +5,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SpotRepository extends JpaRepository<Spot, Long> {
-
-
 }
