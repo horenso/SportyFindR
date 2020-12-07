@@ -7,16 +7,15 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,29 +25,32 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
 public class ReactionServiceTest implements TestData {
 
     @Autowired
-    private static SpotRepository spotRepository;
+    private SpotRepository spotRepository;
     @Autowired
-    private static MessageRepository messageRepository;
+    private MessageRepository messageRepository;
+    @Autowired
+    private ReactionRepository reactionRepository;
     @Autowired
     private ReactionService reactionService;
+
+//    private final ReactionService reactionService = new SimpleReactionService(reactionRepository, messageRepository);
 
     private Message msg;
 
     @BeforeEach
     public void beforeEach() {
         Location loc = Location.builder()
-            .withLatitude(LOCATION.getLatitude())
-            .withLongitude(LOCATION.getLongitude())
+            .latitude(LOCATION.getLatitude())
+            .longitude(LOCATION.getLongitude())
             .build();
         Spot spot = Spot.builder()
-            .withName(NAME)
-            .withDescription(DESCRIPTION)
-            .withLocation(loc)
-            .withCategory(CATEGORY)
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(loc)
+            .category(CATEGORY)
             .build();
         msg = Message.builder()
             .content(TEST_NEWS_TEXT)
@@ -69,7 +71,7 @@ public class ReactionServiceTest implements TestData {
     public void reactionCreateReturnsReaction() {
 
         Reaction rct = Reaction.builder()
-            .reactionType(Reaction.ReactionType.THUMBS_UP)
+            .type(Reaction.ReactionType.THUMBS_UP)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .message(msg)
             .build();
@@ -77,7 +79,7 @@ public class ReactionServiceTest implements TestData {
         Reaction reaction = reactionService.create(rct);
         assertAll(
             () -> assertTrue(reaction.getId() > 0),
-            () -> assertEquals(rct.getReactionType(), reaction.getReactionType()),
+            () -> assertEquals(rct.getType(), reaction.getType()),
             () -> assertEquals(rct.getMessage(), reaction.getMessage()),
             () -> assertEquals(rct.getPublishedAt(), reaction.getPublishedAt())
         );
@@ -87,7 +89,7 @@ public class ReactionServiceTest implements TestData {
     public void reactionFindReactionByMessageId() {
 
         Reaction rct = Reaction.builder()
-            .reactionType(Reaction.ReactionType.THUMBS_UP)
+            .type(Reaction.ReactionType.THUMBS_UP)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .message(msg)
             .build();
@@ -96,7 +98,7 @@ public class ReactionServiceTest implements TestData {
         Reaction reaction = reactionService.getReactionsByMessageId(ID).get(0); // should be the first in the list
         assertAll(
             () -> assertTrue(reaction.getId() > 0),
-            () -> assertEquals(rct.getReactionType(), reaction.getReactionType()),
+            () -> assertEquals(rct.getType(), reaction.getType()),
             () -> assertEquals(rct.getMessage(), reaction.getMessage()),
             () -> assertEquals(rct.getPublishedAt(), reaction.getPublishedAt())
         );
@@ -106,7 +108,7 @@ public class ReactionServiceTest implements TestData {
     public void reactionThrowExceptionByIncorrectMessageId() {
 
         Reaction rct = Reaction.builder()
-            .reactionType(Reaction.ReactionType.THUMBS_UP)
+            .type(Reaction.ReactionType.THUMBS_UP)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .message(msg)
             .build();

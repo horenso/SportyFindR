@@ -29,7 +29,7 @@ public class Reaction {
     private LocalDateTime publishedAt;
 
     @Column(nullable = false)
-    private ReactionType reactionType;
+    private ReactionType type;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "message_id", nullable = false)

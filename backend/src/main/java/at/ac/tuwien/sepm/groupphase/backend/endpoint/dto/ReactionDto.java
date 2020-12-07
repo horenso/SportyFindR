@@ -17,7 +17,7 @@ public class ReactionDto {
     }
 
     private Long id;
-    private ReactionDtoType reactionType;
+    private ReactionDtoType type;
     private Long messageId;
 
 }
