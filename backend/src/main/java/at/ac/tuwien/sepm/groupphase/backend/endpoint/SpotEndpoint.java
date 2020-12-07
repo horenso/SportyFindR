@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.lang.invoke.MethodHandles;
 
 @RestController
@@ -50,7 +51,7 @@ public class SpotEndpoint {
         LOGGER.info("DELETE /api/v1/spots id: {}", id);
         try {
             spotService.deleteById(id);
-        } catch (ServiceException e) {
+        } catch (ValidationException e) {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

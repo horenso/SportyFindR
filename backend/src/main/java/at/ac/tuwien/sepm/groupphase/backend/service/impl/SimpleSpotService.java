@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.ValidationException;
 import java.lang.invoke.MethodHandles;
 
 @Service
@@ -29,11 +30,11 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public void deleteById(Long id) throws ServiceException {
+    public void deleteById(Long id) throws ValidationException {
         LOGGER.debug("Delete Spot with id {}", id);
         var spot = spotRepository.findById(id);
         if(spot.isEmpty()){
-            throw new ServiceException("Spot does not exist");
+            throw new ValidationException("Spot does not exist");
         }
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()){

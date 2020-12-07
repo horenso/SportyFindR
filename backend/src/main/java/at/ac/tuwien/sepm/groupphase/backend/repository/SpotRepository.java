@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface SpotRepository extends JpaRepository<Spot, Long> {
 
-    @Query(value = "SELECT l FROM Location l JOIN Spot s ON l.id = s.location.id " +
+    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON l.id = s.location.id " +
         "WHERE l.id = :locationId")
     List<Location> findLocationWithSpot(@Param("locationId") Long locationId);
 }
