@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -57,7 +58,7 @@ public class LocationEndpoint {
         try {
             return locationMapper.locationToLocationDto(
                 locationService.create(locationMapper.locationDtoToLocation(locationDto)));
-        }catch (ServiceException e){
+        }catch (ValidationException e){
             LOGGER.error(HttpStatus.BAD_REQUEST +" "+ e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

@@ -9,6 +9,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import org.junit.jupiter.api.Test;
@@ -33,31 +34,25 @@ public class SpotServiceTest implements TestData {
     private SpotRepository spotRepository;
 
     @Test
-    public void spotServiceCreate_withoutValidCategory_doesNotCreateSpot(){
-        boolean b= false;
-        Category category = Category.CategoryBuilder.aCategory()
+    public void spotServiceCreate_withoutValidCategory_doesNotCreateSpot() {
+        boolean b = false;
+        Category category = Category.builder()
             .id(ID)
             .build();
-        Location location = Location.LocationBuilder.aLocation()
+        Location location = Location.builder()
             .latitude(10.0)
             .longitude(10.0)
             .build();
-        Spot spot = Spot.SpotBuilder.aSpot()
-            .withId(ID)
-            .withName(NAME)
-            .withLocation(location)
-            .withCategory(category)
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .location(location)
+            .category(category)
             .build();
-        try {
-            spotService.create(spot);
-        }catch (Exception e){
-            assertAll(
-                () -> assertTrue(e.toString().contains("Category"))
-            );
-        }
 
+        Throwable e = assertThrows(ValidationException.class, () -> spotService.create(spot));
         assertAll(
-            () -> assertEquals(0, spotRepository.findAll().size())
+            () -> assertEquals(0, spotRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(),"Category does not Exist")
         );
     }
 }

@@ -2,14 +2,12 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
-
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +42,7 @@ public class SpotEndpoint {
         try {
             return spotMapper.spotToSpotDto(
                 spotService.create(spotMapper.spotDtoToSpot(spotDto)));
-        }catch (ServiceException e){
+        }catch (ServiceException | ValidationException e){
             LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
