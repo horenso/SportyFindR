@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -36,11 +37,11 @@ public class SpotEndpoint {
     @PostMapping
     @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
     public SpotDto create(@Valid @RequestBody SpotDto spotDto) {
-        LOGGER.info("POST /api/v1/messages body: {}", spotDto);
+        LOGGER.info("POST /api/v1/spots body: {}", spotDto);
         try {
             return spotMapper.spotToSpotDto(
                 spotService.create(spotMapper.spotDtoToSpot(spotDto)));
-        }catch (ServiceException e){
+        }catch (ServiceException | ValidationException e){
             LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

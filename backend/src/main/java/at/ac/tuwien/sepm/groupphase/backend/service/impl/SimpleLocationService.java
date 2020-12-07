@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import org.slf4j.Logger;
@@ -20,25 +21,25 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public Location create(Location location) throws ServiceException {
+    public Location create(Location location) throws ValidationException {
         LOGGER.debug("Create new location {}", location);
         if(location.getLatitude()==null){
-            throw new ServiceException("Latitude must not be Null");
+            throw new ValidationException("Latitude must not be Null");
         }
         if(location.getLongitude()==null){
-            throw new ServiceException("Longitude must not be Null");
+            throw new ValidationException("Longitude must not be Null");
         }
         if(location.getLatitude()<-90){
-            throw new ServiceException("Latitude can not be below -90");
+            throw new ValidationException("Latitude can not be below -90");
         }
         if(location.getLatitude()>90){
-            throw new ServiceException("Latitude can not be above 90");
+            throw new ValidationException("Latitude can not be above 90");
         }
         if(location.getLongitude()<-180){
-            throw new ServiceException("Longitude can not be below -180");
+            throw new ValidationException("Longitude can not be below -180");
         }
         if(location.getLongitude()>180){
-            throw new ServiceException("Longitude can not be above 180");
+            throw new ValidationException("Longitude can not be above 180");
         }
         return locationRepository.save(location);
     }
