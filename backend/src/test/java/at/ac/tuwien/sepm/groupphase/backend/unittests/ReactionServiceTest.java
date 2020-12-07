@@ -9,12 +9,24 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
 public class ReactionServiceTest implements TestData {
 
     @Autowired
@@ -24,16 +36,15 @@ public class ReactionServiceTest implements TestData {
     @Autowired
     private ReactionService reactionService;
 
-    private static Message msg;
+    private Message msg;
 
-    @BeforeAll
-    public static void init() {
+    @BeforeEach
+    public void beforeEach() {
         Location loc = Location.builder()
             .withLatitude(LOCATION.getLatitude())
             .withLongitude(LOCATION.getLongitude())
             .build();
         Spot spot = Spot.builder()
-            .withId(ID)
             .withName(NAME)
             .withDescription(DESCRIPTION)
             .withLocation(loc)
@@ -47,6 +58,11 @@ public class ReactionServiceTest implements TestData {
 
         spotRepository.save(spot);
         messageRepository.save(msg);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        // ToDo: Remove everything
     }
 
     @Test

@@ -38,11 +38,7 @@ public class SimpleReactionService implements ReactionService {
     @Override
     public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException {
         Message message;
-//        try {
-            message = messageRepository.getOne(messageId);
-//        } catch (
-            // TODO: which exceptions to catch?
-//        )
+        message = messageRepository.getOne(messageId);
         if (message == null) { // TODO: check if message can be null
             throw new NotFoundException("Message with ID " + messageId + " cannot be found!");
         } else {
