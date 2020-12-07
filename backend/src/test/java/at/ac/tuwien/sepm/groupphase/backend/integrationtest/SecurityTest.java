@@ -5,8 +5,14 @@ import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageInquiryDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +59,13 @@ public class SecurityTest implements TestData {
     private JwtTokenizer jwtTokenizer;
 
     @Autowired
+    private SpotRepository spotRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
     private SecurityProperties securityProperties;
 //ToDo: fix tests
 
@@ -64,8 +77,26 @@ public class SecurityTest implements TestData {
     @BeforeEach
     public void beforeEach() {
         messageRepository.deleteAll();
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        category = categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(10.0)
+            .longitude(10.0)
+            .build();
+        location = locationRepository.save(location);
+        Spot spot= Spot.builder()
+            .name(SPOT_NAME)
+            .description(SPOT_DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spot = spotRepository.save(spot);
+
         message = Message.builder()
-            .content(TEST_NEWS_SUMMARY)
+            .spot(spot)
+            .content(TEST_NEWS_TITLE)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build();
     }
