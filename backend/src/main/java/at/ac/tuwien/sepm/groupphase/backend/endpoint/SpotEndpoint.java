@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
@@ -49,17 +48,16 @@ public class SpotEndpoint {
     }
 
 
-
-        @Secured("ROLE_ADMIN")
-        @ResponseStatus(HttpStatus.OK)
-        @DeleteMapping(value = "/{id}")
-        @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
-        public void delete(@PathVariable("id") Long id) {
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{id}")
+    @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
+    public void delete(@PathVariable("id") Long id) {
         LOGGER.info("DELETE /api/v1/spots id: {}", id);
         try {
             spotService.deleteById(id);
-        }catch (NotFoundInDatabaseException e){
-            LOGGER.error(HttpStatus.NOT_FOUND +" "+e.getMessage());
+        } catch (ValidationException e) {
+            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
