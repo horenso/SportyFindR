@@ -5,9 +5,12 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,30 +30,34 @@ public class MessageRepositoryTest implements TestData {
 
     @Autowired
     private MessageRepository messageRepository;
-    private SpotRepository spotRepository;
-    private CategoryRepo
+    @Autowired
+    private  SpotRepository spotRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private LocationRepository locationRepository;
 
-    @Before
-    public void before() {
-        Category category = Category.CategoryBuilder.aCategory()
-            .id(ID)
+    @Test
+    public void givenNothing_whenSaveMessage_thenFindListWithOneElementAndFindMessageById() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
             .build();
-        Location location = Location.LocationBuilder.aLocation()
+        category = categoryRepository.save(category);
+        Location location = Location.builder()
             .latitude(10.0)
             .longitude(10.0)
             .build();
+        location = locationRepository.save(location);
         Spot spot= Spot.builder()
             .name(SPOT_NAME)
             .description(SPOT_DESCRIPTION)
             .location(location)
             .category(category)
             .build();
-        category
-        spotRepository.save()
-    }
-    @Test
-    public void givenNothing_whenSaveMessage_thenFindListWithOneElementAndFindMessageById() {
+        spot = spotRepository.save(spot);
+
         Message message = Message.builder()
+            .spot(spot)
             .content(TEST_NEWS_TITLE)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build();
@@ -62,5 +69,4 @@ public class MessageRepositoryTest implements TestData {
             () -> assertNotNull(messageRepository.findById(message.getId()))
         );
     }
-
 }
