@@ -36,5 +36,6 @@ public interface TestData {
     String DESCRIPTION = "The best Spot in Town";
     Location LOCATION = new Location();
     Category CATEGORY = new Category();
-
+    String SPOT_NAME = "Parkour Spot";
+    String SPOT_DESCRIPTION = "At this location one can find the best persons to parkour with";
 }

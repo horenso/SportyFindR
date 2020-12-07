@@ -3,7 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-// THIS IS FROM THE TEMPLATE AND WILL BE REMOVED IN THE FUTURE
+//TODO: THIS IS FROM THE TEMPLATE AND WILL BE REMOVED IN THE FUTURE
 
 public class SimpleMessageDto {
 

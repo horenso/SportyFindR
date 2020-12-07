@@ -1,8 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.unittests;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +27,27 @@ public class MessageRepositoryTest implements TestData {
 
     @Autowired
     private MessageRepository messageRepository;
+    private SpotRepository spotRepository;
+    private CategoryRepo
 
+    @Before
+    public void before() {
+        Category category = Category.CategoryBuilder.aCategory()
+            .id(ID)
+            .build();
+        Location location = Location.LocationBuilder.aLocation()
+            .latitude(10.0)
+            .longitude(10.0)
+            .build();
+        Spot spot= Spot.builder()
+            .name(SPOT_NAME)
+            .description(SPOT_DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        category
+        spotRepository.save()
+    }
     @Test
     public void givenNothing_whenSaveMessage_thenFindListWithOneElementAndFindMessageById() {
         Message message = Message.builder()
