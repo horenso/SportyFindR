@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 import lombok.*;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -30,55 +31,4 @@ public class Spot {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
-
-    public static final class SpotBuilder {
-        private Long id;
-        private String name;
-        private String description;
-        private Location location;
-        private Category category;
-
-        private SpotBuilder() {
-        }
-
-        public static Spot.SpotBuilder aSpot() {
-            return new Spot.SpotBuilder();
-        }
-
-        public Spot.SpotBuilder withId(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Spot.SpotBuilder withName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Spot.SpotBuilder withDescription(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Spot.SpotBuilder withLocation(Location location) {
-            this.location = location;
-            return this;
-        }
-
-        public Spot.SpotBuilder withCategory(Category category) {
-            this.category = category;
-            return this;
-        }
-
-        public Spot build() {
-            Spot spot = new Spot();
-            spot.setId(id);
-            spot.setName(name);
-            spot.setDescription(description);
-            spot.setLocation(location);
-            spot.setCategory(category);
-            return spot;
-        }
-    }
 }

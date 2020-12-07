@@ -1,14 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import java.lang.invoke.MethodHandles;
 
@@ -18,51 +18,51 @@ public class SimpleSpotService implements SpotService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final SpotRepository spotRepository;
     private final LocationService locationService;
+    private final LocationRepository locationRepository;
+    private final CategoryRepository categoryRepository;
 
-    public SimpleSpotService(SpotRepository spotRepository, LocationService locationService) {
+    public SimpleSpotService(SpotRepository spotRepository, LocationService locationService, LocationRepository locationRepository, CategoryRepository categoryRepository) {
         this.spotRepository = spotRepository;
         this.locationService = locationService;
+        this.locationRepository = locationRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
-    public Spot create(Spot spot) throws ServiceException {
+    public Spot create(Spot spot) throws ValidationException, ServiceException {
         LOGGER.debug("Create new Spot {}", spot);
-        if (spot.getName()==null){
-            throw new ServiceException("Name must not be Empty");
+        if(spot.getId()!=null){
+            throw new ValidationException("Id must be null");
         }
-        if(spot.getLocation()==null){
-            throw new ServiceException("Spot must have a location");
+        if(spot.getCategory().getId()==null){
+            throw new ValidationException("Spot must have a Category");
+        }
+        if(categoryRepository.findById(spot.getCategory().getId()).isEmpty()){
+            throw new ValidationException("Category does not Exist");
         }
         if(spot.getLocation().getId()==null){
             try {
                 spot.setLocation(locationService.create(spot.getLocation()));
-            }catch (ServiceException e){
+            }catch (ValidationException e){
                 throw new ServiceException(e.getMessage());
             }
         }
-        if(spot.getCategory()==null||spot.getCategory().getId()==null){
-            throw new ServiceException("Spot must have a Category");
+        if(locationRepository.findById(spot.getLocation().getId()).isEmpty()){
+            throw new ValidationException("Location does not Exist");
         }
-        try {
-            return spotRepository.save(spot);
-        }catch (Exception e){
-            if (e.getCause().getCause().getMessage().contains("CATEGORY")) {
-                throw new ServiceException("The Spot must have a valid Category");
-            }else if (e.getCause().getCause().getMessage().contains("LOCATION")) {
-                throw new ServiceException("The Spot must have a valid Location");
-            }else{
-                throw new ServiceException("Something went wrong when entering the values into the DB");
-            }
-        }
+        return spotRepository.save(spot);
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundInDatabaseException {
+    public void deleteById(Long id) throws ValidationException {
         LOGGER.debug("Delete Spot with id {}", id);
-        try {
-            spotRepository.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
-            throw new NotFoundInDatabaseException("Spot does not exist");
+        var spot = spotRepository.findById(id);
+        if(spot.isEmpty()){
+            throw new ValidationException("Spot does not exist");
+        }
+        spotRepository.deleteById(id);
+        if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()){
+            locationRepository.deleteById(spot.get().getLocation().getId());
         }
     }
 }

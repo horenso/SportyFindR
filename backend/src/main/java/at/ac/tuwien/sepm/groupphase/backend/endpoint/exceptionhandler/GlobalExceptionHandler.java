@@ -1,8 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.exceptionhandler;
 
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import org.h2.jdbc.JdbcSQLDataException;
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
+import org.h2.message.DbException;
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +17,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.lang.invoke.MethodHandles;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,5 +63,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(body.toString(), headers, status);
 
+    }
+    @ExceptionHandler(value = {EmptyResultDataAccessException.class})
+    protected ResponseEntity<Object> emptyResult(RuntimeException ex, WebRequest request) {
+        LOGGER.warn(ex.getMessage());
+        return handleExceptionInternal(ex, "Could not be found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+    @ExceptionHandler(value = {HibernateException.class})
+    protected ResponseEntity<Object> sqlEntryFailed(RuntimeException ex, WebRequest request) {
+        LOGGER.warn("Could not save into database");
+        return handleExceptionInternal(ex, "Could not save into database", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

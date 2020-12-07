@@ -23,12 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 public class SpotMappingTest implements TestData {
-    private final Spot spot = Spot.SpotBuilder.aSpot()
-        .withId(ID)
-        .withName(NAME)
-        .withDescription(DESCRIPTION)
-        .withLocation(LOCATION)
-        .withCategory(CATEGORY)
+    private final Spot spot = Spot.builder()
+        .name(NAME)
+        .description(DESCRIPTION)
+        .location(LOCATION)
+        .category(CATEGORY)
         .build();
 
     @Autowired
@@ -44,7 +43,7 @@ public class SpotMappingTest implements TestData {
         LocationDto locationDto = locationMapper.locationToLocationDto(spot.getLocation());
         CategoryDto categoryDto = categoryMapper.categoryToCategoryDto(spot.getCategory());
         assertAll(
-            () -> assertEquals(ID, spotDto.getId()),
+            () -> assertEquals(null, spotDto.getId()),
             () -> assertEquals(NAME, spotDto.getName()),
             () -> assertEquals(DESCRIPTION, spotDto.getDescription()),
             () -> assertEquals(locationDto, spotDto.getLocation()),
