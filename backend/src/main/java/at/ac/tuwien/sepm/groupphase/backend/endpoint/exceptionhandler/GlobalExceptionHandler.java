@@ -7,6 +7,7 @@ import org.h2.message.DbException;
 import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +63,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(body.toString(), headers, status);
 
+    }
+    @ExceptionHandler(value = {EmptyResultDataAccessException.class})
+    protected ResponseEntity<Object> emptyResult(RuntimeException ex, WebRequest request) {
+        LOGGER.warn(ex.getMessage());
+        return handleExceptionInternal(ex, "Could not be found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
     @ExceptionHandler(value = {HibernateException.class})
     protected ResponseEntity<Object> sqlEntryFailed(RuntimeException ex, WebRequest request) {
