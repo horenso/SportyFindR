@@ -1,8 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
+import org.hibernate.service.spi.ServiceException;
 
 public interface SpotService {
 
@@ -14,5 +13,5 @@ public interface SpotService {
      */
     Spot create(Spot spot);
 
-    void deleteById(Long id) throws NotFoundInDatabaseException;
+    void deleteById(Long id) throws ServiceException;
 }
