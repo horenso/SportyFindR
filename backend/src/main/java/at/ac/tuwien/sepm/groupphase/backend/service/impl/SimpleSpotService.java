@@ -1,5 +1,4 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -8,15 +7,11 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
-import lombok.NonNull;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.validation.ConstraintViolationException;
 import java.lang.invoke.MethodHandles;
-import java.util.Collections;
+
 
 @Service
 public class SimpleSpotService implements SpotService {
@@ -37,6 +32,9 @@ public class SimpleSpotService implements SpotService {
     @Override
     public Spot create(Spot spot) throws ValidationException,ServiceException {
         LOGGER.debug("Create new Spot {}", spot);
+        if(spot.getId()!=null){
+            throw new ValidationException("Id must be null");
+        }
         if(spot.getCategory().getId()==null){
             throw new ValidationException("Spot must have a Category");
         }
