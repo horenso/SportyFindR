@@ -29,15 +29,15 @@ public class ReactionEndpointTest implements TestData {
     @BeforeAll
     public static void init() {
         Location loc = Location.builder()
-            .withLatitude(LOCATION.getLatitude())
-            .withLongitude(LOCATION.getLongitude())
+            .latitude(LOCATION.getLatitude())
+            .longitude(LOCATION.getLongitude())
             .build();
         Spot spot = Spot.builder()
-            .withId(ID)
-            .withName(NAME)
-            .withDescription(DESCRIPTION)
-            .withLocation(loc)
-            .withCategory(CATEGORY)
+            .id(ID)
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(loc)
+            .category(CATEGORY)
             .build();
         msg = Message.builder()
             .content(TEST_NEWS_TEXT)
