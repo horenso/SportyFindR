@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
