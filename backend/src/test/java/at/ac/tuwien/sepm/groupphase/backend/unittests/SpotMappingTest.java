@@ -26,8 +26,8 @@ public class SpotMappingTest implements TestData {
     private final Spot spot = Spot.builder()
         .name(NAME)
         .description(DESCRIPTION)
-        .location(LOCATION)
-        .category(CATEGORY)
+        .location(null)
+        .category(null)
         .build();
 
     @Autowired
