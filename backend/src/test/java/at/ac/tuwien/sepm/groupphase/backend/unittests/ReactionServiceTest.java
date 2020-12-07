@@ -1,17 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.unittests;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -27,6 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class ReactionServiceTest implements TestData {
 
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Autowired
     private SpotRepository spotRepository;
     @Autowired
@@ -42,19 +43,28 @@ public class ReactionServiceTest implements TestData {
 
     @BeforeEach
     public void beforeEach() {
-        Location loc = Location.builder()
-            .latitude(LOCATION.getLatitude())
-            .longitude(LOCATION.getLongitude())
-            .build();
+        Location loc = locationRepository.save(
+            Location.builder()
+                .latitude(91.57)
+                .longitude(-20.3)
+                .build()
+        );
+
+        Category cat = categoryRepository.save(
+            Category.builder()
+                .name("foo")
+                .build()
+        );
+
         Spot spot = Spot.builder()
-            .name(NAME)
-            .description(DESCRIPTION)
+            .name("bar")
+            .description("Lorem ipsum")
             .location(loc)
-            .category(CATEGORY)
+            .category(cat)
             .build();
-        msg = Message.builder()
-            .content(TEST_NEWS_TEXT)
-            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+        this.msg = Message.builder()
+            .content("dolor")
+            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
             .spot(spot)
             .build();
 
@@ -72,7 +82,7 @@ public class ReactionServiceTest implements TestData {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
             .message(msg)
             .build();
 
@@ -90,16 +100,17 @@ public class ReactionServiceTest implements TestData {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
             .message(msg)
             .build();
 
-        reactionService.create(rct);
-        Reaction reaction = reactionService.getReactionsByMessageId(ID).get(0); // should be the first in the list
+        Long msgId = msg.getId();
+        Reaction createReaction = reactionService.create(rct);
+        Reaction reaction = reactionService.getReactionsByMessageId(msgId).get(0); // should be the first in the list
         assertAll(
             () -> assertTrue(reaction.getId() > 0),
             () -> assertEquals(rct.getType(), reaction.getType()),
-            () -> assertEquals(rct.getMessage(), reaction.getMessage()),
+            () -> assertEquals(rct.getMessage().getId(), reaction.getMessage().getId()),
             () -> assertEquals(rct.getPublishedAt(), reaction.getPublishedAt())
         );
     }
@@ -109,13 +120,15 @@ public class ReactionServiceTest implements TestData {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
             .message(msg)
             .build();
 
+        Long msgId = msg.getId();
+
         reactionService.create(rct);
         assertAll(
-            () -> assertThrows(NotFoundException.class, () -> reactionService.getReactionsByMessageId(ID + 100).get(0))
+            () -> assertThrows(NotFoundException.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
         );
     }
 }

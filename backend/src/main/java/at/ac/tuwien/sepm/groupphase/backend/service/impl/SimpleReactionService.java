@@ -15,6 +15,7 @@ import javax.validation.constraints.Null;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SimpleReactionService implements ReactionService {
@@ -38,8 +39,8 @@ public class SimpleReactionService implements ReactionService {
     @Override
     public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException {
         Message message;
-        message = messageRepository.getOne(messageId);
-        if (message == null) { // TODO: check if message can be null
+        Optional<Message> optionalMessage = messageRepository.findById(messageId);
+        if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + messageId + " cannot be found!");
         } else {
             return reactionRepository.getReactionsByMessageId(messageId);
