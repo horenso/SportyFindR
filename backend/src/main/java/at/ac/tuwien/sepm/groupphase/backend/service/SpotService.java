@@ -1,9 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import org.hibernate.service.spi.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 
-import javax.xml.bind.ValidationException;
 
 public interface SpotService {
 

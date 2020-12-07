@@ -53,8 +53,3 @@ security:
     audience: secure-app
     # 12 hours in milliseconds
     expiration-time: 43200000
-server:
-  port: 8080
-  error:
-    include-binding-errors: always
-    include-message: always

@@ -1,20 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
-import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.xml.bind.ValidationException;
 import java.lang.invoke.MethodHandles;
 
 @Service
@@ -34,7 +29,7 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot create(Spot spot) throws ValidationException,ServiceException {
+    public Spot create(Spot spot) throws ValidationException, ServiceException {
         LOGGER.debug("Create new Spot {}", spot);
         if(spot.getId()!=null){
             throw new ValidationException("Id must be null");
