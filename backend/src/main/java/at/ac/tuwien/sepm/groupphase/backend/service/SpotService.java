@@ -15,5 +15,10 @@ public interface SpotService {
      */
     Spot create(Spot spot) throws ServiceException, ValidationException;
 
+    /**
+     * Delete a Spot entry
+     *
+     * @param id of spot to delete
+     */
     void deleteById(Long id) throws ValidationException;
 }
