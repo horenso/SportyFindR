@@ -21,4 +21,12 @@ public interface LocationService {
      * @return created location entry
      */
     Location create(Location location) throws ServiceException;
+
+    /**
+     * Finds locations containing spots that match the filter criteria
+     *
+     * @param categoryId of spot contained in location
+     * @return List of locations containing spots that match the filter criteria
+     */
+    List<Location> filter(Long categoryId);
 }

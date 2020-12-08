@@ -28,24 +28,40 @@ public class SimpleLocationService implements LocationService {
     @Override
     public Location create(Location location) throws ServiceException {
         LOGGER.debug("Create new location {}", location);
-        if(location.getLatitude()==null){
+        if (location.getLatitude() == null) {
             throw new ServiceException("Latitude must not be Null");
         }
-        if(location.getLongitude()==null){
+        if (location.getLongitude() == null) {
             throw new ServiceException("Longitude must not be Null");
         }
-        if(location.getLatitude()<-90){
+        if (location.getLatitude() < -90) {
             throw new ServiceException("Latitude can not be below -90");
         }
-        if(location.getLatitude()>90){
+        if (location.getLatitude() > 90) {
             throw new ServiceException("Latitude can not be above 90");
         }
-        if(location.getLongitude()<-180){
+        if (location.getLongitude() < -180) {
             throw new ServiceException("Longitude can not be below -180");
         }
-        if(location.getLongitude()>180){
+        if (location.getLongitude() > 180) {
             throw new ServiceException("Longitude can not be above 180");
         }
         return locationRepository.save(location);
     }
+
+    @Override
+    public List<Location> filter(Long categoryId) throws ServiceException {
+        LOGGER.debug("Searching for locations containing spots with: " +
+            "category: " + categoryId);
+
+        List<Location> locations = locationRepository.filter(categoryId);
+
+        if (locations.isEmpty()) {
+            throw new ServiceException("No Location with these parameters found.");
+        } else {
+            return locationRepository.filter(categoryId);
+        }
+
+    }
+
 }
