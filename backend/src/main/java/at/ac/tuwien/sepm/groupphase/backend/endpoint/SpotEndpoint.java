@@ -3,8 +3,9 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -43,7 +44,7 @@ public class SpotEndpoint {
         try {
             return spotMapper.spotToSpotDto(
                 spotService.create(spotMapper.spotDtoToSpot(spotDto)));
-        } catch (ServiceException e) {
+        } catch (ValidationException | ServiceException e) {
             LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -52,12 +53,12 @@ public class SpotEndpoint {
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
-    @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Delete a new spot", authorizations = {@Authorization(value = "apiKey")})
     public void delete(@PathVariable("id") Long id) {
         LOGGER.info("DELETE /api/v1/spots id: {}", id);
         try {
             spotService.deleteById(id);
-        } catch (NotFoundInDatabaseException e) {
+        } catch (NotFoundException | ValidationException e) {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
