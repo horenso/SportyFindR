@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
+import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,4 +38,20 @@ public class SimpleLocationService implements LocationService {
         }
         return locationRepository.save(location);
     }
+
+    @Override
+    public List<Location> filter(Long categoryId) throws ServiceException {
+        LOGGER.debug("Searching for locations containing spots with: " +
+            "category: " + categoryId);
+
+        List<Location> locations = locationRepository.filter(categoryId);
+
+        if (locations.isEmpty()) {
+            throw new ServiceException("No Location with these parameters found.");
+        } else {
+            return locationRepository.filter(categoryId);
+        }
+
+    }
+
 }
