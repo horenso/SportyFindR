@@ -2,6 +2,8 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
+import { LeafletModule} from '@asymmetrik/ngx-leaflet';
+import { NgxSidebarControlModule} from '@runette/ngx-leaflet-sidebar';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -32,7 +34,9 @@ import { SpotMessagesComponent } from './components/spot-messages/spot-messages.
     ReactiveFormsModule,
     HttpClientModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    LeafletModule,
+    NgxSidebarControlModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
