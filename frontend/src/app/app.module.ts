@@ -3,7 +3,6 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { LeafletModule} from '@asymmetrik/ngx-leaflet';
-import { NgxSidebarControlModule} from '@runette/ngx-leaflet-sidebar';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -38,7 +37,6 @@ import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.compon
     NgbModule,
     FormsModule,
     LeafletModule,
-    NgxSidebarControlModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
