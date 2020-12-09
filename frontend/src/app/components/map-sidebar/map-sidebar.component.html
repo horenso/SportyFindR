@@ -1,7 +1,10 @@
-<leaflet-sidebar-control
-  [map]="map"
-  [options]="sidebarOptions">
-</leaflet-sidebar-control>
-
-<div id="sidebar" class="leaflet-sidebar collapsed">
+<div id="sidebar-right" class="map-sidebar" [ngClass]="active?'active':'inactive'">
+  <button class="sidebar-handle"
+    (click)="toggleActive()"
+  >
+    {{ active ? "Close" : "Open" }}
+  </button>
+  <div class="sidebar-content">
+      Foo Bar
+  </div>
 </div>

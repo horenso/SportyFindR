@@ -1,6 +1,4 @@
-/// <reference types='leaflet-sidebar-v2' />
-import {Component, Input, OnInit} from '@angular/core';
-import {Map, SidebarOptions} from 'leaflet';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'app-map-sidebar',
@@ -9,14 +7,13 @@ import {Map, SidebarOptions} from 'leaflet';
 })
 export class MapSidebarComponent implements OnInit {
 
-  @Input() map: Map;
+  active: boolean = false;
+  @Output() sidebarActive = new EventEmitter<boolean>();
 
-  public sidebarOptions: SidebarOptions = {
-    position: 'right',
-    autopan: false,
-    closeButton: true,
-    container: 'sidebar',
-  };
+  toggleActive() {
+    this.active = !this.active;
+    this.sidebarActive.emit(this.active);
+  }
 
   constructor() {
   }

@@ -1,6 +1,5 @@
-/// <reference types='leaflet-sidebar-v2' />
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {control, Layer, LayerGroup, Map, marker, SidebarOptions, tileLayer} from 'leaflet';
+import {control, Layer, LayerGroup, Map, marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
 
@@ -37,23 +36,15 @@ export class MapComponent implements OnInit, OnDestroy {
     cursor: true
   };
 
-  public sidebarOptions: SidebarOptions = {
-    position: 'right',
-    autopan: false,
-    closeButton: true,
-    container: 'sidebar',
-  };
-
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
     this.locationService.getAllLocations().subscribe((result: Location[]) => {
         this.locationList = result;
-        console.log(this.locationList);
+//        console.log(this.locationList);
         this.addMarkers();
       }
     );
-
 
     this.map = map;
   }

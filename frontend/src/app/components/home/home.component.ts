@@ -8,7 +8,13 @@ import {AuthService} from '../../services/auth.service';
 })
 export class HomeComponent implements OnInit {
 
+  sidebarActive: boolean = false;
+
   constructor(public authService: AuthService) { }
+
+  onSidebarActive(sidebarActive: boolean) {
+    this.sidebarActive = sidebarActive;
+  }
 
   ngOnInit() {
   }

@@ -4,19 +4,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  margin-top: 56px; // spacing for the header - maybe to be removed later
-}
-
-.map-frame {
-  height: 100%;
 }
 
 #map {
   height: 100%;
-}
-
-.leaflet-sidebar {
-  top: 0;
-  bottom: 0;
-  border-radius: 0;
 }
