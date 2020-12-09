@@ -1,5 +1,5 @@
 /// <reference types='leaflet-sidebar-v2' />
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Map, SidebarOptions} from 'leaflet';
 
 @Component({
@@ -10,9 +10,16 @@ import {Map, SidebarOptions} from 'leaflet';
 export class MapSidebarComponent implements OnInit {
 
   @Input() map: Map;
-  @Input() options: SidebarOptions;
 
-  constructor() { }
+  public sidebarOptions: SidebarOptions = {
+    position: 'right',
+    autopan: false,
+    closeButton: true,
+    container: 'sidebar',
+  };
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

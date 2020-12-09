@@ -1,19 +1,28 @@
 <div class="map-container">
-  <div class="map-frame">
-    <div id="map"
-         leaflet
-         [leafletOptions]="leafletOptions"
-         (leafletMapReady)="onMapReady($event)"
-    ></div>
-    <leaflet-sidebar-control
-      [map]="map"
-      [options]="sidebarOptions"
-    ></leaflet-sidebar-control>
-    <div id="sidebar" class="leaflet-sidebar collapsed">
-      <app-map-sidebar
-        [map]="map"
-        [options]="sidebarOptions"
-      ></app-map-sidebar>
+  <!--  <div class="map-frame">-->
+  <div id="map"
+       leaflet
+       [leafletOptions]="leafletOptions"
+       [leafletLayers]="layers"
+       (leafletMapReady)="onMapReady($event)">
+  </div>
+  <leaflet-sidebar-control
+    [map]="map"
+    [options]="sidebarOptions">
+  </leaflet-sidebar-control>
+
+  <div id="sidebar" class="leaflet-sidebar collapsed">
+    <div class="leaflet-sidebar-tabs">
+      ...
+    </div>
+
+    <!-- Tab panes -->
+    <div class="leaflet-sidebar-content">
+      ...
     </div>
   </div>
+  <!--    <app-map-sidebar-->
+  <!--      [map]="map">-->
+  <!--    </app-map-sidebar>-->
+  <!--  </div>-->
 </div>
