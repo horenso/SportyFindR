@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
+
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
@@ -29,10 +29,10 @@ public class SimpleLocationService implements LocationService {
     @Override
     public Location create(Location location) throws ValidationException {
         LOGGER.debug("Create new location {}", location);
-        if(location.getLatitude()==null){
+        if (location.getLatitude() == null) {
             throw new ValidationException("Latitude must not be Null");
         }
-        if(location.getLongitude()==null){
+        if (location.getLongitude() == null) {
             throw new ValidationException("Longitude must not be Null");
         }
         return locationRepository.save(location);

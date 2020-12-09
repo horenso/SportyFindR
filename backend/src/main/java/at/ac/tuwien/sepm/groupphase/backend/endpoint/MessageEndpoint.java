@@ -1,31 +1,24 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.*;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import lombok.extern.log4j.Log4j;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/messages")
 public class MessageEndpoint {
 
@@ -34,15 +27,7 @@ public class MessageEndpoint {
     private final MessageService messageService;
     private final MessageMapper messageMapper;
     private final SpotEndpoint spotEndpoint;
-
-    @Autowired
-    public MessageEndpoint(MessageService messageService,
-                           MessageMapper messageMapper,
-                           SpotEndpoint spotEndpoint) {
-        this.messageService = messageService;
-        this.messageMapper = messageMapper;
-        this.spotEndpoint = spotEndpoint;
-    }
+    private final SpotService spotService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -62,7 +47,7 @@ public class MessageEndpoint {
         MessageDto newMessage;
         newMessage = messageMapper.messageToMessageDto(
             messageService.create(messageMapper.messageDtoToMessage(messageDto)));
-        spotEndpoint.dispatch(newMessage);
+        spotService.dispatch(messageMapper.messageDtoToMessage(newMessage));
         return newMessage;
     }
 }

@@ -1,8 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SimpleMessageService implements MessageService {
