@@ -53,7 +53,11 @@ public class SimpleLocationService implements LocationService {
             throw new ServiceException("No Location with these parameters found.");
         } else {
             try {
-                return validator.validateLocationDistance(latitude, longitude, radius, locations);
+                if (radius != 0) {      // if search parameters contain radius data
+                    return validator.validateLocationDistance(latitude, longitude, radius, locations);
+                } else {
+                    return locations;       // search by category only
+                }
             } catch (ValidationException e) {
                 throw new ServiceException(e.getMessage());
             }
