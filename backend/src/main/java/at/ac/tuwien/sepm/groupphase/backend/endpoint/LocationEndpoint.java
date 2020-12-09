@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
@@ -58,10 +56,31 @@ public class LocationEndpoint {
         try {
             return locationMapper.locationToLocationDto(
                 locationService.create(locationMapper.locationDtoToLocation(locationDto)));
-        }catch (ValidationException e){
-            LOGGER.error(HttpStatus.BAD_REQUEST +" "+ e.getMessage());
+        } catch (ServiceException | ValidationException e) {
+            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/filter")
+    @ApiOperation(value = "Filter locations by distance and categories of spots", authorizations = {@Authorization(value = "apiKey")})
+    public List<LocationDto> filter(@RequestParam(required = false) Long categoryId,
+                                    @RequestParam(required = false, defaultValue = "0") Double latitude,
+                                    @RequestParam(required = false, defaultValue = "0") Double longitude,
+                                    @RequestParam(required = false, defaultValue = "0") Double radius) {
+
+        LOGGER.info("GET /api/v1/locations/filter?" +
+            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
+
+        try {
+            return locationMapper.entityToListDto(locationService.filter(categoryId, latitude, longitude, radius));
+        } catch (ServiceException e) {
+            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+
     }
 
 }
