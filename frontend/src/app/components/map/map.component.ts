@@ -36,7 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
   public sidebarOptions: SidebarOptions = {
     position: 'right',
     autopan: false,
-    closeButton: false,
+    closeButton: true,
     container: 'sidebar',
   };
 

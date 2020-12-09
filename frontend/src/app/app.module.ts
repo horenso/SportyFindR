@@ -16,6 +16,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { MapComponent } from './components/map/map.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
+import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SpotMessagesComponent } from './components/spot-messages/spot-messages.
     MessageComponent,
     SpotMessagesComponent,
     MapComponent,
+    MapSidebarComponent,
   ],
   imports: [
     BrowserModule,

@@ -14,3 +14,9 @@
 #map {
   height: 100%;
 }
+
+.leaflet-sidebar {
+  top: 0;
+  bottom: 0;
+  border-radius: 0;
+}
