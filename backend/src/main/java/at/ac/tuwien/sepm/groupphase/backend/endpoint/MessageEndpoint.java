@@ -47,7 +47,6 @@ public class MessageEndpoint {
         MessageDto newMessage;
         newMessage = messageMapper.messageToMessageDto(
             messageService.create(messageMapper.messageDtoToMessage(messageDto)));
-        spotService.dispatch(messageMapper.messageDtoToMessage(newMessage));
         return newMessage;
     }
 }

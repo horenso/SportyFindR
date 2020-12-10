@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -36,7 +37,7 @@ public class SimpleSpotService implements SpotService {
      * regarding messages and reactions.
      */
 //    private Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
-    List<SseEmitter> emitterList = new CopyOnWriteArrayList<>();
+    private final List<SseEmitter> emitterList = new CopyOnWriteArrayList<>();
 
     @Override
     public Spot create(Spot spot) throws ValidationException, ServiceException {
@@ -78,8 +79,10 @@ public class SimpleSpotService implements SpotService {
     public SseEmitter subscribe(Long id) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitter.onCompletion(() -> deleteEmitter(id, emitter));
-        emitter.onTimeout(() -> deleteEmitter(id, emitter));
-        emitter.onError(e -> deleteEmitter(id, emitter));
+        emitter.onTimeout(() -> {
+            emitter.complete();
+            deleteEmitter(id, emitter);
+        });
 //        if (!emitterMap.containsKey(id)) {
 //            emitterMap.put(id, new CopyOnWriteArrayList<>());
 //        }
@@ -97,19 +100,24 @@ public class SimpleSpotService implements SpotService {
     @Override
     public void dispatch(Message message) {
         Long spotId = message.getSpot().getId();
-//        List<SseEmitter> emitterList = emitterMap.get(spotId);
+        List<SseEmitter> completedEmitters = new ArrayList<>();
         if (emitterList == null) {
             return;
         }
+        SseEmitter.SseEventBuilder eventBuilder = SseEmitter.event()
+            .name("message")
+            .data(message);
         emitterList.forEach(emitter -> {
             try {
                 log.info("Sending message: {}", message);
-                emitter.send(SseEmitter.event().name("message").data(message));
+                emitter.send(eventBuilder);
             } catch (IOException | IllegalStateException e) {
+                completedEmitters.add(emitter);
+                emitter.completeWithError(e);
                 log.info("Error while sending event");
-                deleteEmitter(spotId, emitter);
             }
         });
+        this.emitterList.removeAll(completedEmitters);
     }
 
     private void deleteEmitter(Long spotId, SseEmitter emitter) {
