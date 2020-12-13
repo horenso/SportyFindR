@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Layer, Map, marker, Marker} from 'leaflet';
+import {Map, marker, Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
 import {Subscription} from 'rxjs';
 import {SpotModel} from '../../dtos/spot';
@@ -28,6 +28,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
       map => {
         this.map = map;
         this.createMarker();
+        this.initSpot();
       },
       error => {
         console.log('create-new-location-and-spot.component lost connection to map with error: ', + error);
@@ -40,9 +41,14 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     this.locMarker.addTo(this.map);
   }
 
-  createSpot(spotName: string, spotDescription: string, spotCategory: string, spotLat: number, spotLng: number) {
-    const location = new Location(null, spotLat, spotLng);
-    this.spot = new SpotModel(null, spotName, spotDescription, location);
+  initSpot() {
+    const location = new Location(null, this.locMarker.getLatLng().lat, this.locMarker.getLatLng().lng);
+    this.spot = new SpotModel(null, '', '', location);
+  }
+
+  saveSpot() {
+    this.spot.location = new Location(null, this.locMarker.getLatLng().lat, this.locMarker.getLatLng().lng);
+    console.log('Creating new spot: ', this.spot);
     this.spotService.createSpot(this.spot);
     this.sidebarActionService.setActionSuccess();
   }
