@@ -16,6 +16,8 @@ import {httpInterceptorProviders} from './interceptors';
 import { MapComponent } from './components/map/map.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
 import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
+import { CreateNewLocationAndSpotComponent } from './components/create-new-location-and-spot/create-new-location-and-spot.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.compon
     SpotMessagesComponent,
     MapComponent,
     MapSidebarComponent,
+    CreateNewLocationAndSpotComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,6 +40,7 @@ import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.compon
     NgbModule,
     FormsModule,
     LeafletModule,
+    BrowserAnimationsModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

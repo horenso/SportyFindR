@@ -1,10 +1,19 @@
+var SidebarActionType = require('../../services/sidebar-action.service').SidebarActionType;
 <div id="sidebar-right" class="map-sidebar" [ngClass]="active?'active':'inactive'">
   <button class="sidebar-handle"
     (click)="toggleActive()"
   >
     {{ active ? "Close" : "Open" }}
   </button>
-  <div class="sidebar-content">
-      Foo Bar
+  <div class="sidebar-content" [ngSwitch]="actionType">
+    <div *ngSwitchCase="actionTypeEnum.CreateLocSpot">
+      <app-create-new-location-and-spot></app-create-new-location-and-spot>
+    </div>
+    <div *ngSwitchCase="actionTypeEnum.Success">
+      !!!SUCCESS!!!
+    </div>
+    <div *ngSwitchCase="actionTypeEnum.Cancelled">
+      )-: CANCELLED :-(
+    </div>
   </div>
 </div>

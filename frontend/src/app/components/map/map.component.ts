@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {control, Layer, LayerGroup, Map, marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
+import {MapService} from '../../services/map.service';
 
 @Component({
   selector: 'app-map',
@@ -10,12 +11,12 @@ import {Location} from '../../dtos/location';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-  public map: Map;
+  map: Map;
 
   private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
-  public locationList: Location[];
+  locationList: Location[];
 
-  public layers: Layer[] = [
+  layers: Layer[] = [
     tileLayer(this.basemap, {
       minZoom: 1,
       maxZoom: 20,
@@ -25,9 +26,9 @@ export class MapComponent implements OnInit, OnDestroy {
     })
   ];
 
-  public markerLayerGroup: LayerGroup = new LayerGroup();
+  markerLayerGroup: LayerGroup = new LayerGroup();
 
-  public leafletOptions = {
+  leafletOptions = {
     center: [48.208174, 16.37819],
     zoom: 13,
     zoomDelta: 0.5,
@@ -47,10 +48,12 @@ export class MapComponent implements OnInit, OnDestroy {
     );
 
     this.map = map;
+    this.mapService.setMap(this.map);
   }
 
   constructor(
-    private locationService: LocationService
+    private locationService: LocationService,
+    private mapService: MapService
   ) {
   }
 

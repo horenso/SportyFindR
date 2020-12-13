@@ -1,0 +1,30 @@
+<form class="spot-create">
+  <div>
+    <label for="spotCreateName">Spot Name</label>
+    <input #spotName id="spotCreateName" name="spotCreateName" type="text" placeholder="Spot Name" />
+  </div>
+  <div>
+    <label for="spotCreateDescription">Spot Description</label>
+    <input #spotDescription id="spotCreateDescription" name="spotCreateDescription" type="text" placeholder="Spot Description" />
+  </div>
+  <div>
+  <label for="spotCreateCategory">Spot Category</label>
+  <select #spotCategory id="spotCreateCategory">
+    <option>Football</option>
+    <option>Soccer</option>
+  </select>
+    <div>
+      <label for="spotCreateLatitude">Latitude</label>
+      <input #locationLat type="number" id="spotCreateLatitude" name="spotCreateLatitude" value="{{ locMarker.getLatLng().lat }}">
+      <label for="spotCreateLongitude">Longitude</label>
+      <input #locationLng type="number" id="spotCreateLongitude" name="spotCreateLongitude" value="{{ locMarker.getLatLng().lng }}">
+    </div>
+    <button
+      (click)="createSpot(spotName, spotDescription, spotCategory, locationLat, locationLng)"
+    >Create</button>
+    <button
+      (click)="cancel()"
+    >Cancel</button>
+
+  </div>
+</form>

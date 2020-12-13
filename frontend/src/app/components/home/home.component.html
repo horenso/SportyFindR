@@ -1,8 +1,12 @@
 <div class="content">
   <div id="map-wrapper" [ngClass]="sidebarActive?'sidebar-active':'sidebar-inactive'">
     <app-map></app-map>
+    <div id="new-loc-new-spot">
+      <button id="create-spot" (click)="createLocationWithSpot()">
+      </button>
+    </div>
   </div>
-  <app-map-sidebar
+  <app-map-sidebar #rightSidebar
     (sidebarActive)="onSidebarActive($event)"
   ></app-map-sidebar>
 </div>

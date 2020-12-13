@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit } from '@angular/core';
 import {AuthService} from '../../services/auth.service';
+import {SidebarActionService} from '../../services/sidebar-action.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +11,7 @@ export class HomeComponent implements OnInit {
 
   sidebarActive: boolean = false;
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService, private sidebarActionService: SidebarActionService) { }
 
   onSidebarActive(sidebarActive: boolean) {
     this.sidebarActive = sidebarActive;
@@ -19,4 +20,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
+  createLocationWithSpot() {
+    this.sidebarActionService.setActionCreateLocSpot();
+  }
 }
