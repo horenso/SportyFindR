@@ -28,4 +28,9 @@ export class SpotService {
     console.log('Delete spot with id ' + id);
     return this.httpClient.delete(this.spotBaseUri + '/' + id);
   }
+
+  updateSpot(spot: SpotModel): Observable<SpotModel> {
+    console.log('Update spot with name ' + spot.name);
+    return this.httpClient.put<SpotModel>(this.spotBaseUri, spot);
+  }
 }
