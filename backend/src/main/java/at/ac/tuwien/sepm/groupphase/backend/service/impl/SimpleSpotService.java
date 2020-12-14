@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundInDatabaseException;
@@ -10,6 +11,7 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +21,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +33,15 @@ public class SimpleSpotService implements SpotService {
     private final LocationService locationService;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
+    private final MessageMapper messageMapper;
+    private final ObjectMapper objectMapper;
 
     /**
      * All emitters (clients who observe so to speak) are stored in a currency save list,
      * that way a client can subscribe to particular spot and receive updates about that spot
      * regarding messages and reactions.
      */
-//    private Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
-    private final List<SseEmitter> emitterList = new CopyOnWriteArrayList<>();
+    private final Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
 
     @Override
     public Spot create(Spot spot) throws ValidationException, ServiceException {
@@ -78,20 +82,23 @@ public class SimpleSpotService implements SpotService {
     @Override
     public SseEmitter subscribe(Long id) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitter.onCompletion(() -> deleteEmitter(id, emitter));
-        emitter.onTimeout(() -> {
-            emitter.complete();
-            deleteEmitter(id, emitter);
-        });
-//        if (!emitterMap.containsKey(id)) {
-//            emitterMap.put(id, new CopyOnWriteArrayList<>());
-//        }
-//        emitterMap.get(id).add(emitter);
+
+        List<SseEmitter> emitterList;
+
+        if (emitterMap.containsKey(id)) {
+            emitterList = emitterMap.get(id);
+        } else {
+            emitterList = new ArrayList<>();
+            emitterMap.put(id, emitterList);
+        }
+
+        emitter.onCompletion(() -> log.info("Emitter has completed"));
+
         try {
             emitter.send(SseEmitter.event().name("INIT"));
             log.info("SENT INIT");
-        } catch (IOException e) {
-            log.error("Subscription error: {}", e);
+        } catch (IOException | IllegalStateException e) {
+            return null;
         }
         emitterList.add(emitter);
         return emitter;
@@ -100,31 +107,27 @@ public class SimpleSpotService implements SpotService {
     @Override
     public void dispatch(Message message) {
         Long spotId = message.getSpot().getId();
-        List<SseEmitter> completedEmitters = new ArrayList<>();
-        if (emitterList == null) {
+        if (!emitterMap.containsKey(spotId)) {
             return;
         }
-        SseEmitter.SseEventBuilder eventBuilder = SseEmitter.event()
-            .name("message")
-            .data(message);
+
+        List<SseEmitter> completedEmitters = new ArrayList<>();
+        List<SseEmitter> emitterList = emitterMap.get(spotId);
         emitterList.forEach(emitter -> {
             try {
-                log.info("Sending message: {}", message);
-                emitter.send(eventBuilder);
+                log.info("Sending message: {}", message.getContent());
+                emitter.send(SseEmitter.event()
+                    .name("message")
+                    .data(objectMapper.writeValueAsString(messageMapper.messageToMessageDto(message))));
             } catch (IOException | IllegalStateException e) {
                 completedEmitters.add(emitter);
                 emitter.completeWithError(e);
                 log.info("Error while sending event");
             }
         });
-        this.emitterList.removeAll(completedEmitters);
-    }
-
-    private void deleteEmitter(Long spotId, SseEmitter emitter) {
-//        List<SseEmitter> emitterList = emitterMap.get(spotId);
-        if (emitterList != null && emitterList.contains(emitter)) {
-            emitterList.remove(emitter);
+        if (!completedEmitters.isEmpty()) {
+            log.info("Remove Emitters: {}", completedEmitters);
+            emitterList.removeAll(completedEmitters);
         }
-        log.info("Removed emitter");
     }
 }

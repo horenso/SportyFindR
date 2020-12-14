@@ -58,7 +58,9 @@ public class SpotEndpoint {
 
     @ApiOperation(value = "Subscribe to the Server Sent Emitter", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/subscribe")
+    @CrossOrigin
     public SseEmitter subscribeToSpot(@RequestParam Long spotId) {
         return spotService.subscribe(spotId);
     }
+
 }

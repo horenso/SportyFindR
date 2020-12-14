@@ -29,7 +29,8 @@ public class SimpleMessageService implements MessageService {
     public Message create(Message message) {
         log.debug("create message in spot with id {}", message.getSpot().getId());
         message.setPublishedAt(LocalDateTime.now());
-        spotService.dispatch(message);
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        spotService.dispatch(savedMessage);
+        return savedMessage;
     }
 }
