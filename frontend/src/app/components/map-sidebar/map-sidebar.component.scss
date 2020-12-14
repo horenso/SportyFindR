@@ -3,9 +3,14 @@
 .map-sidebar {
   position: fixed;
   z-index: 2000;
+  pointer-events: none;
   top: $topHeader; // spacing for the header - maybe to be removed later
   bottom: 0;
   width: $sidebarWidth + $sidebarHandleWidth;
+}
+
+.map-sidebar > * {
+  pointer-events: all;
 }
 
 .map-sidebar.active {

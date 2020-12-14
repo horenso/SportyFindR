@@ -42,7 +42,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   }
 
   initSpot() {
-    const location = new Location(null, this.locMarker.getLatLng().lat, this.locMarker.getLatLng().lng);
+    const location = new Location(null, null, null);
     this.spot = new SpotModel(null, '', '', location);
   }
 
