@@ -44,7 +44,7 @@ public class MessageEndpoint {
         messages.forEach(messageDto -> { messageDtoList.add(messageMapper.messageToMessageDto(messageDto)); });
         return messageDtoList;
     }
-
+    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new message", authorizations = {@Authorization(value = "apiKey")})

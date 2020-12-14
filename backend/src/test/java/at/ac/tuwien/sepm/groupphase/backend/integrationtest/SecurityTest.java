@@ -90,7 +90,7 @@ public class SecurityTest implements TestData {
             .longitude(10.0)
             .build();
         location = locationRepository.save(location);
-        Spot spot= Spot.builder()
+        Spot spot = Spot.builder()
             .name(SPOT_NAME)
             .description(SPOT_DESCRIPTION)
             .location(location)
@@ -105,8 +105,9 @@ public class SecurityTest implements TestData {
             .build();
         id = messageRepository.save(message).getId();
     }
+
     @AfterEach
-    public void afterEach(){
+    public void afterEach() {
         messageRepository.deleteAll();
         spotRepository.deleteAll();
         locationRepository.deleteAll();
@@ -115,7 +116,7 @@ public class SecurityTest implements TestData {
 
     @Test
     public void givenUserLoggedIn_whenFindAll_then200() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_BASE_URI+"?spot="+id)
+        MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_BASE_URI + "?spot=" + id)
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
             .andDo(print())
             .andReturn();
@@ -169,20 +170,20 @@ public class SecurityTest implements TestData {
         assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
     }
 
-//    @Test
-//    public void givenUserLoggedIn_whenPost_then403() throws Exception {
-//      message.setPublishedAt(null);
-//        MessageDto messageDto = messageMapper.messageToMessageDto(message);
-//        String body = objectMapper.writeValueAsString(messageDto);
+    @Test
+    public void givenUserLoggedIn_whenPost_then403() throws Exception {
+        message.setPublishedAt(null);
+        MessageDto messageDto = messageMapper.messageToMessageDto(message);
+        String body = objectMapper.writeValueAsString(messageDto);
 
-//        MvcResult mvcResult = this.mockMvc.perform(post(MESSAGE_BASE_URI)
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .content(body)
-//            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
-//            .andDo(print())
-//            .andReturn();
-//       MockHttpServletResponse response = mvcResult.getResponse();
+        MvcResult mvcResult = this.mockMvc.perform(post(MESSAGE_BASE_URI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(body)
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
+            .andDo(print())
+            .andReturn();
+        MockHttpServletResponse response = mvcResult.getResponse();
 
-//        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
-//    }
+        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
+    }
 }
