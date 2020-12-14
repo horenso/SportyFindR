@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,6 +75,11 @@ public class ReactionServiceTest implements TestData {
 
     @AfterEach
     public void afterEach() {
+        reactionRepository.deleteAll();
+        messageRepository.deleteAll();
+        spotRepository.deleteAll();
+        locationRepository.deleteAll();
+        categoryRepository.deleteAll();
         // ToDo: Remove everything
     }
 
@@ -100,7 +106,6 @@ public class ReactionServiceTest implements TestData {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
             .message(msg)
             .build();
 
@@ -111,7 +116,7 @@ public class ReactionServiceTest implements TestData {
             () -> assertTrue(reaction.getId() > 0),
             () -> assertEquals(rct.getType(), reaction.getType()),
             () -> assertEquals(rct.getMessage().getId(), reaction.getMessage().getId()),
-            () -> assertEquals(rct.getPublishedAt(), reaction.getPublishedAt())
+            () -> assertEquals(rct.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), reaction.getPublishedAt().truncatedTo(ChronoUnit.MILLIS))
         );
     }
 

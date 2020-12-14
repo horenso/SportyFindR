@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,5 +67,9 @@ public class MessageEndpointTest implements TestData {
             .content(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build();
+    }
+    @AfterEach
+    public void afterEach(){
+        messageRepository.deleteAll();
     }
 }

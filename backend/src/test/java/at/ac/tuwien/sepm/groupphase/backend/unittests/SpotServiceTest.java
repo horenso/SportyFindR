@@ -12,6 +12,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,6 @@ public class SpotServiceTest implements TestData {
 
     @Test
     public void spotServiceCreate_withoutValidCategory_doesNotCreateSpot() {
-        boolean b = false;
         Category category = Category.builder()
             .id(ID)
             .build();
@@ -54,5 +55,10 @@ public class SpotServiceTest implements TestData {
             () -> assertEquals(0, spotRepository.findAll().size()),
             () -> assertEquals(e.getMessage(),"Category does not Exist")
         );
+
+    }
+    @AfterEach
+    public void afterEach(){
+        spotRepository.deleteAll();
     }
 }
