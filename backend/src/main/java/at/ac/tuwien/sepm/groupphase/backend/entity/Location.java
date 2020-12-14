@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
+
 import lombok.*;
+
 import javax.persistence.*;
 
 @NoArgsConstructor

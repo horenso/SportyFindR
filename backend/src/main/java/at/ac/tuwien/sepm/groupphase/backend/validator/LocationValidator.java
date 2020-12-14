@@ -19,13 +19,13 @@ public class LocationValidator {
 
         List<Location> result = new LinkedList<>();
 
-        for(Location l : locations){
-            if (inRadius(latitude, longitude, l, radius)){
+        for (Location l : locations) {
+            if (inRadius(latitude, longitude, l, radius)) {
                 result.add(l);
             }
         }
 
-        if (result.isEmpty()){
+        if (result.isEmpty()) {
             throw new ValidationException("No Location within " + radius + "km found.");
         }
         return result;
@@ -38,22 +38,22 @@ public class LocationValidator {
         double lat2 = l.getLatitude();
         double lon2 = l.getLongitude();
 
-        double dLat = deg2rad(lat2-lat1);
-        double dLong = deg2rad(lon2-lon1);
+        double dLat = deg2rad(lat2 - lat1);
+        double dLong = deg2rad(lon2 - lon1);
 
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLong/2) * Math.sin(dLong/2);
+                Math.sin(dLong / 2) * Math.sin(dLong / 2);
 
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = r * c;		// distance [km]
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = r * c;        // distance [km]
 
         return d <= radius;
 
     }
 
     public double deg2rad(double deg) {
-        return deg * (Math.PI/180);
+        return deg * (Math.PI / 180);
     }
 
 

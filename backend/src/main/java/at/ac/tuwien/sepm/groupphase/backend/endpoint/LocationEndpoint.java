@@ -8,9 +8,10 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -22,18 +23,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 @RestController
+@Slf4j
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/locations")
 public class LocationEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final LocationService locationService;
     private final LocationMapper locationMapper;
-
-    @Autowired
-    public LocationEndpoint(LocationService locationService, LocationMapper locationMapper) {
-        this.locationService = locationService;
-        this.locationMapper = locationMapper;
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -65,7 +62,8 @@ public class LocationEndpoint {
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
-    @ApiOperation(value = "Filter locations by distance and categories of spots", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Filter locations by distance and categories of spots",
+        authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> filter(@RequestParam(required = false) Long categoryId,
                                     @RequestParam(required = false, defaultValue = "0") Double latitude,
                                     @RequestParam(required = false, defaultValue = "0") Double longitude,

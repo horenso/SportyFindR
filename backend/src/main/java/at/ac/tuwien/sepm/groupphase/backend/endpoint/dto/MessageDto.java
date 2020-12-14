@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @NoArgsConstructor

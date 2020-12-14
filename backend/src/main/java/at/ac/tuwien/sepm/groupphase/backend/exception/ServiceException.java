@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.exception;
 
-public class ServiceException extends Exception{
+public class ServiceException extends Exception {
 
     public ServiceException() {
     }

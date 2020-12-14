@@ -9,11 +9,12 @@ import org.mapstruct.Mapping;
 public interface ReactionMapper {
 
     Reaction.ReactionType reactionDtoTypeToReactionType(ReactionDto.ReactionDtoType type);
+
     ReactionDto.ReactionDtoType reactionTypeToReactionDtoType(Reaction.ReactionType type);
 
-    @Mapping(source="messageId", target="message.id")
+    @Mapping(source = "messageId", target = "message.id")
     Reaction reactionDtoToReaction(ReactionDto reactionDto);
 
-    @Mapping(source="message.id", target="messageId")
+    @Mapping(source = "message.id", target = "messageId")
     ReactionDto reactionToReactionDto(Reaction reaction);
 }

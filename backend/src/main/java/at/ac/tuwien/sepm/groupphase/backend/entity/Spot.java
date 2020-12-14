@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
+
 import lombok.*;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -2,11 +2,9 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.Reference;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor

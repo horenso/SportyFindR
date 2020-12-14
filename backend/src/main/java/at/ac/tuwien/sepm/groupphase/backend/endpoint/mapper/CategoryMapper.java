@@ -7,5 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface CategoryMapper {
     Category categoryDtoToCategory(CategoryDto category);
+
     CategoryDto categoryToCategoryDto(Category category);
 }

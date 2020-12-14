@@ -6,24 +6,19 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.validator.LocationValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class SimpleLocationService implements LocationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final LocationRepository locationRepository;
     private final LocationValidator validator;
-
-    public SimpleLocationService(LocationRepository locationRepository, LocationValidator validator) {
-        this.locationRepository = locationRepository;
-        this.validator = validator;
-    }
 
     @Override
     public List<Location> findAll() {
@@ -32,7 +27,7 @@ public class SimpleLocationService implements LocationService {
 
     @Override
     public Location create(Location location) throws ValidationException {
-        LOGGER.debug("Create new location {}", location);
+        log.debug("Create new location {}", location);
         if (location.getLatitude() == null) {
             throw new ValidationException("Latitude must not be Null");
         }
@@ -44,7 +39,7 @@ public class SimpleLocationService implements LocationService {
 
     @Override
     public List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws ServiceException {
-        LOGGER.debug("Searching for locations within a distance of at most " + radius + " km, containing spots with category: " + categoryId);
+        log.debug("Searching for locations within a distance of at most " + radius + " km, containing spots with category: " + categoryId);
 
 
         List<Location> locations = locationRepository.filter(categoryId);

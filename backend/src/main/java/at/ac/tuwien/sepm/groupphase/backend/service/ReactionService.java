@@ -9,6 +9,7 @@ public interface ReactionService {
 
     /**
      * Creates a Reaction Entity
+     *
      * @param reaction to be stored
      * @return created Reaction Entity
      */
@@ -16,6 +17,7 @@ public interface ReactionService {
 
     /**
      * Searches all Reactions belonging to a corresponding message
+     *
      * @param messageId of the message the reactions belong to
      * @return List of Reactions belonging to that message
      * @throws NotFoundException if the message does not exist in persistence
