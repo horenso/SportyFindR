@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
-import
+
 import lombok.*;
 
 import javax.validation.constraints.Max;

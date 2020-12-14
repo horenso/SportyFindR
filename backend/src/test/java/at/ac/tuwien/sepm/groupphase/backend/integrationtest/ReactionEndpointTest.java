@@ -1,14 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,21 +24,30 @@ public class ReactionEndpointTest implements TestData {
     private static MessageRepository messageRepository;
     @Autowired
     private ReactionService reactionService;
+    @Autowired
+    private static CategoryRepository categoryRepository;
+    @Autowired
+    private static LocationRepository locationRepository;
 
     private static Message msg;
 
     @BeforeAll
     public static void init() {
-        Location loc = Location.builder()
-            .latitude(LOCATION.getLatitude())
-            .longitude(LOCATION.getLongitude())
+        Category category = Category.builder()
+            .id(ID)
             .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(10.0)
+            .longitude(10.0)
+            .build();
+        locationRepository.save(location);
         Spot spot = Spot.builder()
             .id(ID)
             .name(NAME)
             .description(DESCRIPTION)
-            .location(loc)
-            .category(CATEGORY)
+            .location(location)
+            .category(category)
             .build();
         msg = Message.builder()
             .content(TEST_NEWS_TEXT)
@@ -47,6 +57,13 @@ public class ReactionEndpointTest implements TestData {
 
         spotRepository.save(spot);
         messageRepository.save(msg);
+    }
+    @AfterAll
+    public static void afterAll(){
+
+        messageRepository.deleteAll();
+        spotRepository.deleteAll();
+        locationRepository.deleteAll();
     }
 
     // ToDo: write Endpoint Test

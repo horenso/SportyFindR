@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,4 +70,12 @@ public class MessageRepositoryTest implements TestData {
             () -> assertNotNull(messageRepository.findById(message.getId()))
         );
     }
+     @AfterEach
+    public void afterEach(){
+         messageRepository.deleteAll();
+         spotRepository.deleteAll();
+         locationRepository.deleteAll();
+         categoryRepository.deleteAll();
+     }
+
 }
