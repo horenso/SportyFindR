@@ -71,7 +71,6 @@ public class SecurityTest implements TestData {
     private SecurityProperties securityProperties;
 
     private Long id;
-//ToDo: fix tests
 
     private Message message = Message.builder()
         .content(TEST_NEWS_SUMMARY)
