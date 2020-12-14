@@ -1,0 +1,10 @@
+<div id="sidebar-right" class="map-sidebar" [ngClass]="active?'active':'inactive'">
+  <button class="sidebar-handle"
+    (click)="toggleActive()"
+  >
+    {{ active ? "Close" : "Open" }}
+  </button>
+  <div class="sidebar-content">
+      Foo Bar
+  </div>
+</div>

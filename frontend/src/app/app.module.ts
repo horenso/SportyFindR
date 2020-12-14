@@ -2,6 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
+import { LeafletModule} from '@asymmetrik/ngx-leaflet';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -14,6 +15,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { MapComponent } from './components/map/map.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
+import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,7 @@ import { SpotMessagesComponent } from './components/spot-messages/spot-messages.
     MessageComponent,
     SpotMessagesComponent,
     MapComponent,
+    MapSidebarComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,8 @@ import { SpotMessagesComponent } from './components/spot-messages/spot-messages.
     ReactiveFormsModule,
     HttpClientModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    LeafletModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

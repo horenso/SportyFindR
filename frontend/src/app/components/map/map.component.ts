@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import * as Leaflet from 'leaflet';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {control, Layer, LayerGroup, Map, marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
 
@@ -8,65 +8,66 @@ import {Location} from '../../dtos/location';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy {
 
-  private map;
-  locationList: Location[];
+  public map: Map;
 
-  constructor(
-    private locationService: LocationService
-  ) { }
+  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
+  public locationList: Location[];
 
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    this.map = Leaflet.map('map', {
-      center: [ 48.208174, 16.37819 ],
-      zoom: 13,
-      zoomDelta: 0.5,
-      wheelPxPerZoomLevel: 90,
-      zoomSnap: 0,
-      cursor: true
-    });
-
-    const tiles = Leaflet.tileLayer('https://maps{s}.wien.gv.at/basemap/bmaphidpi/{type}/google3857/{z}/{y}/{x}.{format}', {
+  public layers: Layer[] = [
+    tileLayer(this.basemap, {
       minZoom: 1,
       maxZoom: 20,
       attribution: 'Data Source: <a href="https://www.basemap.at">basemap.at</a>',
       subdomains: ['', '1', '2', '3', '4'],
-      type: 'normal',
-      format: 'jpg',
       bounds: [[46.35877, 8.782379], [49.037872, 17.189532]]
-    });
+    })
+  ];
 
-    tiles.addTo(this.map);
+  public markerLayerGroup: LayerGroup = new LayerGroup();
 
-    Leaflet.control.scale({
-      metric: true,
-      imperial: false
-    }).addTo(this.map);
+  public leafletOptions = {
+    center: [48.208174, 16.37819],
+    zoom: 13,
+    zoomDelta: 0.5,
+    wheelPxPerZoomLevel: 90,
+    zoomSnap: 0,
+    cursor: true
+  };
 
-    this.locationService.getAllLocations().subscribe(
-      (result: Location[]) => {
+  onMapReady(map: Map) {
+    control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
+
+    this.locationService.getAllLocations().subscribe((result: Location[]) => {
         this.locationList = result;
-        console.log(this.locationList)
+//        console.log(this.locationList);
         this.addMarkers();
       }
     );
+
+    this.map = map;
   }
 
+  constructor(
+    private locationService: LocationService
+  ) {
+  }
+
+  ngOnInit(): void {
+  }
+
+
   ngOnDestroy(): void {
-    this.map.clearAllEventListeners();
-    this.map.remove();
   }
 
   private addMarkers(): void {
-    this.locationList.forEach(
-      (location: Location) => {
-        Leaflet.marker([location.latitude, location.longitude]).addTo(this.map);
+    this.locationList.forEach((location: Location) => {
+        const newMarker = marker([location.latitude, location.longitude]);
+        this.markerLayerGroup.addLayer(newMarker);
       }
     );
+    this.layers.push(this.markerLayerGroup);
   }
 
 }

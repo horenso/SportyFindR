@@ -1,0 +1,37 @@
+@import "src/app/app.variables";
+
+.map-sidebar {
+  position: fixed;
+  z-index: 2000;
+  top: $topHeader; // spacing for the header - maybe to be removed later
+  bottom: 0;
+  width: $sidebarWidth + $sidebarHandleWidth;
+}
+
+.map-sidebar.active {
+  right: 0;
+  transition: right $sidebarTransitionTime;
+  transition-timing-function: $sidebarTransitionFunction;
+}
+
+.map-sidebar.inactive {
+  right: -$sidebarWidth;
+  transition: right $sidebarTransitionTime;
+  transition-timing-function: $sidebarTransitionFunction;
+}
+
+.map-sidebar .sidebar-handle {
+  position: absolute;
+  left: 0;
+  bottom: 25px;
+  width: $sidebarHandleWidth;
+  height: 50px;
+  background-color: burlywood;
+}
+.map-sidebar .sidebar-content {
+  position: absolute;
+  left: $sidebarHandleWidth;
+  width: $sidebarWidth;
+  height: 100%;
+  background-color: cadetblue;
+}
