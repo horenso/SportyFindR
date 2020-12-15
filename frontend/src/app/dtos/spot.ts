@@ -1,6 +1,6 @@
 import {Location} from './location';
 
-export class SpotModel {
+export class Spot {
   constructor(
     public id: number,
     public name: string,

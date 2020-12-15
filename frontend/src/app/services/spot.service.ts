@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Message} from '../dtos/message';
 import {Observable} from 'rxjs';
-import {SpotModel} from '../dtos/spot';
+import {Spot} from '../dtos/spot';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +18,9 @@ export class SpotService {
    * Persists spot to the backend
    * @param spot to persist
    */
-  createSpot(spot: SpotModel): Observable<SpotModel> {
+  createSpot(spot: Spot): Observable<Spot> {
     console.log('Create spot with name ' + spot.name);
-    return this.httpClient.post<SpotModel>(this.spotBaseUri, spot);
+    return this.httpClient.post<Spot>(this.spotBaseUri, spot);
   }
 
   deleteSpot(id: number): Observable<any> {
@@ -29,8 +28,8 @@ export class SpotService {
     return this.httpClient.delete(this.spotBaseUri + '/' + id);
   }
 
-  updateSpot(spot: SpotModel): Observable<SpotModel> {
+  updateSpot(spot: Spot): Observable<Spot> {
     console.log('Update spot with name ' + spot.name);
-    return this.httpClient.put<SpotModel>(this.spotBaseUri, spot);
+    return this.httpClient.put<Spot>(this.spotBaseUri, spot);
   }
 }
