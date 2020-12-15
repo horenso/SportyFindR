@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @Service
 public class SimpleCategoryService implements CategoryService {
@@ -44,6 +45,17 @@ public class SimpleCategoryService implements CategoryService {
             categoryRepository.deleteById(id);
         } catch (NotFoundException e){
             throw new NotFoundException("There is no category with id " + id);
+        }
+    }
+
+    @Override
+    public List<Category> findAll() {
+        LOGGER.debug("Get all categories.");
+        try {
+            return categoryRepository.findAll();
+        } catch (NotFoundException e){
+            LOGGER.error("No categories found.");
+            throw new NotFoundException(e.getMessage());
         }
     }
 }

@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import org.hibernate.service.spi.ServiceException;
 
+import java.util.List;
+
 
 public interface CategoryService {
 
@@ -22,4 +24,11 @@ public interface CategoryService {
      * @param id of category to delete
      */
     void deleteById(Long id) throws NotFoundException;
+
+    /**
+     * Get all existing categories from database.
+     * @throws RuntimeException  if something goes wrong during data processing.
+     * @throws NotFoundException if no categories could be found in the system.
+     */
+    List<Category> findAll();
 }

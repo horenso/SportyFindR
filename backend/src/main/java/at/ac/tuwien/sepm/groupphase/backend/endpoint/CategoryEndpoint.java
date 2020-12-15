@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/categories")
@@ -63,5 +64,21 @@ public class CategoryEndpoint {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/all")
+    @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})
+    public List<CategoryDto> getAll() {
+        LOGGER.info("GET /api/v1/categories/all");
+
+        try {
+            return categoryMapper.entityToListDto((categoryService.findAll()));
+        } catch (NotFoundException e) {
+            LOGGER.error("No categories could be found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+
     }
 }
