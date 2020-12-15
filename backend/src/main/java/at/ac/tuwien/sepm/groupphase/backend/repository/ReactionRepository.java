@@ -16,4 +16,8 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
      * @return List of Reactions belonging to that message
      */
     List<Reaction> getReactionsByMessageId(long messageId);
+
+    List<Reaction> getReactionsByTypeAndMessageId(String type, long messageId);
+
+    void deleteById(Long reactionId);
 }

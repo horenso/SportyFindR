@@ -23,4 +23,12 @@ public interface ReactionService {
      * @throws NotFoundException if the message does not exist in persistence
      */
     List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException;
+
+    List<Reaction> getThumbsUpByMessageId(Long messageId);
+
+    List<Reaction> getThumbsDownByMessageId(Long messageId);
+
+    void deleteAnUpvote(Long messageId);
+
+    void deleteADownvote(Long messageId);
 }

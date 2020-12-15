@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class SimpleReactionService implements ReactionService {
 
     @Override
     public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException {
-        Message message;
+        LOGGER.debug("Get reactions for message with id {}", messageId);
         Optional<Message> optionalMessage = messageRepository.findById(messageId);
         if (optionalMessage.isEmpty()) {
             throw new NotFoundException("Message with ID " + messageId + " cannot be found!");
@@ -44,4 +45,46 @@ public class SimpleReactionService implements ReactionService {
             return reactionRepository.getReactionsByMessageId(messageId);
         }
     }
+
+    @Override
+    public List<Reaction> getThumbsUpByMessageId(Long messageId) {
+        LOGGER.debug("Get thumbs up reactions for message with id {}", messageId);
+        List<Reaction> thumbsup = getReactionsByMessageId(messageId);
+        List<Reaction> result = new ArrayList<>();
+        for (Reaction thumbup : thumbsup){
+            if (thumbup.getType().equals(Reaction.ReactionType.THUMBS_UP)) {
+                result.add(thumbup);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<Reaction> getThumbsDownByMessageId(Long messageId) {
+        LOGGER.debug("Get thumbs down reactions for message with id {}", messageId);
+        List<Reaction> thumbsdown = getReactionsByMessageId(messageId);
+        List<Reaction> result = new ArrayList<>();
+        for (Reaction thumbdown : thumbsdown){
+            if (thumbdown.getType().equals(Reaction.ReactionType.THUMBS_DOWN)) {
+                result.add(thumbdown);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void deleteAnUpvote(Long messageId) {
+        LOGGER.debug("Delete a thumbs up reaction message with id {}", messageId);
+        Long reactionId = getThumbsUpByMessageId(messageId).get(0).getId();
+        reactionRepository.deleteById(reactionId);
+    }
+
+    @Override
+    public void deleteADownvote(Long messageId) {
+        LOGGER.debug("Delete a thumbs down reaction message with id {}", messageId);
+        Long reactionId = getThumbsDownByMessageId(messageId).get(0).getId();
+        reactionRepository.deleteById(reactionId);
+    }
+
+
 }
