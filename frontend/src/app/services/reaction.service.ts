@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Location} from '../dtos/location';
 import {Observable} from 'rxjs';
 import {Reaction} from '../dtos/reaction';
-import {Message} from '../dtos/message';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +20,12 @@ export class ReactionService {
   }
 
   getReactionsByMessage(messageId: number): Observable<Reaction[]> {
+    console.log('Get reactions for message with id: ' + messageId);
     return this.httpClient.get<Reaction[]>(this.reactionBaseUri + '?message=' + messageId);
+  }
+
+  deleteReactionByMessageAndType(messageId: number, type: string): Observable<any> {
+    console.log('Delete reactions of type ' + type + ' for message with id: '  + messageId);
+    return this.httpClient.delete(this.reactionBaseUri + '/' + type + '?message=' + messageId);
   }
 }

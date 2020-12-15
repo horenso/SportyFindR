@@ -18,9 +18,13 @@ export class ReactionMessageComponent implements OnInit {
   message: Message = null;
   upvotes: number = 0;
   downvotes: number = 0;
+  alreadyDownvoted: boolean = false;
+  alreadyUpvoted: boolean = false;
+
+  // TODO:
+  // user: User;
 
   messageForm: FormGroup;
-  private reaction: Reaction;
 
   constructor(
     private messageService: MessageService,
@@ -38,9 +42,9 @@ export class ReactionMessageComponent implements OnInit {
           (result) => {
             this.reactionsList = result;
             this.reactionsList.forEach(value => {
-              if (value.type === 'THUMBS_UP'){
+              if (value.type === 'THUMBS_UP') {
                 this.upvotes++;
-              } else if (value.type === 'THUMBS_DOWN'){
+              } else if (value.type === 'THUMBS_DOWN') {
                 this.downvotes++;
               }
             });
@@ -64,18 +68,34 @@ export class ReactionMessageComponent implements OnInit {
   }
 
   downvote() {
-    const downvote = new Reaction(null, null, 'THUMBS_DOWN', this.currentMessage);
-    this.reactionService.createReaction(downvote).subscribe(result => {
-      this.downvotes++;
-      console.log(result);
-    });
+    if (this.alreadyDownvoted) {
+      this.reactionService.deleteReactionByMessageAndType(this.currentMessage, 'THUMBS_DOWN').subscribe(result => {
+        this.downvotes--;
+        this.alreadyDownvoted = false;
+      });
+    } else {
+      const downvote = new Reaction(null, null, 'THUMBS_DOWN', this.currentMessage);
+      this.reactionService.createReaction(downvote).subscribe(result => {
+        this.downvotes++;
+        this.alreadyDownvoted = true;
+        console.log(result);
+      });
+    }
   }
 
   upvote() {
-    const upvote = new Reaction(null, null, 'THUMBS_UP', this.currentMessage);
-    this.reactionService.createReaction(upvote).subscribe(result => {
-      this.upvotes++;
-      console.log(result);
-    });
+    if (this.alreadyUpvoted) {
+      this.reactionService.deleteReactionByMessageAndType(this.currentMessage, 'THUMBS_UP').subscribe(result => {
+        this.upvotes--;
+        this.alreadyUpvoted = false;
+      });
+    } else {
+      const upvote = new Reaction(null, null, 'THUMBS_UP', this.currentMessage);
+      this.reactionService.createReaction(upvote).subscribe(result => {
+        this.upvotes++;
+        this.alreadyUpvoted = true;
+        console.log(result);
+      });
+    }
   }
 }

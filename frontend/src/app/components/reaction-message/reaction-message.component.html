@@ -10,11 +10,11 @@
     </div>
     <div class="col">
       {{upvotes}}
-      <button (click)="upvote()" class="btn-primary">Upvote</button>
+      <button [ngStyle]="{'opacity': !alreadyUpvoted ? '0.5' : '1' }" (click)="upvote()" class="btn-primary">Upvote</button>
     </div>
     <div class="col">
       {{downvotes}}
-      <button (click)="downvote()" class="btn-danger">Downvote</button>
+      <button [ngStyle]="{'opacity': !alreadyDownvoted ? '0.5' : '1' }" (click)="downvote()" class="btn-danger">Downvote</button>
     </div>
   </div>
 </div>
