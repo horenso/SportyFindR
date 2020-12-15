@@ -48,5 +48,10 @@ public interface SpotService {
      * @param id of the spot that should be deleted
      * @throws ValidationException if no spot with this id is known
      */
+    /**
+     * Delete a Spot entry
+     *
+     * @param id of spot to delete
+     */
     void deleteById(Long id) throws ValidationException;
 }
