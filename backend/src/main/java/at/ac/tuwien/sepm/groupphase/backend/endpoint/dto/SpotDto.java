@@ -3,11 +3,10 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.Max;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.validation.Valid;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +24,7 @@ public class SpotDto {
     @NotNull(message = "The spot must have a name")
     private String name;
 
-    @Size(min = 0, max = 500, message = "description can't be longer than 500 chars.")
+    @Size(max = 500, message = "description can't be longer than 500 chars.")
     private String description;
 
     @NotNull(message = "The spot must have a location")

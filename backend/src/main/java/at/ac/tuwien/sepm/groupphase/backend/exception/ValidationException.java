@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.exception;
 
-public class ValidationException extends Exception{
+public class ValidationException extends Exception {
 
     public ValidationException() {
     }
