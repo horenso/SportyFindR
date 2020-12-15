@@ -15,5 +15,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @param spotId id of the spot
      * @return ordered list of all message entries
      */
-    List<Message> findBySpotIdOrderByPublishedAtDesc(Long spotId);
+    List<Message> findBySpotIdOrderByPublishedAtAsc(Long spotId);
 }

@@ -75,6 +75,7 @@ public class SpotEndpoint {
     @GetMapping(value = "/subscribe")
     @CrossOrigin
     public SseEmitter subscribeToSpot(@RequestParam Long spotId) {
+        log.info("GET /api/v1/spots/subscribe with id = {}", spotId);
         return spotService.subscribe(spotId);
     }
 

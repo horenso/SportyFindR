@@ -101,7 +101,7 @@ public class SimpleSpotService implements SpotService {
 
         try {
             emitter.send(SseEmitter.event().name("INIT"));
-            log.info("SENT INIT");
+            log.debug("SENT INIT");
         } catch (IOException | IllegalStateException e) {
             return null;
         }
@@ -120,18 +120,17 @@ public class SimpleSpotService implements SpotService {
         List<SseEmitter> emitterList = emitterMap.get(spotId);
         emitterList.forEach(emitter -> {
             try {
-                log.info("Sending message: {}", message.getContent());
+                log.debug("Sending message: {}", message.getContent());
                 emitter.send(SseEmitter.event()
                     .name("message")
                     .data(objectMapper.writeValueAsString(messageMapper.messageToMessageDto(message))));
             } catch (IOException | IllegalStateException e) {
                 completedEmitters.add(emitter);
                 emitter.completeWithError(e);
-                log.info("Error while sending event");
             }
         });
         if (!completedEmitters.isEmpty()) {
-            log.info("Remove Emitters: {}", completedEmitters);
+            log.debug("Remove Emitters: {}", completedEmitters);
             emitterList.removeAll(completedEmitters);
         }
     }

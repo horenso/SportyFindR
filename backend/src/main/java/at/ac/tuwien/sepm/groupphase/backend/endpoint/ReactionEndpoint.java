@@ -9,6 +9,7 @@ import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +25,7 @@ public class ReactionEndpoint {
     private final ReactionService reactionService;
     private final ReactionMapper reactionMapper;
 
+    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new Reaction", authorizations = {@Authorization(value = "apiKey")})
@@ -33,6 +35,7 @@ public class ReactionEndpoint {
             reactionService.create(reactionMapper.reactionDtoToReaction(reactionDto)));
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})

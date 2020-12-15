@@ -32,6 +32,7 @@ public class LocationEndpoint {
     private final LocationService locationService;
     private final LocationMapper locationMapper;
 
+    @Secured("ROLE_ADMIN")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})

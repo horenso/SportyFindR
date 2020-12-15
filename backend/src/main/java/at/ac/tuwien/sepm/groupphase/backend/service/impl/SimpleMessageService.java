@@ -22,7 +22,7 @@ public class SimpleMessageService implements MessageService {
     @Override
     public List<Message> findBySpot(Long spotId) {
         log.debug("Find all messages");
-        return messageRepository.findBySpotIdOrderByPublishedAtDesc(spotId);
+        return messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
     }
 
     @Override
