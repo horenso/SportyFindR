@@ -16,6 +16,7 @@ import {httpInterceptorProviders} from './interceptors';
 import { MapComponent } from './components/map/map.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
 import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.compon
     NgbModule,
     FormsModule,
     LeafletModule,
+    FontAwesomeModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
