@@ -31,4 +31,9 @@ export class MessageService {
   saveMessage(message: Message): Observable<Message> {
     return this.httpClient.post<Message>(this.messageBaseUri, message);
   }
+
+  getMessageById(id: number): Observable<Message> {
+    console.log('Get message with id ' + id);
+    return this.httpClient.get<Message>(this.messageBaseUri + '/' + id);
+  }
 }

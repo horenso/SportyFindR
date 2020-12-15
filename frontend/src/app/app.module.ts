@@ -16,6 +16,7 @@ import {httpInterceptorProviders} from './interceptors';
 import { MapComponent } from './components/map/map.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
 import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
+import { ReactionMessageComponent } from './components/reaction-message/reaction-message.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.compon
     SpotMessagesComponent,
     MapComponent,
     MapSidebarComponent,
+    ReactionMessageComponent,
   ],
   imports: [
     BrowserModule,

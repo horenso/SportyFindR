@@ -5,16 +5,18 @@ import {LoginComponent} from './components/login/login.component';
 import {AuthGuard} from './guards/auth.guard';
 import {MessageComponent} from './components/message/message.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
+import {ReactionMessageComponent} from './components/reaction-message/reaction-message.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'message', canActivate: [AuthGuard], component: MessageComponent},
-  { path: 'spot', 
+  { path: 'spot',
 		children: [
 			{ path: ':id', component: SpotMessagesComponent }
 		]
 	},
+  { path: 'message', children:[{path: ':id', component: ReactionMessageComponent}]}
 
 ];
 
