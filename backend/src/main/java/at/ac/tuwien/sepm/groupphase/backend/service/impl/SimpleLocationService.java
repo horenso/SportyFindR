@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
@@ -8,8 +9,11 @@ import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.validator.LocationValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @Service
@@ -17,12 +21,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SimpleLocationService implements LocationService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final LocationRepository locationRepository;
     private final LocationValidator validator;
 
     @Override
     public List<Location> findAll() {
-        return locationRepository.findAll();
+
+        LOGGER.debug("Get all categories.");
+        try {
+            return locationRepository.findAll();
+        } catch (NotFoundException e){
+            LOGGER.error("No locations found.");
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
     @Override
