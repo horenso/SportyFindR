@@ -19,6 +19,6 @@ export class CategoryService {
    * @returns list of categories
    */
   getAllCategories(): Observable<Category[]> {
-    return this.httpClient.get<[]>(this.categoryBaseUri);
+    return this.httpClient.get<[]>(this.categoryBaseUri + '/all');
   }
 }
