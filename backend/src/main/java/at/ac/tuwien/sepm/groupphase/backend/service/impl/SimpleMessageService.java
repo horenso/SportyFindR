@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
@@ -32,5 +34,15 @@ public class SimpleMessageService implements MessageService {
         Message savedMessage = messageRepository.save(message);
         spotService.dispatch(savedMessage);
         return savedMessage;
+    }
+
+    @Override
+    public Message getById(Long id) throws ServiceException {
+        log.debug("get message with id {}", id);
+        try {
+            return messageRepository.findById(id).get();
+        } catch (NotFoundException e){
+            throw new ServiceException (e.getMessage());
+        }
     }
 }
