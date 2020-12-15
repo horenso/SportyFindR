@@ -17,6 +17,7 @@ import { MapComponent } from './components/map/map.component';
 import { SpotMessagesComponent } from './components/spot-messages/spot-messages.component';
 import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ReactionMessageComponent } from './components/reaction-message/reaction-message.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     SpotMessagesComponent,
     MapComponent,
     MapSidebarComponent,
+    ReactionMessageComponent,
   ],
   imports: [
     BrowserModule,

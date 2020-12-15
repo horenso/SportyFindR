@@ -5,15 +5,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     /**
-     * Find all message entries form one spot ordered by publication date in descending order.
+     * Find all message entries form one spot ordered by publication date in ascending order.
      *
      * @param spotId id of the spot
      * @return ordered list of all message entries
      */
     List<Message> findBySpotIdOrderByPublishedAtAsc(Long spotId);
+
+    Optional<Message> findById(Long id);
 }

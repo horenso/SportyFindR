@@ -10,9 +10,9 @@ import java.util.List;
 public interface LocationService {
 
     /**
-     * Find all locations
-     *
-     * @return list of all location entities
+     * Get all existing locations from database.
+     * @throws RuntimeException  if something goes wrong during data processing.
+     * @throws NotFoundException if no categories could be found in the system.
      */
     List<Location> findAll();
 

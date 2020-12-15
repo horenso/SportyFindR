@@ -43,8 +43,25 @@ public class ReactionEndpoint {
         log.info("GET /api/v1/reactions?message={}", messageId);
         List<Reaction> reactions = reactionService.getReactionsByMessageId(messageId);
         List<ReactionDto> reactionDtos = new ArrayList<>();
-
         reactions.forEach(reaction -> reactionDtos.add(reactionMapper.reactionToReactionDto(reaction)));
         return reactionDtos;
     }
+
+    @DeleteMapping(value = "/THUMBS_UP")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteUpvoteForMessage(@RequestParam(name = "message") Long messageId) {
+        log.info("DELETE /api/v1/reactions/THUMBS_UP?message={}", messageId);
+        reactionService.deleteAnUpvote(messageId);
+    }
+
+    @DeleteMapping(value = "/THUMBS_DOWN")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteDownvoteForMessage(@RequestParam(name = "message") Long messageId) {
+        log.info("DELETE /api/v1/reactions/THUMBS_DOWN?message={}", messageId);
+        reactionService.deleteADownvote(messageId);
+    }
+
+
 }

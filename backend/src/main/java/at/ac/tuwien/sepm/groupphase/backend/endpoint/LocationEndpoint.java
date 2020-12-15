@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
@@ -19,13 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
-import java.util.LinkedList;
 import java.util.List;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/locations")
+@RequestMapping(value = "/api/v1/locations/all")
 public class LocationEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -37,12 +36,14 @@ public class LocationEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> findAll() {
-        LOGGER.info("GET /api/v1/locations");
-        List<Location> locationList = this.locationService.findAll();
-        List<LocationDto> locationDtoList = new LinkedList<>();
+        LOGGER.info("GET /api/v1/locations/all");
 
-        locationList.forEach(location -> locationDtoList.add(locationMapper.locationToLocationDto(location)));
-        return locationDtoList;
+        try {
+            return locationMapper.entityToListDto((locationService.findAll()));
+        } catch (NotFoundException e) {
+            LOGGER.error("No locations could be found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured("ROLE_ADMIN")

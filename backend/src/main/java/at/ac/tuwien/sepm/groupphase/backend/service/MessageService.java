@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface MessageService {
      * @return created message entry
      */
     Message create(Message message);
+
+    Message getById(Long id) throws ServiceException;
 }

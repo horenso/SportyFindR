@@ -8,6 +8,6 @@ export class Reaction {
 	constructor(
 		public id: number,
 		public messageId: number,
-		public reactionType: ReactionType
+		public type: ReactionType
 	) {}
 }
