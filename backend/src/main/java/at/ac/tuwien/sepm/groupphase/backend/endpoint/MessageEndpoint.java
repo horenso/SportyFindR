@@ -3,18 +3,22 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.*;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +45,9 @@ public class MessageEndpoint {
         List<Message> messages = this.messageService.findBySpot(spotId);
         List<MessageDto> messageDtoList = new LinkedList<>();
 
-        messages.forEach(messageDto -> { messageDtoList.add(messageMapper.messageToMessageDto(messageDto)); });
+        messages.forEach(messageDto -> {
+            messageDtoList.add(messageMapper.messageToMessageDto(messageDto));
+        });
         return messageDtoList;
     }
 
@@ -51,6 +57,28 @@ public class MessageEndpoint {
     public MessageDto create(@Valid @RequestBody MessageDto messageDto) {
         LOGGER.info("POST /api/v1/messages body: {}", messageDto);
         return messageMapper.messageToMessageDto(messageService.create(messageMapper.messageDtoToMessage(messageDto)));
+    }
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/filter")
+    @ApiOperation(value = "Filter messages by distance, time and category", authorizations = {@Authorization(value = "apiKey")})
+    public List<MessageDto> filter(@RequestParam(required = false) Long categoryId,
+                                    @RequestParam(required = false) Double latitude,
+                                    @RequestParam(required = false) Double longitude,
+                                    @RequestParam(required = false) Double radius,
+                                    @RequestParam(required = false) LocalDateTime time) {
+
+        LOGGER.info("GET /api/v1/messages/filter?" +
+            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&time=" + time);
+
+        try {
+            return messageMapper.entityToListDto(messageService.filter(categoryId, latitude, longitude, radius, time));
+        } catch (ServiceException e) {
+            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+
     }
 
 //    @GetMapping(value = "/{id}")

@@ -69,9 +69,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         LOGGER.warn(ex.getMessage());
         return handleExceptionInternal(ex, "Could not be found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
-    @ExceptionHandler(value = {HibernateException.class})
+    /*@ExceptionHandler(value = {HibernateException.class})
     protected ResponseEntity<Object> sqlEntryFailed(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Could not save into database");
         return handleExceptionInternal(ex, "Could not save into database", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+
+     */
 }

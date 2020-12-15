@@ -1,7 +1,7 @@
 logging:
   file.name: ./log/backend.log
   level:
-    root: INFO
+    root: DEBUG
 
 spring:
   datasource:
