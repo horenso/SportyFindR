@@ -32,4 +32,8 @@ export class SpotService {
     console.log('Update spot with name ' + spot.name);
     return this.httpClient.put<Spot>(this.spotBaseUri, spot);
   }
+
+  getSpotsByLocation(locationId: number): Observable<Spot[]> {
+    return this.httpClient.get<Spot[]>(this.spotBaseUri + '?location=' + locationId);
+  }
 }
