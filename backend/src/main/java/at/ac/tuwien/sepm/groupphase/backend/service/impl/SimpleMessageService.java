@@ -1,17 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepm.groupphase.backend.validator.LocationValidator;
 import at.ac.tuwien.sepm.groupphase.backend.validator.MessageValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +23,6 @@ public class SimpleMessageService implements MessageService {
     private final MessageRepository messageRepository;
     private final SpotService spotService;
     private final MessageValidator validator;
-
-    public SimpleMessageService(MessageRepository messageRepository, MessageValidator validator) {
-        this.messageRepository = messageRepository;
-        this.validator = validator;
-    }
 
     @Override
     public List<Message> findBySpot(Long spotId) {
