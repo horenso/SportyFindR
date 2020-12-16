@@ -11,18 +11,9 @@ const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'message', canActivate: [AuthGuard], component: MessageComponent},
-  { path: 'spot',
-		children: [
-			{ path: ':id', component: SpotMessagesComponent }
-		]
-	},
-  { path: 'location',
-    children: [
-      { path: ':id', component: LocationSpotsComponent }
-    ]
-  }
-
-];
+  { path: 'spot', children: [{ path: ':id', component: SpotMessagesComponent }]},
+  { path: 'location', children: [{ path: ':id', component: LocationSpotsComponent }]}
+  ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
