@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,44 +46,18 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public List<Reaction> getThumbsUpByMessageId(Long messageId) {
-        LOGGER.debug("Get thumbs up reactions for message with id {}", messageId);
-        List<Reaction> thumbsup = getReactionsByMessageId(messageId);
-        List<Reaction> result = new ArrayList<>();
-        for (Reaction thumbup : thumbsup){
-            if (thumbup.getType().equals(Reaction.ReactionType.THUMBS_UP)) {
-                result.add(thumbup);
-            }
+    public void deleteById(Long reactionId) throws NotFoundException {
+        if (reactionRepository.findById(reactionId).isEmpty()) {
+            throw new NotFoundException(String.format("Reaction with id %d not found.", reactionId));
         }
-        return result;
-    }
-
-    @Override
-    public List<Reaction> getThumbsDownByMessageId(Long messageId) {
-        LOGGER.debug("Get thumbs down reactions for message with id {}", messageId);
-        List<Reaction> thumbsdown = getReactionsByMessageId(messageId);
-        List<Reaction> result = new ArrayList<>();
-        for (Reaction thumbdown : thumbsdown){
-            if (thumbdown.getType().equals(Reaction.ReactionType.THUMBS_DOWN)) {
-                result.add(thumbdown);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public void deleteAnUpvote(Long messageId) {
-        LOGGER.debug("Delete a thumbs up reaction message with id {}", messageId);
-        Long reactionId = getThumbsUpByMessageId(messageId).get(0).getId();
         reactionRepository.deleteById(reactionId);
     }
 
     @Override
-    public void deleteADownvote(Long messageId) {
-        LOGGER.debug("Delete a thumbs down reaction message with id {}", messageId);
-        Long reactionId = getThumbsDownByMessageId(messageId).get(0).getId();
-        reactionRepository.deleteById(reactionId);
+    public Reaction change(Reaction reaction) {
+        if (reactionRepository.getOne(reaction.getId()) == null) {
+            throw new NotFoundException(String.format("Reaction with id %d not found.", reaction.getId()));
+        }
+        return reactionRepository.updateReaction(reaction.getId(), reaction.getType()).get(0);
     }
-
-
 }

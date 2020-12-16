@@ -24,11 +24,7 @@ public interface ReactionService {
      */
     List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException;
 
-    List<Reaction> getThumbsUpByMessageId(Long messageId);
+    void deleteById(Long reactionId) throws NotFoundException;
 
-    List<Reaction> getThumbsDownByMessageId(Long messageId);
-
-    void deleteAnUpvote(Long messageId);
-
-    void deleteADownvote(Long messageId);
+    Reaction change(Reaction reaction) throws NotFoundException;
 }

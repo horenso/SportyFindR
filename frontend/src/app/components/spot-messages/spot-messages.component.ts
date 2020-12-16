@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { result } from 'lodash';
 import { Message } from 'src/app/dtos/message';
+import { Reaction } from 'src/app/dtos/reaction';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
+import { ReactionService } from 'src/app/services/reaction.service';
 import { SpotService } from 'src/app/services/spot.service';
 
 @Component({
@@ -22,6 +25,7 @@ export class SpotMessagesComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
+    private reactionService: ReactionService,
     private spotService: SpotService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder
@@ -70,6 +74,12 @@ export class SpotMessagesComponent implements OnInit {
       //  TODO: handle error
       // });
     );
+  }
+
+  public deleteOneMessage(message: Message): void {
+    this.messageService.deleteById(message.id).subscribe( result => {
+      this.messageList = this.messageList.filter( m => message.id != m.id);
+    });
   }
 
   private addMessage(newMessage: Message): void {

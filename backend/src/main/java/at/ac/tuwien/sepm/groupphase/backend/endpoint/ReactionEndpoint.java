@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ReactionDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.ReactionMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -42,26 +44,32 @@ public class ReactionEndpoint {
     public List<ReactionDto> getReactionsByMessage(@RequestParam(name = "message") Long messageId) {
         log.info("GET /api/v1/reactions?message={}", messageId);
         List<Reaction> reactions = reactionService.getReactionsByMessageId(messageId);
-        List<ReactionDto> reactionDtos = new ArrayList<>();
-        reactions.forEach(reaction -> reactionDtos.add(reactionMapper.reactionToReactionDto(reaction)));
-        return reactionDtos;
+        List<ReactionDto> reactionDtoList = new ArrayList<>();
+        reactions.forEach(reaction -> reactionDtoList.add(reactionMapper.reactionToReactionDto(reaction)));
+        return reactionDtoList;
     }
 
-    @DeleteMapping(value = "/THUMBS_UP")
+    @Secured("ROLE_ADMIN")
+    @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
-    public void deleteUpvoteForMessage(@RequestParam(name = "message") Long messageId) {
-        log.info("DELETE /api/v1/reactions/THUMBS_UP?message={}", messageId);
-        reactionService.deleteAnUpvote(messageId);
+    public Reaction change(@Valid @RequestBody Reaction reaction) {
+        log.info("PATCH /api/v1/reactions body: {}", reaction);
+        return reactionService.change(reaction);
     }
 
-    @DeleteMapping(value = "/THUMBS_DOWN")
+    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
-    public void deleteDownvoteForMessage(@RequestParam(name = "message") Long messageId) {
-        log.info("DELETE /api/v1/reactions/THUMBS_DOWN?message={}", messageId);
-        reactionService.deleteADownvote(messageId);
+    @DeleteMapping(value = "/{id}")
+    @ApiOperation(value = "Delete one reaction by id", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteById(@PathVariable("id") Long id) {
+        log.info("DELETE /api/v1/reaction/{}", id);
+        try {
+            reactionService.deleteById(id);
+        } catch (NotFoundException e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
-
 
 }

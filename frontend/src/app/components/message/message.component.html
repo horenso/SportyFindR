@@ -1,18 +1,28 @@
 <div class="message">
 	<div class="row">
 		<div class="col">{{author}}</div>
-		<div class="col text-right">{{message.publishedAt | date:'short'}}</div>
+		<div class="col text-right">{{message.publishedAt | messageDate}}</div>
 	</div>
 	<div class="row">
-		<div class="col">{{message.content}}</div>
+		<div class="col"><b>{{message.content}}</b></div>
 	</div>
 	<div class="row">
 		<div class="col">
-			<button type="button" class="btn btn-secondary btn-sm votingButton"><fa-icon [icon]='upVoteSymbol'></fa-icon></button>
-			<button type="button" class="btn btn-secondary btn-sm votingButton"><fa-icon [icon]='downVoteSymbol'></fa-icon></button>
+			<button type="button" class="btn btn-sm upVoteButton"
+				[class]="reaction.type === 'THUMBS_UP' ? 'btn-primary' : 'btn-secondary'"
+				(click)='onUpVote()'>
+				<fa-icon [icon]='upVoteSymbol'></fa-icon></button>
+			<ng-container *ngIf="getUpvoteCount() > 0">{{getUpvoteCount()}}</ng-container>
+			<button type="button" class="btn btn-sm downVoteButton"
+				[class]="reaction.type === 'THUMBS_DOWN' ? 'btn-primary' : 'btn-secondary'"
+				(click)='onDownVote()'>
+				<fa-icon [icon]='downVoteSymbol'></fa-icon></button>
+			<ng-container *ngIf="getDownVoteCount() > 0">{{getDownVoteCount()}}</ng-container>
 		</div>
 		<div class="col text-right">
-			<button type="button" class="btn btn-danger btn-sm"><fa-icon [icon]='deleteSymbol'></fa-icon></button>
+			<button type="button" class="btn btn-danger btn-sm"
+			(click)='onDelete()'><fa-icon [icon]='deleteSymbol'></fa-icon></button>
 		</div>
 	</div>
+	{{reaction.type}}
 </div>

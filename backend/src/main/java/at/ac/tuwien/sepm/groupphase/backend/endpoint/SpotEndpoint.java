@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 public class SpotEndpoint {
 
     private final SpotService spotService;
+    private final SpotSubscriptionService spotSubscriptionService;
     private final SpotMapper spotMapper;
 
     @Secured("ROLE_ADMIN")
@@ -76,7 +78,7 @@ public class SpotEndpoint {
     @CrossOrigin
     public SseEmitter subscribeToSpot(@RequestParam Long spotId) {
         log.info("GET /api/v1/spots/subscribe with id = {}", spotId);
-        return spotService.subscribe(spotId);
+        return spotSubscriptionService.subscribe(spotId);
     }
 
 }

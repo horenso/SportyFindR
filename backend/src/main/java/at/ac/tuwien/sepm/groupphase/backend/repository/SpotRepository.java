@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
 public interface SpotRepository extends JpaRepository<Spot, Long> {
 
+    @Transactional
     @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON l.id = s.location.id " +
         "WHERE l.id = :locationId")
     List<Location> findLocationWithSpot(@Param("locationId") Long locationId);

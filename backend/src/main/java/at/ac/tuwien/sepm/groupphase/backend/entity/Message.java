@@ -30,4 +30,10 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "spot_id", nullable = false)
     private Spot spot;
+
+    @Transient
+    private Integer upVotes;
+
+    @Transient
+    private Integer downVotes;
 }

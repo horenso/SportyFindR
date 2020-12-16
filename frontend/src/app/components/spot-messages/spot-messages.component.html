@@ -3,7 +3,9 @@
   <h3>Messages</h3>
   
   <div *ngFor="let message of messageList" class="message">
-    <app-message [message]='message'></app-message>
+    <app-message 
+      [message]='message'
+      (deleteMessage)='deleteOneMessage($event)'></app-message>
   </div>
 
   <form [formGroup]="messageForm">

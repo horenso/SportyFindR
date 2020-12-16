@@ -14,8 +14,6 @@ const routes: Routes = [
 			{ path: ':id', component: SpotMessagesComponent }
 		]
 	},
-  { path: 'message', children:[{path: ':id', component: ReactionMessageComponent}]}
-
 ];
 
 @NgModule({

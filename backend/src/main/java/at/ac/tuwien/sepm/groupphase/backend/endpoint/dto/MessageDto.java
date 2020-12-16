@@ -17,4 +17,6 @@ public class MessageDto {
     private LocalDateTime publishedAt;
     private String content;
     private Long spotId;
+    private Integer upVotes;
+    private Integer downVotes;
 }

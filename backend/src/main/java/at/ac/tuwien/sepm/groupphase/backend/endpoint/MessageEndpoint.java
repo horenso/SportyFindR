@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +43,7 @@ public class MessageEndpoint {
     @Secured("ROLE_ADMIN")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Create a new message", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Create one new message", authorizations = {@Authorization(value = "apiKey")})
     public MessageDto create(@Valid @RequestBody MessageDto messageDto) {
         log.info("POST /api/v1/messages body: {}", messageDto);
         MessageDto newMessage;
@@ -56,9 +55,9 @@ public class MessageEndpoint {
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}")
-    @ApiOperation(value = "Get a message by id", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Get one message by id", authorizations = {@Authorization(value = "apiKey")})
     public MessageDto getById(@PathVariable("id") Long id) {
-        log.info("GET /api/v1/messages id: {}", id);
+        log.info("GET /api/v1/messages/{}", id);
         try {
             return messageMapper.messageToMessageDto(messageService.getById(id));
         } catch (NotFoundException | ServiceException e) {
@@ -66,4 +65,19 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{id}")
+    @ApiOperation(value = "Delete one message by id", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteById(@PathVariable("id") Long id) {
+        log.info("DELETE /api/v1/messages/{}", id);
+        try {
+            messageService.deleteById(id);
+        } catch (NotFoundException e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
 }

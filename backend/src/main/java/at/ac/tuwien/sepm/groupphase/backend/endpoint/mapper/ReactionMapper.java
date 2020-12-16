@@ -5,7 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(uses = {MessageMapper.class})
 public interface ReactionMapper {
 
     Reaction.ReactionType reactionDtoTypeToReactionType(ReactionDto.ReactionDtoType type);

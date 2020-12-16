@@ -25,7 +25,7 @@ public class Reaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false) // TODO: Do we need this?
     private LocalDateTime publishedAt;
 
     @Column(nullable = false)
