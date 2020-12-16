@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -81,6 +84,17 @@ public class SimpleSpotService implements SpotService {
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()) {
             locationRepository.deleteById(spot.get().getLocation().getId());
+        }
+    }
+
+    @Override
+    public List<Spot> getSpotsByLocation(Long locationId) {
+        //Message message;
+        Optional<Location> optionalLocation = locationRepository.findById(locationId);
+        if (optionalLocation.isEmpty()) {
+            throw new NotFoundException("Location with ID " + locationId + " cannot be found!");
+        } else {
+            return spotRepository.getSpotsByLocationId(locationId);
         }
     }
 
