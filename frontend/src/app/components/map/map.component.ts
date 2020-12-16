@@ -3,7 +3,7 @@ import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
 import {MapService} from '../../services/map.service';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs';
 import {MarkerLocation} from '../../util/marker-location';
 
 @Component({
@@ -49,7 +49,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.locationService.getAllLocations().subscribe((result: Location[]) => {
         this.locationList = result;
-//        console.log(this.locationList);
+        console.log(this.locationList);
         this.addMarkers();
       }
     );
@@ -74,7 +74,7 @@ export class MapComponent implements OnInit, OnDestroy {
       error => {
         console.log('Error receiving Location LayerGroup. Error: ' + error);
       }
-    )
+    );
   }
 
   private subscribeLocMarkers() {
@@ -85,7 +85,7 @@ export class MapComponent implements OnInit, OnDestroy {
       error => {
         console.log('Error waiting for Location Markers' + error);
       }
-    )
+    );
   }
 
   constructor(

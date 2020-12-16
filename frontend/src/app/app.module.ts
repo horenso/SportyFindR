@@ -18,6 +18,7 @@ import { SpotMessagesComponent } from './components/spot-messages/spot-messages.
 import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.component';
 import { CreateNewLocationAndSpotComponent } from './components/create-new-location-and-spot/create-new-location-and-spot.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LocationSpotsComponent } from './components/location-spots/location-spots.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MapComponent,
     MapSidebarComponent,
     CreateNewLocationAndSpotComponent,
+    LocationSpotsComponent,
   ],
   imports: [
     BrowserModule,
