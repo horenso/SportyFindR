@@ -16,6 +16,8 @@ public interface MessageMapper {
     @Mapping(source = "spot.id", target = "spotId")
     MessageDto messageToMessageDto(Message message);
 
+    List<MessageDto> entityToListDto(List<Message> messages);
+
     List<Message> messageDtoListToMessageList(List<MessageDto> messageDtoList);
 
     List<MessageDto> messageListToMessageDtoList(List<Message> messageList);
