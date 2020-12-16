@@ -1,8 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
+import {Location} from '../../dtos/location';
 import {MapService} from '../../services/map.service';
 import {Subscription} from "rxjs";
+import {MarkerLocation} from '../../util/marker-location';
 
 @Component({
   selector: 'app-map',
@@ -19,6 +21,7 @@ export class MapComponent implements OnInit, OnDestroy {
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
 
   private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
+  locationList: Location[];
 
   layers: Layer[] = [
     tileLayer(this.basemap, {
@@ -29,6 +32,8 @@ export class MapComponent implements OnInit, OnDestroy {
       bounds: [[46.35877, 8.782379], [49.037872, 17.189532]]
     })
   ];
+
+  markerLayerGroup: LayerGroup = new LayerGroup();
 
   leafletOptions = {
     center: [48.208174, 16.37819],
@@ -41,6 +46,13 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
+
+    this.locationService.getAllLocations().subscribe((result: Location[]) => {
+        this.locationList = result;
+//        console.log(this.locationList);
+        this.addMarkers();
+      }
+    );
 
     this.map = map;
     this.mapService.setMap(this.map);
@@ -90,4 +102,14 @@ export class MapComponent implements OnInit, OnDestroy {
     this.layerGroupSubscription.unsubscribe();
     this.locMarkerSubscription.unsubscribe();
   }
+
+  private addMarkers(): void {
+    this.locationList.forEach((location: Location) => {
+        const newMarker = new MarkerLocation(location);
+        this.markerLayerGroup.addLayer(newMarker);
+      }
+    );
+    this.layers.push(this.markerLayerGroup);
+  }
+
 }
