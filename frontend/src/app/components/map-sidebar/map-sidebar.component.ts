@@ -45,7 +45,8 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
       this.actionType === SidebarActionType.Failed
     ) {
       this.active = false;
-    } else if (this.actionType === SidebarActionType.CreateLocSpot) {
+    } else if (this.actionType === SidebarActionType.CreateLocSpot ||
+      this.actionType === SidebarActionType.ShowSpotsLoc) {
       // do stuff in the template
       this.active = true;
     } else {

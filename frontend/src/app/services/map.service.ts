@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {LayerGroup, Map, Marker} from 'leaflet';
-import {LocationService} from "./location.service";
-import {Location} from "../dtos/location";
+import {LocationService} from './location.service';
+import {Location} from '../dtos/location';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,7 @@ export class MapService {
       error => {
         console.log('Error retrieving locations from backend: ' + error);
       }
-    )
+    );
   }
 
   public addMarkerToLocations(locMarker: Marker) {
@@ -45,7 +45,7 @@ export class MapService {
       (loc: Location) => {
         locMarkerGroup.addLayer(new Marker([loc.latitude, loc.longitude]));
       }
-    )
+    );
     this.locationLayerGroup.next(locMarkerGroup);
   }
 }
