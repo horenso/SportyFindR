@@ -14,7 +14,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
   active: boolean = false;
   @Output() sidebarActive = new EventEmitter<boolean>();
   actionType: SidebarActionType;
-  subscription: Subscription;
+  private subscription: Subscription;
 
   toggleActive() {
     this.active = !this.active;

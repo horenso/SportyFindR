@@ -26,7 +26,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
   spot: Spot;
 
-  getCategories() {
+  private getCategories() {
     this.categorySubscription = this.categoryService.getAllCategories().subscribe(
       categories => {
         this.categories = categories;
@@ -34,7 +34,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     );
   }
 
-  getMap() {
+  private getMap() {
     this.mapSubscription = this.mapService.map$.subscribe(
       map => {
         this.map = map;
@@ -47,12 +47,12 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     );
   }
 
-  createMarker() {
+  private createMarker() {
     this.locMarker = marker(this.map.getCenter(), {draggable: true});
     this.locMarker.addTo(this.map);
   }
 
-  initSpot() {
+  private initSpot() {
     const location = new Location(null, null, null);
     this.spot = new Spot(null, '', '', null, location);
   }
@@ -65,9 +65,8 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
         console.log(newSpot);
         // Add to Location list
 
-        // This shouldn't stay here long as it would be nicer to hand the new spot to the map layer which should keep the layer list
         const newSpotMarker = new Marker([newSpot.location.latitude, newSpot.location.longitude]);
-        this.map.addLayer(newSpotMarker);
+        this.mapService.addMarkerToLocations(newSpotMarker);
 
         this.sidebarActionService.setActionSuccess();
       },
