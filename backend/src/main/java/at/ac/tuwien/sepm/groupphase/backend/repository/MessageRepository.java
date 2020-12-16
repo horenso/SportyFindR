@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +29,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @param time ... messages not older than stated time
      * @return List of messages that match the filter criteria
      */
+    @EntityGraph("message-with-spots")
     @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt <= :time")
     List<Message> filter(@Param("cat") Long categoryId,
                           @Param("time") LocalDateTime time);

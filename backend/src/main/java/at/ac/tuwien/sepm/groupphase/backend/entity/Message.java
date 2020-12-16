@@ -8,6 +8,23 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@NamedEntityGraph(
+    name = "message-with-spots",
+    attributeNodes = {
+        @NamedAttributeNode(value = "spot", subgraph = "spot-subgraph")
+    },
+
+    subgraphs = {
+        @NamedSubgraph(
+            name = "spot-subgraph",
+            attributeNodes = {
+                @NamedAttributeNode("location"),
+                @NamedAttributeNode("category")
+            }
+        )
+    }
+)
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
