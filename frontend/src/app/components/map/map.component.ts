@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {control, Layer, LayerGroup, Map, marker, tileLayer} from 'leaflet';
+import {control, Layer, LayerGroup, Map, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
 import {MapService} from '../../services/map.service';
+import {MarkerLocation} from '../../util/marker-location';
 
 @Component({
   selector: 'app-map',
@@ -66,7 +67,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private addMarkers(): void {
     this.locationList.forEach((location: Location) => {
-        const newMarker = marker([location.latitude, location.longitude]);
+        const newMarker = new MarkerLocation(location);
         this.markerLayerGroup.addLayer(newMarker);
       }
     );
