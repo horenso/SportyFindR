@@ -5,7 +5,8 @@ export enum SidebarActionType {
   NoAction = 'noAction',
   CreateLocSpot = 'createLocSpot',
   Success = 'Success',
-  Cancelled = 'Cancelled'
+  Cancelled = 'Cancelled',
+  Failed = 'Failed'
 }
 
 @Injectable({
@@ -33,5 +34,9 @@ export class SidebarActionService {
 
   public setActionCancelled() {
     this.action.next(SidebarActionType.Cancelled);
+  }
+
+  setActionFailed() {
+    this.action.next(SidebarActionType.Failed);
   }
 }

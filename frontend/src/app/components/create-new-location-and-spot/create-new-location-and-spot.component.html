@@ -5,12 +5,12 @@
   </div>
   <div>
     <label for="spotCreateDescription">Spot Description</label>
-    <input [(ngModel)]="spot.description" #spotDescription id="spotCreateDescription" name="spotCreateDescription" type="text" placeholder="Spot Description" />
+    <textarea [(ngModel)]="spot.description" #spotDescription id="spotCreateDescription" name="spotCreateDescription" type="text" placeholder="Spot Description"></textarea>
   </div>
   <div>
   <label for="spotCreateCategory">Spot Category</label>
-  <select #spotCategory id="spotCreateCategory">
-    <option *ngFor="let category of categories" [value]="category.id">{{category.name}}</option>
+  <select [(ngModel)]="spot.category" #spotCategory id="spotCreateCategory" name="spotCategory">
+    <option *ngFor="let category of categories" [ngValue]="category">{{category.name}}</option>
   </select>
     <div>
 <!--

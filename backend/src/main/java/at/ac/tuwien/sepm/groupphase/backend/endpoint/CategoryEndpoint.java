@@ -66,7 +66,7 @@ public class CategoryEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+//    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/all")
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})

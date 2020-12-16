@@ -54,14 +54,24 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
   initSpot() {
     const location = new Location(null, null, null);
-    this.spot = new Spot(null, '', '', location);
+    this.spot = new Spot(null, '', '', null, location);
   }
 
   saveSpot() {
     this.spot.location = new Location(null, this.locMarker.getLatLng().lat, this.locMarker.getLatLng().lng);
     console.log('Creating new spot: ', this.spot);
-    this.spotService.createSpot(this.spot);
-    this.sidebarActionService.setActionSuccess();
+    this.spotService.createSpot(this.spot).subscribe(
+      newSpot => {
+        console.log(newSpot);
+        // Add to Location list
+
+        this.sidebarActionService.setActionSuccess();
+      },
+      error => {
+        console.log('Failed to store new spot in the backend. Error: ' + error);
+        this.sidebarActionService.setActionFailed();
+      }
+    );
   }
 
   cancel() {
