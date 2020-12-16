@@ -65,6 +65,10 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
         console.log(newSpot);
         // Add to Location list
 
+        // This shouldn't stay here long as it would be nicer to hand the new spot to the map layer which should keep the layer list
+        const newSpotMarker = new Marker([newSpot.location.latitude, newSpot.location.longitude]);
+        this.map.addLayer(newSpotMarker);
+
         this.sidebarActionService.setActionSuccess();
       },
       error => {
