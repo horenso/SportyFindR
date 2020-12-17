@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {MapService} from '../../services/map.service';
 import {Subscription} from 'rxjs';
-import { SidebarActionService } from 'src/app/services/sidebar-action.service';
+import {SidebarActionService} from 'src/app/services/sidebar-action.service';
 
 @Component({
   selector: 'app-view-spots',
@@ -34,6 +34,10 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
         console.log(error);
       }
     );
+  }
+
+  private onSpotSelect(spot: Spot): void {
+    
   }
   
   ngOnDestroy() {

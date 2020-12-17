@@ -3,7 +3,6 @@ import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
 import {MapService} from '../../services/map.service';
-import {Observable, Subscription} from 'rxjs';
 import {MarkerLocation} from '../../util/marker-location';
 import {Spot} from '../../dtos/spot';
 import {SpotService} from '../../services/spot.service';
@@ -38,7 +37,6 @@ export class MapComponent implements OnInit, OnDestroy {
   private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
 // private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
 // high def but jpg, so no background layer is possible
-  private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
 
   layers: Layer[] = [
     tileLayer(this.worldMap, {
@@ -57,17 +55,6 @@ export class MapComponent implements OnInit, OnDestroy {
   ];
 
   markerLayerGroup: LayerGroup = new LayerGroup();
-
-  leafletOptions = {
-    center: [48.208174, 16.37819],
-    zoom: 13,
-    zoomDelta: 0.5,
-    wheelPxPerZoomLevel: 90,
-    zoomSnap: 0,
-    cursor: true,
-    minZoom: 1,
-    maxZoom: 20,
-  };
 
   constructor(
     private locationService: LocationService,
@@ -94,15 +81,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.mapService.initLayers();
     this.initLocMarkers();
-  }
-
-  ngOnDestroy(): void {
-    if (this.layerGroupSubscription) {
-      this.layerGroupSubscription.unsubscribe();
-    }
-    if (this.locMarkerSubscription) {
-      this.locMarkerSubscription.unsubscribe();
-    }
   }
 
   private initLocMarkers() {

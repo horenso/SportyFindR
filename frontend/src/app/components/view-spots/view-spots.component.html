@@ -8,5 +8,5 @@
 
 
 <div *ngFor="let spot of spots">
-  <button class="btn btn-primary">{{spot.name}}</button>
+  <button class="btn btn-primary" (click)='onSpotSelect(spot)'>{{spot.name}}</button>
 </div>

@@ -1,19 +1,12 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
 import {LayerGroup, Map, Marker} from 'leaflet';
 import {LocationService} from './location.service';
 import {Location} from '../dtos/location';
 import {MarkerLocation} from '../util/marker-location';
-import {MapSidebarComponent} from '../components/map-sidebar/map-sidebar.component';
 import {SpotService} from './spot.service';
 import {Spot} from '../dtos/spot';
-import {MapComponent} from '../components/map/map.component';
 import {SidebarActionService} from './sidebar-action.service';
-import {ViewSpotsComponent} from '../components/view-spots/view-spots.component';
-import {LocationService} from './location.service';
-import {Location} from '../dtos/location';
 
 @Injectable({
   providedIn: 'root'
@@ -28,14 +21,11 @@ export class MapService {
   private spots = new BehaviorSubject<Spot[]>(null);
   public spots$ = this.spots.asObservable();
   // tslint:disable-next-line:max-line-length
-  private locationLayerGroup = new BehaviorSubject<LayerGroup<Marker>>(new LayerGroup<Marker>()); // this value should be set by the Map Component right in time
   public locationLayerGroup$ = this.locationLayerGroup.asObservable();
 
   private locMarker = new Subject<Marker>();
   public locMarker$ = this.locMarker.asObservable();
 
-  constructor(private locationService: LocationService) {
-  }
   // tslint:disable-next-line:max-line-length
   constructor(
     private locationService: LocationService,
