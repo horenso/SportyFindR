@@ -52,7 +52,7 @@ public class SpotEndpoint {
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
-    @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
     public void delete(@PathVariable("id") Long id) {
         log.info("DELETE /api/v1/spots id: {}", id);
         try {
