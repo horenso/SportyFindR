@@ -44,7 +44,13 @@ public class Message {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "spot_id", nullable = false)
     private Spot spot;
+
+    @Transient
+    private Integer upVotes;
+
+    @Transient
+    private Integer downVotes;
 }

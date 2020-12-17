@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -28,21 +27,6 @@ public interface SpotService {
      */
     Spot update(Spot spot) throws ServiceException;
 
-    /**
-     * Allows to subscribe to a specific spot, events get fired each time
-     * a new message or reaction happens in the spot
-     *
-     * @param id of the spot to subscribe to
-     * @return SseEmitter that is supplied with updates until sending an event fails
-     */
-    SseEmitter subscribe(Long id);
-
-    /**
-     * Dispatches a message to all SseEmitters subscribed to the spot of the message
-     *
-     * @param message, spotId determines to which SseEmitters the message gets sent
-     */
-    void dispatch(Message message);
 
     /**
      * Deletes one spot by id, all messages and reactions associated with that spot get
@@ -51,12 +35,14 @@ public interface SpotService {
      * @param id of the spot that should be deleted
      * @throws ValidationException if no spot with this id is known
      */
-    /**
-     * Delete a Spot entry
-     *
-     * @param id of spot to delete
-     */
     void deleteById(Long id) throws ValidationException;
 
+    /**
+     * Get all spots within one Location. This list cannot be empty since since a location
+     * must contain at least one spot.
+     *
+     * @param locationId of the location containing the spots
+     * @return list of spots
+     */
     List<Spot> getSpotsByLocation(Long locationId);
 }

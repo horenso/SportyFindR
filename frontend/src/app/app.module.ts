@@ -2,7 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
-import { LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -20,6 +20,13 @@ import { CreateNewLocationAndSpotComponent } from './components/create-new-locat
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LocationSpotsComponent } from './components/location-spots/location-spots.component';
 import { ViewSpotsComponent } from './components/view-spots/view-spots.component';
+import {MapComponent} from './components/map/map.component';
+import {SpotMessagesComponent} from './components/spot-messages/spot-messages.component';
+import {MapSidebarComponent} from './components/map-sidebar/map-sidebar.component';
+import {CreateNewLocationAndSpotComponent} from './components/create-new-location-and-spot/create-new-location-and-spot.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {MessageDatePipe} from './pipes/message-date.pipe';
 
 @NgModule({
   declarations: [
@@ -32,6 +39,7 @@ import { ViewSpotsComponent } from './components/view-spots/view-spots.component
     SpotMessagesComponent,
     MapComponent,
     MapSidebarComponent,
+    MessageDatePipe,
     CreateNewLocationAndSpotComponent,
     LocationSpotsComponent,
     ViewSpotsComponent,
@@ -44,6 +52,7 @@ import { ViewSpotsComponent } from './components/view-spots/view-spots.component
     NgbModule,
     FormsModule,
     LeafletModule,
+    FontAwesomeModule,
     BrowserAnimationsModule,
   ],
   providers: [httpInterceptorProviders],

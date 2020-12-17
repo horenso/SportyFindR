@@ -1,31 +1,35 @@
 <form class="spot-create">
   <div>
     <label for="spotCreateName">Spot Name</label>
-    <input [(ngModel)]="spot.name" #spotName id="spotCreateName" name="spotCreateName" type="text" placeholder="Spot Name" />
+    <input #spotName [(ngModel)]="spot.name" id="spotCreateName" name="spotCreateName" placeholder="Spot Name"
+           type="text"/>
   </div>
   <div>
     <label for="spotCreateDescription">Spot Description</label>
-    <textarea [(ngModel)]="spot.description" #spotDescription id="spotCreateDescription" name="spotCreateDescription" type="text" placeholder="Spot Description"></textarea>
+    <textarea #spotDescription [(ngModel)]="spot.description" id="spotCreateDescription" name="spotCreateDescription"
+              placeholder="Spot Description" type="text"></textarea>
   </div>
   <div>
-  <label for="spotCreateCategory">Spot Category</label>
-  <select [(ngModel)]="spot.category" #spotCategory id="spotCreateCategory" name="spotCategory">
-    <option *ngFor="let category of categories" [ngValue]="category">{{category.name}}</option>
-  </select>
+    <label for="spotCreateCategory">Spot Category</label>
+    <select #spotCategory [(ngModel)]="spot.category" id="spotCreateCategory" name="spotCategory">
+      <option *ngFor="let category of categories" [ngValue]="category">{{category.name}}</option>
+    </select>
     <div>
-<!--
-      <label type for="spotCreateLatitude">Latitude</label>
-      <input [(ngModel)]="locMarker.getLatLng().lat" #locationLat type="hidden" id="spotCreateLatitude" name="spotCreateLatitude" value="{{ locMarker.getLatLng().lat }}">
-      <label for="spotCreateLongitude">Longitude</label>
-      <input [(ngModel)]="locMarker.getLatLng().lng" #locationLng type="hidden" id="spotCreateLongitude" name="spotCreateLongitude" value="{{ locMarker.getLatLng().lng }}">
--->
+      <!--
+            <label type for="spotCreateLatitude">Latitude</label>
+            <input [(ngModel)]="locMarker.getLatLng().lat" #locationLat type="hidden" id="spotCreateLatitude" name="spotCreateLatitude" value="{{ locMarker.getLatLng().lat }}">
+            <label for="spotCreateLongitude">Longitude</label>
+            <input [(ngModel)]="locMarker.getLatLng().lng" #locationLng type="hidden" id="spotCreateLongitude" name="spotCreateLongitude" value="{{ locMarker.getLatLng().lng }}">
+      -->
     </div>
     <button
       (click)="saveSpot()"
-    >Create</button>
+    >Create
+    </button>
     <button
       (click)="cancel()"
-    >Cancel</button>
+    >Cancel
+    </button>
 
   </div>
 </form>

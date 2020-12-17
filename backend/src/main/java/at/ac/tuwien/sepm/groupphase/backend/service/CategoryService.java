@@ -27,6 +27,7 @@ public interface CategoryService {
 
     /**
      * Get all existing categories from database.
+     *
      * @throws RuntimeException  if something goes wrong during data processing.
      * @throws NotFoundException if no categories could be found in the system.
      */

@@ -11,6 +11,7 @@ public interface LocationService {
 
     /**
      * Get all existing locations from database.
+     *
      * @throws RuntimeException  if something goes wrong during data processing.
      * @throws NotFoundException if no categories could be found in the system.
      */
@@ -28,9 +29,9 @@ public interface LocationService {
      * Finds locations containing spots that match the filter criteria
      *
      * @param categoryId of spot contained in location
-     * @param latitude of the current location of the user
-     * @param longitude of the current location of the user
-     * @param radius determining the maximum distance of filtered locations from user
+     * @param latitude   of the current location of the user
+     * @param longitude  of the current location of the user
+     * @param radius     determining the maximum distance of filtered locations from user
      * @return List of locations containing spots that match the filter criteria
      */
     List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws NotFoundException, ServiceException;

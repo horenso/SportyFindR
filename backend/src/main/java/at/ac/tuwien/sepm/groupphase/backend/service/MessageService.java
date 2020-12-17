@@ -1,8 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
@@ -28,14 +26,18 @@ public interface MessageService {
      */
     Message create(Message message);
 
+    Message getById(Long id) throws ServiceException;
+
+    void deleteById(Long id) throws NotFoundException;
+
     /**
      * Finds locations containing spots that match the filter criteria
      *
      * @param categoryId of spot
-     * @param latitude of the current location of the user
-     * @param longitude of the current location of the user
-     * @param radius determining the maximum distance of filtered locations from user
-     * @param time of sent messages
+     * @param latitude   of the current location of the user
+     * @param longitude  of the current location of the user
+     * @param radius     determining the maximum distance of filtered locations from user
+     * @param time       of sent messages
      * @return List of messages containing spots that match the filter criteria
      */
     List<Message> filter(Long categoryId, Double latitude, Double longitude, Double radius, LocalDateTime time) throws NotFoundException, ServiceException;

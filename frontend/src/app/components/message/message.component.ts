@@ -1,10 +1,8 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {MessageService} from '../../services/message.service';
-import {Message} from '../../dtos/message';
-import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
-import * as _ from 'lodash';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '../../services/auth.service';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Message} from 'src/app/dtos/message';
+import {Reaction, ReactionType} from 'src/app/dtos/reaction';
+import {faArrowDown, faArrowUp, faTrash, IconDefinition} from '@fortawesome/free-solid-svg-icons';
+import {ReactionService} from 'src/app/services/reaction.service';
 
 @Component({
   selector: 'app-message',
@@ -13,103 +11,107 @@ import {AuthService} from '../../services/auth.service';
 })
 export class MessageComponent implements OnInit {
 
-  error: boolean = false;
-  errorMessage: string = '';
-  messageForm: FormGroup;
-  // After first submission attempt, form validation will start
-  submitted: boolean = false;
-  private message: Message[];
+  author: string = 'Anonymous'; // in Version 3 the user name will be displayed
+  @Input() message: Message;
+  @Input() canReact: boolean = true; // whether the component shows reaction buttons
+  @Input() canDelete: boolean = true; // wether the component shows a delete button
 
-  constructor(private messageService: MessageService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
-              private cd: ChangeDetectorRef, private authService: AuthService) {
-    this.messageForm = this.formBuilder.group({
-      content: ['', [Validators.required]]
-    });
+  @Output() deleteMessage = new EventEmitter();
+
+  reaction: Reaction;
+
+  alreadyReacted = false;
+
+  deleteSymbol: IconDefinition = faTrash;
+  upVoteSymbol: IconDefinition = faArrowUp;
+  downVoteSymbol: IconDefinition = faArrowDown;
+
+  constructor(private reactionService: ReactionService) {
   }
 
-  ngOnInit() {
-    this.loadMessage();
+  ngOnInit(): void {
+    this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL);
   }
 
-  /**
-   * Returns true if the authenticated user is an admin
-   */
-  isAdmin(): boolean {
-    return this.authService.getUserRole() === 'ADMIN';
+  public getDateString(): string {
+    return 'hi';
   }
 
-  /**
-   * Starts form validation and builds a message dto for sending a creation request if the form is valid.
-   * If the procedure was successful, the form will be cleared.
-   */
-  addMessage() {
-    // this.submitted = true;
-    // if (this.messageForm.valid) {
-    //   const message: Message = new Message(null,
-    //     this.messageForm.controls.content.value,
-    //     new Date().toISOString()
-    //   );
-    //   this.createMessage(message);
-    //   this.clearForm();
-    // } else {
-    //   console.log('Invalid input');
-    // }
-  }
-
-  /**
-   * Sends message creation request
-   * @param message the message which should be created
-   */
-  createMessage(message: Message) {
-    // this.messageService.createMessage(message).subscribe(
-    //   () => {
-    //     this.loadMessage();
-    //   },
-    //   error => {
-    //     this.defaultServiceErrorHandling(error);
-    //   }
-    // );
-  }
-
-  getMessage(): Message[] {
-    return this.message;
-  }
-
-  /**
-   * Error flag will be deactivated, which clears the error message
-   */
-  vanishError() {
-    this.error = false;
-  }
-
-  /**
-   * Loads the specified page of message from the backend
-   */
-  private loadMessage() {
-    this.messageService.getMessagesBySpot(1).subscribe(
-      (message: Message[]) => {
-        this.message = message;
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
+  public onUpVote(): void {
+    switch (this.reaction.type) {
+      case ReactionType.THUMBS_UP: {
+        this.reaction.type = ReactionType.NEUTRAL;
+        this.deleteReaction(this.reaction);
+        break;
       }
-    );
-  }
-
-
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (typeof error.error === 'object') {
-      this.errorMessage = error.error.error;
-    } else {
-      this.errorMessage = error.error;
+      case ReactionType.THUMBS_DOWN: {
+        this.changeReaction(this.reaction, ReactionType.THUMBS_UP);
+        break;
+      }
+      case ReactionType.NEUTRAL: {
+        this.reaction.type = ReactionType.THUMBS_UP;
+        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+        break;
+      }
     }
   }
 
-  private clearForm() {
-    this.messageForm.reset();
-    this.submitted = false;
+  public onDownVote(): void {
+    switch (this.reaction.type) {
+      case ReactionType.THUMBS_UP: {
+        this.changeReaction(this.reaction, ReactionType.THUMBS_DOWN);
+        break;
+      }
+      case ReactionType.THUMBS_DOWN: {
+        this.reaction.type = ReactionType.NEUTRAL;
+        this.deleteReaction(this.reaction);
+        break;
+      }
+      case ReactionType.NEUTRAL: {
+        this.reaction.type = ReactionType.THUMBS_DOWN;
+        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+        break;
+      }
+    }
   }
 
+  public onDelete(): void {
+    this.deleteMessage.emit(this.message);
+  }
+
+  public getUpvoteCount(): number {
+    // if (this.reaction.type === ReactionType.THUMBS_UP) {
+    //   return this.message.upVotes + 1;
+    // } else {
+    //   return this.message.upVotes;
+    // }
+    return this.message.upVotes;
+  }
+
+  public getDownVoteCount(): number {
+    // if (this.reaction.type === ReactionType.THUMBS_DOWN) {
+    //   return this.message.downVotes + 1;
+    // } else {
+    //   return this.message.downVotes;
+    // }
+    return this.message.downVotes;
+  }
+
+  private deleteReaction(reaction: Reaction): void {
+    if (reaction.id != null) {
+      this.reactionService.deleteById(this.reaction.id).subscribe();
+    }
+  }
+
+  private changeReaction(reaction: Reaction, newType: ReactionType): void {
+    if (reaction.id != null) {
+      this.reaction.type = newType;
+      this.reactionService.changeReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+    }
+  }
+
+  private createReaction(reactionType: ReactionType): void {
+    this.reaction.type = reactionType;
+    this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+  }
 }

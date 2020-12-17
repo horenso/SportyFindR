@@ -3,8 +3,14 @@ body {
   background-color: whitesmoke;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 /* this hack seems to be necessary because of a missing shadow file in the leaflet library */
 .leaflet-pane.leaflet-shadow-pane {

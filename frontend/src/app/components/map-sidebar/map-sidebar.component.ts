@@ -17,9 +17,20 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
   actionType: SidebarActionType;
   private subscription: Subscription;
 
+  constructor(private actionService: SidebarActionService) {
+  }
+
   toggleActive() {
     this.active = !this.active;
     this.emitActive();
+  }
+
+  ngOnInit(): void {
+    this.getSidebarAction();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   private emitActive() {
@@ -33,7 +44,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
         this.doAction();
       },
       error => {
-        console.log('Sidebar lost communication to main application. Error: ', + error);
+        console.log('Sidebar lost communication to main application. Error: ', +error);
       },
     );
   }
@@ -53,16 +64,5 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
         break;
     }
     this.emitActive();
-  }
-
-  constructor(private actionService: SidebarActionService) {
-  }
-
-  ngOnInit(): void {
-    this.getSidebarAction();
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

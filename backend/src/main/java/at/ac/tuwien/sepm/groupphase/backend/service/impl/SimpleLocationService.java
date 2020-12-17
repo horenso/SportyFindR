@@ -31,7 +31,7 @@ public class SimpleLocationService implements LocationService {
         LOGGER.debug("Get all categories.");
         try {
             return locationRepository.findAll();
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             LOGGER.error("No locations found.");
             throw new NotFoundException(e.getMessage());
         }

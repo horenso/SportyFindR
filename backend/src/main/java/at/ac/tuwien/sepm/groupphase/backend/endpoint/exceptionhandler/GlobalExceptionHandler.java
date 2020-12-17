@@ -61,7 +61,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {HibernateException.class})
     protected ResponseEntity<Object> sqlEntryFailed(RuntimeException ex, WebRequest request) {
-        LOGGER.warn("Could not save into database");
+        LOGGER.warn("Could not save into database", ex);
         return handleExceptionInternal(ex, "Could not save into database", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

@@ -1,8 +1,8 @@
 <div class="map-container">
-  <div id="map"
-       leaflet
-       [leafletOptions]="leafletOptions"
+  <div (leafletMapReady)="onMapReady($event)"
        [leafletLayers]="layers"
-       (leafletMapReady)="onMapReady($event)">
+       [leafletOptions]="leafletOptions"
+       id="map"
+       leaflet>
   </div>
 </div>

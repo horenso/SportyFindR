@@ -17,45 +17,20 @@ import {MarkerLocation} from '../../util/marker-location';
 })
 export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
-  private categorySubscription: Subscription;
   selectedCategory: Category;
   categories: Category[];
-
+  locMarker: Marker;
+  spot: Spot;
+  private categorySubscription: Subscription;
   private mapSubscription: Subscription;
   private map: Map;
-  locMarker: Marker;
 
-  spot: Spot;
-
-  private getCategories() {
-    this.categorySubscription = this.categoryService.getAllCategories().subscribe(
-      categories => {
-        this.categories = categories;
-      }
-    );
-  }
-
-  private getMap() {
-    this.mapSubscription = this.mapService.map$.subscribe(
-      map => {
-        this.map = map;
-        this.createMarker();
-        this.initSpot();
-      },
-      error => {
-        console.log('create-new-location-and-spot.component lost connection to map with error: ', + error);
-      },
-    );
-  }
-
-  private createMarker() {
-    this.locMarker = marker(this.map.getCenter(), {draggable: true});
-    this.locMarker.addTo(this.map);
-  }
-
-  private initSpot() {
-    const location = new Location(null, null, null);
-    this.spot = new Spot(null, '', '', null, location);
+  constructor(
+    private mapService: MapService,
+    private spotService: SpotService,
+    private categoryService: CategoryService,
+    private sidebarActionService: SidebarActionService
+  ) {
   }
 
   saveSpot() {
@@ -82,13 +57,6 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     this.sidebarActionService.setActionCancelled();
   }
 
-  constructor(
-    private mapService: MapService,
-    private spotService: SpotService,
-    private categoryService: CategoryService,
-    private sidebarActionService: SidebarActionService
-  ) { }
-
   ngOnInit(): void {
     this.getMap();
     this.getCategories();
@@ -97,6 +65,37 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.locMarker.removeFrom(this.map);
     this.mapSubscription.unsubscribe();
+  }
+
+  private getCategories() {
+    this.categorySubscription = this.categoryService.getAllCategories().subscribe(
+      categories => {
+        this.categories = categories;
+      }
+    );
+  }
+
+  private getMap() {
+    this.mapSubscription = this.mapService.map$.subscribe(
+      map => {
+        this.map = map;
+        this.createMarker();
+        this.initSpot();
+      },
+      error => {
+        console.log('create-new-location-and-spot.component lost connection to map with error: ', +error);
+      },
+    );
+  }
+
+  private createMarker() {
+    this.locMarker = marker(this.map.getCenter(), {draggable: true});
+    this.locMarker.addTo(this.map);
+  }
+
+  private initSpot() {
+    const location = new Location(null, null, null);
+    this.spot = new Spot(null, '', '', null, location);
   }
 
 }

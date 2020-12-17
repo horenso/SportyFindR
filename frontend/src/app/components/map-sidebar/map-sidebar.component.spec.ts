@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MapSidebarComponent } from './map-sidebar.component';
+import {MapSidebarComponent} from './map-sidebar.component';
 
 describe('MapSidebarComponent', () => {
   let component: MapSidebarComponent;
@@ -8,9 +8,9 @@ describe('MapSidebarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MapSidebarComponent ]
+      declarations: [MapSidebarComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -7,6 +7,7 @@ import {Observable, Subscription} from 'rxjs';
 import {MarkerLocation} from '../../util/marker-location';
 import {Spot} from '../../dtos/spot';
 import {SpotService} from '../../services/spot.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -16,13 +17,25 @@ import {SpotService} from '../../services/spot.service';
 export class MapComponent implements OnInit, OnDestroy {
 
   map: Map;
+  leafletOptions = {
+    center: [48.208174, 16.37819],
+    zoom: 13,
+    zoomDelta: 0.5,
+    wheelPxPerZoomLevel: 90,
+    zoomSnap: 0,
+    cursor: true,
+    minZoom: 1,
+    maxZoom: 20,
+  };
   private spots: Spot[];
   private layerGroupSubscription: Subscription;
   private locMarkerSubscription: Subscription;
   private locationList: Location[];
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
-
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
+//  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
+// high def but jpg, so no background layer is possible
+  private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
 // private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
 // high def but jpg, so no background layer is possible
   private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
@@ -56,6 +69,16 @@ export class MapComponent implements OnInit, OnDestroy {
     maxZoom: 20,
   };
 
+  constructor(
+    private locationService: LocationService,
+    private mapService: MapService,
+    private spotService: SpotService
+  ) {
+  }
+
+  ngOnInit(): void {
+  }
+
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
@@ -71,6 +94,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.mapService.initLayers();
     this.initLocMarkers();
+  }
+
+  ngOnDestroy(): void {
+    if (this.layerGroupSubscription) {
+      this.layerGroupSubscription.unsubscribe();
+    }
+    if (this.locMarkerSubscription) {
+      this.locMarkerSubscription.unsubscribe();
+    }
   }
 
   private initLocMarkers() {
@@ -100,16 +132,14 @@ export class MapComponent implements OnInit, OnDestroy {
     );
   }
 
-  constructor(
-    private locationService: LocationService,
-    private mapService: MapService,
-    private spotService: SpotService
-  ) {
+  private addMarkers(): void {
+    this.locationList.forEach((location: Location) => {
+        const newMarker = new MarkerLocation(location);
+        this.markerLayerGroup.addLayer(newMarker);
+      }
+    );
+    this.layers.push(this.markerLayerGroup);
   }
-
-  ngOnInit(): void {
-  }
-
 
   ngOnDestroy(): void {
     if (this.layerGroupSubscription) {
@@ -118,14 +148,5 @@ export class MapComponent implements OnInit, OnDestroy {
     if (this.locMarkerSubscription) {
       this.locMarkerSubscription.unsubscribe();
     }
-  }
-
-  private addMarkers(): void {
-    this.locationList.forEach((location: Location) => {
-        const newMarker = new MarkerLocation(location);
-        this.markerLayerGroup.addLayer(newMarker);
-      }
-    );
-    this.layers.push(this.markerLayerGroup);
   }
 }

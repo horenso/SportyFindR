@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Spot} from '../dtos/spot';
 
 @Injectable({
@@ -35,5 +35,15 @@ export class SpotService {
 
   getSpotsByLocation(locationId: number): Observable<Spot[]> {
     return this.httpClient.get<Spot[]>(this.spotBaseUri + '?location=' + locationId);
+  }
+
+  observeEvents(spotId: number): Subject<any> {
+    console.log('New SSE connection with spot ' + spotId);
+    const eventSource = new EventSource(this.globals.backendUri + '/spots/subscribe?spotId=' + spotId);
+    const subscription = new Subject();
+    eventSource.addEventListener('message/new', event => subscription.next(event));
+    eventSource.addEventListener('message/delete', event => subscription.next(event));
+    eventSource.addEventListener('message/updateReaction', event => subscription.next(event));
+    return subscription;
   }
 }

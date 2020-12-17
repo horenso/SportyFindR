@@ -24,14 +24,14 @@ public class MessageValidator {
 
         LOGGER.debug("HEIOO (2)");
 
-        for(Message m : messages){
-            if (inRadius(latitude, longitude, m.getSpot().getLocation(), radius)){
+        for (Message m : messages) {
+            if (inRadius(latitude, longitude, m.getSpot().getLocation(), radius)) {
                 LOGGER.debug("loopsidoopsi");
                 result.add(m);
             }
         }
 
-        if (result.isEmpty()){
+        if (result.isEmpty()) {
             LOGGER.debug("EMPTYYYY");
             LOGGER.error("No Location within " + radius + "km found.");
             throw new ValidationException("No Location within " + radius + "km found.");
@@ -46,21 +46,21 @@ public class MessageValidator {
         double lat2 = l.getLatitude();
         double lon2 = l.getLongitude();
 
-        double dLat = deg2rad(lat2-lat1);
-        double dLong = deg2rad(lon2-lon1);
+        double dLat = deg2rad(lat2 - lat1);
+        double dLong = deg2rad(lon2 - lon1);
 
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLong/2) * Math.sin(dLong/2);
+                Math.sin(dLong / 2) * Math.sin(dLong / 2);
 
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = r * c;		// distance [km]
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = r * c;        // distance [km]
 
         return d <= radius;
 
     }
 
     public double deg2rad(double deg) {
-        return deg * (Math.PI/180);
+        return deg * (Math.PI / 180);
     }
 }

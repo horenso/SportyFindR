@@ -1,19 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
   <a class="navbar-brand ml-lg-5" href="">SEPM Group Phase</a>
-  <button class="navbar-toggler ml-5" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+          class="navbar-toggler ml-5"
+          data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/spot/1" routerLinkActive="active">Message Spot 1</a>
+        <a *ngIf="authService.isLoggedIn()" class="nav-link" routerLink="/spot/1" routerLinkActive="active">Message Spot
+          1</a>
       </li>
     </ul>
     <ul class="navbar-nav mr-5">
-      <a class="nav-link" *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">Login</a>
-      <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/" (click)="authService.logoutUser()">Logout</a>
+      <a *ngIf="!authService.isLoggedIn()" class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
+      <a (click)="authService.logoutUser()" *ngIf="authService.isLoggedIn()" class="nav-link" routerLink="/">Logout</a>
     </ul>
   </div>
 </nav>

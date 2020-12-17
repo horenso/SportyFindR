@@ -1,18 +1,15 @@
-<h3>Messages</h3>
+<div class="messageList">
 
-<div *ngFor="let message of messageList" class="message">
-  <div class="row">
-    <div class="col">
-      {{message.content}}
-    </div>
-    <div class="col date">
-      {{message.publishedAt | date:'short'}}
-    </div>
+  <h3>Messages</h3>
+
+  <div *ngFor="let message of messageList" class="message">
+    <app-message
+      (deleteMessage)='deleteOneMessage($event)'
+      [message]='message'></app-message>
   </div>
-</div>
 
-<form [formGroup]="messageForm">
-  <input formControlName="content" placeholder="New message">
-  <button class="btn btn-primary" (click)="submitDialog()" [disabled]='!messageForm.valid'>
-    Send</button>
-</form>
+  <form [formGroup]="messageForm">
+    <input formControlName="content" placeholder="New message">
+    <button (click)="submitDialog()" [disabled]='!messageForm.valid' class="btn btn-primary"> Send</button>
+  </form>
+</div>

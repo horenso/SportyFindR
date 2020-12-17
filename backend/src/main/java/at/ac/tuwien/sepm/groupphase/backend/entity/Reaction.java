@@ -16,24 +16,21 @@ import java.time.LocalDateTime;
 
 public class Reaction {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false) // TODO: Do we need this?
+    private LocalDateTime publishedAt;
+    @Column(nullable = false)
+    private ReactionType type;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "message_id", nullable = false)
+    private Message message;
+
     public enum ReactionType {
         THUMBS_UP,
         THUMBS_DOWN
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private LocalDateTime publishedAt;
-
-    @Column(nullable = false)
-    private ReactionType type;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "message_id", nullable = false)
-    private Message message;
 
     //TODO Add userID once users are implemented
 }

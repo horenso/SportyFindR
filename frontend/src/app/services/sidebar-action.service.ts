@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 export enum SidebarActionType {
@@ -22,7 +22,7 @@ export class SidebarActionService {
   constructor() {
   }
 
-  public setActionCreateLocSpot()  {
+  public setActionCreateLocSpot() {
     this.action.next(SidebarActionType.CreateLocSpot);
   }
 

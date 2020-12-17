@@ -43,7 +43,7 @@ public class SimpleCategoryService implements CategoryService {
 
         try {
             categoryRepository.deleteById(id);
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             throw new NotFoundException("There is no category with id " + id);
         }
     }
@@ -53,7 +53,7 @@ public class SimpleCategoryService implements CategoryService {
         LOGGER.debug("Get all categories.");
         try {
             return categoryRepository.findAll();
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             LOGGER.error("No categories found.");
             throw new NotFoundException(e.getMessage());
         }

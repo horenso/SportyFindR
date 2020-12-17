@@ -23,4 +23,8 @@ public interface ReactionService {
      * @throws NotFoundException if the message does not exist in persistence
      */
     List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException;
+
+    void deleteById(Long reactionId) throws NotFoundException;
+
+    Reaction change(Reaction reaction) throws NotFoundException;
 }
