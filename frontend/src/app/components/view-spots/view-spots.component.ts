@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {MapService} from '../../services/map.service';
 import {Subscription} from 'rxjs';
+import {SidebarActionService} from '../../services/sidebar-action.service';
 
 @Component({
   selector: 'app-view-spots',
@@ -11,7 +12,7 @@ import {Subscription} from 'rxjs';
 export class ViewSpotsComponent implements OnInit, OnDestroy {
   spots: Spot[];
   private subscription: Subscription;
-  constructor(private mapService: MapService, private cdr: ChangeDetectorRef) { }
+  constructor(private mapService: MapService, private cdr: ChangeDetectorRef, private sidebarActionService: SidebarActionService) { }
 
   ngOnInit(): void {
     this.setSpots();
@@ -32,5 +33,12 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+  createSpot() {
+    this.sidebarActionService.setActionCreateSpot();
+  }
+  getLoc() {
+    this.ngOnInit();
+    return this.spots[0].location;
   }
 }

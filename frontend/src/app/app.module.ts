@@ -22,6 +22,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {MessageDatePipe} from './pipes/message-date.pipe';
 import { LocationSpotsComponent } from './components/location-spots/location-spots.component';
 import { ViewSpotsComponent } from './components/view-spots/view-spots.component';
+import { CreateNewSpotComponent } from './components/create-new-spot/create-new-spot.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { ViewSpotsComponent } from './components/view-spots/view-spots.component
     CreateNewLocationAndSpotComponent,
     LocationSpotsComponent,
     ViewSpotsComponent,
+    CreateNewSpotComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +52,7 @@ import { ViewSpotsComponent } from './components/view-spots/view-spots.component
     FontAwesomeModule,
     BrowserAnimationsModule,
   ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, ViewSpotsComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

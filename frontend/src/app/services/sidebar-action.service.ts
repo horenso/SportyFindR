@@ -4,6 +4,7 @@ import {BehaviorSubject} from 'rxjs';
 export enum SidebarActionType {
   NoAction = 'noAction',
   CreateLocSpot = 'createLocSpot',
+  CreateSpot = 'createSpot',
   Success = 'Success',
   Cancelled = 'Cancelled',
   Failed = 'Failed',
@@ -23,6 +24,9 @@ export class SidebarActionService {
 
   public setActionCreateLocSpot() {
     this.action.next(SidebarActionType.CreateLocSpot);
+  }
+  public setActionCreateSpot() {
+    this.action.next(SidebarActionType.CreateSpot);
   }
 
   public setNoAction() {

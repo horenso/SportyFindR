@@ -62,17 +62,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
   markerLayerGroup: LayerGroup = new LayerGroup();
 
-  leafletOptions = {
-    center: [48.208174, 16.37819],
-    zoom: 13,
-    zoomDelta: 0.5,
-    wheelPxPerZoomLevel: 90,
-    zoomSnap: 0,
-    cursor: true,
-    minZoom: 1,
-    maxZoom: 20,
-  };
-
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 

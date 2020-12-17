@@ -21,7 +21,7 @@ export class MapService {
 
   // this value should be set by the Map Component right in time
   // tslint:disable-next-line:max-line-length
-  private locationLayerGroup = new BehaviorSubject<LayerGroup<Marker>>(new LayerGroup<Marker>());// this value should be set by the Map Component right in time
+  private locationLayerGroup = new BehaviorSubject<LayerGroup<Marker>>(new LayerGroup<Marker>()); // this value should be set by the Map Component right in time
   public locationLayerGroup$ = this.locationLayerGroup.asObservable();
   private spots = new BehaviorSubject<Spot[]>(null);
   public spots$ = this.spots.asObservable();
