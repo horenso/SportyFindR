@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {SidebarActionService, SidebarActionType} from '../../services/sidebar-action.service';
 import {Subscription} from 'rxjs';
+import {ViewSpotsComponent} from '../view-spots/view-spots.component';
 
 @Component({
   selector: 'app-map-sidebar',
@@ -56,7 +57,8 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
       this.actionType === SidebarActionType.Failed
     ) {
       this.active = false;
-    } else if (this.actionType === SidebarActionType.CreateLocSpot) {
+    } else if (this.actionType === SidebarActionType.CreateLocSpot ||
+      this.actionType === SidebarActionType.ShowSpotsLoc) {
       // do stuff in the template
       this.active = true;
     } else {

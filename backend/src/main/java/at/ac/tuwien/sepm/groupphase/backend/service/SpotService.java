@@ -1,8 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+
+import java.util.List;
 
 public interface SpotService {
 
@@ -32,4 +36,6 @@ public interface SpotService {
      * @throws ValidationException if no spot with this id is known
      */
     void deleteById(Long id) throws ValidationException;
+
+    List<Spot> getSpotsByLocation(Long locationId);
 }

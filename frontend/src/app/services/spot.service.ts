@@ -33,6 +33,10 @@ export class SpotService {
     return this.httpClient.put<Spot>(this.spotBaseUri, spot);
   }
 
+  getSpotsByLocation(locationId: number): Observable<Spot[]> {
+    return this.httpClient.get<Spot[]>(this.spotBaseUri + '?location=' + locationId);
+  }
+
   observeEvents(spotId: number): Subject<any> {
     console.log('New SSE connection with spot ' + spotId);
     const eventSource = new EventSource(this.globals.backendUri + '/spots/subscribe?spotId=' + spotId);

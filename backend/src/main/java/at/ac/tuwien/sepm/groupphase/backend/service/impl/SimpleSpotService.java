@@ -1,6 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
@@ -11,6 +15,14 @@ import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +74,69 @@ public class SimpleSpotService implements SpotService {
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()) {
             locationRepository.deleteById(spot.get().getLocation().getId());
+        }
+    }
+
+    @Override
+    public List<Spot> getSpotsByLocation(Long locationId) {
+        //Message message;
+        Optional<Location> optionalLocation = locationRepository.findById(locationId);
+        if (optionalLocation.isEmpty()) {
+            throw new NotFoundException("Location with ID " + locationId + " cannot be found!");
+        } else {
+            return spotRepository.getSpotsByLocationId(locationId);
+        }
+    }
+
+    @Override
+    public SseEmitter subscribe(Long id) {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+
+        List<SseEmitter> emitterList;
+
+        if (emitterMap.containsKey(id)) {
+            emitterList = emitterMap.get(id);
+        } else {
+            emitterList = new ArrayList<>();
+            emitterMap.put(id, emitterList);
+        }
+
+        emitter.onCompletion(() -> log.info("Emitter has completed"));
+
+        try {
+            emitter.send(SseEmitter.event().name("INIT"));
+            log.info("SENT INIT");
+        } catch (IOException | IllegalStateException e) {
+            return null;
+        }
+        emitterList.add(emitter);
+        return emitter;
+    }
+
+    @Override
+    public void dispatch(Message message) {
+        Long spotId = message.getSpot().getId();
+        if (!emitterMap.containsKey(spotId)) {
+            return;
+        }
+
+        List<SseEmitter> completedEmitters = new ArrayList<>();
+        List<SseEmitter> emitterList = emitterMap.get(spotId);
+        emitterList.forEach(emitter -> {
+            try {
+                log.info("Sending message: {}", message.getContent());
+                emitter.send(SseEmitter.event()
+                    .name("message")
+                    .data(objectMapper.writeValueAsString(messageMapper.messageToMessageDto(message))));
+            } catch (IOException | IllegalStateException e) {
+                completedEmitters.add(emitter);
+                emitter.completeWithError(e);
+                log.info("Error while sending event");
+            }
+        });
+        if (!completedEmitters.isEmpty()) {
+            log.info("Remove Emitters: {}", completedEmitters);
+            emitterList.removeAll(completedEmitters);
         }
     }
 }

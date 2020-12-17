@@ -20,6 +20,8 @@ import {CreateNewLocationAndSpotComponent} from './components/create-new-locatio
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {MessageDatePipe} from './pipes/message-date.pipe';
+import { LocationSpotsComponent } from './components/location-spots/location-spots.component';
+import { ViewSpotsComponent } from './components/view-spots/view-spots.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import {MessageDatePipe} from './pipes/message-date.pipe';
     MapSidebarComponent,
     MessageDatePipe,
     CreateNewLocationAndSpotComponent,
+    LocationSpotsComponent,
+    ViewSpotsComponent,
   ],
   imports: [
     BrowserModule,

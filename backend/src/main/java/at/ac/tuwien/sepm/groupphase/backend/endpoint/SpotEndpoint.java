@@ -1,7 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ReactionDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -18,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +33,8 @@ public class SpotEndpoint {
     private final SpotService spotService;
     private final SpotSubscriptionService spotSubscriptionService;
     private final SpotMapper spotMapper;
+
+
 
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.CREATED)
@@ -71,6 +78,18 @@ public class SpotEndpoint {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get list of spots for a specific location", authorizations = {@Authorization(value = "apiKey")})
+    public List<SpotDto> getSpotsByLocation(@RequestParam(name = "location") Long locationId) {
+        log.info("GET /api/v1/spots?location={}", locationId);
+        List<Spot> spots = spotService.getSpotsByLocation(locationId);
+        List<SpotDto> spotDtos = new ArrayList<>();
+
+        spots.forEach(spot -> spotDtos.add(spotMapper.spotToSpotDto(spot)));
+        return spotDtos;
     }
 
     @ApiOperation(value = "Subscribe to the Server Sent Emitter", authorizations = {@Authorization(value = "apiKey")})

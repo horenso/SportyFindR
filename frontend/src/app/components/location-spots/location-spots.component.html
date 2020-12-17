@@ -1,0 +1,17 @@
+<h3>Spots</h3>
+
+<div *ngFor="let spot of spotList" class="spot">
+  <div class="row">
+    <div class="col">
+      Name:{{spot.name}}
+    </div>
+
+    <div class="col">
+      Description: {{spot.description}}
+    </div>
+
+    <div class="col">
+      Category: {{spot.category.name}}
+    </div>
+  </div>
+</div>
