@@ -123,23 +123,9 @@ export class MapComponent implements OnInit, OnDestroy {
   private addMarkers(): void {
     this.locationList.forEach((location: Location) => {
         const newMarker = new MarkerLocation(location);
-        this.markerLayerGroup.addLayer(newMarker.on('click', () => {
-          this.onMarkerClick(newMarker);
-        }));
+        this.markerLayerGroup.addLayer(newMarker);
       }
     );
     this.layers.push(this.markerLayerGroup);
-  }
-
-  public onMarkerClick(mLoc: MarkerLocation) {
-    console.log('1');
-    this.spotService.getSpotsByLocation(mLoc.id).subscribe((spots: Spot[]) => {
-        this.spots = spots;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-    console.log(this.spots);
   }
 }

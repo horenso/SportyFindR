@@ -9,6 +9,9 @@ var SidebarActionType = require('../../services/sidebar-action.service').Sidebar
     <div *ngSwitchCase="actionTypeEnum.CreateLocSpot">
       <app-create-new-location-and-spot></app-create-new-location-and-spot>
     </div>
+    <div *ngSwitchCase="actionTypeEnum.ShowSpotsLoc">
+      <app-view-spots></app-view-spots>
+    </div>
     <div *ngSwitchCase="actionTypeEnum.Success">
       !!!SUCCESS!!!
     </div>

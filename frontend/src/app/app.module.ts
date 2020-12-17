@@ -19,6 +19,7 @@ import { MapSidebarComponent } from './components/map-sidebar/map-sidebar.compon
 import { CreateNewLocationAndSpotComponent } from './components/create-new-location-and-spot/create-new-location-and-spot.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LocationSpotsComponent } from './components/location-spots/location-spots.component';
+import { ViewSpotsComponent } from './components/view-spots/view-spots.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { LocationSpotsComponent } from './components/location-spots/location-spo
     MapSidebarComponent,
     CreateNewLocationAndSpotComponent,
     LocationSpotsComponent,
+    ViewSpotsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {LayerGroup, Map, Marker} from 'leaflet';
 import {LocationService} from './location.service';
@@ -8,6 +8,8 @@ import {MapSidebarComponent} from '../components/map-sidebar/map-sidebar.compone
 import {SpotService} from './spot.service';
 import {Spot} from '../dtos/spot';
 import {MapComponent} from '../components/map/map.component';
+import {SidebarActionService} from './sidebar-action.service';
+import {ViewSpotsComponent} from '../components/view-spots/view-spots.component';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class MapService {
 
   private map = new BehaviorSubject<Map>(null); // this value should be set by the Map Component right in time
   public map$ = this.map.asObservable();
-  private spots: Observable<Spot[]>;
+  private spots: Spot[];
   // tslint:disable-next-line:max-line-length
   private locationLayerGroup = new BehaviorSubject<LayerGroup<Marker>>(new LayerGroup<Marker>()); // this value should be set by the Map Component right in time
   public locationLayerGroup$ = this.locationLayerGroup.asObservable();
@@ -24,7 +26,9 @@ export class MapService {
   private locMarker = new Subject<Marker>();
   public locMarker$ = this.locMarker.asObservable();
 
-  constructor(private locationService: LocationService, private spotService: SpotService) { }
+  // tslint:disable-next-line:max-line-length
+  constructor(private locationService: LocationService, private spotService: SpotService, private sidebarActionService: SidebarActionService) {
+  }
 
   public setMap(map: Map) {
     this.map.next(map);
@@ -42,7 +46,9 @@ export class MapService {
   }
 
   public addMarkerToLocations(markerLocation: MarkerLocation) {
-    this.locMarker.next(markerLocation.on('click', () => {this.onMarkerClick(markerLocation); } ));
+    this.locMarker.next(markerLocation.on('click', () => {
+      this.onMarkerClick(markerLocation);
+    }));
   }
 
   private convertLocations(locations: Location[]) {
@@ -50,14 +56,26 @@ export class MapService {
     locations.forEach(
       (loc: Location) => {
         const markerLocation = new MarkerLocation(loc);
-        locMarkerGroup.addLayer(markerLocation.on('click', () => {this.onMarkerClick(markerLocation); } ));
+        locMarkerGroup.addLayer(markerLocation.on('click', () => {
+          this.onMarkerClick(markerLocation);
+        }));
       }
     );
     this.locationLayerGroup.next(locMarkerGroup);
   }
+
   public onMarkerClick(mLoc: MarkerLocation) {
-    console.log('1');
-    this.spots = this.spotService.getSpotsByLocation(mLoc.id);
-    console.log(this.spots);
+    this.spotService.getSpotsByLocation(mLoc.id).subscribe((spots: Spot[]) => {
+        this.spots = spots;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    console.log(mLoc.id);
+    this.sidebarActionService.setActionShowSpotsLoc();
+  }
+  public getSpots() {
+    return this.spots;
   }
 }
