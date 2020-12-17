@@ -6,7 +6,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,6 @@ public class MessageEndpoint {
 
     private final MessageService messageService;
     private final MessageMapper messageMapper;
-    private final SpotEndpoint spotEndpoint;
-    private final SpotService spotService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

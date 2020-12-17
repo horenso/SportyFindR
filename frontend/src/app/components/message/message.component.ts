@@ -41,16 +41,17 @@ export class MessageComponent implements OnInit {
     switch(this.reaction.type) {
       case ReactionType.THUMBS_UP: {
         this.reaction.type = ReactionType.NEUTRAL;
-        this.reactionService.deleteById(this.reaction.id).subscribe();
+        this.deleteReation(this.reaction);
         break;
       }
       case ReactionType.THUMBS_DOWN: {
-        this.reaction.type = ReactionType.THUMBS_UP;
-        this.reactionService.changeReaction(this.reaction).subscribe(result => this.reaction = result);
+        this.changeReation(this.reaction, ReactionType.THUMBS_UP);
+        break;
       }
       case ReactionType.NEUTRAL: {
         this.reaction.type = ReactionType.THUMBS_UP;
-        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction = result);
+        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+        break;
       }
     }
   }
@@ -58,17 +59,18 @@ export class MessageComponent implements OnInit {
   public onDownVote(): void {
     switch(this.reaction.type) {
       case ReactionType.THUMBS_UP: {
-        this.reaction.type = ReactionType.THUMBS_DOWN;
-        this.reactionService.changeReaction(this.reaction).subscribe(result => this.reaction = result);
+        this.changeReation(this.reaction, ReactionType.THUMBS_DOWN);
         break;
       }
       case ReactionType.THUMBS_DOWN: {
         this.reaction.type = ReactionType.NEUTRAL;
-        this.reactionService.deleteById(this.reaction.id).subscribe();
+        this.deleteReation(this.reaction)
+        break;
       }
       case ReactionType.NEUTRAL: {
         this.reaction.type = ReactionType.THUMBS_DOWN;
-        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction = result);
+        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+        break;
       }
     }
   }
@@ -78,18 +80,38 @@ export class MessageComponent implements OnInit {
   }
 
   public getUpvoteCount(): number {
-    if (this.reaction.type === ReactionType.THUMBS_UP) {
-      return this.message.upVotes + 1;
-    } else {
-      return this.message.upVotes;
-    }
+    // if (this.reaction.type === ReactionType.THUMBS_UP) {
+    //   return this.message.upVotes + 1;
+    // } else {
+    //   return this.message.upVotes;
+    // }
+    return this.message.upVotes;
   }
 
   public getDownVoteCount(): number {
-    if (this.reaction.type === ReactionType.THUMBS_DOWN) {
-      return this.message.downVotes + 1;
-    } else {
-      return this.message.downVotes;
+    // if (this.reaction.type === ReactionType.THUMBS_DOWN) {
+    //   return this.message.downVotes + 1;
+    // } else {
+    //   return this.message.downVotes;
+    // }
+    return this.message.downVotes;
+  }
+
+  private deleteReation(reaction: Reaction): void {
+    if (reaction.id != null) {
+      this.reactionService.deleteById(this.reaction.id).subscribe();
+    } 
+  }
+
+  private changeReation(reaction: Reaction, newType: ReactionType): void {
+    if (reaction.id != null) {
+      this.reaction.type = newType;
+      this.reactionService.changeReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
     }
+  }
+
+  private createReation(reactionType: ReactionType): void {
+    this.reaction.type = reactionType;
+    this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
   }
 }

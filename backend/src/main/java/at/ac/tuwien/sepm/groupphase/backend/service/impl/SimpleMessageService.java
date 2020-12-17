@@ -64,11 +64,13 @@ public class SimpleMessageService implements MessageService {
 
     @Override
     public void deleteById(Long id) throws NotFoundException {
-        if (messageRepository.findById(id).isEmpty()) {
+        Optional<Message> messageOptional = messageRepository.findById(id);
+        if (messageOptional.isEmpty()) {
             throw new NotFoundException(String.format("No message with id %d found!", id));
         }
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);
+        spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
     }
 
     private void setReactions(Message message) {

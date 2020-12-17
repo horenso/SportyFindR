@@ -3,8 +3,8 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

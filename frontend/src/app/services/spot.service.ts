@@ -38,8 +38,9 @@ export class SpotService {
     console.log('New SSE connection with spot ' + spotId);
     let eventSource = new EventSource(this.globals.backendUri + '/spots/subscribe?spotId=' + spotId);
     let subscription = new Subject();
-    eventSource.addEventListener("message", event => subscription.next(event));
-    eventSource.addEventListener("reaction", event => subscription.next(event));
+    eventSource.addEventListener("message/new", event => subscription.next(event));
+    eventSource.addEventListener("message/delete", event => subscription.next(event));
+    eventSource.addEventListener("message/updateReaction", event => subscription.next(event));
     return subscription;
   }
 }

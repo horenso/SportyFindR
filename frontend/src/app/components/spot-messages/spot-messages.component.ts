@@ -54,10 +54,27 @@ export class SpotMessagesComponent implements OnInit {
       content: [null, [Validators.required, Validators.minLength(1)]],
     });
 
-    this.spotService.observeEvents(1).subscribe({
+    this.spotService.observeEvents(this.spotId).subscribe({
       next: (event) => {
         var newMessage: Message = JSON.parse(event.data);
-        this.addMessage(newMessage);
+        console.log(event.type, event.data);
+        switch(event.type) {
+          case 'message/new': {
+            this.addMessage(newMessage);
+            break;
+          }
+          case 'message/delete': {
+            this.messageList = this.messageList.filter(m => m.id !== newMessage.id);
+            break;
+          }
+          case 'message/updateReaction': {
+            var target = this.messageList.find(m => m.id === newMessage.id);
+            target.upVotes = newMessage.upVotes;
+            target.downVotes = newMessage.downVotes;
+            break;
+          }
+        }
+        
       }
     });
   }

@@ -31,7 +31,7 @@ public class Reaction {
     @Column(nullable = false)
     private ReactionType type;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "message_id", nullable = false)
     private Message message;
 

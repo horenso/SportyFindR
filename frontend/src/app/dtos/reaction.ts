@@ -1,7 +1,7 @@
 export enum ReactionType {
 	THUMBS_UP = 'THUMBS_UP',
   THUMBS_DOWN = 'THUMBS_DOWN',
-  NEUTRAL = 0
+  NEUTRAL = 'NEUTRAL'
 }
 
 export class Reaction {

@@ -53,9 +53,9 @@ public class ReactionEndpoint {
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
-    public Reaction change(@Valid @RequestBody Reaction reaction) {
-        log.info("PATCH /api/v1/reactions body: {}", reaction);
-        return reactionService.change(reaction);
+    public Reaction change(@Valid @RequestBody ReactionDto reactionDto) {
+        log.info("PATCH /api/v1/reactions body: {}", reactionDto);
+        return reactionService.change(reactionMapper.reactionDtoToReaction(reactionDto));
     }
 
     @Secured("ROLE_ADMIN")

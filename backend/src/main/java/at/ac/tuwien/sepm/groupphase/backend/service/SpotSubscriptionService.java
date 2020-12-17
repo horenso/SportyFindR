@@ -15,9 +15,27 @@ public interface SpotSubscriptionService {
     SseEmitter subscribe(Long id);
 
     /**
-     * Dispatches a message to all SseEmitters subscribed to the spot of the message
+     * Dispatches a newly created message to all subscribers
+     * Event name: 'message/new'
      *
      * @param message, spotId determines to which SseEmitters the message gets sent
      */
     void dispatchNewMessage(Message message);
+
+    /**
+     * Dispatches an event that a message was deleted to all subscribers
+     * Event name: 'message/delete'
+     *
+     * @param spotId    of the spot that contained the deleted message
+     * @param messageId of the message that was just deleted
+     */
+    void dispatchDeletedMessage(Long spotId, Long messageId);
+
+    /**
+     * Dispatches a new reaction (from one user to one message) to all subscribers
+     * Event name: 'message/updateReaction'
+     *
+     * @param messageId of the message that has changed
+     */
+    void dispatchMessageWithUpdatedReactions(Long messageId);
 }
