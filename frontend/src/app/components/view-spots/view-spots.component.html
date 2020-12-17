@@ -1,3 +1,22 @@
-<option *ngFor="let spot of spots">
-  {{spot.name}}
-</option>
+<div>
+  <h2>Results</h2>
+  <table>
+    <thead>
+    <style>
+      table, th, td {
+        border: 1px solid black;
+      }
+    </style>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let spot of spots">
+      <td>{{spot.name}}</td>
+      <td>{{spot.description}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -18,7 +18,8 @@ export class MapService {
 
   private map = new BehaviorSubject<Map>(null); // this value should be set by the Map Component right in time
   public map$ = this.map.asObservable();
-  private spots: Spot[];
+  private spots = new BehaviorSubject<Spot[]>(null);
+  public spots$ = this.spots.asObservable();
   // tslint:disable-next-line:max-line-length
   private locationLayerGroup = new BehaviorSubject<LayerGroup<Marker>>(new LayerGroup<Marker>()); // this value should be set by the Map Component right in time
   public locationLayerGroup$ = this.locationLayerGroup.asObservable();
@@ -64,9 +65,9 @@ export class MapService {
     this.locationLayerGroup.next(locMarkerGroup);
   }
 
-  public onMarkerClick(mLoc: MarkerLocation) {
+  private onMarkerClick(mLoc: MarkerLocation) {
     this.spotService.getSpotsByLocation(mLoc.id).subscribe((spots: Spot[]) => {
-        this.spots = spots;
+        this.spots.next(spots);
       },
       (error) => {
         console.log(error);
@@ -74,8 +75,5 @@ export class MapService {
     );
     console.log(mLoc.id);
     this.sidebarActionService.setActionShowSpotsLoc();
-  }
-  public getSpots() {
-    return this.spots;
   }
 }

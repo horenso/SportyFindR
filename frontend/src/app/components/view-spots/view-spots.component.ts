@@ -1,21 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {MapService} from '../../services/map.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-view-spots',
   templateUrl: './view-spots.component.html',
   styleUrls: ['./view-spots.component.scss']
 })
-export class ViewSpotsComponent implements OnInit {
+export class ViewSpotsComponent implements OnInit, OnDestroy {
   spots: Spot[];
+  private subscription: Subscription;
   constructor(private mapService: MapService) { }
 
   ngOnInit(): void {
-    this.spots = this.mapService.getSpots();
+    this.setSpots();
   }
-  setSpots(spots: Spot[]) {
+  getSpots(spots: Spot[]) {
     this.spots = spots;
   }
-
+  private setSpots () {
+    this.subscription = this.mapService.spots$.subscribe((spots: Spot[]) => {
+      window.alert('test');
+        this.spots = spots;
+        console.log(spots);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }
