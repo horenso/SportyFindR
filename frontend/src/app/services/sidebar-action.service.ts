@@ -7,7 +7,8 @@ export enum SidebarActionType {
   Success = 'Success',
   Cancelled = 'Cancelled',
   Failed = 'Failed',
-  ShowSpotsLoc = 'showSpotsLoc'
+  ShowSpotsLoc = 'showSpotsLoc',
+  ShowMessages = 'showMessages'
 }
 
 @Injectable({
@@ -43,5 +44,9 @@ export class SidebarActionService {
 
   public setActionShowSpotsLoc() {
     this.action.next(SidebarActionType.ShowSpotsLoc);
+  }
+
+  public setActionShowMessages() {
+    this.action.next(SidebarActionType.ShowMessages);
   }
 }

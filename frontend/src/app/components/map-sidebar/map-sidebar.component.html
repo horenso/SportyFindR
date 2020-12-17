@@ -18,5 +18,8 @@ var SidebarActionType = require('../../services/sidebar-action.service').Sidebar
     <div *ngSwitchCase="actionTypeEnum.Cancelled">
       )-: CANCELLED :-(
     </div>
+    <div *ngSwitchCase="actionTypeEnum.Cancelled">
+      <app-message></app-message>
+    </div>
   </div>
 </div>

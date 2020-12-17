@@ -28,8 +28,11 @@ export class MapService {
   public locMarker$ = this.locMarker.asObservable();
 
   // tslint:disable-next-line:max-line-length
-  constructor(private locationService: LocationService, private spotService: SpotService, private sidebarActionService: SidebarActionService) {
-  }
+  constructor(
+    private locationService: LocationService,
+    private spotService: SpotService,
+    private sidebarActionService: SidebarActionService) 
+    { }
 
   public setMap(map: Map) {
     this.map.next(map);

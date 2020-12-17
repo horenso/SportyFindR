@@ -39,20 +39,18 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
   }
 
   private doAction() {
-//    console.log('Current action is ' + this.actionType + '.');
-    if (this.actionType === SidebarActionType.NoAction ||
-      this.actionType === SidebarActionType.Success ||
-      this.actionType === SidebarActionType.Cancelled ||
-      this.actionType === SidebarActionType.Failed
-    ) {
-      this.active = false;
-    } else if (this.actionType === SidebarActionType.CreateLocSpot ||
-      this.actionType === SidebarActionType.ShowSpotsLoc) {
-      // do stuff in the template
-      this.active = true;
-    } else {
-      // This should not happen
-      console.log('SidebarActionType is ' + this.actionType);
+    switch(this.actionType) {
+      case SidebarActionType.NoAction:
+      case SidebarActionType.Success:
+      case SidebarActionType.Cancelled:
+      case SidebarActionType.Failed:
+        this.active = false;
+        break;
+      case SidebarActionType.CreateLocSpot:
+      case SidebarActionType.ShowSpotsLoc:
+      case SidebarActionType.ShowMessages:
+        this.active = true;
+        break;
     }
     this.emitActive();
   }
