@@ -87,7 +87,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
-    this.layerGroupSubscription.unsubscribe();
-    this.locMarkerSubscription.unsubscribe();
+    if (this.layerGroupSubscription) {
+      this.layerGroupSubscription.unsubscribe();
+    }
+    if (this.locMarkerSubscription) {
+      this.locMarkerSubscription.unsubscribe();
+    }
   }
 }
