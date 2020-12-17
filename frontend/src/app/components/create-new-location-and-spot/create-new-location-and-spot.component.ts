@@ -8,6 +8,7 @@ import {Location} from '../../dtos/location';
 import {SidebarActionService} from '../../services/sidebar-action.service';
 import {Category} from '../../dtos/category';
 import {CategoryService} from '../../services/category.service';
+import {MarkerLocation} from '../../util/marker-location';
 
 @Component({
   selector: 'app-create-new-location-and-spot',
@@ -65,8 +66,8 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
         console.log(newSpot);
         // Add to Location list
 
-        const newSpotMarker = new Marker([newSpot.location.latitude, newSpot.location.longitude]);
-        this.mapService.addMarkerToLocations(newSpotMarker);
+        const newMarkerLocation = new MarkerLocation(newSpot.location);
+        this.mapService.addMarkerToLocations(newMarkerLocation);
 
         this.sidebarActionService.setActionSuccess();
       },

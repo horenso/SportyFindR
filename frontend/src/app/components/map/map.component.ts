@@ -3,8 +3,10 @@ import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
 import {MapService} from '../../services/map.service';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {MarkerLocation} from '../../util/marker-location';
+import {Spot} from '../../dtos/spot';
+import {SpotService} from '../../services/spot.service';
 
 @Component({
   selector: 'app-map',
@@ -14,7 +16,7 @@ import {MarkerLocation} from '../../util/marker-location';
 export class MapComponent implements OnInit, OnDestroy {
 
   map: Map;
-
+  private spots: Observable<Spot[]>;
   private layerGroupSubscription: Subscription;
   private locMarkerSubscription: Subscription;
 
@@ -90,7 +92,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private locationService: LocationService,
-    private mapService: MapService
+    private mapService: MapService,
+    private spotService: SpotService
   ) {
   }
 
@@ -106,10 +109,14 @@ export class MapComponent implements OnInit, OnDestroy {
   private addMarkers(): void {
     this.locationList.forEach((location: Location) => {
         const newMarker = new MarkerLocation(location);
-        this.markerLayerGroup.addLayer(newMarker);
+      this.markerLayerGroup.addLayer(newMarker.on('click', () => {this.onMarkerClick(newMarker); }));
       }
     );
     this.layers.push(this.markerLayerGroup);
   }
-
+  public onMarkerClick(mLoc: MarkerLocation) {
+    console.log('1');
+    this.spots = this.spotService.getSpotsByLocation(mLoc.id);
+    console.log(this.spots);
+  }
 }
