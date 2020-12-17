@@ -1,6 +1,6 @@
 <div *ngIf="error" class="alert alert-warning alert-dismissible fade show" role="alert">
   <strong>Authentication problems!</strong> {{ errorMessage }}
-  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+  <button (click)="vanishError()" aria-label="Close" class="close" data-dismiss="alert" type="button">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -16,14 +16,16 @@
         </div>
 
         <div class="card-body">
-          <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
+          <form (ngSubmit)="loginUser()" [formGroup]="loginForm" class="form">
 
             <div class="form-group">
               <label for="inputUsername">Username</label>
-              <input type="text" name="username" formControlName="username" class="form-control" id="inputUsername"
-                     aria-describedby="usernameHelp" placeholder="Enter username">
+              <input aria-describedby="usernameHelp" class="form-control" formControlName="username" id="inputUsername"
+                     name="username"
+                     placeholder="Enter username" type="text">
               <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
-                <small class="form-text text-warning" *ngIf="loginForm.controls.username.errors.required">Your username is
+                <small *ngIf="loginForm.controls.username.errors.required" class="form-text text-warning">Your username
+                  is
                   required!
                 </small>
               </div>
@@ -31,20 +33,21 @@
 
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" name="password" formControlName="password" class="form-control" id="password"
-                     placeholder="Password">
+              <input class="form-control" formControlName="password" id="password" name="password"
+                     placeholder="Password"
+                     type="password">
               <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
-                <small class="form-text text-warning" *ngIf="loginForm.controls.password.errors.required">Your password
+                <small *ngIf="loginForm.controls.password.errors.required" class="form-text text-warning">Your password
                   is
                   required!
                 </small>
-                <small class="form-text text-warning" *ngIf="loginForm.controls.password.errors.minlength">Your password
+                <small *ngIf="loginForm.controls.password.errors.minlength" class="form-text text-warning">Your password
                   must be at least 8 characters long!
                 </small>
               </div>
             </div>
 
-            <button type="button" (click)="loginUser()" class="btn btn-success float-right">Login</button>
+            <button (click)="loginUser()" class="btn btn-success float-right" type="button">Login</button>
 
           </form>
         </div>

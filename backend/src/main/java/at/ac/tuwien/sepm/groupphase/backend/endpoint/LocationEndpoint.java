@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/locations/all")
+@RequestMapping(value = "/api/v1/locations")
 public class LocationEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -36,7 +36,7 @@ public class LocationEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> findAll() {
-        LOGGER.info("GET /api/v1/locations/all");
+        LOGGER.info("GET /api/v1/locations");
 
         try {
             return locationMapper.entityToListDto((locationService.findAll()));

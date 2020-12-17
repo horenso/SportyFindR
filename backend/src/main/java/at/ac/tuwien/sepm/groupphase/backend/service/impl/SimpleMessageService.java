@@ -4,11 +4,14 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
+import at.ac.tuwien.sepm.groupphase.backend.validator.MessageValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ public class SimpleMessageService implements MessageService {
     private final ReactionRepository reactionRepository;
     private final SpotRepository spotRepository;
     private final SpotSubscriptionService spotSubscriptionService;
+    private final SpotService spotService;
+    private final MessageValidator validator;
 
     @Override
     public List<Message> findBySpot(Long spotId) {
@@ -78,5 +83,55 @@ public class SimpleMessageService implements MessageService {
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_UP));
         message.setDownVotes(
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_DOWN));
+    }
+
+    @Override
+    public List<Message> filter(Long categoryId,
+                                Double latitude,
+                                Double longitude,
+                                Double radius,
+                                LocalDateTime time) throws NotFoundException, ServiceException {
+        log.debug("Searching for messages of spots within a distance of at most " + radius + " km, belonging to the category " + categoryId + ",not older than: " + time);
+
+        if (categoryId == null) {
+            categoryId = 0L;
+        }
+
+        if (latitude == null) {
+            latitude = 0.0;
+        }
+
+        if (longitude == null) {
+            longitude = 0.0;
+        }
+
+        if (radius == null) {
+            radius = 0.0;
+        }
+
+        if (time == null) {
+            time = LocalDateTime.MIN;
+        }
+
+        List<Message> messages = messageRepository.filter(categoryId, time);
+
+        if (messages.isEmpty()) {
+            log.error("No Messages with these parameters found.");
+            throw new ServiceException("No Messages with these parameters found.");
+        } else {
+            try {
+                if (radius != 0) {      // if search parameters contain radius data
+                    log.debug("radius > 0");
+                    return validator.validateLocationDistance(latitude, longitude, radius, messages);
+                } else {
+                    log.debug("no radius given: search by category & time only");
+                    return messages;       // search by category and time only
+                }
+            } catch (ValidationException e) {
+                log.error("Invalid Data.");
+                throw new ServiceException(e.getMessage());
+            }
+        }
+
     }
 }

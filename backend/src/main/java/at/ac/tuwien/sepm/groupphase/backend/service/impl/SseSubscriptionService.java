@@ -27,6 +27,12 @@ public class SseSubscriptionService implements SpotSubscriptionService {
     private final ReactionRepository reactionRepository;
     private final MessageRepository messageRepository;
     private final ObjectMapper objectMapper;
+    /**
+     * All emitters (clients who observe so to speak) are stored in a currency save list,
+     * that way a client can subscribe to particular spot and receive updates about that spot
+     * regarding messages and reactions.
+     */
+    private final Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
 
     public SseSubscriptionService(MessageMapper messageMapper,
                                   ReactionRepository reactionRepository,
@@ -39,13 +45,6 @@ public class SseSubscriptionService implements SpotSubscriptionService {
 
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
-
-    /**
-     * All emitters (clients who observe so to speak) are stored in a currency save list,
-     * that way a client can subscribe to particular spot and receive updates about that spot
-     * regarding messages and reactions.
-     */
-    private final Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
 
     @Override
     public SseEmitter subscribe(Long id) {

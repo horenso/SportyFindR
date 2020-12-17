@@ -16,7 +16,7 @@ export class LocationService {
 
   /**
    * Loads all locations
-   * @returns list of messages
+   * @returns list of locations
    */
   getAllLocations(): Observable<Location[]> {
     return this.httpClient.get<[]>(this.locationBaseUri);
@@ -25,7 +25,7 @@ export class LocationService {
   /**
    * Persists location to the backend
    * @param location to persist
-   * @returns persisted location 
+   * @returns persisted location
    */
   createLocation(location: Location): Observable<Location> {
     console.log('Create location with title ' + location.id);

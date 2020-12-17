@@ -16,7 +16,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-
 import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -45,7 +44,7 @@ public class CategoryEndpoint {
         try {
             return categoryMapper.categoryToCategoryDto(
                 categoryService.create(categoryMapper.categoryDtoToCategory(categoryDto)));
-        }catch (ServiceException | ValidationException e){
+        } catch (ServiceException | ValidationException e) {
             LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -66,7 +65,7 @@ public class CategoryEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    //    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/all")
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})

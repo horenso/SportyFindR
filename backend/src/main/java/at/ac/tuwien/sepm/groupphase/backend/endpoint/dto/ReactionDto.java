@@ -13,17 +13,15 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class ReactionDto {
 
+    private Long id;
+    @NotNull
+    private ReactionDtoType type;
+    @NotNull
+    private Long messageId;
+
     public enum ReactionDtoType {
         THUMBS_UP,
         THUMBS_DOWN
     }
-
-    private Long id;
-
-    @NotNull
-    private ReactionDtoType type;
-
-    @NotNull
-    private Long messageId;
 
 }

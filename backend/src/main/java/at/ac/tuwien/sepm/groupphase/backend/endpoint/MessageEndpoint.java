@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -77,4 +78,26 @@ public class MessageEndpoint {
         }
     }
 
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/filter")
+    @ApiOperation(value = "Filter messages by distance, time and category", authorizations = {@Authorization(value = "apiKey")})
+    public List<MessageDto> filter(@RequestParam(required = false) Long categoryId,
+                                   @RequestParam(required = false) Double latitude,
+                                   @RequestParam(required = false) Double longitude,
+                                   @RequestParam(required = false) Double radius,
+                                   @RequestParam(required = false) LocalDateTime time) {
+
+        log.info("GET /api/v1/messages/filter?" +
+            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&time=" + time);
+
+        try {
+            return messageMapper.entityToListDto(messageService.filter(categoryId, latitude, longitude, radius, time));
+        } catch (ServiceException e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+
+    }
 }

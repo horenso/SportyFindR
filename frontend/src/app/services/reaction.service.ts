@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
 import {Observable} from 'rxjs';
-import {OldReaction, Reaction, ReactionType} from '../dtos/reaction';
+import {Reaction} from '../dtos/reaction';
 
 @Injectable({
   providedIn: 'root'

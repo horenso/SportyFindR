@@ -6,5 +6,6 @@ export class Message {
     public spotId: number,
     public upVotes?: number,
     public downVotes?: number
-    ) {}
+  ) {
+  }
 }

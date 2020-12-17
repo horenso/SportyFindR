@@ -1,15 +1,15 @@
 <div class="messageList">
 
   <h3>Messages</h3>
-  
+
   <div *ngFor="let message of messageList" class="message">
-    <app-message 
-      [message]='message'
-      (deleteMessage)='deleteOneMessage($event)'></app-message>
+    <app-message
+      (deleteMessage)='deleteOneMessage($event)'
+      [message]='message'></app-message>
   </div>
 
   <form [formGroup]="messageForm">
-  <input formControlName="content" placeholder="New message">
-  <button class="btn btn-primary" (click)="submitDialog()" [disabled]='!messageForm.valid'> Send</button>
+    <input formControlName="content" placeholder="New message">
+    <button (click)="submitDialog()" [disabled]='!messageForm.valid' class="btn btn-primary"> Send</button>
   </form>
 </div>

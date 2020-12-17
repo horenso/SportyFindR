@@ -97,8 +97,8 @@ public class DataGenerator {
         LOGGER.debug("generating {} spot entries", NUMBER_OF_SPOTS);
         for (int i = 0; i < NUMBER_OF_SPOTS; i++) {
             Spot spot = Spot.builder()
-                .name(SPOT_NAME + Integer.toString(i))
-                .description(SPOT_DESCRIPTION + Integer.toString(i))
+                .name(SPOT_NAME + i)
+                .description(SPOT_DESCRIPTION + i)
                 .location(locationList.get(i % NUMBER_OF_LOCATIONS))
                 .build();
             LOGGER.debug("saving spot {}", spot);

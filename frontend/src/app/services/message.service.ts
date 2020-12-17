@@ -1,7 +1,7 @@
-import {Injectable, NgZone} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
 
 @Injectable({

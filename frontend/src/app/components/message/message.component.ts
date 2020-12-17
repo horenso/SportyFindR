@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Message } from 'src/app/dtos/message';
-import { Reaction, ReactionType } from 'src/app/dtos/reaction';
-import { faTrash, faArrowUp, faArrowDown, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { ReactionService } from 'src/app/services/reaction.service';
-import { ThisReceiver } from '@angular/compiler';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Message} from 'src/app/dtos/message';
+import {Reaction, ReactionType} from 'src/app/dtos/reaction';
+import {faArrowDown, faArrowUp, faTrash, IconDefinition} from '@fortawesome/free-solid-svg-icons';
+import {ReactionService} from 'src/app/services/reaction.service';
 
 @Component({
   selector: 'app-message',
@@ -15,7 +14,7 @@ export class MessageComponent implements OnInit {
   author: string = 'Anonymous'; // in Version 3 the user name will be displayed
   @Input() message: Message;
   @Input() canReact: boolean = true; // whether the component shows reaction buttons
-  @Input() canDelete: boolean = true; // wether the component shows a delete button 
+  @Input() canDelete: boolean = true; // wether the component shows a delete button
 
   @Output() deleteMessage = new EventEmitter();
 
@@ -25,9 +24,10 @@ export class MessageComponent implements OnInit {
 
   deleteSymbol: IconDefinition = faTrash;
   upVoteSymbol: IconDefinition = faArrowUp;
-  downVoteSymbol: IconDefinition = faArrowDown
+  downVoteSymbol: IconDefinition = faArrowDown;
 
-  constructor(private reactionService: ReactionService) { }
+  constructor(private reactionService: ReactionService) {
+  }
 
   ngOnInit(): void {
     this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL);
@@ -38,14 +38,14 @@ export class MessageComponent implements OnInit {
   }
 
   public onUpVote(): void {
-    switch(this.reaction.type) {
+    switch (this.reaction.type) {
       case ReactionType.THUMBS_UP: {
         this.reaction.type = ReactionType.NEUTRAL;
-        this.deleteReation(this.reaction);
+        this.deleteReaction(this.reaction);
         break;
       }
       case ReactionType.THUMBS_DOWN: {
-        this.changeReation(this.reaction, ReactionType.THUMBS_UP);
+        this.changeReaction(this.reaction, ReactionType.THUMBS_UP);
         break;
       }
       case ReactionType.NEUTRAL: {
@@ -57,14 +57,14 @@ export class MessageComponent implements OnInit {
   }
 
   public onDownVote(): void {
-    switch(this.reaction.type) {
+    switch (this.reaction.type) {
       case ReactionType.THUMBS_UP: {
-        this.changeReation(this.reaction, ReactionType.THUMBS_DOWN);
+        this.changeReaction(this.reaction, ReactionType.THUMBS_DOWN);
         break;
       }
       case ReactionType.THUMBS_DOWN: {
         this.reaction.type = ReactionType.NEUTRAL;
-        this.deleteReation(this.reaction)
+        this.deleteReaction(this.reaction);
         break;
       }
       case ReactionType.NEUTRAL: {
@@ -97,20 +97,20 @@ export class MessageComponent implements OnInit {
     return this.message.downVotes;
   }
 
-  private deleteReation(reaction: Reaction): void {
+  private deleteReaction(reaction: Reaction): void {
     if (reaction.id != null) {
       this.reactionService.deleteById(this.reaction.id).subscribe();
-    } 
+    }
   }
 
-  private changeReation(reaction: Reaction, newType: ReactionType): void {
+  private changeReaction(reaction: Reaction, newType: ReactionType): void {
     if (reaction.id != null) {
       this.reaction.type = newType;
       this.reactionService.changeReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
     }
   }
 
-  private createReation(reactionType: ReactionType): void {
+  private createReaction(reactionType: ReactionType): void {
     this.reaction.type = reactionType;
     this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
   }
