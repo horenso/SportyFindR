@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {MapService} from '../../services/map.service';
 import {Subscription} from 'rxjs';
@@ -11,7 +11,7 @@ import {Subscription} from 'rxjs';
 export class ViewSpotsComponent implements OnInit, OnDestroy {
   spots: Spot[];
   private subscription: Subscription;
-  constructor(private mapService: MapService) { }
+  constructor(private mapService: MapService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.setSpots();
@@ -21,8 +21,8 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
   }
   private setSpots () {
     this.subscription = this.mapService.spots$.subscribe((spots: Spot[]) => {
-      window.alert('test');
         this.spots = spots;
+        this.cdr.detectChanges();
         console.log(spots);
       },
       (error) => {
