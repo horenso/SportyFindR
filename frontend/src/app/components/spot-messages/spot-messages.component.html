@@ -1,5 +1,6 @@
-<div class="messageList">
+<div *ngIf="!deleted" class="messageList">
 
+  <button (click)="deleteSpot(spotId)" class="btn btn-primary"> Delete this spot </button>
   <h3>Messages</h3>
 
   <div *ngFor="let message of messageList" class="message">

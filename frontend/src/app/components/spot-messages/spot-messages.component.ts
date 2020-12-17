@@ -17,6 +17,8 @@ export class SpotMessagesComponent implements OnInit {
   lastSeenMessageId: number = -1;
   messageForm: FormGroup;
 
+  deleted: boolean = false;
+
   spotIdString: string;
   spotId: number;
 
@@ -40,7 +42,6 @@ export class SpotMessagesComponent implements OnInit {
             console.log('Loaded messages:');
             console.log(this.messageList);
           }
-          //,
           //  (error) => {
           //  TODO: handle error
           // });
@@ -84,7 +85,6 @@ export class SpotMessagesComponent implements OnInit {
         this.addMessage(result);
         this.messageForm.reset();
       }
-      //,
       //  (error) => {
       //  TODO: handle error
       // });
@@ -103,4 +103,10 @@ export class SpotMessagesComponent implements OnInit {
     }
   }
 
+  deleteSpot(spotId: number) {
+    this.spotService.deleteById(spotId).subscribe( result => {
+      this.deleted = true;
+      console.log('Deleted');
+    });
+  }
 }
