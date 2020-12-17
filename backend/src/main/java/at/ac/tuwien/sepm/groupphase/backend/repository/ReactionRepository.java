@@ -42,4 +42,6 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
     @Query("update Reaction r set r.type = :type where r.id = :id")
     void updateReaction(@Param("id") Long reactionId,
                         @Param("type") Reaction.ReactionType type);
+
+    void deleteAllByMessage(Long messageId);
 }
