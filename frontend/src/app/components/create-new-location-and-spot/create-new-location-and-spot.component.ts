@@ -42,7 +42,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
         // Add to Location list
 
         const newMarkerLocation = new MarkerLocation(newSpot.location);
-        this.mapService.addMarkerToLocations(newMarkerLocation);
+        // this.mapService.addMarkerToLocations(newMarkerLocation);
 
         this.sidebarActionService.setActionSuccess();
       },
@@ -58,7 +58,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getMap();
+    // this.getMap();
     this.getCategories();
   }
 
@@ -75,18 +75,18 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getMap() {
-    this.mapSubscription = this.mapService.map$.subscribe(
-      map => {
-        this.map = map;
-        this.createMarker();
-        this.initSpot();
-      },
-      error => {
-        console.log('create-new-location-and-spot.component lost connection to map with error: ', +error);
-      },
-    );
-  }
+  // private getMap() {
+  //   this.mapSubscription = this.mapService.map$.subscribe(
+  //     map => {
+  //       this.map = map;
+  //       this.createMarker();
+  //       this.initSpot();
+  //     },
+  //     error => {
+  //       console.log('create-new-location-and-spot.component lost connection to map with error: ', +error);
+  //     },
+  //   );
+  // }
 
   private createMarker() {
     this.locMarker = marker(this.map.getCenter(), {draggable: true});

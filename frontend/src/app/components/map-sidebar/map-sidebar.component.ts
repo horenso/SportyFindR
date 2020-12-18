@@ -1,8 +1,10 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {SidebarActionService, SidebarActionType} from '../../services/sidebar-action.service';
 import {Subscription} from 'rxjs';
 import {ViewSpotsComponent} from '../view-spots/view-spots.component';
 import { MapService } from 'src/app/services/map.service';
+import { Spot } from 'src/app/dtos/spot';
+import { isThisTypeNode } from 'typescript';
 
 @Component({
   selector: 'app-map-sidebar',
@@ -11,14 +13,15 @@ import { MapService } from 'src/app/services/map.service';
 })
 export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
 
+  @Input() locationId: number;
   @Output() sidebarActive = new EventEmitter<boolean>();
   
   actionTypeEnum = SidebarActionType;
-  visible: boolean = true;
-  actionType: SidebarActionType = SidebarActionType.ShowSpotsLoc;
+  visible: boolean = false;
+  actionType: SidebarActionType = SidebarActionType.NoAction;
   private subscription: Subscription;
 
-  currentLocationId: number;
+  currentSpot: Spot = null;
 
   constructor(
     private actionService: SidebarActionService,
@@ -35,6 +38,20 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+      console.log('Changes in MapSidebarComponent: ' + JSON.stringify(changes))
+      if (this.locationId == null) {
+        return;
+      }
+      if (this.actionType === SidebarActionType.NoAction) {
+        this.actionType = SidebarActionType.ShowSpotsLoc;
+      }
+      this.visible = true;
+  }
+
+  onSelectSpot(spot: Spot) {
+    this.currentSpot = spot;
+    this.actionType = SidebarActionType.ShowMessages;
+    this.changeDetectorRef.detectChanges();
   }
 
   toggleActive() {
@@ -55,7 +72,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
       actionType => {
         this.actionType = actionType;
         if (actionType === SidebarActionType.ShowMessages) {
-          this.currentLocationId = this.actionService.currentLocId;
+          this.locationId = this.actionService.currentLocId;
         }
         this.doAction();
       },
@@ -67,6 +84,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
 
   onGoBackFromMessages(): void {
     this.actionType = SidebarActionType.ShowSpotsLoc;
+    this.changeDetectorRef.detectChanges();
   }
 
   private doAction() {

@@ -10,14 +10,12 @@ import { result } from 'lodash';
   templateUrl: './view-spots.component.html',
   styleUrls: ['./view-spots.component.scss']
 })
-export class ViewSpotsComponent implements OnInit, OnChanges, OnDestroy {
+export class ViewSpotsComponent implements OnInit, OnChanges {
 
-  locationId: number;
+  @Input() locationId: number = null;
   @Output() selectSpot = new EventEmitter();
 
   public spots: Spot[] = [];
-  private subscription: Subscription;
-  active: boolean = false;
 
   constructor(
     private spotService: SpotService,
@@ -26,15 +24,13 @@ export class ViewSpotsComponent implements OnInit, OnChanges, OnDestroy {
     ) { }
 
   ngOnInit(): void {
-    this.mapService.markerClicked$.subscribe(result => this.locationId = result);
+    // this.mapService.markerClicked$.subscribe(result => this.locationId = result);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('Changes in ViewSpotsComponent: ' + JSON.stringify(changes))
-    if (!changes.locationId.firstChange && changes.locationId && this.locationId != null) {
-      this.changeDetectorRef.detectChanges();
+    if (this.locationId != null) {
       this.getSpots();
-      this.active = true;
       console.log('In spot view: ' + this.locationId);
     }
   }
@@ -42,14 +38,12 @@ export class ViewSpotsComponent implements OnInit, OnChanges, OnDestroy {
   onSelectedSpot(spot: Spot) {
     this.selectSpot.emit(spot);
   }
-  
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
 
   private getSpots(): void {
     this.spotService.getSpotsByLocation(this.locationId).subscribe(result => {
       this.spots = result;
+      console.log(this.spots);
+      this.changeDetectorRef.detectChanges();
     })
     console.log('Spots requested');
   }

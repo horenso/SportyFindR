@@ -2,20 +2,16 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core'
 import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {Location} from '../../dtos/location';
-import {MapService} from '../../services/map.service';
 import {MarkerLocation} from '../../util/marker-location';
-import {Spot} from '../../dtos/spot';
-import {SpotService} from '../../services/spot.service';
-import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent {
 
-  @Output() selectLoc = new EventEmitter();
+  @Output() locationClicked = new EventEmitter();
 
   map: Map;
   leafletOptions = {
@@ -28,10 +24,9 @@ export class MapComponent implements OnInit, OnDestroy {
     minZoom: 1,
     maxZoom: 20,
   };
-  private spots: Spot[];
-  private layerGroupSubscription: Subscription;
-  private locMarkerSubscription: Subscription;
+
   private locationList: Location[];
+  private locMarkerGroup: LayerGroup<MarkerLocation>;
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
@@ -58,75 +53,42 @@ export class MapComponent implements OnInit, OnDestroy {
 
   markerLayerGroup: LayerGroup = new LayerGroup();
 
-  constructor(
-    private locationService: LocationService,
-    private mapService: MapService,
-    private spotService: SpotService
-  ) {
-  }
-
-  ngOnInit(): void {
-  }
+  constructor(private locationService: LocationService) {}
 
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-    this.locationService.getAllLocations().subscribe((result: Location[]) => {
-        this.locationList = result;
-        console.log(this.locationList);
-        this.addMarkers();
-      }
-    );
-
     this.map = map;
-    this.mapService.setMap(this.map);
-
-    this.mapService.initLayers();
-    this.initLocMarkers();
+    
+    this.getLocationsAndConvertToLayerGroup();
   }
 
-  private initLocMarkers() {
-    this.layerGroupSubscription = this.mapService.locationLayerGroup$.subscribe(
-      locationLayerGroup => {
-        this.locLayerGroup = locationLayerGroup;
-        if (this.map.hasLayer(this.locLayerGroup)) {
-          this.locLayerGroup.removeFrom(this.map);
-        }
-        this.locLayerGroup.addTo(this.map);
-        this.subscribeLocMarkers();
+  private getLocationsAndConvertToLayerGroup() {
+    this.locationService.getAllLocations().subscribe(
+      result => {
+        this.locationList = result;
+        this.convertLocations();
       },
       error => {
-        console.log('Error receiving Location LayerGroup. Error: ' + error);
+        console.log('Error retrieving locations from backend: ' + error);
       }
     );
   }
 
-  private subscribeLocMarkers() {
-    this.mapService.locMarker$.subscribe(
-      locMarker => {
-        this.locLayerGroup.addLayer(locMarker);
-      },
-      error => {
-        console.log('Error waiting for Location Markers' + error);
-      }
-    );
+  private convertLocations() {
+    this.locMarkerGroup = new LayerGroup<MarkerLocation>();
+    this.locationList.forEach(location => {
+      const markerLocation = new MarkerLocation(location);
+      this.locMarkerGroup.addLayer(markerLocation.on('click', () => {
+        this.onMarkerClick(markerLocation);
+      }));
+      this.locMarkerGroup.addTo(this.locLayerGroup);
+      this.locLayerGroup.addTo(this.map);
+    });
   }
 
-  private addMarkers(): void {
-    this.locationList.forEach((location: Location) => {
-        const newMarker = new MarkerLocation(location);
-        this.markerLayerGroup.addLayer(newMarker);
-      }
-    );
-    this.layers.push(this.markerLayerGroup);
-  }
-
-  ngOnDestroy(): void {
-    if (this.layerGroupSubscription) {
-      this.layerGroupSubscription.unsubscribe();
-    }
-    if (this.locMarkerSubscription) {
-      this.locMarkerSubscription.unsubscribe();
-    }
+  private onMarkerClick(mLoc: MarkerLocation) {
+    console.log(mLoc.id);
+    this.locationClicked.emit(mLoc.id);
   }
 }
