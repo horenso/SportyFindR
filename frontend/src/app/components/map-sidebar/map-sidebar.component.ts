@@ -1,10 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
-import {SidebarActionService, SidebarActionType} from '../../services/sidebar-action.service';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
 import {Subscription} from 'rxjs';
-import {ViewSpotsComponent} from '../view-spots/view-spots.component';
-import { MapService } from 'src/app/services/map.service';
-import { Spot } from 'src/app/dtos/spot';
-import { isThisTypeNode } from 'typescript';
+import {MapService} from 'src/app/services/map.service';
+import {Spot} from 'src/app/dtos/spot';
 
 @Component({
   selector: 'app-map-sidebar',
@@ -15,26 +13,25 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() locationId: number;
   @Output() sidebarActive = new EventEmitter<boolean>();
-  
+
   actionTypeEnum = SidebarActionType;
   visible: boolean = false;
   actionType: SidebarActionType = SidebarActionType.NoAction;
-  private subscription: Subscription;
+
+  private actionSubscription: Subscription;
+  private clickedLocationSubscription: Subscription;
 
   currentSpot: Spot = null;
 
   constructor(
-    private actionService: SidebarActionService,
+    private sidebarService: SidebarService,
     private mapService: MapService,
     private changeDetectorRef: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
-    // this.mapService.markerClicked$.subscribe(result => { 
-    //   this.currentLocationId = result;
-    //   console.log(this.currentLocationId);
-    //   // this.changeDetectorRef.detectChanges();
-    // });
+    this.getSidebarAction();
+    this.listenToClickedLocations();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,19 +57,19 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.actionSubscription.unsubscribe();
   }
 
   private emitActive() {
     this.sidebarActive.emit(this.visible);
   }
 
-  private getSidebarAction() {
-    this.subscription = this.actionService.action$.subscribe(
+  private getSidebarAction(): void {
+    this.actionSubscription = this.sidebarService.action$.subscribe(
       actionType => {
         this.actionType = actionType;
         if (actionType === SidebarActionType.ShowMessages) {
-          this.locationId = this.actionService.currentLocId;
+          this.locationId = this.sidebarService.location.id;
         }
         this.doAction();
       },
@@ -82,25 +79,26 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
+  private listenToClickedLocations(): void {
+    this.clickedLocationSubscription = this.mapService.locationClickedObservable.subscribe(result => {
+      this.sidebarService.location = result.changeToLocation();
+      this.actionType = SidebarActionType.ShowSpotsLoc;
+      this.doAction();
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
   onGoBackFromMessages(): void {
     this.actionType = SidebarActionType.ShowSpotsLoc;
     this.changeDetectorRef.detectChanges();
   }
 
   private doAction() {
-    switch(this.actionType) {
-      case SidebarActionType.NoAction:
-      case SidebarActionType.Success:
-      case SidebarActionType.Cancelled:
-      case SidebarActionType.Failed:
-        this.visible = false;
-        break;
-      case SidebarActionType.CreateLocSpot:
-      case SidebarActionType.ShowSpotsLoc:
-      case SidebarActionType.ShowMessages:
-        this.visible = true;
-        break;
-    }
+    this.visible = (
+      this.actionType === SidebarActionType.CreateLocSpot ||
+      this.actionType === SidebarActionType.ShowSpotsLoc ||
+      this.actionType === SidebarActionType.ShowMessages
+    );
     this.emitActive();
   }
 }

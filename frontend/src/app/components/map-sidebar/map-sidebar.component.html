@@ -1,15 +1,17 @@
-var SidebarActionType = require('../../services/sidebar-action.service').SidebarActionType;
 <div [ngClass]="visible?'active':'inactive'" class="map-sidebar" id="sidebar-right">
-  <button (click)="toggleActive()" [disabled]='actionType === actionTypeEnum.NoAction' 
-    class="sidebar-handle">{{ visible ? "Close" : "Open" }}
+  <button (click)="toggleActive()" [disabled]='actionType === actionTypeEnum.NoAction'
+          class="sidebar-handle">{{ visible ? "Close" : "Open" }}
   </button>
-  
+
   <div [ngSwitch]="actionType" class="sidebar-content">
     <div *ngSwitchCase="actionTypeEnum.CreateLocSpot">
       <app-create-new-location-and-spot></app-create-new-location-and-spot>
     </div>
     <div *ngSwitchCase="actionTypeEnum.ShowSpotsLoc">
-      <app-view-spots [locationId]='locationId' (selectSpot)='onSelectSpot($event)'></app-view-spots>
+      <app-view-spots (selectSpot)='onSelectSpot($event)'></app-view-spots>
+    </div>
+    <div *ngSwitchCase="actionTypeEnum.CreateSpot">
+      <app-create-new-spot></app-create-new-spot>
     </div>
     <div *ngSwitchCase="actionTypeEnum.Success">
       !!!SUCCESS!!!

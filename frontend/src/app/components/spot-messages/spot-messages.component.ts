@@ -1,10 +1,8 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
-import { Spot } from 'src/app/dtos/spot';
+import {Spot} from 'src/app/dtos/spot';
 import {MessageService} from 'src/app/services/message.service';
-import { SidebarActionService } from 'src/app/services/sidebar-action.service';
 import {SpotService} from 'src/app/services/spot.service';
 
 @Component({
@@ -19,26 +17,22 @@ export class SpotMessagesComponent implements OnInit {
 
   messageList: Message[] = [];
   messageForm: FormGroup;
+  deleted: boolean = false;
 
   constructor(
     private messageService: MessageService,
     private spotService: SpotService,
-    private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
-    private sidebarActionService: SidebarActionService
+    private formBuilder: FormBuilder
   ) {
   }
 
   ngOnInit(): void {
-    console.log('Inside SpotMessagesComponent');
-    console.log(this.spot);
-
     this.messageService.getMessagesBySpot(this.spot.id).subscribe(
       (result) => {
         this.messageList = result;
         console.log('Loaded messages:');
         console.log(this.messageList);
-        this.changeDetectorRef.detectChanges();
       }
     );
 
@@ -59,9 +53,20 @@ export class SpotMessagesComponent implements OnInit {
     );
   }
 
+  onGoBack(): void {
+    this.changeDetectorRef.detectChanges();
+  }
+
   public deleteOneMessage(message: Message): void {
     this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
+    });
+  }
+
+  deleteSpot(spotId: number) {
+    this.spotService.deleteById(spotId).subscribe( result => {
+      this.deleted = true;
+      console.log('Deleted');
     });
   }
 
@@ -94,9 +99,5 @@ export class SpotMessagesComponent implements OnInit {
         }
       }
     });
-  }
-
-  onGoBack(): void {
-    this.changeDetectorRef.detectChanges();
   }
 }

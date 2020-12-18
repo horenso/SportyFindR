@@ -29,6 +29,6 @@ public class MessageDto {
     @Null(message = "UpVotes must be null")
     private Integer upVotes;
 
-    @Null(message = "DownVotes must be null")
+    @Null(message = "Down Votes must be null")
     private Integer downVotes;
 }

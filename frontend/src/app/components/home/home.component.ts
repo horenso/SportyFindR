@@ -1,6 +1,7 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {SidebarActionService} from '../../services/sidebar-action.service';
+import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
+import {Location} from '../../dtos/location';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private sidebarActionService: SidebarActionService,
+    private sidebarService: SidebarService,
     private changeDetectorRef: ChangeDetectorRef) {
   }
 
@@ -26,11 +27,14 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  createLocationWithSpot(): void {
+  onSelectedLoc(location: Location): void {
+    this.selectedLocationId = location.id;
+    this.sidebarService.setAction(SidebarActionType.ShowSpotsLoc);
+    this.sidebarService.location = location;
+
   }
 
-  onSelectedLoc(locationId: number) {
-    this.selectedLocationId = locationId;
-    this.changeDetectorRef.detectChanges();
+  createLocationWithSpot() {
+    this.sidebarService.setAction(SidebarActionType.CreateLocSpot);
   }
 }

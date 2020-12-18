@@ -1,38 +1,40 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {Spot} from '../../dtos/spot';
+import {SpotService} from 'src/app/services/spot.service';
+import {MapService} from 'src/app/services/map.service';
+import {SidebarActionType, SidebarService} from 'src/app/services/sidebar.service';
 import {Subscription} from 'rxjs';
-import { SpotService } from 'src/app/services/spot.service';
-import { MapService } from 'src/app/services/map.service';
-import { result } from 'lodash';
 
 @Component({
   selector: 'app-view-spots',
   templateUrl: './view-spots.component.html',
   styleUrls: ['./view-spots.component.scss']
 })
-export class ViewSpotsComponent implements OnInit, OnChanges {
+export class ViewSpotsComponent implements OnInit, OnDestroy {
 
-  @Input() locationId: number = null;
+  locationId: number = null;
   @Output() selectSpot = new EventEmitter();
+
+  private locationClickedSubscription: Subscription;
+  private getSpotsSubscription: Subscription;
 
   public spots: Spot[] = [];
 
   constructor(
     private spotService: SpotService,
     private mapService: MapService,
-    private changeDetectorRef: ChangeDetectorRef
-    ) { }
-
-  ngOnInit(): void {
-    // this.mapService.markerClicked$.subscribe(result => this.locationId = result);
+    private changeDetectorRef: ChangeDetectorRef,
+    private sidebarService: SidebarService
+  ) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('Changes in ViewSpotsComponent: ' + JSON.stringify(changes))
-    if (this.locationId != null) {
+  ngOnInit(): void {
+    this.locationId = this.sidebarService.location.id;
+    this.locationClickedSubscription = this.mapService.locationClickedObservable.subscribe(result => {
+      this.locationId = this.sidebarService.location.id;
       this.getSpots();
-      console.log('In spot view: ' + this.locationId);
-    }
+    });
+    this.getSpots();
   }
 
   onSelectedSpot(spot: Spot) {
@@ -40,11 +42,24 @@ export class ViewSpotsComponent implements OnInit, OnChanges {
   }
 
   private getSpots(): void {
-    this.spotService.getSpotsByLocation(this.locationId).subscribe(result => {
+    console.log(this.locationId);
+    if (this.getSpotsSubscription != null) {
+      this.getSpotsSubscription.unsubscribe();
+    }
+    this.getSpotsSubscription = this.spotService.getSpotsByLocation(this.locationId).subscribe(result => {
       this.spots = result;
       console.log(this.spots);
       this.changeDetectorRef.detectChanges();
-    })
+    });
     console.log('Spots requested');
+  }
+
+  createSpot(): void {
+    this.sidebarService.setAction(SidebarActionType.CreateSpot);
+  }
+
+  ngOnDestroy() {
+    this.getSpotsSubscription?.unsubscribe();
+    this.locationClickedSubscription?.unsubscribe();
   }
 }

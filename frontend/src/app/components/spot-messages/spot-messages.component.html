@@ -1,9 +1,11 @@
-<div class="messageList">
+<div *ngIf="!deleted" class="messageList">
 
   <h3>Spot</h3>
 
   <button (click)='goBack.emit()' class="btn btn-primary btn-sm upVoteButton" type="button"
     (click)='onGoBack()'>Go back</button>
+  <button (click)="deleteSpot(spot.id)" class="btn btn-primary"> Delete this spot </button>
+  <h3>Messages</h3>
 
   <div *ngFor="let message of messageList" class="message">
     <app-message

@@ -1,6 +1,7 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
+import {MapService} from 'src/app/services/map.service';
 import {Location} from '../../dtos/location';
 import {MarkerLocation} from '../../util/marker-location';
 
@@ -51,21 +52,31 @@ export class MapComponent {
     })
   ];
 
-  markerLayerGroup: LayerGroup = new LayerGroup();
+  // markerLayerGroup: LayerGroup = new LayerGroup();
 
-  constructor(private locationService: LocationService) {}
+  private newMarkerSubscription;
+
+  constructor(
+    private locationService: LocationService,
+    private mapService: MapService) {}
 
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
     this.map = map;
-    
+    this.mapService.map = map;
+
     this.getLocationsAndConvertToLayerGroup();
+    this.newMarkerSubscription = this.mapService.addMarkerObservable.subscribe(markerLocation => {
+      this.locMarkerGroup.addLayer(markerLocation.on('click', () => {
+        this.onMarkerClick(markerLocation);
+      }));
+    });
   }
 
   private getLocationsAndConvertToLayerGroup() {
     this.locationService.getAllLocations().subscribe(
-      result => {
+      (result: Location[]) => {
         this.locationList = result;
         this.convertLocations();
       },
@@ -87,8 +98,8 @@ export class MapComponent {
     });
   }
 
-  private onMarkerClick(mLoc: MarkerLocation) {
-    console.log(mLoc.id);
-    this.locationClicked.emit(mLoc.id);
+  private onMarkerClick(markerLocation: MarkerLocation) {
+    console.log(markerLocation.id);
+    this.mapService.clickedOnLocation(markerLocation);
   }
 }

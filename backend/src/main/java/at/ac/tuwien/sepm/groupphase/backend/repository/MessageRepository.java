@@ -41,4 +41,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt <= :time")
     List<Message> filter(@Param("cat") Long categoryId,
                          @Param("time") LocalDateTime time);
+
+    List<Message> findAllBySpot_Id(Long spotId);
 }
