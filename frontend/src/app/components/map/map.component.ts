@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
+import {Component, OnDestroy, OnInit, EventEmitter, Output} from '@angular/core';
+import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import {Location} from '../../dtos/location';
@@ -29,12 +29,12 @@ export class MapComponent {
   private locationList: Location[];
   private locMarkerGroup: LayerGroup<MarkerLocation>;
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
+
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
 // high def but jpg, so no background layer is possible
   private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
-// private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
-// high def but jpg, so no background layer is possible
+
 
   layers: Layer[] = [
     tileLayer(this.worldMap, {
@@ -84,6 +84,12 @@ export class MapComponent {
         console.log('Error retrieving locations from backend: ' + error);
       }
     );
+
+    this.map = map;
+    this.mapService.setMap(this.map);
+
+    this.mapService.initLayers();
+    this.initLocMarkers();
   }
 
   private convertLocations() {
@@ -96,6 +102,46 @@ export class MapComponent {
       this.locMarkerGroup.addTo(this.locLayerGroup);
       this.locLayerGroup.addTo(this.map);
     });
+  }
+  ngOnInit(): void {
+    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconUrl = 'assets/marker-icon.png';
+    const shadowUrl = 'assets/marker-shadow.png';
+    const iconDefault = icon({
+      iconRetinaUrl,
+      iconUrl,
+      shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    });
+    Marker.prototype.options.icon = iconDefault;
+  }
+  ngOnDestroy(): void {
+    if (this.layerGroupSubscription) {
+      this.layerGroupSubscription.unsubscribe();
+    }
+    if (this.locMarkerSubscription) {
+      this.locMarkerSubscription.unsubscribe();
+    }
+  }
+
+  private initLocMarkers() {
+    this.layerGroupSubscription = this.mapService.locationLayerGroup$.subscribe(
+      locationLayerGroup => {
+        this.locLayerGroup = locationLayerGroup;
+        if (this.map.hasLayer(this.locLayerGroup)) {
+          this.locLayerGroup.removeFrom(this.map);
+        }
+        this.locLayerGroup.addTo(this.map);
+        this.subscribeLocMarkers();
+      },
+      error => {
+        console.log('Error receiving Location LayerGroup. Error: ' + error);
+      }
+    );
   }
 
   private onMarkerClick(markerLocation: MarkerLocation) {
