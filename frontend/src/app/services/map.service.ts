@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {LayerGroup, Map, Marker} from 'leaflet';
 import {LocationService} from './location.service';
@@ -25,6 +25,9 @@ export class MapService {
 
   private locMarker = new Subject<Marker>();
   public locMarker$ = this.locMarker.asObservable();
+
+  private markerClicked = new Subject<number>();
+  public markerClicked$ = this.markerClicked.asObservable();
 
   // tslint:disable-next-line:max-line-length
   constructor(
@@ -68,14 +71,8 @@ export class MapService {
   }
 
   private onMarkerClick(mLoc: MarkerLocation) {
-    this.spotService.getSpotsByLocation(mLoc.id).subscribe((spots: Spot[]) => {
-        this.spots.next(spots);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-    console.log(mLoc.id);
-    this.sidebarActionService.setActionShowSpotsLoc();
+    // console.log(mLoc.id);
+    // this.sidebarActionService.setActionShowSpotsLoc();
+    this.markerClicked.next(mLoc.id);
   }
 }

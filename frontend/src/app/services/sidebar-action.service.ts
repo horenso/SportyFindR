@@ -16,6 +16,9 @@ export enum SidebarActionType {
 })
 export class SidebarActionService {
 
+  public currentLocId: number;
+  public currentSpotId: number;
+
   private action = new BehaviorSubject<SidebarActionType>(SidebarActionType.NoAction);
   public action$ = this.action.asObservable();
 
@@ -46,7 +49,7 @@ export class SidebarActionService {
     this.action.next(SidebarActionType.ShowSpotsLoc);
   }
 
-  public setActionShowMessages() {
+  public setActionShowMessages(spotId: number) {
     this.action.next(SidebarActionType.ShowMessages);
   }
 }

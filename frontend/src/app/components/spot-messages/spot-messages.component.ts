@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
@@ -13,16 +13,14 @@ import {SpotService} from 'src/app/services/spot.service';
 })
 export class SpotMessagesComponent implements OnInit {
 
-  messageList: Message[] = [];
-  lastSeenMessageId: number = -1;
-  messageForm: FormGroup;
+  @Input() spotId: number;
+  @Output() goBack = new EventEmitter();
 
-  spotIdString: string;
-  spotId: number;
+  messageList: Message[] = [];
+  messageForm: FormGroup;
 
   constructor(
     private messageService: MessageService,
-    private reactionService: ReactionService,
     private spotService: SpotService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder
@@ -30,23 +28,13 @@ export class SpotMessagesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.activatedRoute.params.subscribe(params => {
-      this.spotIdString = params['id'];
-      this.spotId = +this.spotIdString;
-      if (Number.isInteger(this.spotId)) {
-        this.messageService.getMessagesBySpot(this.spotId).subscribe(
-          (result) => {
-            this.messageList = result;
-            console.log('Loaded messages:');
-            console.log(this.messageList);
-          }
-          //,
-          //  (error) => {
-          //  TODO: handle error
-          // });
-        );
+    this.messageService.getMessagesBySpot(this.spotId).subscribe(
+      (result) => {
+        this.messageList = result;
+        console.log('Loaded messages:');
+        console.log(this.messageList);
       }
-    });
+    );
 
     this.messageForm = this.formBuilder.group({
       content: [null, [Validators.required, Validators.minLength(1)]],
@@ -84,10 +72,6 @@ export class SpotMessagesComponent implements OnInit {
         this.addMessage(result);
         this.messageForm.reset();
       }
-      //,
-      //  (error) => {
-      //  TODO: handle error
-      // });
     );
   }
 

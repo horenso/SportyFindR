@@ -26,21 +26,21 @@ export class LocationSpotsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.params.subscribe( params => {
-      this.idString = params['id'];
-      this.currentLocation = +this.idString;
-      if (Number.isInteger(this.currentLocation)) {
-        this.spotService.getSpotsByLocation(this.currentLocation).subscribe(
-          (result) => {
-            this.spotList = result;
-            console.log(this.spotList);
-          }
-          //  (error) => {
-          //  TODO: handle error
-          // });
-        );
-      }
-    });
+    // this.activatedRoute.params.subscribe( params => {
+    //   this.idString = params['id'];
+    //   this.currentLocation = +this.idString;
+    //   if (Number.isInteger(this.currentLocation)) {
+    //     this.spotService.getSpotsByLocation(this.currentLocation).subscribe(
+    //       (result) => {
+    //         this.spotList = result;
+    //         console.log(this.spotList);
+    //       }
+    //       //  (error) => {
+    //       //  TODO: handle error
+    //       // });
+    //     );
+    //   }
+    // });
 
     this.spotForm = this.formBuilder.group({
       name: [null, [Validators.required, Validators.minLength(1)]],

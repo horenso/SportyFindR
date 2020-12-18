@@ -9,6 +9,8 @@ import {SidebarActionService} from '../../services/sidebar-action.service';
 })
 export class HomeComponent implements OnInit {
 
+  selectedLocationId: number = null;
+
   sidebarActive: boolean = false;
 
   constructor(public authService: AuthService, private sidebarActionService: SidebarActionService) {
@@ -21,7 +23,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  createLocationWithSpot() {
-    this.sidebarActionService.setActionCreateLocSpot();
+  onSelectedLoc(locationId: number) {
+    this.selectedLocationId = locationId;
   }
 }

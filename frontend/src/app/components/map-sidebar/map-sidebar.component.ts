@@ -1,32 +1,45 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {SidebarActionService, SidebarActionType} from '../../services/sidebar-action.service';
 import {Subscription} from 'rxjs';
 import {ViewSpotsComponent} from '../view-spots/view-spots.component';
+import { MapService } from 'src/app/services/map.service';
 
 @Component({
   selector: 'app-map-sidebar',
   templateUrl: './map-sidebar.component.html',
   styleUrls: ['./map-sidebar.component.scss']
 })
-export class MapSidebarComponent implements OnInit, OnDestroy {
+export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
 
-  actionTypeEnum = SidebarActionType;
-
-  active: boolean = false;
   @Output() sidebarActive = new EventEmitter<boolean>();
-  actionType: SidebarActionType;
+  
+  actionTypeEnum = SidebarActionType;
+  visible: boolean = true;
+  actionType: SidebarActionType = SidebarActionType.ShowSpotsLoc;
   private subscription: Subscription;
 
-  constructor(private actionService: SidebarActionService) {
-  }
+  currentLocationId: number;
 
-  toggleActive() {
-    this.active = !this.active;
-    this.emitActive();
+  constructor(
+    private actionService: SidebarActionService,
+    private mapService: MapService,
+    private changeDetectorRef: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
-    this.getSidebarAction();
+    // this.mapService.markerClicked$.subscribe(result => { 
+    //   this.currentLocationId = result;
+    //   console.log(this.currentLocationId);
+    //   // this.changeDetectorRef.detectChanges();
+    // });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+  }
+
+  toggleActive() {
+    this.visible = !this.visible;
+    this.emitActive();
   }
 
   ngOnDestroy(): void {
@@ -34,13 +47,16 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
   }
 
   private emitActive() {
-    this.sidebarActive.emit(this.active);
+    this.sidebarActive.emit(this.visible);
   }
 
   private getSidebarAction() {
     this.subscription = this.actionService.action$.subscribe(
       actionType => {
         this.actionType = actionType;
+        if (actionType === SidebarActionType.ShowMessages) {
+          this.currentLocationId = this.actionService.currentLocId;
+        }
         this.doAction();
       },
       error => {
@@ -49,18 +65,22 @@ export class MapSidebarComponent implements OnInit, OnDestroy {
     );
   }
 
+  onGoBackFromMessages(): void {
+    this.actionType = SidebarActionType.ShowSpotsLoc;
+  }
+
   private doAction() {
     switch(this.actionType) {
       case SidebarActionType.NoAction:
       case SidebarActionType.Success:
       case SidebarActionType.Cancelled:
       case SidebarActionType.Failed:
-        this.active = false;
+        this.visible = false;
         break;
       case SidebarActionType.CreateLocSpot:
       case SidebarActionType.ShowSpotsLoc:
       case SidebarActionType.ShowMessages:
-        this.active = true;
+        this.visible = true;
         break;
     }
     this.emitActive();

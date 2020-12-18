@@ -1,6 +1,8 @@
 <div class="messageList">
 
-  <h3>Messages</h3>
+  <h3>Spot</h3>
+
+  <button (click)='goBack.emit()' class="btn btn-primary btn-sm upVoteButton" type="button"></button>
 
   <div *ngFor="let message of messageList" class="message">
     <app-message

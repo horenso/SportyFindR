@@ -6,13 +6,7 @@ import {SpotMessagesComponent} from './components/spot-messages/spot-messages.co
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
-  {path: 'login', component: LoginComponent},
-  {
-    path: 'spot',
-    children: [
-      {path: ':id', component: SpotMessagesComponent}
-    ]
-  },
+  {path: 'login', component: LoginComponent}
 ];
 
 @NgModule({

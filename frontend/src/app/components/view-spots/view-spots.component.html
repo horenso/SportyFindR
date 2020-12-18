@@ -1,6 +1,8 @@
-<div *ngIf="spots == null; else showSpots">
+<div *ngIf="!active; else showSpots">
   <h2>Click on a Location</h2>
 </div>
+
+{{active}} {{locationId}}
 
 <ng-template #showSpots>
   <h2>Spots in Location</h2>
@@ -8,5 +10,5 @@
 
 
 <div *ngFor="let spot of spots">
-  <button class="btn btn-primary" (click)='onSpotSelect(spot)'>{{spot.name}}</button>
+  <button class="btn btn-primary" (click)='onSelectedSpot(spot)'>{{spot.name}}</button>
 </div>
