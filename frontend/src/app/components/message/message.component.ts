@@ -33,10 +33,6 @@ export class MessageComponent implements OnInit {
     this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL);
   }
 
-  public getDateString(): string {
-    return 'hi';
-  }
-
   public onUpVote(): void {
     switch (this.reaction.type) {
       case ReactionType.THUMBS_UP: {

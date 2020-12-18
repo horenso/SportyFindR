@@ -1,10 +1,7 @@
-locationId: '{{locationId}}'
-
 <div *ngIf="locationId != null; else showSpots">
   <h2>Click on a Location</h2>
 
   <div *ngFor="let spot of spots">
-    {{spot.id}}
     <button class="btn btn-primary" (click)='onSelectedSpot(spot)'>{{spot.name}}</button>
   </div>
 </div>

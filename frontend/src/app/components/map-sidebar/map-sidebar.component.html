@@ -20,7 +20,7 @@
       )-: CANCELLED :-(
     </div>
     <div *ngSwitchCase="actionTypeEnum.ShowMessages">
-      <app-spot-messages [spot]='currentSpot' (goBack)='onGoBackFromMessages()'></app-spot-messages>
+      <app-spot-messages (goBack)='onGoBackFromMessages()'></app-spot-messages>
     </div>
   </div>
 </div>

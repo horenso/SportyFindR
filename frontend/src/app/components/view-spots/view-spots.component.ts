@@ -38,6 +38,7 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
   }
 
   onSelectedSpot(spot: Spot) {
+    this.sidebarService.spot = spot;
     this.selectSpot.emit(spot);
   }
 

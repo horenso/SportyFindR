@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Message} from 'src/app/dtos/message';
 import {Spot} from 'src/app/dtos/spot';
 import {MessageService} from 'src/app/services/message.service';
+import { SidebarService } from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
 
 @Component({
@@ -12,7 +13,7 @@ import {SpotService} from 'src/app/services/spot.service';
 })
 export class SpotMessagesComponent implements OnInit {
 
-  @Input() spot: Spot;
+  spot: Spot;
   @Output() goBack = new EventEmitter();
 
   messageList: Message[] = [];
@@ -23,16 +24,19 @@ export class SpotMessagesComponent implements OnInit {
     private messageService: MessageService,
     private spotService: SpotService,
     private changeDetectorRef: ChangeDetectorRef,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private sidebarService: SidebarService,
   ) {
   }
 
   ngOnInit(): void {
+    this.spot = this.sidebarService.spot;
     this.messageService.getMessagesBySpot(this.spot.id).subscribe(
       (result) => {
         this.messageList = result;
         console.log('Loaded messages:');
         console.log(this.messageList);
+        this.changeDetectorRef.detectChanges();
       }
     );
 
@@ -49,6 +53,7 @@ export class SpotMessagesComponent implements OnInit {
       (result: Message) => {
         this.addMessage(result);
         this.messageForm.reset();
+        this.changeDetectorRef.detectChanges();
       }
     );
   }
@@ -60,13 +65,14 @@ export class SpotMessagesComponent implements OnInit {
   public deleteOneMessage(message: Message): void {
     this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
+      this.changeDetectorRef.detectChanges();
     });
   }
 
   deleteSpot(spotId: number) {
     this.spotService.deleteById(spotId).subscribe( result => {
       this.deleted = true;
-      console.log('Deleted');
+      this.changeDetectorRef.detectChanges();
     });
   }
 
@@ -84,16 +90,19 @@ export class SpotMessagesComponent implements OnInit {
         switch (event.type) {
           case 'message/new': {
             this.addMessage(newMessage);
+            this.changeDetectorRef.detectChanges();
             break;
           }
           case 'message/delete': {
             this.messageList = this.messageList.filter(m => m.id !== newMessage.id);
+            this.changeDetectorRef.detectChanges();
             break;
           }
           case 'message/updateReaction': {
             const target = this.messageList.find(m => m.id === newMessage.id);
             target.upVotes = newMessage.upVotes;
             target.downVotes = newMessage.downVotes;
+            this.changeDetectorRef.detectChanges();
             break;
           }
         }

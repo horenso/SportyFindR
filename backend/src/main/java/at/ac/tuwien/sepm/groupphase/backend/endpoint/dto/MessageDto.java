@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Builder
 public class MessageDto {
 
-    @NotNull(message = "Id must not be null")
     private Long id;
 
     private LocalDateTime publishedAt;
