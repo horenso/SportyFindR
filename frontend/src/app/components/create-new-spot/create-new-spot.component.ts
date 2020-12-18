@@ -4,6 +4,9 @@ import {SpotService} from '../../services/spot.service';
 import {CategoryService} from '../../services/category.service';
 import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
 import {Location} from '../../dtos/location';
+import {Spot} from '../../dtos/spot';
+import {MarkerLocation} from '../../util/marker-location';
+import {Map} from 'leaflet';
 
 
 @Component({
@@ -14,7 +17,7 @@ import {Location} from '../../dtos/location';
 export class CreateNewSpotComponent implements OnInit {
 
   location: Location;
-
+  private map: Map;
   constructor(
     private mapService: MapService,
     private spotService: SpotService,
@@ -26,7 +29,8 @@ export class CreateNewSpotComponent implements OnInit {
     this.location = this.sidebarService.location;
   }
 
-  saveSpot() {
+  saveSpot(newSpot: Spot) {
+    console.log(newSpot);
     this.sidebarService.setAction(SidebarActionType.Success);
   }
 

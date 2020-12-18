@@ -56,7 +56,6 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   private createMarker() {
     this.locMarker = marker(this.map.getCenter(), {draggable: true});
     this.locMarker.addTo(this.map).on('click', () => {
-      ;
     });
   }
 }

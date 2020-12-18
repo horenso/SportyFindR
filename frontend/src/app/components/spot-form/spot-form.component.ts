@@ -44,7 +44,7 @@ export class SpotFormComponent implements OnInit {
 
   saveSpot(): void {
     const values = this.spotForm.value;
-    if (this.locationMarker !== null) {
+    if (this.locationMarker !== null && this.locationMarker !== undefined) {
       const latLng = this.locationMarker.getLatLng();
       this.location = new Location(null, latLng.lat, latLng.lng);
     }
