@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-import {control, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
+import {Component, EventEmitter, Output, OnInit} from '@angular/core';
+import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import {Location} from '../../dtos/location';
@@ -25,7 +25,6 @@ export class MapComponent {
     minZoom: 1,
     maxZoom: 20,
   };
-
   private locationList: Location[];
   private locMarkerGroup: LayerGroup<MarkerLocation>;
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
@@ -59,8 +58,7 @@ export class MapComponent {
   constructor(
     private locationService: LocationService,
     private mapService: MapService) {}
-
-  onMapReady(map: Map) {
+    onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
     this.map = map;
@@ -96,6 +94,22 @@ export class MapComponent {
       this.locMarkerGroup.addTo(this.locLayerGroup);
       this.locLayerGroup.addTo(this.map);
     });
+  }
+  ngOnInit(): void {
+    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconUrl = 'assets/marker-icon.png';
+    const shadowUrl = 'assets/marker-shadow.png';
+    const iconDefault = icon({
+      iconRetinaUrl,
+      iconUrl,
+      shadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    });
+    Marker.prototype.options.icon = iconDefault;
   }
 
   private onMarkerClick(markerLocation: MarkerLocation) {
