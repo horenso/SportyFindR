@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
 import {Observable, Subject} from 'rxjs';
 import {Spot} from '../dtos/spot';
+import {Message} from '../dtos/message';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +24,9 @@ export class SpotService {
     return this.httpClient.post<Spot>(this.spotBaseUri, spot);
   }
 
-  deleteSpot(id: number): Observable<any> {
+  deleteById(id: number): Observable<{}> {
     console.log('Delete spot with id ' + id);
-    return this.httpClient.delete(this.spotBaseUri + '/' + id);
+    return this.httpClient.delete<Spot>(this.spotBaseUri + '/' + id);
   }
 
   updateSpot(spot: Spot): Observable<Spot> {

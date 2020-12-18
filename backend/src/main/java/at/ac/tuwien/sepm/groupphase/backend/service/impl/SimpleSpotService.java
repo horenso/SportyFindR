@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
@@ -9,6 +10,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
@@ -24,6 +27,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,6 +38,8 @@ public class SimpleSpotService implements SpotService {
     private final LocationService locationService;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
+    private final MessageRepository messageRepository;
+    private final ReactionRepository reactionRepository;
 
     @Override
     public Spot create(Spot spot) throws ValidationException, ServiceException {
@@ -71,6 +78,13 @@ public class SimpleSpotService implements SpotService {
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
         }
+
+        List<Message> messages = messageRepository.findAllBySpot_Id(id);
+        for(Message message : messages){
+            reactionRepository.deleteAllByMessage_Id(message.getId());
+            messageRepository.deleteById(message.getId());
+        }
+
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()) {
             locationRepository.deleteById(spot.get().getLocation().getId());
