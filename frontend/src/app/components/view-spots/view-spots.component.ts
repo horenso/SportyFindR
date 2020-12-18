@@ -56,6 +56,7 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
 
   createSpot(): void {
     this.sidebarService.setAction(SidebarActionType.CreateSpot);
+    this.changeDetectorRef.detectChanges();
   }
 
   ngOnDestroy() {

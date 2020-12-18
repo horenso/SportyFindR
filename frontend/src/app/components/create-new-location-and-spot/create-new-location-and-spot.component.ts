@@ -38,7 +38,10 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   saveSpot(newSpot: Spot) {
     console.log(newSpot);
     const newMarkerLocation = new MarkerLocation(newSpot.location);
-    newMarkerLocation.addTo(this.map);
+    newMarkerLocation.addTo(this.map)
+      .on('click', () => {
+        this.mapService.clickedOnLocation(newMarkerLocation);
+      });
     this.sidebarService.setAction(SidebarActionType.Success);
   }
 
@@ -52,6 +55,8 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
   private createMarker() {
     this.locMarker = marker(this.map.getCenter(), {draggable: true});
-    this.locMarker.addTo(this.map);
+    this.locMarker.addTo(this.map).on('click', () => {
+      ;
+    });
   }
 }
