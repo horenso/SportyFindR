@@ -1,35 +1,3 @@
-<form class="spot-create">
-  <div>
-    <label for="spotCreateName">Spot Name</label>
-    <input required #spotName [(ngModel)]="spot.name" id="spotCreateName" name="spotCreateName" placeholder="Spot Name"
-           type="text" #nameValidation="ngModel">
-  </div>
-  <div>
-    <label for="spotCreateDescription">Spot Description</label>
-    <textarea #spotDescription [(ngModel)]="spot.description" id="spotCreateDescription" name="spotCreateDescription"
-              placeholder="Spot Description" type="text"></textarea>
-  </div>
-  <div>
-    <label for="spotCreateCategory">Spot Category</label>
-    <select required #spotCategory [(ngModel)]="spot.category" id="spotCreateCategory" name="spotCategory" #categoryValidation="ngModel">
-      <option *ngFor="let category of categories" [ngValue]="category">{{category.name}}</option>
-    </select>
-    <div>
-      <!--
-            <label type for="spotCreateLatitude">Latitude</label>
-            <input [(ngModel)]="locMarker.getLatLng().lat" #locationLat type="hidden" id="spotCreateLatitude" name="spotCreateLatitude" value="{{ locMarker.getLatLng().lat }}">
-            <label for="spotCreateLongitude">Longitude</label>
-            <input [(ngModel)]="locMarker.getLatLng().lng" #locationLng type="hidden" id="spotCreateLongitude" name="spotCreateLongitude" value="{{ locMarker.getLatLng().lng }}">
-      -->
-    </div>
-    <button
-      (click)="saveSpot()" [disabled]="nameValidation.invalid || categoryValidation.invalid"
-    >Create
-    </button>
-    <button
-      (click)="cancel()"
-    >Cancel
-    </button>
-
-  </div>
-</form>
+<app-spot-form [locationMarker]="locMarker"
+               (savedSpot)="saveSpot($event)"
+               (cancel)="cancel()"></app-spot-form>

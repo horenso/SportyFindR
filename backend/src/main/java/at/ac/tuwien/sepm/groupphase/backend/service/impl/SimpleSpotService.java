@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
@@ -9,12 +10,18 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +32,15 @@ public class SimpleSpotService implements SpotService {
     private final LocationService locationService;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
+    private final MessageMapper messageMapper;
+    private final ObjectMapper objectMapper;
+
+    /**
+     * All emitters (clients who observe so to speak) are stored in a currency save list,
+     * that way a client can subscribe to particular spot and receive updates about that spot
+     * regarding messages and reactions.
+     */
+    private final Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
     private final MessageRepository messageRepository;
     private final ReactionRepository reactionRepository;
 

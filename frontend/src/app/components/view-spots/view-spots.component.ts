@@ -1,8 +1,9 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {Spot} from '../../dtos/spot';
-import {MapService} from '../../services/map.service';
+import {SpotService} from 'src/app/services/spot.service';
+import {MapService} from 'src/app/services/map.service';
+import {SidebarActionType, SidebarService} from 'src/app/services/sidebar.service';
 import {Subscription} from 'rxjs';
-import {SidebarActionService} from '../../services/sidebar-action.service';
 
 @Component({
   selector: 'app-view-spots',
@@ -10,35 +11,57 @@ import {SidebarActionService} from '../../services/sidebar-action.service';
   styleUrls: ['./view-spots.component.scss']
 })
 export class ViewSpotsComponent implements OnInit, OnDestroy {
-  spots: Spot[];
-  private subscription: Subscription;
-  constructor(private mapService: MapService, private cdr: ChangeDetectorRef, private sidebarActionService: SidebarActionService) { }
+
+  locationId: number = null;
+  @Output() selectSpot = new EventEmitter();
+
+  private locationClickedSubscription: Subscription;
+  private getSpotsSubscription: Subscription;
+
+  public spots: Spot[] = [];
+
+  constructor(
+    private spotService: SpotService,
+    private mapService: MapService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private sidebarService: SidebarService
+  ) {
+  }
 
   ngOnInit(): void {
-    this.setSpots();
+    this.locationId = this.sidebarService.location.id;
+    this.locationClickedSubscription = this.mapService.locationClickedObservable.subscribe(result => {
+      this.locationId = this.sidebarService.location.id;
+      this.getSpots();
+    });
+    this.getSpots();
   }
-  getSpots(spots: Spot[]) {
-    this.spots = spots;
+
+  onSelectedSpot(spot: Spot) {
+    this.sidebarService.spot = spot;
+    this.selectSpot.emit(spot);
   }
-  private setSpots () {
-    this.subscription = this.mapService.spots$.subscribe((spots: Spot[]) => {
-        this.spots = spots;
-        this.cdr.detectChanges();
-        console.log(spots);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+
+  private getSpots(): void {
+    console.log(this.locationId);
+    if (this.getSpotsSubscription != null) {
+      this.getSpotsSubscription.unsubscribe();
+    }
+    this.getSpotsSubscription = this.spotService.getSpotsByLocation(this.locationId).subscribe(result => {
+      this.spots = result;
+      console.log(this.spots);
+      this.changeDetectorRef.detectChanges();
+    });
+    console.log('Spots requested');
   }
+
+  createSpot(): void {
+    this.sidebarService.setAction(SidebarActionType.CreateSpot);
+    this.changeDetectorRef.detectChanges();
+  }
+
   ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-  createSpot() {
-    this.sidebarActionService.setActionCreateSpot();
-  }
-  getMLoc() {
-    this.ngOnInit();
-    return this.spots[0].markerLocation;
+    this.getSpotsSubscription?.unsubscribe();
+    this.locationClickedSubscription?.unsubscribe();
   }
 }

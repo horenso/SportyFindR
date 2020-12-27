@@ -1,16 +1,14 @@
-var SidebarActionType = require('../../services/sidebar-action.service').SidebarActionType;
-<div [ngClass]="active?'active':'inactive'" class="map-sidebar" id="sidebar-right">
-  <button (click)="toggleActive()"
-          class="sidebar-handle"
-  >
-    {{ active ? "Close" : "Open" }}
+<div [ngClass]="visible?'active':'inactive'" class="map-sidebar" id="sidebar-right">
+  <button (click)="toggleActive()" [disabled]='actionType === actionTypeEnum.NoAction'
+          class="sidebar-handle">{{ visible ? "Close" : "Open" }}
   </button>
+
   <div [ngSwitch]="actionType" class="sidebar-content">
     <div *ngSwitchCase="actionTypeEnum.CreateLocSpot">
       <app-create-new-location-and-spot></app-create-new-location-and-spot>
     </div>
     <div *ngSwitchCase="actionTypeEnum.ShowSpotsLoc">
-      <app-view-spots></app-view-spots>
+      <app-view-spots (selectSpot)='onSelectSpot($event)'></app-view-spots>
     </div>
     <div *ngSwitchCase="actionTypeEnum.CreateSpot">
       <app-create-new-spot></app-create-new-spot>
@@ -20,6 +18,9 @@ var SidebarActionType = require('../../services/sidebar-action.service').Sidebar
     </div>
     <div *ngSwitchCase="actionTypeEnum.Cancelled">
       )-: CANCELLED :-(
+    </div>
+    <div *ngSwitchCase="actionTypeEnum.ShowMessages">
+      <app-spot-messages (goBack)='onGoBackFromMessages()'></app-spot-messages>
     </div>
   </div>
 </div>

@@ -1,6 +1,24 @@
 <div *ngIf="!deleted" class="messageList">
 
-  <button (click)="deleteSpot(spotId)" class="btn btn-primary"> Delete this spot </button>
+  <h3>Spot name: {{spot.name}}</h3>
+
+  <div class='row'>
+    <div class="col">
+      Spot description: {{spot.description}}
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class="col">
+      <button (click)='goBack.emit()' class="btn btn-primary upVoteButton" type="button"
+        (click)='onGoBack()'>Go back</button>
+    </div>
+    <div class="col">
+      <button (click)="deleteSpot(spot.id)" class="btn btn-primary"> Delete this spot </button>
+    </div>
+  </div>
+
+  
   <h3>Messages</h3>
 
   <div *ngFor="let message of messageList" class="message">
@@ -11,6 +29,6 @@
 
   <form [formGroup]="messageForm">
     <input formControlName="content" placeholder="New message">
-    <button (click)="submitDialog()" [disabled]='!messageForm.valid' class="btn btn-primary"> Send</button>
+    <button (click)="submitDialog()" class="btn btn-primary"> Send</button>
   </form>
 </div>

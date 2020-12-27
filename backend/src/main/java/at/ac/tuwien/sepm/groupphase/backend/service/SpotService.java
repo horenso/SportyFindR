@@ -37,5 +37,12 @@ public interface SpotService {
      */
     void deleteById(Long id) throws ValidationException;
 
+    /**
+     * Get all spots within one Location. This list cannot be empty since since a location
+     * must contain at least one spot.
+     *
+     * @param locationId of the location containing the spots
+     * @return list of spots
+     */
     List<Spot> getSpotsByLocation(Long locationId);
 }

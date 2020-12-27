@@ -1,8 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Output, OnInit} from '@angular/core';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
-import {MapService} from '../../services/map.service';
-import {Subscription} from 'rxjs';
+import {MapService} from 'src/app/services/map.service';
 import {MarkerLocation} from '../../util/marker-location';
 
 @Component({
@@ -10,7 +9,9 @@ import {MarkerLocation} from '../../util/marker-location';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent {
+
+  @Output() locationClicked = new EventEmitter();
 
   map: Map;
   leafletOptions = {
@@ -23,9 +24,8 @@ export class MapComponent implements OnInit, OnDestroy {
     minZoom: 1,
     maxZoom: 20,
   };
-  private layerGroupSubscription: Subscription;
-  private locMarkerSubscription: Subscription;
   private locationList: MarkerLocation[];
+  private locMarkerGroup: LayerGroup<MarkerLocation>;
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
@@ -50,28 +50,52 @@ export class MapComponent implements OnInit, OnDestroy {
     })
   ];
 
+  private newMarkerSubscription;
+
   constructor(
     private locationService: LocationService,
-    private mapService: MapService,
-  ) {
+    private mapService: MapService) {
   }
-  markerLayerGroup: LayerGroup = new LayerGroup();
 
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-    this.locationService.getAllMarkerLocations().subscribe((result: MarkerLocation[]) => {
+    this.map = map;
+    this.mapService.map = map;
+
+    this.getLocationsAndConvertToLayerGroup();
+    this.newMarkerSubscription = this.mapService.addMarkerObservable.subscribe(markerLocation => {
+      this.locMarkerGroup.addLayer(markerLocation.on('click', () => {
+        this.onMarkerClick(markerLocation);
+      }));
+    });
+  }
+
+  private getLocationsAndConvertToLayerGroup() {
+    this.locationService.getAllLocations().subscribe(
+      (result: MarkerLocation[]) => {
         this.locationList = result;
-        console.log(this.locationList);
         this.addMarkers();
+      },
+      error => {
+        console.log('Error retrieving locations from backend: ' + error);
       }
     );
+  }
 
-    this.map = map;
-    this.mapService.setMap(this.map);
+  private addMarkers(): void {
+    this.locMarkerGroup = new LayerGroup<MarkerLocation>();
+    this.locationList.forEach(
+      (mLoc: MarkerLocation) => {
+        this.locMarkerGroup.addLayer(mLoc);
+      }
+    );
+    this.layers.push(this.locMarkerGroup);
 
-    this.mapService.initLayers();
-    this.initLocMarkers();
+    if (this.map.hasLayer(this.locMarkerGroup)) {
+      this.map.removeLayer(this.locMarkerGroup);
+    }
+    this.locMarkerGroup.addTo(this.map);
   }
 
   ngOnInit(): void {
@@ -91,47 +115,8 @@ export class MapComponent implements OnInit, OnDestroy {
     Marker.prototype.options.icon = iconDefault;
   }
 
-  ngOnDestroy(): void {
-    if (this.layerGroupSubscription) {
-      this.layerGroupSubscription.unsubscribe();
-    }
-    if (this.locMarkerSubscription) {
-      this.locMarkerSubscription.unsubscribe();
-    }
-  }
-
-  private initLocMarkers() {
-    this.layerGroupSubscription = this.mapService.locationLayerGroup$.subscribe(
-      locationLayerGroup => {
-        this.locLayerGroup = locationLayerGroup;
-        if (this.map.hasLayer(this.locLayerGroup)) {
-          this.locLayerGroup.removeFrom(this.map);
-        }
-        this.locLayerGroup.addTo(this.map);
-        this.subscribeLocMarkers();
-      },
-      error => {
-        console.log('Error receiving Location LayerGroup. Error: ' + error);
-      }
-    );
-  }
-
-  private subscribeLocMarkers() {
-    this.mapService.locMarker$.subscribe(
-      locMarker => {
-        this.locLayerGroup.addLayer(locMarker);
-      },
-      error => {
-        console.log('Error waiting for Location Markers' + error);
-      }
-    );
-  }
-  private addMarkers(): void {
-    this.locationList.forEach(
-      (mLoc: MarkerLocation) => {
-        this.markerLayerGroup.addLayer(mLoc);
-      }
-    );
-    this.layers.push(this.markerLayerGroup);
+  private onMarkerClick(markerLocation: MarkerLocation) {
+    console.log(markerLocation.id);
+    this.mapService.clickedOnLocation(markerLocation);
   }
 }
