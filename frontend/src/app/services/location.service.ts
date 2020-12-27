@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Observable} from 'rxjs';
+import {Observable, } from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Location} from '../dtos/location';
+import {MarkerLocation} from "../util/marker-location";
 
 @Injectable({
   providedIn: 'root'
@@ -16,19 +18,45 @@ export class LocationService {
 
   /**
    * Loads all locations
-   * @returns list of locations
+   * @returns list of MarkerLocations
    */
-  getAllLocations(): Observable<Location[]> {
-    return this.httpClient.get<[]>(this.locationBaseUri);
+  getAllMarkerLocations(): Observable<MarkerLocation[]> {
+    return this.requestAllLocations().pipe(
+      map(
+        value => this.translateToMarkerLocations(value)
+      )
+    );
   }
 
   /**
    * Persists location to the backend
-   * @param location to persist
-   * @returns persisted location
+   * @param mLoc to persist
+   * @returns persisted markerLocation
    */
-  createLocation(location: Location): Observable<Location> {
-    console.log('Create location with title ' + location.id);
-    return this.httpClient.post<Location>(this.locationBaseUri, location);
+  createLocation(mLoc: MarkerLocation): Observable<MarkerLocation> {
+    console.log('Create location with title ' + mLoc.id);
+    return this.httpClient.post<Location>(this.locationBaseUri, mLoc.changeToLocation()).pipe(
+      map(
+        value => LocationService.translateToMarkerLocation(value)
+      )
+    );
+  }
+
+  private translateToMarkerLocations(locations: Location[]): MarkerLocation[] {
+    const markerLocations: MarkerLocation[] = [];
+    locations.forEach(
+      (location: Location) => {
+        markerLocations.push(LocationService.translateToMarkerLocation(location));
+      }
+    )
+    return markerLocations;
+  }
+
+  private static translateToMarkerLocation(location: Location): MarkerLocation {
+    return new MarkerLocation(location);
+  }
+
+  private requestAllLocations(): Observable<Location[]> {
+    return this.httpClient.get<[]>(this.locationBaseUri);
   }
 }

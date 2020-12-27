@@ -1,15 +1,11 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {LayerGroup, Map, Marker} from 'leaflet';
 import {LocationService} from './location.service';
-import {Location} from '../dtos/location';
 import {MarkerLocation} from '../util/marker-location';
-import {MapSidebarComponent} from '../components/map-sidebar/map-sidebar.component';
 import {SpotService} from './spot.service';
 import {Spot} from '../dtos/spot';
-import {MapComponent} from '../components/map/map.component';
 import {SidebarActionService} from './sidebar-action.service';
-import {ViewSpotsComponent} from '../components/view-spots/view-spots.component';
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +34,9 @@ export class MapService {
   }
 
   public initLayers() {
-    this.locationService.getAllLocations().subscribe(
-      (locations: Location[]) => {
-        this.convertLocations(locations);
+    this.locationService.getAllMarkerLocations().subscribe(
+      (markerLocations: MarkerLocation[]) => {
+        this.convertLocations(markerLocations);
       },
       error => {
         console.log('Error retrieving locations from backend: ' + error);
@@ -54,13 +50,12 @@ export class MapService {
     }));
   }
 
-  private convertLocations(locations: Location[]) {
+  private convertLocations(mLocs: MarkerLocation[]) {
     const locMarkerGroup: LayerGroup<MarkerLocation> = new LayerGroup<MarkerLocation>();
-    locations.forEach(
-      (loc: Location) => {
-        const markerLocation = new MarkerLocation(loc);
-        locMarkerGroup.addLayer(markerLocation.on('click', () => {
-          this.onMarkerClick(markerLocation);
+    mLocs.forEach(
+      (mLoc: MarkerLocation) => {
+        locMarkerGroup.addLayer(mLoc.on('click', () => {
+          this.onMarkerClick(mLoc);
         }));
       }
     );

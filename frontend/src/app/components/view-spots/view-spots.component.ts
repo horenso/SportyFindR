@@ -37,8 +37,8 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
   createSpot() {
     this.sidebarActionService.setActionCreateSpot();
   }
-  getLoc() {
+  getMLoc() {
     this.ngOnInit();
-    return this.spots[0].location;
+    return this.spots[0].markerLocation;
   }
 }

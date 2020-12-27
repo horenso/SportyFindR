@@ -6,7 +6,6 @@ import {SidebarActionService} from '../../services/sidebar-action.service';
 import {Subscription} from 'rxjs';
 import {Category} from '../../dtos/category';
 import {Spot} from '../../dtos/spot';
-import {Location} from '../../dtos/location';
 import {ViewSpotsComponent} from '../view-spots/view-spots.component';
 import {MarkerLocation} from '../../util/marker-location';
 
@@ -21,7 +20,7 @@ export class CreateNewSpotComponent implements OnInit {
   categories: Category[];
   spot: Spot = new Spot (null, '', '', null, null );
   id: number;
-  location: Location;
+  markerLocation: MarkerLocation;
   constructor(
     private mapService: MapService,
     private spotService: SpotService,
@@ -32,8 +31,8 @@ export class CreateNewSpotComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.location = this.viewSpotsComponent.getLoc();
-    this.spot = new Spot(null, '', '', null, this.location );
+    this.markerLocation = this.viewSpotsComponent.getMLoc();
+    this.spot = new Spot(null, '', '', null, this.markerLocation );
     this.getCategories();
   }
   private getCategories() {
@@ -49,8 +48,7 @@ export class CreateNewSpotComponent implements OnInit {
       newSpot => {
         console.log(newSpot);
         // Add to Location list
-        const newMarkerLocation = new MarkerLocation(newSpot.location);
-        this.mapService.addMarkerToLocations(newMarkerLocation);
+        this.mapService.addMarkerToLocations(newSpot.markerLocation);
         this.sidebarActionService.setActionSuccess();
       },
       error => {

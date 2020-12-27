@@ -1,12 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
-import {Location} from '../../dtos/location';
 import {MapService} from '../../services/map.service';
-import {Observable, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {MarkerLocation} from '../../util/marker-location';
-import {Spot} from '../../dtos/spot';
-import {SpotService} from '../../services/spot.service';
 
 @Component({
   selector: 'app-map',
@@ -26,10 +23,9 @@ export class MapComponent implements OnInit, OnDestroy {
     minZoom: 1,
     maxZoom: 20,
   };
-  private spots: Spot[];
   private layerGroupSubscription: Subscription;
   private locMarkerSubscription: Subscription;
-  private locationList: Location[];
+  private locationList: MarkerLocation[];
   private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
@@ -57,7 +53,6 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private locationService: LocationService,
     private mapService: MapService,
-    private spotService: SpotService
   ) {
   }
   markerLayerGroup: LayerGroup = new LayerGroup();
@@ -65,7 +60,7 @@ export class MapComponent implements OnInit, OnDestroy {
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-    this.locationService.getAllLocations().subscribe((result: Location[]) => {
+    this.locationService.getAllMarkerLocations().subscribe((result: MarkerLocation[]) => {
         this.locationList = result;
         console.log(this.locationList);
         this.addMarkers();
@@ -132,9 +127,9 @@ export class MapComponent implements OnInit, OnDestroy {
     );
   }
   private addMarkers(): void {
-    this.locationList.forEach((location: Location) => {
-        const newMarker = new MarkerLocation(location);
-        this.markerLayerGroup.addLayer(newMarker);
+    this.locationList.forEach(
+      (mLoc: MarkerLocation) => {
+        this.markerLayerGroup.addLayer(mLoc);
       }
     );
     this.layers.push(this.markerLayerGroup);
