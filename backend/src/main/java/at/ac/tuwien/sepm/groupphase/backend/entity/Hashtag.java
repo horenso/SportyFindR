@@ -31,8 +31,20 @@ public class Hashtag {
     )
     private List<Message> messagesList = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+        name = "hashtags_spots",
+        joinColumns = @JoinColumn(name = "hashtag_id"),
+        inverseJoinColumns = @JoinColumn(name = "spot_id")
+    )
+    private List<Spot> spotsList = new ArrayList<>();
+
     public void addMessage(Message message){
         this.messagesList.add(message);
+    }
+
+    public void addSpot(Spot spot){
+        this.spotsList.add(spot);
     }
 
 }
