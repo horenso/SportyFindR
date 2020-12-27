@@ -5,6 +5,8 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NamedEntityGraph(
     name = "message-with-spots",
@@ -53,4 +55,11 @@ public class Message {
 
     @Transient
     private Integer downVotes;
+
+    @ManyToMany( mappedBy = "messagesList")
+    private List<Hashtag> hashtagsList = new ArrayList<>();
+
+    public void addHashtag(Hashtag hashtag){
+        this.hashtagsList.add(hashtag);
+    }
 }
