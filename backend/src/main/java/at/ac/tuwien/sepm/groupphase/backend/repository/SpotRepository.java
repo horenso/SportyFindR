@@ -21,4 +21,7 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
     List<Location> findLocationWithSpot(@Param("locationId") Long locationId);
 
     List<Spot> getSpotsByLocationId(Long locationId);
+
+    @Transactional
+    void deleteById(Long id);
 }

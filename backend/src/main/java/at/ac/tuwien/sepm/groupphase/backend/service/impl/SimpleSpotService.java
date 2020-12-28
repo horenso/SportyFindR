@@ -9,6 +9,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +31,10 @@ public class SimpleSpotService implements SpotService {
 
     private final SpotRepository spotRepository;
     private final LocationService locationService;
+    private final MessageService messageService;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
-    private final MessageMapper messageMapper;
-    private final ObjectMapper objectMapper;
+
 
     /**
      * All emitters (clients who observe so to speak) are stored in a currency save list,
@@ -41,8 +42,6 @@ public class SimpleSpotService implements SpotService {
      * regarding messages and reactions.
      */
     private final Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
-    private final MessageRepository messageRepository;
-    private final ReactionRepository reactionRepository;
 
     @Override
     public Spot create(Spot spot) throws ValidationException, ServiceException {
@@ -73,7 +72,6 @@ public class SimpleSpotService implements SpotService {
     public Spot update(Spot spot) throws ServiceException {
         return null; // TODO: merge
     }
-
     @Override
     public void deleteById(Long id) throws ValidationException {
         log.debug("Delete Spot with id {}", id);
@@ -82,10 +80,9 @@ public class SimpleSpotService implements SpotService {
             throw new ValidationException("Spot does not exist");
         }
 
-        List<Message> messages = messageRepository.findAllBySpot_Id(id);
+        List<Message> messages = messageService.findBySpot(id);
         for(Message message : messages){
-            reactionRepository.deleteAllByMessage_Id(message.getId());
-            messageRepository.deleteById(message.getId());
+            messageService.deleteById(message.getId());
         }
 
         spotRepository.deleteById(id);
@@ -96,7 +93,6 @@ public class SimpleSpotService implements SpotService {
 
     @Override
     public List<Spot> getSpotsByLocation(Long locationId) {
-        //Message message;
         Optional<Location> optionalLocation = locationRepository.findById(locationId);
         if (optionalLocation.isEmpty()) {
             throw new NotFoundException("Location with ID " + locationId + " cannot be found!");
