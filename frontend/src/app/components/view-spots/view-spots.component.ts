@@ -31,17 +31,20 @@ export class ViewSpotsComponent implements OnInit {
   ngOnInit(): void {
     this.activeRoute.params.subscribe(params => {
 
-      this.locationId = parseIntStrictly(this.locationIdString);
+      this.locationId = parseIntStrictly(params.locId);
 
       if (isNaN(this.locationId)) {
         console.log('it is not a number!');
       } else {
         console.log('Correct: ' + this.locationId);
-        this.spotService.getSpotsByLocation(this.locationId).subscribe(result => {
-          this.spots = result;
-        }, error => {
-          console.log('could not find location!');
-        });
+        this.spotService.getSpotsByLocation(this.locationId).subscribe(
+          result => {
+            this.spots = result;
+          },
+          error => {
+            console.log('could not find location!');
+          }
+        );
       }
     });
   }
