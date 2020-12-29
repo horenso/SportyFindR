@@ -1,5 +1,4 @@
-import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
@@ -56,9 +55,7 @@ export class MapComponent implements OnInit {
 
   constructor(
     private locationService: LocationService,
-    private mapService: MapService,
-    private router: Router,
-    private ngZone: NgZone) {
+    private mapService: MapService) {
   }
 
   onMapReady(map: Map) {
@@ -69,9 +66,7 @@ export class MapComponent implements OnInit {
 
     this.getLocationsAndConvertToLayerGroup();
     this.newMarkerSubscription = this.mapService.addMarkerObservable.subscribe(markerLocation => {
-      this.locMarkerGroup.addLayer(markerLocation.on('click', () => {
-        this.onMarkerClick(markerLocation);
-      }));
+      this.locMarkerGroup.addLayer(markerLocation);
     });
   }
 
@@ -99,7 +94,7 @@ export class MapComponent implements OnInit {
         this.addMarkers();
       },
       error => {
-        console.log('Error retrieving locations from backend: ' + error);
+        console.log('Error retrieving locations from backend: ', error);
       }
     );
   }
@@ -108,8 +103,8 @@ export class MapComponent implements OnInit {
     this.locMarkerGroup = new LayerGroup<MLocation>();
     this.locationList.forEach(
       (mLoc: MLocation) => {
+        this.mapService.setClickFunction(mLoc);
         this.locMarkerGroup.addLayer(mLoc);
-        console.log(mLoc);
       }
     );
     this.layers.push(this.locMarkerGroup);
@@ -118,13 +113,5 @@ export class MapComponent implements OnInit {
       this.map.removeLayer(this.locMarkerGroup);
     }
     this.locMarkerGroup.addTo(this.map);
-  }
-
-  private onMarkerClick(markerLocation: MLocation) {
-    console.log(markerLocation.id);
-    this.ngZone.run(() => {
-      this.router.navigate(['locations', markerLocation.id]);
-    });
-    this.mapService.clickedOnLocation(markerLocation);
   }
 }

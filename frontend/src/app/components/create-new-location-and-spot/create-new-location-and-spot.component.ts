@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Map, marker, Marker} from 'leaflet';
+import {Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
 import {SpotService} from '../../services/spot.service';
 import {SidebarService} from '../../services/sidebar.service';
@@ -15,10 +15,9 @@ import {Router} from '@angular/router';
 })
 export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
-  locMarker: Marker;
+  marker: Marker;
   spot: MLocSpot;
   markerLocation: MLocation;
-  private map: Map;
 
   constructor(
     private mapService: MapService,
@@ -29,15 +28,16 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.map = this.mapService.map;
-    this.createMarker();
+    this.marker = this.mapService.getCreationMarker();
     this.markerLocation = this.sidebarService.markerLocation;
   }
 
   saveSpot(newSpot: MLocSpot) {
     console.log(newSpot);
     const newMarkerLocation = newSpot.markerLocation;
-    newMarkerLocation.addTo(this.map);
+    this.mapService.addMarkerToLocations(newMarkerLocation);
+    this.mapService.destroyCreationMarker();
+    this.router.navigate(['..']);
   }
 
   cancel() {
@@ -45,12 +45,6 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.locMarker.removeFrom(this.map);
-  }
-
-  private createMarker() {
-    this.locMarker = marker(this.map.getCenter(), {draggable: true});
-    this.locMarker.addTo(this.map).on('click', () => {
-    });
+    this.mapService.destroyCreationMarker();
   }
 }

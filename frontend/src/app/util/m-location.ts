@@ -25,17 +25,9 @@ export class MLocation extends Marker {
       super([locationOrId.latitude, locationOrId.longitude]);
       this.id = locationOrId.id;
     }
-    this.addClickAction();
   }
 
   toLocation() {
     return new Location(this.id, this.getLatLng().lat, this.getLatLng().lng);
-  }
-
-  private addClickAction() {
-    this.on('click', () => {
-      // TODO set routing for clicked MarkerLocation
-      console.log('Clicked on MarkerLocation: ', this);
-    });
   }
 }
