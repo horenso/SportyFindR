@@ -9,7 +9,8 @@ import {Map} from 'leaflet';
 })
 export class MapService {
 
-  constructor(private sidebarService: SidebarService) {
+  constructor(
+    private sidebarService: SidebarService) {
   }
 
   public map: Map;
@@ -26,6 +27,5 @@ export class MapService {
 
   public clickedOnLocation(markerLocation: MarkerLocation) {
     this.locationClickedSubject.next(markerLocation);
-    this.sidebarService.location = markerLocation.changeToLocation();
   }
 }

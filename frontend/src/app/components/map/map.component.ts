@@ -1,4 +1,5 @@
-import {Component, EventEmitter, Output, OnInit} from '@angular/core';
+import {Component, EventEmitter, Output, OnInit, NgZone} from '@angular/core';
+import { Router } from '@angular/router';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
@@ -57,8 +58,11 @@ export class MapComponent {
 
   constructor(
     private locationService: LocationService,
-    private mapService: MapService) {}
-    onMapReady(map: Map) {
+    private mapService: MapService,
+    private router: Router,
+    private ngZone: NgZone) {}
+
+  onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
     this.map = map;
@@ -95,6 +99,7 @@ export class MapComponent {
       this.locLayerGroup.addTo(this.map);
     });
   }
+
   ngOnInit(): void {
     const iconRetinaUrl = 'assets/marker-icon-2x.png';
     const iconUrl = 'assets/marker-icon.png';
@@ -114,6 +119,9 @@ export class MapComponent {
 
   private onMarkerClick(markerLocation: MarkerLocation) {
     console.log(markerLocation.id);
+    this.ngZone.run(() => {
+      this.router.navigate(['locations/' + markerLocation.id.toString()]);
+    })
     this.mapService.clickedOnLocation(markerLocation);
   }
 }

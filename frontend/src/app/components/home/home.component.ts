@@ -2,6 +2,8 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
 import {Location} from '../../dtos/location';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +19,7 @@ export class HomeComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private sidebarService: SidebarService,
-    private changeDetectorRef: ChangeDetectorRef) {
+    private router: Router) {
   }
 
   onSidebarActive(sidebarActive: boolean) {
@@ -35,6 +37,7 @@ export class HomeComponent implements OnInit {
   }
 
   createLocationWithSpot() {
+    this.router.navigate(['locations', 'new']);
     this.sidebarService.setAction(SidebarActionType.CreateLocSpot);
   }
 }

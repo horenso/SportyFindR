@@ -34,7 +34,19 @@ public class SpotEndpoint {
     private final SpotSubscriptionService spotSubscriptionService;
     private final SpotMapper spotMapper;
 
-
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    @ApiOperation(value = "Get one spot by id", authorizations = {@Authorization(value = "apiKey")})
+    public SpotDto getOneById(@PathVariable("id") Long id) {
+        log.info("Get /api/v1/spots/{}", id);
+        try {
+            return spotMapper.spotToSpotDto(spotService.getOneById(id));
+        } catch (NotFoundException e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
 
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,7 +68,7 @@ public class SpotEndpoint {
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
     public void delete(@PathVariable("id") Long id) {
-        log.info("DELETE /api/v1/spots id: {}", id);
+        log.info("DELETE /api/v1/spots/{}", id);
         try {
             spotService.deleteById(id);
         } catch (NotFoundException | ValidationException e) {

@@ -20,9 +20,8 @@ export enum SidebarActionType {
 })
 export class SidebarService {
 
-  public location: Location;
-  public spot: Spot;
-  public messageList: Message[];
+  public location: Location = null;
+  public spot: Spot = null;
 
   private action = new BehaviorSubject<SidebarActionType>(SidebarActionType.NoAction);
   public action$ = this.action.asObservable();

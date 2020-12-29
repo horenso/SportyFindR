@@ -1,10 +1,10 @@
 <div *ngIf="!deleted" class="messageList">
 
-  <h3>Spot name: {{spot.name}}</h3>
+  <h3>Spot name: {{spot?.name}}</h3>
 
   <div class='row'>
     <div class="col">
-      Spot description: {{spot.description}}
+      Spot description: {{spot?.description}}
     </div>
   </div>
 
@@ -14,7 +14,7 @@
         (click)='onGoBack()'>Go back</button>
     </div>
     <div class="col">
-      <button (click)="deleteSpot(spot.id)" class="btn btn-primary"> Delete this spot </button>
+      <button (click)="deleteSpot(spot.id)" class="btn btn-primary">Delete this spot</button>
     </div>
   </div>
 

@@ -13,7 +13,6 @@ import {LoginComponent} from './components/login/login.component';
 import {MessageComponent} from './components/message/message.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
-import {LocationSpotsComponent} from './components/location-spots/location-spots.component';
 import {ViewSpotsComponent} from './components/view-spots/view-spots.component';
 import {MapComponent} from './components/map/map.component';
 import {SpotMessagesComponent} from './components/spot-messages/spot-messages.component';
@@ -24,6 +23,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {MessageDatePipe} from './pipes/message-date.pipe';
 import {CreateNewSpotComponent} from './components/create-new-spot/create-new-spot.component';
 import {SpotFormComponent} from './components/spot-form/spot-form.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -38,10 +38,10 @@ import {SpotFormComponent} from './components/spot-form/spot-form.component';
     MapSidebarComponent,
     MessageDatePipe,
     CreateNewLocationAndSpotComponent,
-    LocationSpotsComponent,
     ViewSpotsComponent,
     CreateNewSpotComponent,
     SpotFormComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,

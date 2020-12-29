@@ -1,10 +1,14 @@
+import { Location } from '@angular/common';
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { result } from 'lodash';
 import {Message} from 'src/app/dtos/message';
 import {Spot} from 'src/app/dtos/spot';
 import {MessageService} from 'src/app/services/message.service';
 import { SidebarService } from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
+import {parseIntStrictly} from './../../util/parse-int';
 
 @Component({
   selector: 'app-spot-messages',
@@ -13,7 +17,11 @@ import {SpotService} from 'src/app/services/spot.service';
 })
 export class SpotMessagesComponent implements OnInit {
 
+  spotId: number;
+  locationId: number;
+
   spot: Spot;
+  
   @Output() goBack = new EventEmitter();
 
   messageList: Message[] = [];
@@ -26,25 +34,41 @@ export class SpotMessagesComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private sidebarService: SidebarService,
+    private activeRoute: ActivatedRoute,
+    private router: Router,
+    private routerLocation: Location
   ) {
   }
 
   ngOnInit(): void {
-    this.spot = this.sidebarService.spot;
-    this.messageService.getMessagesBySpot(this.spot.id).subscribe(
-      (result) => {
-        this.messageList = result;
-        console.log('Loaded messages:');
-        console.log(this.messageList);
-        this.changeDetectorRef.detectChanges();
+    this.activeRoute.params.subscribe(params => {
+      this.locationId = parseIntStrictly(params.locId);
+      this.spotId = parseIntStrictly(params.spotId);
+
+      if (isNaN(this.locationId)) {
+        console.log('Invalid location!');
+        return;
       }
-    );
+
+      if (isNaN(this.spotId)) {
+        console.log('Invalid spot!');
+        return;
+      }
+
+      if (this.sidebarService.spot != null && this.sidebarService.spot.id === this.spotId) {
+        this.spot = this.sidebarService.spot;
+        this.getMessagesAndStartEventHandling();
+      } else {
+        this.spotService.getSpotById(this.spotId).subscribe(result => {
+          this.spot = result;
+          this.getMessagesAndStartEventHandling();
+        });
+      }
+    });
 
     this.messageForm = this.formBuilder.group({
       content: [null, [Validators.required, Validators.minLength(1)]],
     });
-
-    this.handleEvents();
   }
 
   submitDialog() {
@@ -59,7 +83,7 @@ export class SpotMessagesComponent implements OnInit {
   }
 
   onGoBack(): void {
-    this.changeDetectorRef.detectChanges();
+    this.routerLocation.back();
   }
 
   public deleteOneMessage(message: Message): void {
@@ -74,6 +98,16 @@ export class SpotMessagesComponent implements OnInit {
       this.deleted = true;
       this.changeDetectorRef.detectChanges();
     });
+  }
+
+  private getMessagesAndStartEventHandling(): void {
+    this.messageService.getMessagesBySpot(this.spot.id).subscribe(result => {
+      this.messageList = result;
+      console.log('Loaded messages:');
+      console.log(this.messageList);
+      this.changeDetectorRef.detectChanges();
+    });
+    this.handleEvents();
   }
 
   private addMessage(newMessage: Message): void {

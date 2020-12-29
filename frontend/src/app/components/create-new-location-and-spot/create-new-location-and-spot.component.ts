@@ -8,6 +8,7 @@ import {Location} from '../../dtos/location';
 import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
 import {CategoryService} from '../../services/category.service';
 import {MarkerLocation} from '../../util/marker-location';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-new-location-and-spot',
@@ -26,7 +27,8 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private spotService: SpotService,
     private categoryService: CategoryService,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.sidebarService.setAction(SidebarActionType.Cancelled);
+    this.router.navigate(['..']);
   }
 
   ngOnDestroy() {

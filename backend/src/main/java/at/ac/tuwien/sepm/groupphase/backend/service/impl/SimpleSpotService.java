@@ -104,4 +104,13 @@ public class SimpleSpotService implements SpotService {
             return spotRepository.getSpotsByLocationId(locationId);
         }
     }
+
+    @Override
+    public Spot getOneById(Long spotId) {
+        Optional<Spot> spotOptional = this.spotRepository.getOneById(spotId);
+        if (spotOptional.isEmpty()) {
+            throw new NotFoundException("Spot with ID " + spotId + " cannot be found!");
+        }
+        return spotOptional.get();
+    }
 }

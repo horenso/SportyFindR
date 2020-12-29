@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
 import {Observable, Subject} from 'rxjs';
 import {Spot} from '../dtos/spot';
-import {Message} from '../dtos/message';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +10,7 @@ import {Message} from '../dtos/message';
 export class SpotService {
 
   private spotBaseUri: string = this.globals.backendUri + '/spots';
+  private eventSource: EventSource = null;
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
@@ -38,13 +38,25 @@ export class SpotService {
     return this.httpClient.get<Spot[]>(this.spotBaseUri + '?location=' + locationId);
   }
 
+  getSpotById(spotId: number): Observable<Spot> {
+    return this.httpClient.get<Spot>(this.spotBaseUri + '/' + spotId);
+  }
+
   observeEvents(spotId: number): Subject<any> {
     console.log('New SSE connection with spot ' + spotId);
-    const eventSource = new EventSource(this.globals.backendUri + '/spots/subscribe?spotId=' + spotId);
+
+    this.eventSource = new EventSource(this.globals.backendUri + '/spots/subscribe?spotId=' + spotId);
     const subscription = new Subject();
-    eventSource.addEventListener('message/new', event => subscription.next(event));
-    eventSource.addEventListener('message/delete', event => subscription.next(event));
-    eventSource.addEventListener('message/updateReaction', event => subscription.next(event));
+    this.eventSource.addEventListener('message/new', event => subscription.next(event));
+    this.eventSource.addEventListener('message/delete', event => subscription.next(event));
+    this.eventSource.addEventListener('message/updateReaction', event => subscription.next(event));
     return subscription;
+  }
+
+  closeConnection(): void {
+    if (this.eventSource != null) {
+      this.eventSource.close();
+    }
+    this.eventSource = null;
   }
 }

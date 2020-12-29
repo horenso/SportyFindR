@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 
@@ -45,4 +46,13 @@ public interface SpotService {
      * @return list of spots
      */
     List<Spot> getSpotsByLocation(Long locationId);
+
+    /**
+     * Get one spot by spotId
+     *
+     * @param spotId of the spot
+     * @throws NotFoundException if the spot was not found
+     * @return the spot entity
+     */
+    Spot getOneById(Long spotId);
 }
