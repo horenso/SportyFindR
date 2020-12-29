@@ -30,13 +30,13 @@ public class Hashtag {
     )
     private List<Message> messagesList = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    /*@ManyToMany
     @JoinTable(
         name = "hashtags_spots",
         joinColumns = @JoinColumn(name = "hashtag_id"),
         inverseJoinColumns = @JoinColumn(name = "spot_id")
     )
-    private List<Spot> spotsList = new ArrayList<>();
+    private List<Spot> spotsList = new ArrayList<>();*/
 
     public Hashtag(String name) {
         this.name = name;
@@ -50,8 +50,8 @@ public class Hashtag {
         messagesList.removeIf(message -> message.getId().equals(messageId));
     }
 
-    public void addSpot(Spot spot){
+    /*public void addSpot(Spot spot){
         this.spotsList.add(spot);
-    }
+    }*/
 
 }

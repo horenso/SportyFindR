@@ -14,4 +14,6 @@ public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
     Optional<Hashtag> findHashtagByName(String name);
 
     List<Hashtag> findHashtagsByMessagesListContains(Message message);
+
+    Hashtag getHashtagByNameEquals(String name);
 }

@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 
 public interface HashtagService {
 
+    Hashtag getByName(String name);
+
     Hashtag create(Hashtag hashtag);
 
     void getHashtags(Message message);

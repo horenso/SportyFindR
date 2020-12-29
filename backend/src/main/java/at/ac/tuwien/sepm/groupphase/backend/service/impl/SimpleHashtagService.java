@@ -27,6 +27,11 @@ public class SimpleHashtagService implements HashtagService {
     private final HashtagRepository hashtagRepository;
 
     @Override
+    public Hashtag getByName(String name) {
+        return hashtagRepository.getHashtagByNameEquals(name);
+    }
+
+    @Override
     public Hashtag create(Hashtag hashtag) {
         return hashtagRepository.save(hashtag);
     }
