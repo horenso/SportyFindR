@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
-import {MarkerLocation} from '../util/marker-location';
+import {MLocation} from '../util/m-location';
 import {SidebarService} from './sidebar.service';
 import {Map} from 'leaflet';
 
@@ -14,18 +14,18 @@ export class MapService {
 
   public map: Map;
 
-  private addMarkerSubject = new Subject<MarkerLocation>();
-  private locationClickedSubject = new Subject<MarkerLocation>();
+  private addMarkerSubject = new Subject<MLocation>();
+  private locationClickedSubject = new Subject<MLocation>();
 
   public addMarkerObservable = this.addMarkerSubject.asObservable();
   public locationClickedObservable = this.locationClickedSubject.asObservable();
 
-  public addMarkerToLocations(markerLocation: MarkerLocation) {
+  public addMarkerToLocations(markerLocation: MLocation) {
     this.addMarkerSubject.next(markerLocation);
   }
 
-  public clickedOnLocation(markerLocation: MarkerLocation) {
+  public clickedOnLocation(markerLocation: MLocation) {
     this.locationClickedSubject.next(markerLocation);
-    this.sidebarService.location = markerLocation.changeToLocation();
+    this.sidebarService.markerLocation = markerLocation;
   }
 }

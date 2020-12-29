@@ -4,7 +4,7 @@ import {Globals} from '../global/globals';
 import {Observable, } from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Location} from '../dtos/location';
-import {MarkerLocation} from "../util/marker-location";
+import {MLocation} from "../util/m-location";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class LocationService {
    * Loads all locations
    * @returns list of MarkerLocations
    */
-  getAllMarkerLocations(): Observable<MarkerLocation[]> {
+  getAllMarkerLocations(): Observable<MLocation[]> {
     return this.requestAllLocations().pipe(
       map(
         value => this.translateToMarkerLocations(value)
@@ -33,17 +33,17 @@ export class LocationService {
    * @param mLoc to persist
    * @returns persisted markerLocation
    */
-  createLocation(mLoc: MarkerLocation): Observable<MarkerLocation> {
+  createLocation(mLoc: MLocation): Observable<MLocation> {
     console.log('Create location with title ' + mLoc.id);
-    return this.httpClient.post<Location>(this.locationBaseUri, mLoc.changeToLocation()).pipe(
+    return this.httpClient.post<Location>(this.locationBaseUri, mLoc.toLocation()).pipe(
       map(
         value => LocationService.translateToMarkerLocation(value)
       )
     );
   }
 
-  private translateToMarkerLocations(locations: Location[]): MarkerLocation[] {
-    const markerLocations: MarkerLocation[] = [];
+  private translateToMarkerLocations(locations: Location[]): MLocation[] {
+    const markerLocations: MLocation[] = [];
     locations.forEach(
       (location: Location) => {
         markerLocations.push(LocationService.translateToMarkerLocation(location));
@@ -52,8 +52,8 @@ export class LocationService {
     return markerLocations;
   }
 
-  private static translateToMarkerLocation(location: Location): MarkerLocation {
-    return new MarkerLocation(location);
+  private static translateToMarkerLocation(location: Location): MLocation {
+    return new MLocation(location);
   }
 
   private requestAllLocations(): Observable<Location[]> {

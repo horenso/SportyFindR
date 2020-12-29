@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Output, OnInit} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
-import {MarkerLocation} from '../../util/marker-location';
+import {MLocation} from '../../util/m-location';
 
 @Component({
   selector: 'app-map',
@@ -11,7 +11,7 @@ import {MarkerLocation} from '../../util/marker-location';
 })
 export class MapComponent {
 
-  @Output() locationClicked = new EventEmitter();
+  @Output() mLocClicked = new EventEmitter();
 
   map: Map;
   leafletOptions = {
@@ -24,9 +24,8 @@ export class MapComponent {
     minZoom: 1,
     maxZoom: 20,
   };
-  private locationList: MarkerLocation[];
-  private locMarkerGroup: LayerGroup<MarkerLocation>;
-  private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
+  private locationList: MLocation[];
+  private locMarkerGroup: LayerGroup<MLocation>;
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
@@ -72,8 +71,8 @@ export class MapComponent {
   }
 
   private getLocationsAndConvertToLayerGroup() {
-    this.locationService.getAllLocations().subscribe(
-      (result: MarkerLocation[]) => {
+    this.locationService.getAllMarkerLocations().subscribe(
+      (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();
       },
@@ -84,9 +83,9 @@ export class MapComponent {
   }
 
   private addMarkers(): void {
-    this.locMarkerGroup = new LayerGroup<MarkerLocation>();
+    this.locMarkerGroup = new LayerGroup<MLocation>();
     this.locationList.forEach(
-      (mLoc: MarkerLocation) => {
+      (mLoc: MLocation) => {
         this.locMarkerGroup.addLayer(mLoc);
       }
     );
@@ -115,7 +114,7 @@ export class MapComponent {
     Marker.prototype.options.icon = iconDefault;
   }
 
-  private onMarkerClick(markerLocation: MarkerLocation) {
+  private onMarkerClick(markerLocation: MLocation) {
     console.log(markerLocation.id);
     this.mapService.clickedOnLocation(markerLocation);
   }

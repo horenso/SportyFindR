@@ -4,6 +4,7 @@ import {SpotService} from 'src/app/services/spot.service';
 import {MapService} from 'src/app/services/map.service';
 import {SidebarActionType, SidebarService} from 'src/app/services/sidebar.service';
 import {Subscription} from 'rxjs';
+import {MLocSpot} from "../../util/m-loc-spot";
 
 @Component({
   selector: 'app-view-spots',
@@ -18,7 +19,7 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
   private locationClickedSubscription: Subscription;
   private getSpotsSubscription: Subscription;
 
-  public spots: Spot[] = [];
+  public spots: MLocSpot[] = [];
 
   constructor(
     private spotService: SpotService,
@@ -29,9 +30,9 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.locationId = this.sidebarService.location.id;
+    this.locationId = this.sidebarService.markerLocation.id;
     this.locationClickedSubscription = this.mapService.locationClickedObservable.subscribe(result => {
-      this.locationId = this.sidebarService.location.id;
+      this.locationId = this.sidebarService.markerLocation.id;
       this.getSpots();
     });
     this.getSpots();

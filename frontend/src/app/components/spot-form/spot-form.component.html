@@ -1,22 +1,22 @@
 <form class="spot-create" [formGroup]="spotForm">
   <div>
     <label for="spotCreateName">Spot Name</label>
-    <input formControlName='name' id="spotCreateName" placeholder="Spot Name" type="text">
+    <input #spotName formControlName="name" name='name' id="spotCreateName" placeholder="Spot Name" type="text">
   </div>
 
   <div>
     <label for="spotCreateDescription">Spot Description</label>
-    <textarea id="spotCreateDescription" formControlName="description"
+    <textarea #spotDescription formControlName="description" id="spotCreateDescription" name="description"
               placeholder="Spot Description" type="text"></textarea>
   </div>
 
   <div>
     <label for="spotCreateCategory">Spot Category</label>
-    <select id="spotCreateCategory" formControlName="category">
+    <select #spotCategory formControlName="category" id="spotCreateCategory" name="category">
       <option *ngFor="let category of categories" [ngValue]="category">{{category.name}}</option>
     </select>
 
     <button (click)="saveSpot()" [disabled]="spotForm.invalid">Create</button>
-    <button (click)="cancel.emit()">Cancel</button>
+    <button (click)="cancelCreateSpot()">Cancel</button>
   </div>
 </form>

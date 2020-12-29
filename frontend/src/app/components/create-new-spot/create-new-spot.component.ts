@@ -3,10 +3,9 @@ import {MapService} from '../../services/map.service';
 import {SpotService} from '../../services/spot.service';
 import {CategoryService} from '../../services/category.service';
 import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
-import {Location} from '../../dtos/location';
-import {Spot} from '../../dtos/spot';
-import {MarkerLocation} from '../../util/marker-location';
+import {MLocation} from '../../util/m-location';
 import {Map} from 'leaflet';
+import {MLocSpot} from "../../util/m-loc-spot";
 
 
 @Component({
@@ -16,8 +15,7 @@ import {Map} from 'leaflet';
 })
 export class CreateNewSpotComponent implements OnInit {
 
-  markerLocation: MarkerLocation;
-  private map: Map;
+  markerLocation: MLocation;
   constructor(
     private mapService: MapService,
     private spotService: SpotService,
@@ -26,14 +24,14 @@ export class CreateNewSpotComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.markerLocation = this.viewSpotsComponent.getMLoc();
+    this.markerLocation = this.sidebarService.markerLocation;
   }
 
-  saveSpot(newSpot: Spot) {
+  saveSpot(newSpot: MLocSpot) {
     console.log(newSpot);
     this.sidebarService.setAction(SidebarActionType.Success);
   }
   cancel() {
-    this.sidebarActionService.setActionCancelled();
+    this.sidebarService.setAction(SidebarActionType.Cancelled);
   }
 }

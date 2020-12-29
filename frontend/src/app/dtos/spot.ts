@@ -1,5 +1,5 @@
 import {Category} from './category';
-import {MarkerLocation} from "../util/marker-location";
+import {Location} from "./location";
 
 export class Spot {
   constructor(
@@ -7,7 +7,7 @@ export class Spot {
     public name: string,
     public description: string,
     public category: Category,
-    public markerLocation: MarkerLocation
+    public location: Location
   ) {
   }
 }

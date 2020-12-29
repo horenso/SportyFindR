@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {Spot} from '../dtos/spot';
 import {Message} from '../dtos/message';
-import {Location} from '../dtos/location';
+import {MLocation} from "../util/m-location";
 
 export enum SidebarActionType {
   NoAction = 'noAction',
@@ -20,7 +20,7 @@ export enum SidebarActionType {
 })
 export class SidebarService {
 
-  public location: Location;
+  public markerLocation: MLocation;
   public spot: Spot;
   public messageList: Message[];
 

@@ -69,7 +69,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
       actionType => {
         this.actionType = actionType;
         if (actionType === SidebarActionType.ShowMessages) {
-          this.locationId = this.sidebarService.location.id;
+          this.locationId = this.sidebarService.markerLocation.id;
         }
         this.doAction();
       },
@@ -81,7 +81,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
 
   private listenToClickedLocations(): void {
     this.clickedLocationSubscription = this.mapService.locationClickedObservable.subscribe(result => {
-      this.sidebarService.location = result.changeToLocation();
+      this.sidebarService.markerLocation = result;
       this.actionType = SidebarActionType.ShowSpotsLoc;
       this.doAction();
       this.changeDetectorRef.detectChanges();
