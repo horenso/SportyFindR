@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MapService} from '../../services/map.service';
 import {SpotService} from '../../services/spot.service';
 import {CategoryService} from '../../services/category.service';
-import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
+import {SidebarService} from '../../services/sidebar.service';
 import {MLocation} from '../../util/m-location';
 import {MLocSpot} from '../../util/m-loc-spot';
 
@@ -29,10 +29,8 @@ export class CreateNewSpotComponent implements OnInit {
 
   saveSpot(newSpot: MLocSpot) {
     console.log(newSpot);
-    this.sidebarService.setAction(SidebarActionType.Success);
   }
 
   cancel() {
-    this.sidebarService.setAction(SidebarActionType.Cancelled);
   }
 }

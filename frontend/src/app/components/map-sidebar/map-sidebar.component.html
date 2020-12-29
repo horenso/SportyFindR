@@ -1,5 +1,5 @@
 <div [ngClass]="visible?'active':'inactive'" class="map-sidebar" id="sidebar-right">
-  <button (click)="toggleActive()" [disabled]='actionType === actionTypeEnum.NoAction'
+  <button (click)="toggleActive()"
           class="sidebar-handle">{{ visible ? "Close" : "Open" }}
   </button>
   <div class="sidebarContent">

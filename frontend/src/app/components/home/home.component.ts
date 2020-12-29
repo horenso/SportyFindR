@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
-import {Router} from '@angular/router';
+import {SidebarService} from '../../services/sidebar.service';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
 
 @Component({
@@ -18,25 +18,24 @@ export class HomeComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private sidebarService: SidebarService,
-    private router: Router) {
+    private router: Router,
+    private activeRouter: ActivatedRoute) {
+  }
+
+  ngOnInit() {
+    this.activeRouter.params.subscribe
   }
 
   onSidebarActive(sidebarActive: boolean) {
     this.sidebarActive = sidebarActive;
   }
 
-  ngOnInit() {
-  }
-
   onSelectedLoc(markerLocation: MLocation): void {
     this.selectedLocationId = markerLocation.id;
-    this.sidebarService.setAction(SidebarActionType.ShowSpotsLoc);
     this.sidebarService.markerLocation = markerLocation;
-
   }
 
   createLocationWithSpot() {
     this.router.navigate(['locations', 'new']);
-    this.sidebarService.setAction(SidebarActionType.CreateLocSpot);
   }
 }

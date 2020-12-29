@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Map, marker, Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
 import {SpotService} from '../../services/spot.service';
-import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
+import {SidebarService} from '../../services/sidebar.service';
 import {CategoryService} from '../../services/category.service';
 import {MLocation} from '../../util/m-location';
 import {MLocSpot} from '../../util/m-loc-spot';
@@ -38,11 +38,9 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     console.log(newSpot);
     const newMarkerLocation = newSpot.markerLocation;
     newMarkerLocation.addTo(this.map);
-    this.sidebarService.setAction(SidebarActionType.Success);
   }
 
   cancel() {
-    this.sidebarService.setAction(SidebarActionType.Cancelled);
     this.router.navigate(['..']);
   }
 

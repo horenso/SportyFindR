@@ -8,21 +8,13 @@ import {SpotMessagesComponent} from './components/spot-messages/spot-messages.co
 import {ViewSpotsComponent} from './components/view-spots/view-spots.component';
 
 const routes: Routes = [
-  {
-    path: '', component: HomeComponent, children: [
-      {path: 'locations/new', component: CreateNewLocationAndSpotComponent},
-      {path: 'locations/:locId', component: ViewSpotsComponent},
-      {path: 'locations/:locId/spots/new', component: SpotMessagesComponent},
-      {path: 'locations/:locId/spots/:spotId', component: SpotMessagesComponent},
-    ]
-  },
+  {path: '', component: HomeComponent, children: [
+    {path: 'locations/new', component: CreateNewLocationAndSpotComponent},
+    {path: 'locations/:locId', component: ViewSpotsComponent},
+    {path: 'locations/:locId/spots/new', component: SpotMessagesComponent},
+    {path: 'locations/:locId/spots/:spotId', component: SpotMessagesComponent},
+  ]},
   {path: 'login', component: LoginComponent},
-  {
-    path: 'spot',
-    children: [
-      {path: ':id', component: SpotMessagesComponent}
-    ]
-  },
   {path: '**', component: PageNotFoundComponent},
 ];
 
