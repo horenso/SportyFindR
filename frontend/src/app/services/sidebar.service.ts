@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {Spot} from '../dtos/spot';
-import {Message} from '../dtos/message';
-import {Location} from '../dtos/location';
+import {MLocation} from '../util/m-location';
+import {MLocSpot} from '../util/m-loc-spot';
 
 export enum SidebarActionType {
   NoAction = 'noAction',
@@ -20,8 +19,8 @@ export enum SidebarActionType {
 })
 export class SidebarService {
 
-  public location: Location = null;
-  public spot: Spot = null;
+  public markerLocation: MLocation = null;
+  public spot: MLocSpot = null;
 
   private action = new BehaviorSubject<SidebarActionType>(SidebarActionType.NoAction);
   public action$ = this.action.asObservable();

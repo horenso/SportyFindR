@@ -23,7 +23,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {MessageDatePipe} from './pipes/message-date.pipe';
 import {CreateNewSpotComponent} from './components/create-new-spot/create-new-spot.component';
 import {SpotFormComponent} from './components/spot-form/spot-form.component';
-import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [

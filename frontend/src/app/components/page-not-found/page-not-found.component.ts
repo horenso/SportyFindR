@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-page-not-found',
@@ -12,12 +12,13 @@ export class PageNotFoundComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.activatedRoute.url.subscribe(url => {
       this.route = url.toString();
-    })
+    });
   }
 
 }

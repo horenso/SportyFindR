@@ -17,11 +17,9 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
   actionTypeEnum = SidebarActionType;
   visible: boolean = false;
   actionType: SidebarActionType = SidebarActionType.NoAction;
-
+  currentSpot: Spot = null;
   private actionSubscription: Subscription;
   private clickedLocationSubscription: Subscription;
-
-  currentSpot: Spot = null;
 
   constructor(
     private sidebarService: SidebarService,
@@ -35,14 +33,14 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-      console.log('Changes in MapSidebarComponent: ' + JSON.stringify(changes))
-      if (this.locationId == null) {
-        return;
-      }
-      if (this.actionType === SidebarActionType.NoAction) {
-        this.actionType = SidebarActionType.ShowSpotsLoc;
-      }
-      this.visible = true;
+    console.log('Changes in MapSidebarComponent: ' + JSON.stringify(changes));
+    if (this.locationId == null) {
+      return;
+    }
+    if (this.actionType === SidebarActionType.NoAction) {
+      this.actionType = SidebarActionType.ShowSpotsLoc;
+    }
+    this.visible = true;
   }
 
   onSelectSpot(spot: Spot) {
@@ -60,6 +58,11 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
     this.actionSubscription.unsubscribe();
   }
 
+  onGoBackFromMessages(): void {
+    this.actionType = SidebarActionType.ShowSpotsLoc;
+    this.changeDetectorRef.detectChanges();
+  }
+
   private emitActive() {
     this.sidebarActive.emit(this.visible);
   }
@@ -69,7 +72,7 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
       actionType => {
         this.actionType = actionType;
         if (actionType === SidebarActionType.ShowMessages) {
-          this.locationId = this.sidebarService.location.id;
+          this.locationId = this.sidebarService.markerLocation.id;
         }
         this.doAction();
       },
@@ -81,16 +84,11 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
 
   private listenToClickedLocations(): void {
     this.clickedLocationSubscription = this.mapService.locationClickedObservable.subscribe(result => {
-      this.sidebarService.location = result.changeToLocation();
+      this.sidebarService.markerLocation = result;
       this.actionType = SidebarActionType.ShowSpotsLoc;
       this.doAction();
       this.changeDetectorRef.detectChanges();
     });
-  }
-
-  onGoBackFromMessages(): void {
-    this.actionType = SidebarActionType.ShowSpotsLoc;
-    this.changeDetectorRef.detectChanges();
   }
 
   private doAction() {

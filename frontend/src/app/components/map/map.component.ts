@@ -1,19 +1,18 @@
-import {Component, EventEmitter, Output, OnInit, NgZone} from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, EventEmitter, NgZone, OnInit, Output} from '@angular/core';
+import {Router} from '@angular/router';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
-import {Location} from '../../dtos/location';
-import {MarkerLocation} from '../../util/marker-location';
+import {MLocation} from '../../util/m-location';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent {
+export class MapComponent implements OnInit {
 
-  @Output() locationClicked = new EventEmitter();
+  @Output() mLocClicked = new EventEmitter();
 
   map: Map;
   leafletOptions = {
@@ -26,15 +25,14 @@ export class MapComponent {
     minZoom: 1,
     maxZoom: 20,
   };
-  private locationList: Location[];
-  private locMarkerGroup: LayerGroup<MarkerLocation>;
-  private locLayerGroup: LayerGroup<Marker> = new LayerGroup<Marker>();
+  private locationList: MLocation[];
+  private locMarkerGroup: LayerGroup<MLocation>;
+
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
 // high def but jpg, so no background layer is possible
   private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
-// private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
-// high def but jpg, so no background layer is possible
+
 
   layers: Layer[] = [
     tileLayer(this.worldMap, {
@@ -60,7 +58,8 @@ export class MapComponent {
     private locationService: LocationService,
     private mapService: MapService,
     private router: Router,
-    private ngZone: NgZone) {}
+    private ngZone: NgZone) {
+  }
 
   onMapReady(map: Map) {
     control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
@@ -73,30 +72,6 @@ export class MapComponent {
       this.locMarkerGroup.addLayer(markerLocation.on('click', () => {
         this.onMarkerClick(markerLocation);
       }));
-    });
-  }
-
-  private getLocationsAndConvertToLayerGroup() {
-    this.locationService.getAllLocations().subscribe(
-      (result: Location[]) => {
-        this.locationList = result;
-        this.convertLocations();
-      },
-      error => {
-        console.log('Error retrieving locations from backend: ' + error);
-      }
-    );
-  }
-
-  private convertLocations() {
-    this.locMarkerGroup = new LayerGroup<MarkerLocation>();
-    this.locationList.forEach(location => {
-      const markerLocation = new MarkerLocation(location);
-      this.locMarkerGroup.addLayer(markerLocation.on('click', () => {
-        this.onMarkerClick(markerLocation);
-      }));
-      this.locMarkerGroup.addTo(this.locLayerGroup);
-      this.locLayerGroup.addTo(this.map);
     });
   }
 
@@ -117,11 +92,39 @@ export class MapComponent {
     Marker.prototype.options.icon = iconDefault;
   }
 
-  private onMarkerClick(markerLocation: MarkerLocation) {
+  private getLocationsAndConvertToLayerGroup() {
+    this.locationService.getAllMarkerLocations().subscribe(
+      (result: MLocation[]) => {
+        this.locationList = result;
+        this.addMarkers();
+      },
+      error => {
+        console.log('Error retrieving locations from backend: ' + error);
+      }
+    );
+  }
+
+  private addMarkers(): void {
+    this.locMarkerGroup = new LayerGroup<MLocation>();
+    this.locationList.forEach(
+      (mLoc: MLocation) => {
+        this.locMarkerGroup.addLayer(mLoc);
+        console.log(mLoc);
+      }
+    );
+    this.layers.push(this.locMarkerGroup);
+
+    if (this.map.hasLayer(this.locMarkerGroup)) {
+      this.map.removeLayer(this.locMarkerGroup);
+    }
+    this.locMarkerGroup.addTo(this.map);
+  }
+
+  private onMarkerClick(markerLocation: MLocation) {
     console.log(markerLocation.id);
     this.ngZone.run(() => {
-      this.router.navigate(['locations/' + markerLocation.id.toString()]);
-    })
+      this.router.navigate(['locations', markerLocation.id]);
+    });
     this.mapService.clickedOnLocation(markerLocation);
   }
 }

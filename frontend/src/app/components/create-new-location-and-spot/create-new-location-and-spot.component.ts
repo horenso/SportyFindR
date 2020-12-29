@@ -1,14 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Map, marker, Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
-import {Subscription} from 'rxjs';
-import {Spot} from '../../dtos/spot';
 import {SpotService} from '../../services/spot.service';
-import {Location} from '../../dtos/location';
 import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
 import {CategoryService} from '../../services/category.service';
-import {MarkerLocation} from '../../util/marker-location';
-import { Router } from '@angular/router';
+import {MLocation} from '../../util/m-location';
+import {MLocSpot} from '../../util/m-loc-spot';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-create-new-location-and-spot',
@@ -18,9 +16,8 @@ import { Router } from '@angular/router';
 export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
   locMarker: Marker;
-  spot: Spot;
-  location: Location;
-  private categorySubscription: Subscription;
+  spot: MLocSpot;
+  markerLocation: MLocation;
   private map: Map;
 
   constructor(
@@ -34,16 +31,13 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.map = this.mapService.map;
     this.createMarker();
-    this.location = this.sidebarService.location;
+    this.markerLocation = this.sidebarService.markerLocation;
   }
 
-  saveSpot(newSpot: Spot) {
+  saveSpot(newSpot: MLocSpot) {
     console.log(newSpot);
-    const newMarkerLocation = new MarkerLocation(newSpot.location);
-    newMarkerLocation.addTo(this.map)
-      .on('click', () => {
-        this.mapService.clickedOnLocation(newMarkerLocation);
-      });
+    const newMarkerLocation = newSpot.markerLocation;
+    newMarkerLocation.addTo(this.map);
     this.sidebarService.setAction(SidebarActionType.Success);
   }
 

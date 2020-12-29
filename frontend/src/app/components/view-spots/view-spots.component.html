@@ -2,7 +2,7 @@
   <h2>Click on a Location</h2>
 
   <div *ngFor="let spot of spots">
-    <button class="btn btn-primary" (click)='onSelectedSpot(spot)'>{{spot.name}}</button>
+    <button (click)='onSelectedSpot(spot)' class="btn btn-primary">{{spot.name}}</button>
   </div>
 </div>
 

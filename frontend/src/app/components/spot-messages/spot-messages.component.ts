@@ -1,14 +1,13 @@
-import { Location } from '@angular/common';
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Location} from '@angular/common';
+import {ChangeDetectorRef, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { result } from 'lodash';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
-import {Spot} from 'src/app/dtos/spot';
 import {MessageService} from 'src/app/services/message.service';
-import { SidebarService } from 'src/app/services/sidebar.service';
+import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
 import {parseIntStrictly} from './../../util/parse-int';
+import {MLocSpot} from '../../util/m-loc-spot';
 
 @Component({
   selector: 'app-spot-messages',
@@ -20,8 +19,8 @@ export class SpotMessagesComponent implements OnInit {
   spotId: number;
   locationId: number;
 
-  spot: Spot;
-  
+  spot: MLocSpot;
+
   @Output() goBack = new EventEmitter();
 
   messageList: Message[] = [];
@@ -94,7 +93,7 @@ export class SpotMessagesComponent implements OnInit {
   }
 
   deleteSpot(spotId: number) {
-    this.spotService.deleteById(spotId).subscribe( result => {
+    this.spotService.deleteById(spotId).subscribe(result => {
       this.deleted = true;
       this.changeDetectorRef.detectChanges();
     });

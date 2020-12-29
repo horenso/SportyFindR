@@ -10,15 +10,16 @@
 
   <div class='row'>
     <div class="col">
-      <button (click)='goBack.emit()' class="btn btn-primary upVoteButton" type="button"
-        (click)='onGoBack()'>Go back</button>
+      <button (click)='goBack.emit()' (click)='onGoBack()' class="btn btn-primary upVoteButton"
+              type="button">Go back
+      </button>
     </div>
     <div class="col">
       <button (click)="deleteSpot(spot.id)" class="btn btn-primary">Delete this spot</button>
     </div>
   </div>
 
-  
+
   <h3>Messages</h3>
 
   <div *ngFor="let message of messageList" class="message">
