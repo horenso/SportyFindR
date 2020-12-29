@@ -85,11 +85,16 @@ public class SpotEndpoint {
     @ApiOperation(value = "Get list of spots for a specific location", authorizations = {@Authorization(value = "apiKey")})
     public List<SpotDto> getSpotsByLocation(@RequestParam(name = "location") Long locationId) {
         log.info("GET /api/v1/spots?location={}", locationId);
-        List<Spot> spots = spotService.getSpotsByLocation(locationId);
-        List<SpotDto> spotDtos = new ArrayList<>();
+        try {
+            List<Spot> spots = spotService.getSpotsByLocation(locationId);
+            List<SpotDto> spotDtos = new ArrayList<>();
+            spots.forEach(spot -> spotDtos.add(spotMapper.spotToSpotDto(spot)));
+            return spotDtos;
+        }catch (ValidationException e){
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
 
-        spots.forEach(spot -> spotDtos.add(spotMapper.spotToSpotDto(spot)));
-        return spotDtos;
     }
 
     @ApiOperation(value = "Subscribe to the Server Sent Emitter", authorizations = {@Authorization(value = "apiKey")})

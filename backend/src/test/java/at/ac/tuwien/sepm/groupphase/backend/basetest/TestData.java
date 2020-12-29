@@ -37,4 +37,5 @@ public interface TestData {
     String SPOT_NAME = "Parkour Spot";
     String SPOT_DESCRIPTION = "At this location one can find the best persons to parkour with";
     String CAT_NAME= "Soccer";
+    String CAT_NAME2= "Parkour";
 }

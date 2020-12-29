@@ -14,6 +14,7 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
 
   locationId: number = null;
   @Output() selectSpot = new EventEmitter();
+  @Output() noSpot = new EventEmitter();
 
   private locationClickedSubscription: Subscription;
   private getSpotsSubscription: Subscription;

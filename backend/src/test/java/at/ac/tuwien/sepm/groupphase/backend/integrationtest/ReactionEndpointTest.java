@@ -34,7 +34,7 @@ public class ReactionEndpointTest implements TestData {
     @BeforeAll
     public static void init() {
         Category category = Category.builder()
-            .id(ID)
+            .name(CAT_NAME)
             .build();
         categoryRepository.save(category);
         Location location = Location.builder()

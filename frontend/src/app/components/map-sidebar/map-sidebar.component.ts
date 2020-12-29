@@ -97,7 +97,8 @@ export class MapSidebarComponent implements OnInit, OnDestroy, OnChanges {
     this.visible = (
       this.actionType === SidebarActionType.CreateLocSpot ||
       this.actionType === SidebarActionType.ShowSpotsLoc ||
-      this.actionType === SidebarActionType.ShowMessages
+      this.actionType === SidebarActionType.ShowMessages ||
+      this.actionType === SidebarActionType.CreateSpot
     );
     this.emitActive();
   }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {MapService} from '../../services/map.service';
 import {SpotService} from '../../services/spot.service';
 import {CategoryService} from '../../services/category.service';
@@ -22,7 +22,8 @@ export class CreateNewSpotComponent implements OnInit {
     private mapService: MapService,
     private spotService: SpotService,
     private categoryService: CategoryService,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService
+  ) {
   }
 
   ngOnInit(): void {
