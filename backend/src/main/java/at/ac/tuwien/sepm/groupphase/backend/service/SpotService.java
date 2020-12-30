@@ -42,8 +42,9 @@ public interface SpotService {
      *
      * @param locationId of the location containing the spots
      * @return list of spots
+     * @throws ValidationException
      */
-    List<Spot> getSpotsByLocation(Long locationId);
+    List<Spot> getSpotsByLocation(Long locationId) throws ValidationException;
 
     /**
      * Get one spot by spotId
