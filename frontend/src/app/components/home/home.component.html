@@ -7,6 +7,6 @@
   </div>
   <app-map-sidebar #rightSidebar
                    (sidebarActive)="onSidebarActive($event)"
-                   [locationId]='selectedLocationId'
+                   [visibleStart]='sidebarActive'
   ></app-map-sidebar>
 </div>

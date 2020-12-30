@@ -23,7 +23,11 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.activeRouter.params.subscribe
+    this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
+
+    this.sidebarService.visibilityChanged$.subscribe(change => {
+      this.sidebarActive = change;
+    });
   }
 
   onSidebarActive(sidebarActive: boolean) {
@@ -37,5 +41,7 @@ export class HomeComponent implements OnInit {
 
   createLocationWithSpot() {
     this.router.navigate(['locations', 'new']);
+    this.sidebarService.changeVisibility(true);
+    this.sidebarActive = true;
   }
 }

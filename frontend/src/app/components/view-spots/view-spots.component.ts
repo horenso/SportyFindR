@@ -14,9 +14,10 @@ import {parseIntStrictly} from '../../util/parse-int';
 })
 export class ViewSpotsComponent implements OnInit {
 
-  locationIdString: string;
   locationId: number = null;
+
   public spots: MLocSpot[] = [];
+
   private locationClickedSubscription: Subscription;
   private getSpotsSubscription: Subscription;
 
@@ -49,9 +50,17 @@ export class ViewSpotsComponent implements OnInit {
     });
   }
 
+  onClose(): void {
+    this.route.navigate(['..']);
+    this.sidebarService.changeVisibility(false);
+  }
 
   onSelectedSpot(spot: Spot) {
     this.route.navigate(['locations', this.locationId, 'spots', spot.id]);
+  }
+
+  onCreateSpot() {
+
   }
 
   ngOnDestroy() {

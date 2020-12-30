@@ -38,10 +38,12 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     this.mapService.addMarkerToLocations(newMarkerLocation);
     this.mapService.destroyCreationMarker();
     this.router.navigate(['..']);
+    this.sidebarService.changeVisibility(false);
   }
 
   cancel() {
     this.router.navigate(['..']);
+    this.sidebarService.changeVisibility(false);
   }
 
   ngOnDestroy() {

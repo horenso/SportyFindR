@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
+import { SidebarService } from 'src/app/services/sidebar.service';
 import {MLocation} from '../../util/m-location';
 
 @Component({
@@ -49,13 +50,12 @@ export class MapComponent implements OnInit {
     })
   ];
 
-  // markerLayerGroup: LayerGroup = new LayerGroup();
-
   private newMarkerSubscription;
 
   constructor(
     private locationService: LocationService,
-    private mapService: MapService) {
+    private mapService: MapService,
+    private sidebarService: SidebarService) {
   }
 
   onMapReady(map: Map) {
@@ -68,6 +68,16 @@ export class MapComponent implements OnInit {
     this.newMarkerSubscription = this.mapService.addMarkerObservable.subscribe(markerLocation => {
       this.locMarkerGroup.addLayer(markerLocation);
     });
+
+    this.mapService.removeMarkerLocObservable.subscribe(idToRemove => {
+      this.removeMLocation(idToRemove);
+    });
+
+    this.sidebarService.visibilityChanged$.subscribe(changed => {
+      setTimeout(() => {
+        this.map.invalidateSize({pan: false});
+      }, 300);
+    })
   }
 
   ngOnInit(): void {
@@ -103,7 +113,7 @@ export class MapComponent implements OnInit {
     this.locMarkerGroup = new LayerGroup<MLocation>();
     this.locationList.forEach(
       (mLoc: MLocation) => {
-        this.mapService.setClickFunction(mLoc);
+        this.mapService.setClickFunction(mLoc); 
         this.locMarkerGroup.addLayer(mLoc);
       }
     );
@@ -113,5 +123,12 @@ export class MapComponent implements OnInit {
       this.map.removeLayer(this.locMarkerGroup);
     }
     this.locMarkerGroup.addTo(this.map);
+  }
+
+  public removeMLocation(id: number) {
+    const found = this.locationList.find(ele => ele.id === id);
+    if (found != null) {
+      this.map?.removeLayer(found);
+    }
   }
 }

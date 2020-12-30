@@ -1,5 +1,4 @@
-import {Location} from '@angular/common';
-import {ChangeDetectorRef, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
@@ -14,7 +13,7 @@ import {MLocSpot} from '../../util/m-loc-spot';
   templateUrl: './spot-messages.component.html',
   styleUrls: ['./spot-messages.component.scss']
 })
-export class SpotMessagesComponent implements OnInit {
+export class SpotMessagesComponent implements OnInit, OnDestroy {
 
   spotId: number;
   locationId: number;
@@ -25,18 +24,14 @@ export class SpotMessagesComponent implements OnInit {
 
   messageList: Message[] = [];
   messageForm: FormGroup;
-  deleted: boolean = false;
 
   constructor(
     private messageService: MessageService,
     private spotService: SpotService,
-    private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private sidebarService: SidebarService,
     private activeRoute: ActivatedRoute,
-    private router: Router,
-    private routerLocation: Location
-  ) {
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -70,33 +65,36 @@ export class SpotMessagesComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.spotService.closeConnection();
+  }
+
   submitDialog() {
     const newMessage = new Message(null, this.messageForm.value.content, null, this.spot.id);
     this.messageService.saveMessage(newMessage).subscribe(
       (result: Message) => {
         this.addMessage(result);
         this.messageForm.reset();
-        this.changeDetectorRef.detectChanges();
       }
     );
   }
 
   onGoBack(): void {
-    this.routerLocation.back();
+    this.router.navigate(['locations', this.locationId]);
   }
 
   public deleteOneMessage(message: Message): void {
     this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
-      this.changeDetectorRef.detectChanges();
     });
   }
 
   deleteSpot(spotId: number) {
     this.spotService.deleteById(spotId).subscribe(result => {
-      this.deleted = true;
-      this.changeDetectorRef.detectChanges();
+      // TODO: notificaiton
     });
+    // TODO: if this is the last spot of the location, do this:
+    // this.mapService.removeMarkerLocation(this.locationId);
   }
 
   private getMessagesAndStartEventHandling(): void {
@@ -104,7 +102,6 @@ export class SpotMessagesComponent implements OnInit {
       this.messageList = result;
       console.log('Loaded messages:');
       console.log(this.messageList);
-      this.changeDetectorRef.detectChanges();
     });
     this.handleEvents();
   }
@@ -123,19 +120,16 @@ export class SpotMessagesComponent implements OnInit {
         switch (event.type) {
           case 'message/new': {
             this.addMessage(newMessage);
-            this.changeDetectorRef.detectChanges();
             break;
           }
           case 'message/delete': {
             this.messageList = this.messageList.filter(m => m.id !== newMessage.id);
-            this.changeDetectorRef.detectChanges();
             break;
           }
           case 'message/updateReaction': {
             const target = this.messageList.find(m => m.id === newMessage.id);
             target.upVotes = newMessage.upVotes;
             target.downVotes = newMessage.downVotes;
-            this.changeDetectorRef.detectChanges();
             break;
           }
         }

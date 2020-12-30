@@ -1,7 +1,4 @@
 <div [ngClass]="visible?'active':'inactive'" class="map-sidebar" id="sidebar-right">
-  <button (click)="toggleActive()"
-          class="sidebar-handle">{{ visible ? "Close" : "Open" }}
-  </button>
   <div class="sidebarContent">
     <router-outlet></router-outlet>
   </div>

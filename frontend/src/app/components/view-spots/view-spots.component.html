@@ -1,13 +1,9 @@
-<div *ngIf="locationId != null; else showSpots">
-  <h2>Click on a Location</h2>
+<h2>Spots: </h2>
 
-  <div *ngFor="let spot of spots">
-    <button (click)='onSelectedSpot(spot)' class="btn btn-primary">{{spot.name}}</button>
-  </div>
+<button (click)='onClose()'>Close</button>
+
+<div *ngFor="let spot of spots">
+  <button (click)='onSelectedSpot(spot)' class="btn btn-primary">{{spot.name}}</button>
 </div>
 
-<ng-template #showSpots>
-  <h2>Spots in Location</h2>
-</ng-template>
-
-<!-- <button (click)="createSpot()">New Spot</button> -->
+<button (click)="onCreateSpot()">New Spot</button>
