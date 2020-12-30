@@ -38,10 +38,11 @@ export class MapService {
 
   private onMarkerClick(markerLocation: MLocation) {
     console.log(markerLocation.id);
+    this.sidebarService.changeVisibility(true);
+    this.sidebarService.markerLocation = markerLocation;
     this.ngZone.run(() => {
       this.router.navigate(['locations', markerLocation.id]);
     });
-    this.sidebarService.changeVisibility(true);
     this.clickedOnLocation(markerLocation);
   }
 

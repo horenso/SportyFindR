@@ -7,9 +7,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
+    /**
+     * Gets one location by id.
+     * @return an optional, empty if the id was not found
+     */
+    Optional<Location> getOneById(Long ids);
+
     /**
      * Finds all location entities in the repository
      *

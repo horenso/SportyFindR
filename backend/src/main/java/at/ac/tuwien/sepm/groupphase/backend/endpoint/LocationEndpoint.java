@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -30,6 +31,20 @@ public class LocationEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final LocationService locationService;
     private final LocationMapper locationMapper;
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    @ApiOperation(value = "Get one location by id", authorizations = {@Authorization(value = "apiKey")})
+    public LocationDto getOneById(@PathVariable("id") Long id) {
+        log.info("Get /api/v1/locations/{}", id);
+        try {
+            return locationMapper.locationToLocationDto(locationService.getOneById(id));
+        } catch (NotFoundException e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
 
     @Secured("ROLE_ADMIN")
     @GetMapping

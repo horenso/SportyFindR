@@ -4,8 +4,9 @@ import {SpotService} from '../../services/spot.service';
 import {Category} from '../../dtos/category';
 import {CategoryService} from '../../services/category.service';
 import {MLocSpot} from '../../util/m-loc-spot';
-import {Marker} from 'leaflet';
 import {MLocation} from '../../util/m-location';
+import { Marker } from 'leaflet';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-spot-form',
@@ -14,8 +15,12 @@ import {MLocation} from '../../util/m-location';
 })
 export class SpotFormComponent implements OnInit {
 
-  @Input() spot: MLocSpot;
-  @Input() marker: Marker;
+  // for existing locatoins
+  @Input() locationId: number = null;
+
+  // for new locatoins:
+  @Input() marker: Marker = null;
+
   @Output() savedSpot = new EventEmitter<MLocSpot>();
   @Output() cancel = new EventEmitter();
 
@@ -25,14 +30,11 @@ export class SpotFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private categoryService: CategoryService,
-    private spotService: SpotService) {
+    private spotService: SpotService,
+    private activedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    if (this.spot === undefined) {
-      this.spot = new MLocSpot(null, null, null, null, null);
-    }
-
     this.spotForm = this.formBuilder.group({
       name: [null, [Validators.required, Validators.minLength(1)]],
       description: [null, [Validators.required]],
@@ -45,9 +47,20 @@ export class SpotFormComponent implements OnInit {
   }
 
   saveSpot(): void {
-    const newMLoc: MLocation = new MLocation(null, this.marker.getLatLng().lat, this.marker.getLatLng().lng);
-    const newSpot: MLocSpot = new MLocSpot(null, this.spotForm.value.name, this.spotForm.value.description, this.spotForm.value.category, newMLoc);
-    console.log(JSON.stringify(newSpot));
+    console.log('in saveSpot(): ');
+
+    let loc: MLocation;
+
+    if (this.marker != null) {
+      loc = new MLocation(null, this.marker.getLatLng().lat, this.marker.getLatLng().lng);
+    } else {
+      console.log('no marker');
+      console.log(this.locationId);
+      loc = new MLocation(this.locationId, 0.0, 0.0);
+    }
+
+    const newSpot = new MLocSpot(null, this.spotForm.value.name, this.spotForm.value.description, this.spotForm.value.category, loc);
+
     this.spotService.createSpot(newSpot).subscribe(result => {
       this.savedSpot.emit(result);
     });

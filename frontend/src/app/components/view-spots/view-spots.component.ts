@@ -60,7 +60,7 @@ export class ViewSpotsComponent implements OnInit {
   }
 
   onCreateSpot() {
-
+    this.route.navigate(['locations', this.locationId, 'spots', 'new']);
   }
 
   ngOnDestroy() {

@@ -95,7 +95,7 @@ public class SimpleSpotService implements SpotService {
     @Override
     public List<Spot> getSpotsByLocation(Long locationId) throws ValidationException {
         //Message message;
-        Optional<Location> optionalLocation = locationRepository.findById(locationId);
+        Optional<Location> optionalLocation = locationRepository.getOneById(locationId);
         if (optionalLocation.isEmpty()) {
             throw new ValidationException("Location with ID " + locationId + " cannot be found!");
         } else {

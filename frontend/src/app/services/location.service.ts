@@ -20,6 +20,14 @@ export class LocationService {
     return new MLocation(location);
   }
 
+  public getLocationById(locationId: number): Observable<MLocation> {
+    return this.httpClient.get<Location>(this.locationBaseUri + '/' + locationId).pipe(
+      map(
+        (location: Location) => LocationService.translateToMarkerLocation(location)
+      )
+    );
+  }
+
   /**
    * Loads all locations
    * @returns list of MarkerLocations

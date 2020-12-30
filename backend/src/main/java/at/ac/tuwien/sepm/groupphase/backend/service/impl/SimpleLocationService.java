@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,6 +26,15 @@ public class SimpleLocationService implements LocationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final LocationRepository locationRepository;
     private final LocationValidator validator;
+
+    @Override
+    public Location getOneById(Long locationId) {
+        Optional<Location> locationOptional = locationRepository.getOneById(locationId);
+        if (locationOptional.isEmpty()) {
+            throw new NotFoundException("Location with ID " + locationId + " cannot be found!");
+        }
+        return locationOptional.get();
+    }
 
     @Override
     public List<Location> findAll() {

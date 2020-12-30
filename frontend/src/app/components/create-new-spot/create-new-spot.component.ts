@@ -1,10 +1,10 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {MapService} from '../../services/map.service';
-import {SpotService} from '../../services/spot.service';
-import {CategoryService} from '../../services/category.service';
+import {Component, OnInit} from '@angular/core';
 import {SidebarService} from '../../services/sidebar.service';
 import {MLocation} from '../../util/m-location';
 import {MLocSpot} from '../../util/m-loc-spot';
+import {ActivatedRoute, Router} from '@angular/router';
+import {parseIntStrictly} from 'src/app/util/parse-int';
+import {LocationService} from 'src/app/services/location.service';
 
 
 @Component({
@@ -14,24 +14,46 @@ import {MLocSpot} from '../../util/m-loc-spot';
 })
 export class CreateNewSpotComponent implements OnInit {
 
-  markerLocation: MLocation;
+  public locationId: number;
+  public mLocation: MLocation;
 
   constructor(
-    private mapService: MapService,
-    private spotService: SpotService,
-    private categoryService: CategoryService,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private locationService: LocationService,
+    private router: Router,
+    private activeRoute: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
-    this.markerLocation = this.sidebarService.markerLocation;
+    this.activeRoute.params.subscribe(params => {
+
+      this.locationId = parseIntStrictly(params.locId);
+
+      if (isNaN(this.locationId)) {
+        console.log('it is not a number!');
+      } else {
+        console.log('Correct: ' + this.locationId);
+      }
+
+      if (this.sidebarService.markerLocation != null && this.sidebarService.markerLocation.id === this.locationId) {
+        this.mLocation = this.sidebarService.markerLocation;
+        console.log('hi');
+      } else {
+        this.locationService.getLocationById(this.locationId).subscribe(result => {
+          this.mLocation = result;
+          this.sidebarService.markerLocation = result;
+        });
+      }
+    });
   }
 
   saveSpot(newSpot: MLocSpot) {
-    console.log(newSpot);
+    console.log('new Spot: ' + newSpot);
+    this.router.navigate(['locations', this.locationId]);
   }
 
   cancel() {
+    this.router.navigate(['locations', this.locationId]);
   }
 }
