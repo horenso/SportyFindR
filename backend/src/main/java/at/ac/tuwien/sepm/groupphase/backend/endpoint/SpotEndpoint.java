@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.DeletedSpotResponseDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
@@ -65,10 +66,10 @@ public class SpotEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
-    public void delete(@PathVariable("id") Long id) {
+    public DeletedSpotResponseDto delete(@PathVariable("id") Long id) {
         log.info("DELETE /api/v1/spots/{}", id);
         try {
-            spotService.deleteById(id);
+            return DeletedSpotResponseDto.builder().deletedLocation(spotService.deleteById(id)).build();
         } catch (NotFoundException | ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

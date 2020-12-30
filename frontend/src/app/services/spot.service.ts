@@ -36,9 +36,11 @@ export class SpotService {
     );
   }
 
-  deleteById(id: number): Observable<{}> {
+  deleteById(id: number): Observable<boolean> {
     console.log('Delete spot with id ' + id);
-    return this.httpClient.delete<Spot>(this.spotBaseUri + '/' + id);
+    return this.httpClient.delete<any>(this.spotBaseUri + '/' + id).pipe(
+      map(respone => respone.deletedLocation)
+    );
   }
 
   updateSpot(mLocSpot: MLocSpot): Observable<MLocSpot> {

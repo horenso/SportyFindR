@@ -73,7 +73,7 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public void deleteById(Long id) throws ValidationException {
+    public boolean deleteById(Long id) throws ValidationException {
         log.debug("Delete Spot with id {}", id);
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
@@ -89,6 +89,9 @@ public class SimpleSpotService implements SpotService {
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()) {
             locationRepository.deleteById(spot.get().getLocation().getId());
+            return true;
+        } else {
+            return false;
         }
     }
 

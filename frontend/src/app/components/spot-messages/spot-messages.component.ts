@@ -7,6 +7,7 @@ import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
 import {parseIntStrictly} from './../../util/parse-int';
 import {MLocSpot} from '../../util/m-loc-spot';
+import { MapService } from 'src/app/services/map.service';
 
 @Component({
   selector: 'app-spot-messages',
@@ -31,6 +32,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private sidebarService: SidebarService,
     private activeRoute: ActivatedRoute,
+    private mapService: MapService,
     private router: Router) {
   }
 
@@ -91,10 +93,14 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
 
   deleteSpot(spotId: number) {
     this.spotService.deleteById(spotId).subscribe(result => {
-      // TODO: notificaiton
+      console.log(result);
+      if (result) { // if the location was deleted
+        this.mapService.removeMarkerLocation(this.locationId);
+      };
+      this.router.navigate(['']);
+      this.sidebarService.changeVisibility(false);
     });
-    // TODO: if this is the last spot of the location, do this:
-    // this.mapService.removeMarkerLocation(this.locationId);
+
   }
 
   private getMessagesAndStartEventHandling(): void {
