@@ -1,5 +1,5 @@
-import {Location} from './location';
 import {Category} from './category';
+import {Location} from './location';
 
 export class Spot {
   constructor(

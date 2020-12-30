@@ -1,36 +1,24 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {Spot} from '../dtos/spot';
-import {Message} from '../dtos/message';
-import {Location} from '../dtos/location';
-
-export enum SidebarActionType {
-  NoAction = 'noAction',
-  CreateLocSpot = 'createLocSpot',
-  CreateSpot = 'createSpot',
-  Success = 'Success',
-  Cancelled = 'Cancelled',
-  Failed = 'Failed',
-  ShowSpotsLoc = 'showSpotsLoc',
-  ShowMessages = 'showMessages'
-}
+import {MLocation} from '../util/m-location';
+import {MLocSpot} from '../util/m-loc-spot';
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SidebarService {
 
-  public location: Location;
-  public spot: Spot;
-  public messageList: Message[];
+  private visibilityChanged = new Subject<boolean>();
+  public visibilityChanged$ = this.visibilityChanged.asObservable();
 
-  private action = new BehaviorSubject<SidebarActionType>(SidebarActionType.NoAction);
-  public action$ = this.action.asObservable();
+  public markerLocation: MLocation = null;
+  public spot: MLocSpot = null;
 
   constructor() {
   }
 
-  public setAction(actionType: SidebarActionType) {
-    this.action.next(actionType);
+  public changeVisibility(isVisible: boolean): void {
+    this.visibilityChanged.next(isVisible);
+    console.log('change visibibility to :' + isVisible);
   }
 }

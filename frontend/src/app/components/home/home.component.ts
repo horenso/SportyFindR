@@ -1,7 +1,8 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
-import {Location} from '../../dtos/location';
+import {SidebarService} from '../../services/sidebar.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MLocation} from '../../util/m-location';
 
 @Component({
   selector: 'app-home',
@@ -17,24 +18,30 @@ export class HomeComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private sidebarService: SidebarService,
-    private changeDetectorRef: ChangeDetectorRef) {
+    private router: Router,
+    private activeRouter: ActivatedRoute) {
+  }
+
+  ngOnInit() {
+    this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
+
+    this.sidebarService.visibilityChanged$.subscribe(change => {
+      this.sidebarActive = change;
+    });
   }
 
   onSidebarActive(sidebarActive: boolean) {
     this.sidebarActive = sidebarActive;
   }
 
-  ngOnInit() {
-  }
-
-  onSelectedLoc(location: Location): void {
-    this.selectedLocationId = location.id;
-    this.sidebarService.setAction(SidebarActionType.ShowSpotsLoc);
-    this.sidebarService.location = location;
-
+  onSelectedLoc(markerLocation: MLocation): void {
+    this.selectedLocationId = markerLocation.id;
+    this.sidebarService.markerLocation = markerLocation;
   }
 
   createLocationWithSpot() {
-    this.sidebarService.setAction(SidebarActionType.CreateLocSpot);
+    this.router.navigate(['locations', 'new']);
+    this.sidebarService.changeVisibility(true);
+    this.sidebarActive = true;
   }
 }

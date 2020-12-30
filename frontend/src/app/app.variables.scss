@@ -1,6 +1,6 @@
 $sidebarWidth: 500px;
 $sidebarHandleWidth: 50px;
-$sidebarTransitionTime: 0.5s;
+$sidebarTransitionTime: 0.3s; // This value must be changed in the map component as well!
 $sidebarTransitionFunction: ease-in-out;
 
 $topHeader: 52px;

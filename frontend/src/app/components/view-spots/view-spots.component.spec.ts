@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ViewSpotsComponent } from './view-spots.component';
+import {ViewSpotsComponent} from './view-spots.component';
 
 describe('ViewSpotsComponent', () => {
   let component: ViewSpotsComponent;
@@ -8,9 +8,9 @@ describe('ViewSpotsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ViewSpotsComponent ]
+      declarations: [ViewSpotsComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

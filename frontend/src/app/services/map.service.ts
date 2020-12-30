@@ -1,31 +1,70 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {Subject} from 'rxjs';
-import {MarkerLocation} from '../util/marker-location';
+import {MLocation} from '../util/m-location';
 import {SidebarService} from './sidebar.service';
-import {Map} from 'leaflet';
+import {Map, Marker} from 'leaflet';
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
 
-  constructor(private sidebarService: SidebarService) {
-  }
-
   public map: Map;
+  public creationMarker: Marker = null;
 
-  private addMarkerSubject = new Subject<MarkerLocation>();
-  private locationClickedSubject = new Subject<MarkerLocation>();
-
+  private addMarkerSubject = new Subject<MLocation>();
   public addMarkerObservable = this.addMarkerSubject.asObservable();
+
+  private locationClickedSubject = new Subject<MLocation>();
   public locationClickedObservable = this.locationClickedSubject.asObservable();
 
-  public addMarkerToLocations(markerLocation: MarkerLocation) {
+  private removeMarkerLocSubject = new Subject<number>();
+  public removeMarkerLocObservable = this.removeMarkerLocSubject.asObservable();
+
+  constructor(private sidebarService: SidebarService, private ngZone: NgZone, private router: Router) {
+  }
+
+  public addMarkerToLocations(markerLocation: MLocation) {
+    this.setClickFunction(markerLocation);
     this.addMarkerSubject.next(markerLocation);
   }
 
-  public clickedOnLocation(markerLocation: MarkerLocation) {
+  public setClickFunction(markerLocation: MLocation) {
+    markerLocation.on('click', () => {
+      this.onMarkerClick(markerLocation);
+    });
+  }
+
+  private onMarkerClick(markerLocation: MLocation) {
+    console.log(markerLocation.id);
+    this.ngZone.run(() => {
+      this.router.navigate(['locations', markerLocation.id]);
+    });
+    this.sidebarService.changeVisibility(true);
+    this.clickedOnLocation(markerLocation);
+  }
+
+  public clickedOnLocation(markerLocation: MLocation) {
     this.locationClickedSubject.next(markerLocation);
-    this.sidebarService.location = markerLocation.changeToLocation();
+    this.sidebarService.markerLocation = markerLocation;
+  }
+
+  public getCreationMarker(): Marker {
+    this.creationMarker = new Marker(this.map.getCenter(), {draggable: true});
+    this.creationMarker.addTo(this.map).on('click', () => {
+    });
+    return this.creationMarker;
+  }
+
+  public destroyCreationMarker(): void {
+    if (this.creationMarker !== null) {
+      this.creationMarker.removeFrom(this.map);
+    }
+    this.creationMarker = null;
+  }
+
+  public removeMarkerLocation(locationId: number): void {
+    this.removeMarkerLocSubject.next(locationId);
   }
 }

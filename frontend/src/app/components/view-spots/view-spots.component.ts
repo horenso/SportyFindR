@@ -1,64 +1,66 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {SpotService} from 'src/app/services/spot.service';
-import {MapService} from 'src/app/services/map.service';
-import {SidebarActionType, SidebarService} from 'src/app/services/sidebar.service';
+import {SidebarService} from 'src/app/services/sidebar.service';
 import {Subscription} from 'rxjs';
+import {MLocSpot} from '../../util/m-loc-spot';
+import {ActivatedRoute, Router} from '@angular/router';
+import {parseIntStrictly} from '../../util/parse-int';
 
 @Component({
   selector: 'app-view-spots',
   templateUrl: './view-spots.component.html',
   styleUrls: ['./view-spots.component.scss']
 })
-export class ViewSpotsComponent implements OnInit, OnDestroy {
+export class ViewSpotsComponent implements OnInit {
 
   locationId: number = null;
-  @Output() selectSpot = new EventEmitter();
-  @Output() noSpot = new EventEmitter();
+
+  public spots: MLocSpot[] = [];
 
   private locationClickedSubscription: Subscription;
   private getSpotsSubscription: Subscription;
 
-  public spots: Spot[] = [];
-
   constructor(
     private spotService: SpotService,
-    private mapService: MapService,
-    private changeDetectorRef: ChangeDetectorRef,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private route: Router,
+    private activeRoute: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
-    this.locationId = this.sidebarService.location.id;
-    this.locationClickedSubscription = this.mapService.locationClickedObservable.subscribe(result => {
-      this.locationId = this.sidebarService.location.id;
-      this.getSpots();
+    this.activeRoute.params.subscribe(params => {
+
+      this.locationId = parseIntStrictly(params.locId);
+
+      if (isNaN(this.locationId)) {
+        console.log('it is not a number!');
+      } else {
+        console.log('Correct: ' + this.locationId);
+        this.spotService.getSpotsByLocation(this.locationId).subscribe(
+          result => {
+            this.spots = result;
+          },
+          error => {
+            console.log('could not find location!');
+          }
+        );
+      }
     });
-    this.getSpots();
+  }
+
+  onClose(): void {
+    this.route.navigate(['..']);
+    this.sidebarService.changeVisibility(false);
   }
 
   onSelectedSpot(spot: Spot) {
-    this.sidebarService.spot = spot;
-    this.selectSpot.emit(spot);
+    this.route.navigate(['locations', this.locationId, 'spots', spot.id]);
   }
 
-  private getSpots(): void {
-    console.log(this.locationId);
-    if (this.getSpotsSubscription != null) {
-      this.getSpotsSubscription.unsubscribe();
-    }
-    this.getSpotsSubscription = this.spotService.getSpotsByLocation(this.locationId).subscribe(result => {
-      this.spots = result;
-      console.log(this.spots);
-      this.changeDetectorRef.detectChanges();
-    });
-    console.log('Spots requested');
-  }
+  onCreateSpot() {
 
-  createSpot(): void {
-    this.sidebarService.setAction(SidebarActionType.CreateSpot);
-    this.changeDetectorRef.detectChanges();
   }
 
   ngOnDestroy() {

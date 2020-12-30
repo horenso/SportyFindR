@@ -1,13 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Map, marker, Marker} from 'leaflet';
+import {Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
-import {Subscription} from 'rxjs';
-import {Spot} from '../../dtos/spot';
 import {SpotService} from '../../services/spot.service';
-import {Location} from '../../dtos/location';
-import {SidebarActionType, SidebarService} from '../../services/sidebar.service';
+import {SidebarService} from '../../services/sidebar.service';
 import {CategoryService} from '../../services/category.service';
-import {MarkerLocation} from '../../util/marker-location';
+import {MLocation} from '../../util/m-location';
+import {MLocSpot} from '../../util/m-loc-spot';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-create-new-location-and-spot',
@@ -16,46 +15,38 @@ import {MarkerLocation} from '../../util/marker-location';
 })
 export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
 
-  locMarker: Marker;
-  spot: Spot;
-  location: Location;
-  private categorySubscription: Subscription;
-  private map: Map;
+  marker: Marker;
+  spot: MLocSpot;
+  markerLocation: MLocation;
 
   constructor(
     private mapService: MapService,
     private spotService: SpotService,
     private categoryService: CategoryService,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
-    this.map = this.mapService.map;
-    this.createMarker();
-    this.location = this.sidebarService.location;
+    this.marker = this.mapService.getCreationMarker();
+    this.markerLocation = this.sidebarService.markerLocation;
   }
 
-  saveSpot(newSpot: Spot) {
+  saveSpot(newSpot: MLocSpot) {
     console.log(newSpot);
-    const newMarkerLocation = new MarkerLocation(newSpot.location);
-    newMarkerLocation.addTo(this.map)
-      .on('click', () => {
-        this.mapService.clickedOnLocation(newMarkerLocation);
-      });
-    this.sidebarService.setAction(SidebarActionType.Success);
+    const newMarkerLocation = newSpot.markerLocation;
+    this.mapService.addMarkerToLocations(newMarkerLocation);
+    this.mapService.destroyCreationMarker();
+    this.router.navigate(['..']);
+    this.sidebarService.changeVisibility(false);
   }
 
   cancel() {
-    this.sidebarService.setAction(SidebarActionType.Cancelled);
+    this.router.navigate(['..']);
+    this.sidebarService.changeVisibility(false);
   }
 
   ngOnDestroy() {
-    this.locMarker.removeFrom(this.map);
-  }
-
-  private createMarker() {
-    this.locMarker = marker(this.map.getCenter(), {draggable: true});
-    this.locMarker.addTo(this.map).on('click', () => {
-    });
+    this.mapService.destroyCreationMarker();
   }
 }

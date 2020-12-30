@@ -1,3 +1,3 @@
-<app-spot-form [locationMarker]="locMarker"
+<app-spot-form (cancel)="cancel()"
                (savedSpot)="saveSpot($event)"
-               (cancel)="cancel()"></app-spot-form>
+               [marker]="marker"></app-spot-form>

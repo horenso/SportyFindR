@@ -1,12 +1,12 @@
 <div class="content">
   <div [ngClass]="sidebarActive?'sidebar-active':'sidebar-inactive'" id="map-wrapper">
-    <app-map (locationClicked)='onSelectedLoc($event)'></app-map>
+    <app-map (mLocClicked)="onSelectedLoc($event)"></app-map>
     <div id="new-loc-new-spot">
       <button (click)="createLocationWithSpot()" id="create-spot">New Spot</button>
     </div>
   </div>
   <app-map-sidebar #rightSidebar
                    (sidebarActive)="onSidebarActive($event)"
-                   [locationId]='selectedLocationId'
+                   [visibleStart]='sidebarActive'
   ></app-map-sidebar>
 </div>
