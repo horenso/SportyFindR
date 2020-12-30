@@ -13,6 +13,6 @@ import java.util.List;
 public class HashtagDto {
     private Long id;
     private String name;
-    private List<MessageDto> messagesList = new ArrayList<>();
-    //private List<SpotDto> spotsList = new ArrayList<>();
+    private List<MessageDto> messagesList;
+    private List<SpotDto> spotsList;
 }

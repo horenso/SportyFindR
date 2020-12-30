@@ -1,6 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ public class Hashtag {
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
         name = "hashtags_messages",
         joinColumns = @JoinColumn(name = "hashtag_id"),
@@ -30,13 +34,14 @@ public class Hashtag {
     )
     private List<Message> messagesList = new ArrayList<>();
 
-    /*@ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
         name = "hashtags_spots",
         joinColumns = @JoinColumn(name = "hashtag_id"),
         inverseJoinColumns = @JoinColumn(name = "spot_id")
     )
-    private List<Spot> spotsList = new ArrayList<>();*/
+    private List<Spot> spotsList = new ArrayList<>();
 
     public Hashtag(String name) {
         this.name = name;
@@ -50,8 +55,12 @@ public class Hashtag {
         messagesList.removeIf(message -> message.getId().equals(messageId));
     }
 
-    /*public void addSpot(Spot spot){
+    public void addSpot(Spot spot){
         this.spotsList.add(spot);
-    }*/
+    }
+
+    public void deleteSpot(Long spotId){
+        spotsList.removeIf(spot -> spot.getId().equals(spotId));
+    }
 
 }

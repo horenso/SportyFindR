@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HashtagRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
@@ -61,10 +62,43 @@ public class SimpleHashtagService implements HashtagService {
     }
 
     @Override
+    public void getHashtags(Spot spot) {
+        String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
+        String[] words = spot.getDescription().split("\\s+");
+        List<String> hashtags = new ArrayList<>();
+        for(String word : words){
+            if (Pattern.matches(hashtagPattern, word)){
+                hashtags.add(word.substring(1));
+            }
+        }
+
+        for(String hashtag : hashtags){
+            if (hashtagRepository.findHashtagByName(hashtag).isPresent()){
+                Hashtag hashtag1 = hashtagRepository.findHashtagByName(hashtag).get();
+                hashtag1.addSpot(spot);
+                hashtagRepository.save(hashtag1);
+            } else {
+                Hashtag hashtag1 = new Hashtag(hashtag);
+                hashtag1.addSpot(spot);
+                hashtagRepository.save(hashtag1);
+            }
+        }
+    }
+
+    @Override
     public void deleteMessageInHashtags(Message message){
         List<Hashtag> hashtags = hashtagRepository.findHashtagsByMessagesListContains(message);
         for (Hashtag hashtag : hashtags){
             hashtag.deleteMessage(message.getId());
+            hashtagRepository.save(hashtag);
+        }
+    }
+
+    @Override
+    public void deleteSpotInHashtags(Spot spot) {
+        List<Hashtag> hashtags = hashtagRepository.findHashtagsBySpotsListContains(spot);
+        for (Hashtag hashtag : hashtags){
+            hashtag.deleteSpot(spot.getId());
             hashtagRepository.save(hashtag);
         }
     }

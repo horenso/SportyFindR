@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
+import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
@@ -27,8 +28,10 @@ public class SimpleSpotService implements SpotService {
     private final SpotRepository spotRepository;
     private final LocationService locationService;
     private final MessageService messageService;
+    private final HashtagService hashtagService;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
+
 
 
     /**
@@ -60,7 +63,9 @@ public class SimpleSpotService implements SpotService {
         if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
             throw new ValidationException("Location does not Exist");
         }
-        return spotRepository.save(spot);
+        Spot savedSpot = spotRepository.save(spot);
+        hashtagService.getHashtags(spot);
+        return savedSpot;
     }
 
     @Override
@@ -79,7 +84,7 @@ public class SimpleSpotService implements SpotService {
         for(Message message : messages){
             messageService.deleteById(message.getId());
         }
-
+        hashtagService.deleteSpotInHashtags(spotRepository.findById(id).get());
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()) {
             locationRepository.deleteById(spot.get().getLocation().getId());
