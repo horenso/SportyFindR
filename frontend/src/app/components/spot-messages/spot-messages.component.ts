@@ -95,12 +95,14 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
     this.spotService.deleteById(spotId).subscribe(result => {
       console.log(result);
       if (result) { // if the location was deleted
+        console.log(result);
         this.mapService.removeMarkerLocation(this.locationId);
-      };
-      this.router.navigate(['']);
-      this.sidebarService.changeVisibility(false);
+        this.router.navigate(['']);
+        this.sidebarService.changeVisibility(false);
+      } else {
+        this.router.navigate(['locations', this.locationId]);
+      }
     });
-
   }
 
   private getMessagesAndStartEventHandling(): void {

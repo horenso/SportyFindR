@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {control, icon, Layer, LayerGroup, Map, Marker, tileLayer} from 'leaflet';
+import {control, icon, Layer, LayerGroup, Map, marker, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import { SidebarService } from 'src/app/services/sidebar.service';
@@ -66,6 +66,7 @@ export class MapComponent implements OnInit {
 
     this.getLocationsAndConvertToLayerGroup();
     this.newMarkerSubscription = this.mapService.addMarkerObservable.subscribe(markerLocation => {
+      this.locationList.push(markerLocation);
       this.locMarkerGroup.addLayer(markerLocation);
     });
 
@@ -77,7 +78,7 @@ export class MapComponent implements OnInit {
       setTimeout(() => {
         this.map.invalidateSize({pan: false});
       }, 300);
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -118,17 +119,12 @@ export class MapComponent implements OnInit {
       }
     );
     this.layers.push(this.locMarkerGroup);
-
-    if (this.map.hasLayer(this.locMarkerGroup)) {
-      this.map.removeLayer(this.locMarkerGroup);
-    }
-    this.locMarkerGroup.addTo(this.map);
   }
 
   public removeMLocation(id: number) {
     const found = this.locationList.find(ele => ele.id === id);
     if (found != null) {
-      this.map?.removeLayer(found);
+      this.locMarkerGroup?.removeLayer(found);
     }
   }
 }
