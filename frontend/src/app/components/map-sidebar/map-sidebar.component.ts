@@ -17,8 +17,8 @@ export class MapSidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.visible = this.visibleStart;
-    this.sidebarService.visibilityChanged$.subscribe(change => {
-      this.visible = change;
+    this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+      this.visible = change.isVisible;
     });
   }
 }

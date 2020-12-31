@@ -5,7 +5,7 @@ import {Message} from 'src/app/dtos/message';
 import {MessageService} from 'src/app/services/message.service';
 import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
-import {parseIntStrictly} from './../../util/parse-int';
+import {parseIntStrictly} from '../../util/parse-int';
 import {MLocSpot} from '../../util/m-loc-spot';
 import { MapService } from 'src/app/services/map.service';
 
@@ -98,7 +98,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
         console.log(result);
         this.mapService.removeMarkerLocation(this.locationId);
         this.router.navigate(['']);
-        this.sidebarService.changeVisibility(false);
+        this.sidebarService.changeVisibilityAndFocus({isVisible: false});
       } else {
         this.router.navigate(['locations', this.locationId]);
       }

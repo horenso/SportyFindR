@@ -1,7 +1,47 @@
-import {Marker} from 'leaflet';
+import {Icon, icon, Marker} from 'leaflet';
 import {Location} from '../dtos/location';
 
+export enum IconType {
+  Default,
+  New,
+  Edit
+}
+
 export class MLocation extends Marker {
+
+  static iconDefault: Icon = icon({
+    iconRetinaUrl: 'assets/markers/marker-default-2x.png',
+    iconUrl: 'assets/markers/marker-default.png',
+    shadowUrl: 'assets/markers/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
+
+  static iconNew: Icon = icon({
+    iconRetinaUrl: 'assets/markers/marker-new-2x.png',
+    iconUrl: 'assets/markers/marker-new.png',
+    shadowUrl: 'assets/markers/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
+
+  static iconEdit: Icon = icon({
+    iconRetinaUrl: 'assets/markers/marker-edit-2x.png',
+    iconUrl: 'assets/markers/marker-edit.png',
+    shadowUrl: 'assets/markers/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
+
   public id: number;
 
   constructor(location: Location)
@@ -25,9 +65,20 @@ export class MLocation extends Marker {
       super([locationOrId.latitude, locationOrId.longitude]);
       this.id = locationOrId.id;
     }
+    this.setIcon(MLocation.iconDefault);
   }
 
-  toLocation() {
+  public changeIcon(type: IconType): void {
+    console.log('in MLoc: changed icon to: ' + type.toString());
+    
+    switch(type) {
+      case IconType.Default: this.setIcon(MLocation.iconDefault); break;
+      case IconType.New: this.setIcon(MLocation.iconNew); break;
+      case IconType.Edit: this.setIcon(MLocation.iconEdit); break;
+    }
+  }
+
+  toLocation(): Location {
     return new Location(this.id, this.getLatLng().lat, this.getLatLng().lng);
   }
 }

@@ -2,14 +2,27 @@ import {Injectable} from '@angular/core';
 import {MLocation} from '../util/m-location';
 import {MLocSpot} from '../util/m-loc-spot';
 import {Subject} from 'rxjs';
+import { createTextChangeRange } from 'typescript';
+
+export interface VisibilityFocusChange {
+  isVisible: boolean;
+  locationInFocus?: MLocation;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class SidebarService {
 
-  private visibilityChanged = new Subject<boolean>();
-  public visibilityChanged$ = this.visibilityChanged.asObservable();
+  public previousVisibility = null;
+
+  private changeVisibilityAndFocusSubject = new Subject<VisibilityFocusChange>();
+
+  /**
+   * The visibility of the sidebar and/or the MLocation in focus changed,
+   * this needs to happen simultaneously because the map changes in size with a delay 
+   */
+  public changeVisibilityAndFocusObservable = this.changeVisibilityAndFocusSubject.asObservable();
 
   public markerLocation: MLocation = null;
   public spot: MLocSpot = null;
@@ -17,8 +30,9 @@ export class SidebarService {
   constructor() {
   }
 
-  public changeVisibility(isVisible: boolean): void {
-    this.visibilityChanged.next(isVisible);
-    console.log('change visibibility to :' + isVisible);
+  public changeVisibilityAndFocus(change: VisibilityFocusChange): void {
+    this.changeVisibilityAndFocusSubject.next(change);
+    this.previousVisibility = change.isVisible;
+    console.log('change visibibility to :' + change.isVisible);
   }
 }

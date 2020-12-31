@@ -1,14 +1,16 @@
-import {Injectable, NgZone} from '@angular/core';
-import {Subject} from 'rxjs';
-import {MLocation} from '../util/m-location';
+import {EventEmitter, Injectable, NgZone} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import {IconType, MLocation} from '../util/m-location';
 import {SidebarService} from './sidebar.service';
-import {Map, Marker} from 'leaflet';
+import {Icon, Map, marker, Marker} from 'leaflet';
 import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
+
+  // private selectedMarker: MLocation = null;
 
   public map: Map;
   public creationMarker: Marker = null;
@@ -21,6 +23,9 @@ export class MapService {
 
   private removeMarkerLocSubject = new Subject<number>();
   public removeMarkerLocObservable = this.removeMarkerLocSubject.asObservable();
+
+  private resetAllMarkerIconsSubject = new Subject<any>();
+  public resetAllMarkerIconsObservable = this.resetAllMarkerIconsSubject.asObservable();
 
   constructor(private sidebarService: SidebarService, private ngZone: NgZone, private router: Router) {
   }
@@ -37,9 +42,15 @@ export class MapService {
   }
 
   private onMarkerClick(markerLocation: MLocation) {
-    console.log(markerLocation.id);
-    this.sidebarService.changeVisibility(true);
+    console.log('clicked on marker: ' + markerLocation.id);
+    this.sidebarService.changeVisibilityAndFocus({isVisible: true, locationInFocus: markerLocation});
+
+    if (this.sidebarService.markerLocation != null) {
+      this.sidebarService.markerLocation.changeIcon(IconType.Default);
+    }
+    markerLocation.changeIcon(IconType.Edit);
     this.sidebarService.markerLocation = markerLocation;
+
     this.ngZone.run(() => {
       this.router.navigate(['locations', markerLocation.id]);
     });
@@ -53,8 +64,8 @@ export class MapService {
 
   public getCreationMarker(): Marker {
     this.creationMarker = new Marker(this.map.getCenter(), {draggable: true});
-    this.creationMarker.addTo(this.map).on('click', () => {
-    });
+    this.creationMarker.addTo(this.map).on('click', () => {});
+    this.creationMarker.setIcon(MLocation.iconNew);
     return this.creationMarker;
   }
 
@@ -63,6 +74,10 @@ export class MapService {
       this.creationMarker.removeFrom(this.map);
     }
     this.creationMarker = null;
+  }
+
+  public resetAllMarkerIcons(): void {
+    this.resetAllMarkerIconsSubject.next({});
   }
 
   public removeMarkerLocation(locationId: number): void {

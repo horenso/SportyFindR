@@ -6,6 +6,8 @@ import {Subscription} from 'rxjs';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {ActivatedRoute, Router} from '@angular/router';
 import {parseIntStrictly} from '../../util/parse-int';
+import { IconType } from 'src/app/util/m-location';
+import { Icon } from 'leaflet';
 
 @Component({
   selector: 'app-view-spots',
@@ -52,7 +54,8 @@ export class ViewSpotsComponent implements OnInit {
 
   onClose(): void {
     this.route.navigate(['..']);
-    this.sidebarService.changeVisibility(false);
+    this.sidebarService?.markerLocation.changeIcon(IconType.Default);
+    this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 
   onSelectedSpot(spot: Spot) {

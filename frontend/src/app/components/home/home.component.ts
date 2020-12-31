@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarService} from '../../services/sidebar.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
 
 @Component({
@@ -18,15 +18,15 @@ export class HomeComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private sidebarService: SidebarService,
-    private router: Router,
-    private activeRouter: ActivatedRoute) {
+    private router: Router) {
   }
 
   ngOnInit() {
     this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
+    this.sidebarService.previousVisibility = this.sidebarActive;
 
-    this.sidebarService.visibilityChanged$.subscribe(change => {
-      this.sidebarActive = change;
+    this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+      this.sidebarActive = change.isVisible;
     });
   }
 
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit {
 
   createLocationWithSpot() {
     this.router.navigate(['locations', 'new']);
-    this.sidebarService.changeVisibility(true);
+    this.sidebarService.changeVisibilityAndFocus({isVisible: true});
     this.sidebarActive = true;
   }
 }

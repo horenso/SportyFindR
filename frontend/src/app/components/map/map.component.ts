@@ -2,8 +2,8 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {control, icon, Layer, LayerGroup, Map, marker, Marker, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
-import { SidebarService } from 'src/app/services/sidebar.service';
-import {MLocation} from '../../util/m-location';
+import { SidebarService, VisibilityFocusChange } from 'src/app/services/sidebar.service';
+import {IconType, MLocation} from '../../util/m-location';
 
 @Component({
   selector: 'app-map',
@@ -74,28 +74,20 @@ export class MapComponent implements OnInit {
       this.removeMLocation(idToRemove);
     });
 
-    this.sidebarService.visibilityChanged$.subscribe(changed => {
-      setTimeout(() => {
-        this.map.invalidateSize({pan: false});
-      }, 300);
+    this.mapService.resetAllMarkerIconsObservable.subscribe(() => {
+      console.log('reset all marker icons');
+      this.locationList.forEach(loc => {
+        console.log('resetting icon for loc : ' + loc.id);
+        loc.changeIcon(IconType.Default);
+      })
+    })
+
+    this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+      this.changeVisibilityAndFocus(change);
     });
   }
 
   ngOnInit(): void {
-    const iconRetinaUrl = 'assets/marker-icon-2x.png';
-    const iconUrl = 'assets/marker-icon.png';
-    const shadowUrl = 'assets/marker-shadow.png';
-    const iconDefault = icon({
-      iconRetinaUrl,
-      iconUrl,
-      shadowUrl,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
-    });
-    Marker.prototype.options.icon = iconDefault;
   }
 
   private getLocationsAndConvertToLayerGroup() {
@@ -125,6 +117,22 @@ export class MapComponent implements OnInit {
     const found = this.locationList.find(ele => ele.id === id);
     if (found != null) {
       this.locMarkerGroup?.removeLayer(found);
+    }
+  }
+
+  private changeVisibilityAndFocus(change: VisibilityFocusChange): void {
+    if (this.sidebarService.previousVisibility === change.isVisible && change.locationInFocus !== null) {
+      this.map.setView(change.locationInFocus.getLatLng(), this.map.getZoom());
+    }
+    if (this.sidebarService.previousVisibility !== change.isVisible) {
+      setTimeout(() => {
+        console.log('resizing map')
+        this.map.invalidateSize({pan: false});
+
+        if (change.locationInFocus !== null) {
+          this.map.setView(change.locationInFocus.getLatLng(), this.map.getZoom());
+        }
+      }, 300);
     }
   }
 }
