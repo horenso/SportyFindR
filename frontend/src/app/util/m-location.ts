@@ -15,9 +15,8 @@ export class MLocation extends Marker {
     shadowUrl: 'assets/markers/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowSize: [41, 41]
+    shadowSize: [41, 41],
+    shadowAnchor: [14, 41]
   });
 
   static iconNew: Icon = icon({
@@ -26,9 +25,8 @@ export class MLocation extends Marker {
     shadowUrl: 'assets/markers/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowSize: [41, 41]
+    shadowSize: [41, 41],
+    shadowAnchor: [14, 41]
   });
 
   static iconEdit: Icon = icon({
@@ -37,9 +35,8 @@ export class MLocation extends Marker {
     shadowUrl: 'assets/markers/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowSize: [41, 41]
+    shadowSize: [41, 41],
+    shadowAnchor: [14, 41]
   });
 
   public id: number;
@@ -69,9 +66,7 @@ export class MLocation extends Marker {
   }
 
   public changeIcon(type: IconType): void {
-    console.log('in MLoc: changed icon to: ' + type.toString());
-    
-    switch(type) {
+    switch (type) {
       case IconType.Default: this.setIcon(MLocation.iconDefault); break;
       case IconType.New: this.setIcon(MLocation.iconNew); break;
       case IconType.Edit: this.setIcon(MLocation.iconEdit); break;

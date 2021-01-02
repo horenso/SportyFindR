@@ -1,0 +1,17 @@
+.buttonWrapper {
+	display: flex;
+	justify-content: space-between;
+}
+
+.sendButton {
+	margin-left: 1em;
+}
+
+.messageArea {
+	max-height: 60%;
+	overflow-y: auto;
+}
+
+.writingInput {
+	display: sticky;
+}

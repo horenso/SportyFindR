@@ -4,7 +4,7 @@
  * @returns a number or NaN if the string is not a valid number
  */
 export function parseIntStrictly(str: string): number {
-  let num: number = parseInt(str);
+  const num: number = parseInt(str, 10);
 
   // the secound check is necessary because parseInt ignores all chars after the first
   // valid number, e.g '43dd' would parse to 43

@@ -83,8 +83,10 @@ public class SpotEndpoint {
     public SpotDto update(@Valid @RequestBody SpotDto spotDto) {
         log.info("PUT /api/v1/spots body: {}", spotDto);
         try {
-            return spotMapper.spotToSpotDto(
+            SpotDto updated = spotMapper.spotToSpotDto(
                 spotService.update(spotMapper.spotDtoToSpot(spotDto)));
+            log.info("{}", updated);
+            return updated;
         } catch (ServiceException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -105,7 +107,6 @@ public class SpotEndpoint {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-
     }
 
     @ApiOperation(value = "Subscribe to the Server Sent Emitter", authorizations = {@Authorization(value = "apiKey")})

@@ -1,0 +1,31 @@
+#nameLabel {
+	grid-area: nameLabel;
+}
+
+#nameInput {
+	grid-area: nameInput;
+}
+
+#descriptionInput {
+	grid-area: descriptionInput;
+}
+
+#categoryLabel {
+	grid-area: categoryLabel;
+}
+
+#categoryInput {
+	grid-area: categoryInput;
+}
+
+.spotFrom {
+	height: 80%;
+	display: grid;
+	gap: 1em;
+	grid-template-rows: min-content max-content min-content min-content min-content;
+	grid-template-columns: 1fr 1fr;
+	grid-template-areas:
+		"nameLabel nameInput"
+		"descriptionInput descriptionInput "
+		"categoryLabel categoryInput";
+}

@@ -1,35 +1,27 @@
-<div class="messageList">
+<div class="buttonWrapper">
+  <button (click)='goBack.emit()' (click)='onGoBack()' class="btn btn-secondary">Go back</button>
+  <button (click)="editSpot(spot.id)" class="btn btn-primary">Edit this spot</button>
+  <button (click)="deleteSpot(spot.id)" class="btn btn-primary">Delete this spot</button>
+</div>
 
-  <h3>Spot name: {{spot?.name}}</h3>
+<hr>
 
-  <div class='row'>
-    <div class="col">
-      Spot description: {{spot?.description}}
-    </div>
-  </div>
+<h3>Spot: <b>{{spot?.name}}</b></h3>
+<h3>Category: <b>{{spot?.category.name}}</b></h3>
+<h3>Description: </h3><p>{{spot?.description}}</p>
 
-  <div class='row'>
-    <div class="col">
-      <button (click)='goBack.emit()' (click)='onGoBack()' class="btn btn-primary upVoteButton"
-              type="button">Go back
-      </button>
-    </div>
-    <div class="col">
-      <button (click)="deleteSpot(spot.id)" class="btn btn-primary">Delete this spot</button>
-    </div>
-  </div>
+<hr>
 
+<h3>Messages</h3>
 
-  <h3>Messages</h3>
-
+<div class="messageArea">
   <div *ngFor="let message of messageList" class="message">
     <app-message
-      (deleteMessage)='deleteOneMessage($event)'
-      [message]='message'></app-message>
+    (deleteMessage)='deleteOneMessage($event)'
+    [message]='message'></app-message>
   </div>
-
-  <form [formGroup]="messageForm">
-    <input formControlName="content" placeholder="New message">
-    <button (click)="submitDialog()" class="btn btn-primary"> Send</button>
-  </form>
 </div>
+<form [formGroup]="messageForm" class="writingInput">
+  <input formControlName="content" placeholder="Write a message">
+  <button (click)="submitDialog()" class="btn btn-primary sendButton"> Send</button>
+</form>

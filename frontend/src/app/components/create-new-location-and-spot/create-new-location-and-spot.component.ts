@@ -1,9 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Marker} from 'leaflet';
+import {Icon, Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {Router} from '@angular/router';
+import { IconType, MLocation } from 'src/app/util/m-location';
+import { SpotService } from 'src/app/services/spot.service';
 
 @Component({
   selector: 'app-create-new-location-and-spot',
@@ -17,20 +19,27 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   constructor(
     private mapService: MapService,
     private sidebarService: SidebarService,
+    private spotService: SpotService,
     private router: Router) {
   }
 
   ngOnInit(): void {
+    if (this.sidebarService.markerLocation != null) {
+      this.sidebarService.markerLocation.changeIcon(IconType.Default);
+    }
     this.marker = this.mapService.getCreationMarker();
   }
 
   saveSpot(newSpot: MLocSpot) {
-    console.log(newSpot);
-    const newMarkerLocation = newSpot.markerLocation;
-    this.mapService.addMarkerToLocations(newMarkerLocation);
-    this.mapService.destroyCreationMarker();
-    this.router.navigate(['..']);
-    this.sidebarService.changeVisibilityAndFocus({isVisible: false});
+    newSpot.markerLocation = new MLocation(null, this.marker.getLatLng().lat, this.marker.getLatLng().lng);
+    console.log(newSpot.category);
+    this.spotService.createSpot(newSpot).subscribe(result => {
+      const newMarkerLocation = newSpot.markerLocation;
+      this.mapService.addMarkerToLocations(newMarkerLocation);
+      this.mapService.destroyCreationMarker();
+      this.router.navigate(['..']);
+      this.sidebarService.changeVisibilityAndFocus({isVisible: false});
+    });
   }
 
   cancel() {

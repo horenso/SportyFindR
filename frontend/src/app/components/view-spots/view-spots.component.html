@@ -1,9 +1,12 @@
-<h2>Spots: </h2>
-
-<button (click)='onClose()'>Close</button>
-
-<div *ngFor="let spot of spots">
-  <button (click)='onSelectedSpot(spot)' class="btn btn-primary">{{spot.name}}</button>
+<div class="buttonWrapper">
+  <button (click)='onClose()' class="btn btn-secondary">Close</button>
+  <button (click)="onCreateSpot()" class="btn btn-primary">New Spot</button>
 </div>
 
-<button (click)="onCreateSpot()">New Spot</button>
+<hr>
+
+<h2>Spots</h2>
+
+<div *ngFor="let spot of spots">
+  <button (click)='onSelectedSpot(spot)' class="btn btn-outline-dark spotButton">{{spot.name}}</button>
+</div>

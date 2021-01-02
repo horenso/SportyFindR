@@ -1,16 +1,14 @@
 import {EventEmitter, Injectable, NgZone} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {IconType, MLocation} from '../util/m-location';
-import {SidebarService} from './sidebar.service';
-import {Icon, Map, marker, Marker} from 'leaflet';
-import {Router} from "@angular/router";
+import {SidebarService, SidebarState} from './sidebar.service';
+import {Icon, LatLng, Map, marker, Marker, Point} from 'leaflet';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
-
-  // private selectedMarker: MLocation = null;
 
   public map: Map;
   public creationMarker: Marker = null;
@@ -42,7 +40,6 @@ export class MapService {
   }
 
   private onMarkerClick(markerLocation: MLocation) {
-    console.log('clicked on marker: ' + markerLocation.id);
     this.sidebarService.changeVisibilityAndFocus({isVisible: true, locationInFocus: markerLocation});
 
     if (this.sidebarService.markerLocation != null) {
@@ -63,7 +60,25 @@ export class MapService {
   }
 
   public getCreationMarker(): Marker {
-    this.creationMarker = new Marker(this.map.getCenter(), {draggable: true});
+    let latLng = this.map.getCenter();
+
+    if (this.sidebarService.sidebarState === SidebarState.Closed) {
+      const point = this.map.latLngToContainerPoint(latLng);
+      const newPoint = new Point(point.x - 250, point.y);
+      latLng = this.map.containerPointToLatLng(newPoint);
+    }
+
+    // If a location is already selected, to prevent the marker from being exactly above
+    latLng.lat += 0.001;
+    latLng.lng += 0.001;
+
+    this.creationMarker = new Marker(latLng, {
+      draggable: true, 
+      autoPan: true, 
+      autoPanPadding: new Point(60, 60),
+      zIndexOffset: 1000}
+    );
+
     this.creationMarker.addTo(this.map).on('click', () => {});
     this.creationMarker.setIcon(MLocation.iconNew);
     return this.creationMarker;

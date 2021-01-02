@@ -1,5 +1,4 @@
 <h1>New Spot within existing locaton</h1>
 
 <app-spot-form (cancel)="cancel()"
-               (savedSpot)="saveSpot($event)"
-               [locationId]='locationId'></app-spot-form>
+               (confirm)="saveSpot($event)"></app-spot-form>

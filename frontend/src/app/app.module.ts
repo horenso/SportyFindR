@@ -23,6 +23,7 @@ import {MessageDatePipe} from './pipes/message-date.pipe';
 import {CreateNewSpotComponent} from './components/create-new-spot/create-new-spot.component';
 import {SpotFormComponent} from './components/spot-form/spot-form.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
+import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import {PageNotFoundComponent} from './components/page-not-found/page-not-found.
     CreateNewSpotComponent,
     SpotFormComponent,
     PageNotFoundComponent,
+    EditSpotComponent,
   ],
   imports: [
     BrowserModule,

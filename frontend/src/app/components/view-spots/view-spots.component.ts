@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {SpotService} from 'src/app/services/spot.service';
 import {SidebarService} from 'src/app/services/sidebar.service';
@@ -14,7 +14,7 @@ import { Icon } from 'leaflet';
   templateUrl: './view-spots.component.html',
   styleUrls: ['./view-spots.component.scss']
 })
-export class ViewSpotsComponent implements OnInit {
+export class ViewSpotsComponent implements OnInit, OnDestroy {
 
   locationId: number = null;
 
@@ -27,12 +27,12 @@ export class ViewSpotsComponent implements OnInit {
     private spotService: SpotService,
     private sidebarService: SidebarService,
     private route: Router,
-    private activeRoute: ActivatedRoute
+    private activedRoute: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
-    this.activeRoute.params.subscribe(params => {
+    this.activedRoute.params.subscribe(params => {
 
       this.locationId = parseIntStrictly(params.locId);
 
@@ -54,7 +54,7 @@ export class ViewSpotsComponent implements OnInit {
 
   onClose(): void {
     this.route.navigate(['..']);
-    this.sidebarService?.markerLocation.changeIcon(IconType.Default);
+    this.sidebarService.markerLocation?.changeIcon(IconType.Default);
     this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 

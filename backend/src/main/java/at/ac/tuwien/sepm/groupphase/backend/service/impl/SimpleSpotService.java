@@ -69,7 +69,7 @@ public class SimpleSpotService implements SpotService {
 
     @Override
     public Spot update(Spot spot) throws ServiceException {
-        return null; // TODO: merge
+        return this.spotRepository.save(spot);
     }
 
     @Override

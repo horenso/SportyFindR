@@ -5,6 +5,8 @@ import {MLocSpot} from '../../util/m-loc-spot';
 import {ActivatedRoute, Router} from '@angular/router';
 import {parseIntStrictly} from 'src/app/util/parse-int';
 import {LocationService} from 'src/app/services/location.service';
+import { Spot } from 'src/app/dtos/spot';
+import { SpotService } from 'src/app/services/spot.service';
 
 
 @Component({
@@ -20,13 +22,14 @@ export class CreateNewSpotComponent implements OnInit {
   constructor(
     private sidebarService: SidebarService,
     private locationService: LocationService,
+    private spotService: SpotService,
     private router: Router,
-    private activeRoute: ActivatedRoute
+    private activedRoute: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
-    this.activeRoute.params.subscribe(params => {
+    this.activedRoute.params.subscribe(params => {
 
       this.locationId = parseIntStrictly(params.locId);
 
@@ -38,7 +41,6 @@ export class CreateNewSpotComponent implements OnInit {
 
       if (this.sidebarService.markerLocation != null && this.sidebarService.markerLocation.id === this.locationId) {
         this.mLocation = this.sidebarService.markerLocation;
-        console.log('hi');
       } else {
         this.locationService.getLocationById(this.locationId).subscribe(result => {
           this.mLocation = result;
@@ -49,8 +51,14 @@ export class CreateNewSpotComponent implements OnInit {
   }
 
   saveSpot(newSpot: MLocSpot) {
-    console.log('new Spot: ' + newSpot);
-    this.router.navigate(['locations', this.locationId]);
+    console.log(newSpot);
+    console.log(this.locationId);
+    
+    newSpot.markerLocation = new MLocation(this.locationId, 0.0, 0.0);
+    this.spotService.createSpot(newSpot).subscribe(result => {
+      this.router.navigate(['../../'], {relativeTo: this.activedRoute});
+      console.log(result);
+    });
   }
 
   cancel() {

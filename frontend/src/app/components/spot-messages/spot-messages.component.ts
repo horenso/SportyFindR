@@ -7,7 +7,7 @@ import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
 import {parseIntStrictly} from '../../util/parse-int';
 import {MLocSpot} from '../../util/m-loc-spot';
-import { MapService } from 'src/app/services/map.service';
+import {MapService} from 'src/app/services/map.service';
 
 @Component({
   selector: 'app-spot-messages',
@@ -16,28 +16,27 @@ import { MapService } from 'src/app/services/map.service';
 })
 export class SpotMessagesComponent implements OnInit, OnDestroy {
 
-  spotId: number;
-  locationId: number;
-
-  spot: MLocSpot;
-
   @Output() goBack = new EventEmitter();
 
-  messageList: Message[] = [];
-  messageForm: FormGroup;
+  public spotId: number;
+  public locationId: number;
+  public spot: MLocSpot;
+  
+  public messageList: Message[] = [];
+  public messageForm: FormGroup;
 
   constructor(
     private messageService: MessageService,
     private spotService: SpotService,
     private formBuilder: FormBuilder,
     private sidebarService: SidebarService,
-    private activeRoute: ActivatedRoute,
+    private activedRoute: ActivatedRoute,
     private mapService: MapService,
     private router: Router) {
   }
 
   ngOnInit(): void {
-    this.activeRoute.params.subscribe(params => {
+    this.activedRoute.params.subscribe(params => {
       this.locationId = parseIntStrictly(params.locId);
       this.spotId = parseIntStrictly(params.spotId);
 
@@ -85,7 +84,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
     this.router.navigate(['locations', this.locationId]);
   }
 
-  public deleteOneMessage(message: Message): void {
+  deleteOneMessage(message: Message): void {
     this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
     });
@@ -93,9 +92,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
 
   deleteSpot(spotId: number) {
     this.spotService.deleteById(spotId).subscribe(result => {
-      console.log(result);
       if (result) { // if the location was deleted
-        console.log(result);
         this.mapService.removeMarkerLocation(this.locationId);
         this.router.navigate(['']);
         this.sidebarService.changeVisibilityAndFocus({isVisible: false});
@@ -103,6 +100,11 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
         this.router.navigate(['locations', this.locationId]);
       }
     });
+  }
+
+  editSpot(): void {
+    this.sidebarService.spot = this.spot;
+    this.router.navigate(['locations', this.locationId, 'spots', this.spotId, 'edit']);
   }
 
   private getMessagesAndStartEventHandling(): void {

@@ -1,8 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {control, icon, Layer, LayerGroup, Map, marker, Marker, tileLayer} from 'leaflet';
+import {control, icon, Layer, LayerGroup, Map, marker, Marker, tileLayer, Point} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
-import { SidebarService, VisibilityFocusChange } from 'src/app/services/sidebar.service';
+import { SidebarService, SidebarState, VisibilityFocusChange } from 'src/app/services/sidebar.service';
 import {IconType, MLocation} from '../../util/m-location';
 
 @Component({
@@ -74,14 +74,6 @@ export class MapComponent implements OnInit {
       this.removeMLocation(idToRemove);
     });
 
-    this.mapService.resetAllMarkerIconsObservable.subscribe(() => {
-      console.log('reset all marker icons');
-      this.locationList.forEach(loc => {
-        console.log('resetting icon for loc : ' + loc.id);
-        loc.changeIcon(IconType.Default);
-      })
-    })
-
     this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.changeVisibilityAndFocus(change);
     });
@@ -106,7 +98,7 @@ export class MapComponent implements OnInit {
     this.locMarkerGroup = new LayerGroup<MLocation>();
     this.locationList.forEach(
       (mLoc: MLocation) => {
-        this.mapService.setClickFunction(mLoc); 
+        this.mapService.setClickFunction(mLoc);
         this.locMarkerGroup.addLayer(mLoc);
       }
     );
@@ -121,18 +113,34 @@ export class MapComponent implements OnInit {
   }
 
   private changeVisibilityAndFocus(change: VisibilityFocusChange): void {
-    if (this.sidebarService.previousVisibility === change.isVisible && change.locationInFocus !== null) {
-      this.map.setView(change.locationInFocus.getLatLng(), this.map.getZoom());
-    }
-    if (this.sidebarService.previousVisibility !== change.isVisible) {
+    const state = this.sidebarService.sidebarState;
+    
+    if (this.sidebarStateEqualsChange(change.isVisible, state)) { // If the visibility stayed the same
+      if (change.locationInFocus != null) {
+        this.map.setView(change.locationInFocus.getLatLng(), this.map.getZoom());
+      }
+    } else {
+      if (change.locationInFocus != null) {
+        const latLng = change.locationInFocus.getLatLng();
+        const point = this.map.latLngToContainerPoint(latLng);
+        const newPoint = new Point(point.x + 250, point.y);
+        const newLatLng = this.map.containerPointToLatLng(newPoint);
+        this.map.setView(newLatLng, this.map.getZoom());
+      }
       setTimeout(() => {
-        console.log('resizing map')
+        console.log('Resizing Map');
         this.map.invalidateSize({pan: false});
-
-        if (change.locationInFocus !== null) {
-          this.map.setView(change.locationInFocus.getLatLng(), this.map.getZoom());
+        if (change.isVisible) {
+          this.sidebarService.sidebarState = SidebarState.Open;
+        } else {
+          this.sidebarService.sidebarState = SidebarState.Closed;
         }
       }, 300);
     }
+  }
+
+  private sidebarStateEqualsChange(isVisible: boolean, state: SidebarState): boolean {
+    console.log(state.toString());
+    return (state === SidebarState.Open && isVisible) || (state === SidebarState.Closed && !isVisible);
   }
 }
