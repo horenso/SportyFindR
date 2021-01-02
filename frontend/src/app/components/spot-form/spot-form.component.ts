@@ -55,7 +55,7 @@ export class SpotFormComponent implements OnInit, OnChanges {
   }
 
   public compareCategory(a: Category, b: Category): boolean {
-    return a.id === b.id;
+    return a?.id === b?.id;
   }
 
   onConfirm(): void {

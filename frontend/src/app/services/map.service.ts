@@ -40,6 +40,9 @@ export class MapService {
   }
 
   private onMarkerClick(markerLocation: MLocation) {
+    console.log('onMarkerClick()');
+    console.log(markerLocation);
+
     this.sidebarService.changeVisibilityAndFocus({isVisible: true, locationInFocus: markerLocation});
 
     if (this.sidebarService.markerLocation != null) {

@@ -34,7 +34,7 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     newSpot.markerLocation = new MLocation(null, this.marker.getLatLng().lat, this.marker.getLatLng().lng);
     console.log(newSpot.category);
     this.spotService.createSpot(newSpot).subscribe(result => {
-      const newMarkerLocation = newSpot.markerLocation;
+      const newMarkerLocation = result.markerLocation;
       this.mapService.addMarkerToLocations(newMarkerLocation);
       this.mapService.destroyCreationMarker();
       this.router.navigate(['..']);
