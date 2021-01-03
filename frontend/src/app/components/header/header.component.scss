@@ -1,0 +1,27 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.header {
+  font-family: Roboto, sans-serif;
+  color: #FFFFFF;
+}
+
+.create {
+  margin-right: 20px;
+}
+
+.create:hover {
+  color: #FE3F80;
+  text-decoration: none;
+}
+
+.mat-raised-button{
+  text-decoration: none;
+}
+
+.mat-toolbar {
+  position: relative;
+  top: 0;
+  z-index: 9999;
+}

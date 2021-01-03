@@ -6,11 +6,11 @@
 
 #map-wrapper {
   position: absolute;
-  top: 0;
+  top: 64px;
   left: 0;
   right: 0;
   bottom: 0;
-  margin-top: $topHeader; // spacing for the header - maybe to be removed later
+  //margin-top: $topHeader; // spacing for the header - maybe to be removed later
 }
 
 #map-wrapper.sidebar-active {
@@ -27,11 +27,15 @@
 }
 
 #create-spot {
-  z-index: 1990;
+  z-index: 2000;
   position: absolute;
-  right: 25px;
-  bottom: 125px;
-  width: 50px;
-  height: 50px;
-  background-color: burlywood;
+  bottom: 32px;
+  left: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  border: none;
+  outline: none;
+  text-decoration: none;
 }

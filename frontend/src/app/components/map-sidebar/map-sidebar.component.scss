@@ -2,7 +2,6 @@
 
 .map-sidebar {
   position: fixed;
-  z-index: 2000;
   pointer-events: none;
   top: $topHeader; // spacing for the header - maybe to be removed later
   bottom: 0;
@@ -39,6 +38,6 @@
   left: $sidebarHandleWidth;
   width: $sidebarWidth;
   height: 100%;
-  padding: 1em 1em 1em 1em;
-  background-color: cadetblue;
+  padding: 16px;
+  top: 12px;
 }

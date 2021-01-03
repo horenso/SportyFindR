@@ -1,21 +1,81 @@
-$messageColor: #d3d3d3;
+.you-message {
+  justify-content: end;
+  justify-items: end;
+}
 
-.message {
-  background-color: lightblue;
-  margin-bottom: 1em;
-  padding-left: 1em;
-  padding-right: 1em;
-  border-radius: 10px;
-  border: 1px solid #a7a7a7;
-  box-shadow: 1px 1px #888888;
-  padding-bottom: 0.5em;
+.message-row {
+  display: grid;
+  grid-template-columns: 100%;
+  margin-bottom: 20px;
+}
+
+.message-content {
+  padding: 9px 14px;
+  margin-bottom: 5px;
+  min-width: 170px;
+  max-width: 368px;
+  overflow-wrap: break-word;
+}
+
+.message-author {
+  margin-bottom: 4px;
+  justify-items: start;
+  text-align: start;
+}
+
+.you-message .message-content {
+  background: #4051B6;
+  color: #FFFFFF;
+  border: 1px solid #4051B6;
+  border-radius: 14px 14px 0 14px;
+  text-align: start;
+}
+
+.message-date {
+  color: #BEC3E1;
+  margin-top: 4px;
+  text-align: end;
+  //font-size: 13px; maybeee
+}
+
+.count {
+  font-size: 13px;
+  margin-top: 14px;
+  margin-right: 1px;
+
+}
+
+.count2 {
+  font-size: 13px;
+  margin-top: 14px;
+  margin-right: -6px;
 }
 
 .upVoteButton {
-  margin-right: 0.5em;
+  margin-right: 0.6em;
 }
 
 .downVoteButton {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
+  margin-left: 0.6em;
+}
+
+.button-enabled {
+  background: #FAFAFA;
+  color: lightskyblue;
+  border: none;
+  outline: none;
+}
+
+.button-disabled {
+  background: #FAFAFA;
+  color: lightgray;
+  border: none;
+  outline: none;
+}
+
+.button-warn {
+  background: #FAFAFA;
+  color: crimson;
+  border: none;
+  outline: none;
 }

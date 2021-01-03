@@ -17,37 +17,34 @@
 
         <div class="card-body">
           <form (ngSubmit)="loginUser()" [formGroup]="loginForm" class="form">
-
-            <div class="form-group">
-              <label for="inputUsername">Username</label>
-              <input aria-describedby="usernameHelp" class="form-control" formControlName="username" id="inputUsername"
-                     name="username"
-                     placeholder="Enter username" type="text">
-              <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
-                <small *ngIf="loginForm.controls.username.errors.required" class="form-text text-warning">Your username
-                  is
-                  required!
-                </small>
-              </div>
+            <!-- Username -->
+            <div>
+              <mat-form-field appearance="outline">
+                <mat-label>Name</mat-label>
+                <label for="inputUsername"></label>
+                <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
+                       name="username" type="text">
+                <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
+                  <mat-error *ngIf="loginForm.controls.username.errors.required">Your username is required!</mat-error>
+                </div>
+              </mat-form-field>
             </div>
 
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input class="form-control" formControlName="password" id="password" name="password"
-                     placeholder="Password"
-                     type="password">
-              <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
-                <small *ngIf="loginForm.controls.password.errors.required" class="form-text text-warning">Your password
-                  is
-                  required!
-                </small>
-                <small *ngIf="loginForm.controls.password.errors.minlength" class="form-text text-warning">Your password
-                  must be at least 8 characters long!
-                </small>
-              </div>
+            <!-- Password -->
+            <div>
+              <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <label for="password"></label>
+                <input matInput formControlName="password" id="password"
+                       name="password" type="password">
+                <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
+                  <mat-error *ngIf="loginForm.controls.password.errors.required">Your password is required!</mat-error>
+                  <mat-error *ngIf="loginForm.controls.password.errors.minlength">Your password must be at least 8 characters long!</mat-error>
+                </div>
+              </mat-form-field>
             </div>
 
-            <button (click)="loginUser()" class="btn btn-success float-right" type="button">Login</button>
+            <button mat-raised-button color="accent" (click)="loginUser()" class="float-right loginButton">Login</button>
 
           </form>
         </div>

@@ -24,6 +24,7 @@ import {CreateNewSpotComponent} from './components/create-new-spot/create-new-sp
 import {SpotFormComponent} from './components/spot-form/spot-form.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
+import {MaterialModule} from './material/material.module';
 
 @NgModule({
   declarations: [
@@ -41,10 +42,11 @@ import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
     CreateNewSpotComponent,
     SpotFormComponent,
     PageNotFoundComponent,
-    EditSpotComponent,
+    EditSpotComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -52,7 +54,7 @@ import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
     FormsModule,
     LeafletModule,
     FontAwesomeModule,
-    BrowserAnimationsModule,
+    MaterialModule
   ],
   providers: [httpInterceptorProviders, ViewSpotsComponent],
   bootstrap: [AppComponent]

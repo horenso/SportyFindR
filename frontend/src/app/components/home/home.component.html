@@ -2,7 +2,7 @@
   <div [ngClass]="sidebarActive?'sidebar-active':'sidebar-inactive'" id="map-wrapper">
     <app-map (mLocClicked)="onSelectedLoc($event)"></app-map>
     <div id="new-loc-new-spot">
-      <button (click)="createLocationWithSpot()" id="create-spot">New Spot</button>
+      <a mat-raised-button color="accent" (click)="createLocationWithSpot()" id="create-spot">New Location</a>
     </div>
   </div>
   <app-map-sidebar #rightSidebar

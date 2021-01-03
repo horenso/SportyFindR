@@ -1,31 +1,21 @@
-#nameLabel {
-	grid-area: nameLabel;
+.create-btn{
+  width: 174px;
+  align-content: center;
+  border: none;
+  outline: none;
+  text-decoration: none;
 }
 
-#nameInput {
-	grid-area: nameInput;
+.cancel-btn{
+  margin-right: 20px;
+  width: 174px;
+  align-content: center;
+  border: none;
+  outline: none;
+  text-decoration: none;
 }
 
-#descriptionInput {
-	grid-area: descriptionInput;
+.mat-form-field {
+  width: 368px;
 }
 
-#categoryLabel {
-	grid-area: categoryLabel;
-}
-
-#categoryInput {
-	grid-area: categoryInput;
-}
-
-.spotFrom {
-	height: 80%;
-	display: grid;
-	gap: 1em;
-	grid-template-rows: min-content max-content min-content min-content min-content;
-	grid-template-columns: 1fr 1fr;
-	grid-template-areas:
-		"nameLabel nameInput"
-		"descriptionInput descriptionInput "
-		"categoryLabel categoryInput";
-}

@@ -1,18 +1,37 @@
-<div class="buttonWrapper">
-  <button (click)='goBack.emit()' (click)='onGoBack()' class="btn btn-secondary">Go back</button>
-  <button (click)="editSpot(spot.id)" class="btn btn-primary">Edit this spot</button>
-  <button (click)="deleteSpot(spot.id)" class="btn btn-primary">Delete this spot</button>
+<div class="row">
+  <div class="col-auto backButton">
+    <button mat-icon-button color="primary" class="icon" (click)='goBack.emit()' (click)='onGoBack()'>
+      <mat-icon>arrow_back_ios_new</mat-icon>
+    </button>
+  </div>
+
+  <div class="col title">
+    <h2 class="heading">{{spot.name}}</h2>
+  </div>
+
+  <div class="col-auto menu">
+
+    <button mat-icon-button color="primary" class="icon" [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu" xPosition="before" yPosition="below">
+      <button mat-menu-item (click)="editSpot(spot.id)">
+        <mat-icon>edit</mat-icon>
+        <span>Edit Spot</span>
+      </button>
+      <button mat-menu-item (click)="deleteSpot(spot.id)">
+        <mat-icon>delete</mat-icon>
+        <span>Delete Spot</span>
+      </button>
+    </mat-menu>
+
+  </div>
 </div>
 
-<hr>
-
-<h3>Spot: <b>{{spot?.name}}</b></h3>
-<h3>Category: <b>{{spot?.category.name}}</b></h3>
-<h3>Description: </h3><p>{{spot?.description}}</p>
-
-<hr>
-
-<h3>Messages</h3>
+<div class="description">
+  {{spot.description}}
+</div>
 
 <div class="messageArea">
   <div *ngFor="let message of messageList" class="message">
@@ -21,7 +40,22 @@
     [message]='message'></app-message>
   </div>
 </div>
-<form [formGroup]="messageForm" class="writingInput">
-  <input formControlName="content" placeholder="Write a message">
-  <button (click)="submitDialog()" class="btn btn-primary sendButton"> Send</button>
-</form>
+
+
+<div class="row">
+  <form [formGroup]="messageForm">
+
+    <mat-form-field appearance="outline" class="messageForm">
+      <mat-label>New message</mat-label>
+      <label for="messages"></label>
+      <input matInput formControlName="content" id="messages">
+    </mat-form-field>
+    <!--
+    WIESO GEHT DAS LABEL NICHT HOCH?!
+    -->
+  </form>
+
+  <button mat-icon-button class="sendButton" color="primary" (click)="submitDialog()">
+    <mat-icon>send</mat-icon>
+  </button>
+</div>

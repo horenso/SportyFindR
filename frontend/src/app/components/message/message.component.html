@@ -1,31 +1,38 @@
 <div class="message">
-  <div class="row">
-    <div class="col">{{author}}</div>
-    <div class="col text-right">{{message.publishedAt | messageDate}}</div>
-  </div>
-  <div class="row">
-    <div class="col"><b>{{message.content}}</b></div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <button (click)='onUpVote()' [class]="reaction.type === 'THUMBS_UP' ? 'btn-primary' : 'btn-secondary'"
-              class="btn btn-sm upVoteButton"
-              type="button">
-        <fa-icon [icon]='upVoteSymbol'></fa-icon>
-      </button>
-      <ng-container *ngIf="getUpvoteCount() > 0">{{getUpvoteCount()}}</ng-container>
-      <button (click)='onDownVote()' [class]="reaction.type === 'THUMBS_DOWN' ? 'btn-primary' : 'btn-secondary'"
-              class="btn btn-sm downVoteButton"
-              type="button">
-        <fa-icon [icon]='downVoteSymbol'></fa-icon>
-      </button>
-      <ng-container *ngIf="getDownVoteCount() > 0">{{getDownVoteCount()}}</ng-container>
+  <div class="message-row you-message">
+    <div class="message-content">
+      <div class="message-author"><b>{{author}}</b></div>
+      <div class="message-text">{{message.content}}</div>
+      <div class="message-date">{{message.publishedAt | messageDate}}</div>
     </div>
-    <div class="col text-right">
-      <button (click)='onDelete()' class="btn btn-danger btn-sm"
+
+    <div class="row">
+      <ng-container *ngIf="getUpvoteCount() > 0">
+        <p class="count">{{getUpvoteCount()}}</p>
+      </ng-container>
+      <button mat-icon-button (click)='onUpVote()' [class]="reaction.type === 'THUMBS_UP' ? 'button-enabled' : 'button-disabled'"
+              class="upVoteButton"
               type="button">
-        <fa-icon [icon]='deleteSymbol'></fa-icon>
+        <mat-icon>thumb_up</mat-icon>
       </button>
+
+      <ng-container *ngIf="getDownVoteCount() > 0">
+        <p class="count2">{{getDownVoteCount()}}</p>
+      </ng-container>
+      <button mat-icon-button (click)='onDownVote()' [class]="reaction.type === 'THUMBS_DOWN' ? 'button-enabled' : 'button-disabled'"
+              class="downVoteButton"
+              type="button">
+        <mat-icon>thumb_down</mat-icon>
+      </button>
+
+      <div class="col text-right">
+        <button mat-icon-button (click)='onDelete()' class="button-warn deleteButton"
+                type="button">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
+
   </div>
+
 </div>

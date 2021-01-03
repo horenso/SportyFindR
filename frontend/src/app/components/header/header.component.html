@@ -1,19 +1,21 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-  <a class="navbar-brand ml-lg-5" href="">SportyFindR</a>
-  <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-          class="navbar-toggler ml-5"
-          data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<mat-toolbar color="primary" class="mat-elevation-z4 header">
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-      </li>
-    </ul>
-    <ul class="navbar-nav mr-5">
-      <a *ngIf="!authService.isLoggedIn()" class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
-      <a (click)="authService.logoutUser()" *ngIf="authService.isLoggedIn()" class="nav-link" routerLink="/">Logout</a>
-    </ul>
+  <span>SportyFindR</span>
+
+  <span class="spacer"></span>
+
+  <!--
+  <div id="new-loc-new-spot">
+    <a mat-button class="create" (click)="createLocationWithSpot()" id="create-spot">New Location</a>
   </div>
-</nav>
+  -->
+
+  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">
+    Login
+  </a>
+
+  <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()" (click)="authService.logoutUser()" routerLink="/">
+    Logout
+  </a>
+
+</mat-toolbar>
