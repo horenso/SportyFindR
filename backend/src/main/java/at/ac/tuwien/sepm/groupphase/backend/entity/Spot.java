@@ -25,7 +25,7 @@ public class Spot {
     @Column(length = 500)
     private String description;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 

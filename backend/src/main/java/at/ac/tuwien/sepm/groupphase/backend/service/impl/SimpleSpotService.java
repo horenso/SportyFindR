@@ -1,6 +1,4 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
@@ -8,9 +6,10 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
+import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,10 +27,12 @@ public class SimpleSpotService implements SpotService {
 
     private final SpotRepository spotRepository;
     private final LocationService locationService;
+    private final MessageService messageService;
+    private final HashtagService hashtagService;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
-    private final MessageMapper messageMapper;
-    private final ObjectMapper objectMapper;
+
+
 
     /**
      * All emitters (clients who observe so to speak) are stored in a currency save list,
@@ -39,8 +40,6 @@ public class SimpleSpotService implements SpotService {
      * regarding messages and reactions.
      */
     private final Map<Long, List<SseEmitter>> emitterMap = new ConcurrentHashMap<>();
-    private final MessageRepository messageRepository;
-    private final ReactionRepository reactionRepository;
 
     @Override
     public Spot create(Spot spot) throws ValidationException, ServiceException {
@@ -64,14 +63,15 @@ public class SimpleSpotService implements SpotService {
         if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
             throw new ValidationException("Location does not Exist");
         }
-        return spotRepository.save(spot);
+        Spot savedSpot = spotRepository.save(spot);
+        hashtagService.getHashtags(spot);
+        return savedSpot;
     }
 
     @Override
     public Spot update(Spot spot) throws ServiceException {
         return this.spotRepository.save(spot);
     }
-
     @Override
     public boolean deleteById(Long id) throws ValidationException {
         log.debug("Delete Spot with id {}", id);
@@ -80,12 +80,11 @@ public class SimpleSpotService implements SpotService {
             throw new ValidationException("Spot does not exist");
         }
 
-        List<Message> messages = messageRepository.findAllBySpot_Id(id);
-        for (Message message : messages) {
-            reactionRepository.deleteAllByMessage_Id(message.getId());
-            messageRepository.deleteById(message.getId());
+        List<Message> messages = messageService.findBySpot(id);
+        for(Message message : messages){
+            messageService.deleteById(message.getId());
         }
-
+        hashtagService.deleteSpotInHashtags(spotRepository.findById(id).get());
         spotRepository.deleteById(id);
         if (spotRepository.findLocationWithSpot(spot.get().getLocation().getId()).isEmpty()) {
             locationRepository.deleteById(spot.get().getLocation().getId());

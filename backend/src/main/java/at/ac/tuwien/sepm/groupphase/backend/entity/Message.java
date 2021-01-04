@@ -53,4 +53,11 @@ public class Message {
 
     @Transient
     private Integer downVotes;
+
+  /*  @ManyToMany( mappedBy = "messagesList")
+    private List<Hashtag> hashtagsList = new ArrayList<>();
+
+    public void addHashtag(Hashtag hashtag){
+        this.hashtagsList.add(hashtag);
+    }*/
 }
