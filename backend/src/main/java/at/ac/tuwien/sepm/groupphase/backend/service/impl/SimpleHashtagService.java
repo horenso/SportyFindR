@@ -90,7 +90,11 @@ public class SimpleHashtagService implements HashtagService {
         List<Hashtag> hashtags = hashtagRepository.findHashtagsByMessagesListContains(message);
         for (Hashtag hashtag : hashtags){
             hashtag.deleteMessage(message.getId());
-            hashtagRepository.save(hashtag);
+            if (hashtag.getMessagesList().isEmpty() && hashtag.getSpotsList().isEmpty()){
+                hashtagRepository.delete(hashtag);
+            } else {
+                hashtagRepository.save(hashtag);
+            }
         }
     }
 
@@ -99,7 +103,11 @@ public class SimpleHashtagService implements HashtagService {
         List<Hashtag> hashtags = hashtagRepository.findHashtagsBySpotsListContains(spot);
         for (Hashtag hashtag : hashtags){
             hashtag.deleteSpot(spot.getId());
-            hashtagRepository.save(hashtag);
+            if (hashtag.getMessagesList().isEmpty() && hashtag.getSpotsList().isEmpty()){
+                hashtagRepository.delete(hashtag);
+            } else {
+                hashtagRepository.save(hashtag);
+            }
         }
     }
 }
