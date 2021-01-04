@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {MLocation} from '../util/m-location';
 import {MLocSpot} from '../util/m-loc-spot';
-import {Subject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 export interface VisibilityFocusChange {
   isVisible: boolean;
@@ -15,9 +15,9 @@ export enum SidebarState { Open, Opening, Closed, Closing }
 })
 export class SidebarService {
 
-  public sidebarState: SidebarState = null;
+  private sidebarState: SidebarState = null;
 
-  private changeVisibilityAndFocusSubject = new Subject<VisibilityFocusChange>();
+  private changeVisibilityAndFocusSubject = new BehaviorSubject<VisibilityFocusChange>({isVisible: false});
 
   /**
    * The visibility of the sidebar and/or the MLocation in focus changed,
@@ -27,6 +27,20 @@ export class SidebarService {
 
   public markerLocation: MLocation = null;
   public spot: MLocSpot = null;
+
+  public setSidebarStateOpen(): void {
+    this.sidebarState = SidebarState.Open;
+    this.changeVisibilityAndFocusSubject.next({isVisible: true});
+  }
+
+  public setSidebarStateClosed(): void {
+    this.sidebarState = SidebarState.Closed;
+    this.changeVisibilityAndFocusSubject.next({isVisible: false});
+  }
+
+  public isSidebarClosed(): boolean {
+    return this.sidebarState === SidebarState.Closed;
+  }
 
   constructor() {
   }

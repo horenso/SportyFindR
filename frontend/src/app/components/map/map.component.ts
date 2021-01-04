@@ -1,9 +1,9 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {control, icon, Layer, LayerGroup, Map, marker, Marker, tileLayer, Point} from 'leaflet';
+import {control, Layer, LayerGroup, Map, tileLayer, Point} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
-import { SidebarService, SidebarState, VisibilityFocusChange } from 'src/app/services/sidebar.service';
-import {IconType, MLocation} from '../../util/m-location';
+import { SidebarService, VisibilityFocusChange } from 'src/app/services/sidebar.service';
+import {MLocation} from '../../util/m-location';
 
 @Component({
   selector: 'app-map',
@@ -113,9 +113,7 @@ export class MapComponent implements OnInit {
   }
 
   private changeVisibilityAndFocus(change: VisibilityFocusChange): void {
-    const state = this.sidebarService.sidebarState;
-    
-    if (this.sidebarStateEqualsChange(change.isVisible, state)) { // If the visibility stayed the same
+    if ((!this.sidebarService.isSidebarClosed()) === change.isVisible) { // If the visibility stayed the same
       if (change.locationInFocus != null) {
         this.map.setView(change.locationInFocus.getLatLng(), this.map.getZoom());
       }
@@ -131,16 +129,11 @@ export class MapComponent implements OnInit {
         console.log('Resizing Map');
         this.map.invalidateSize({pan: false});
         if (change.isVisible) {
-          this.sidebarService.sidebarState = SidebarState.Open;
+          this.sidebarService.setSidebarStateOpen();
         } else {
-          this.sidebarService.sidebarState = SidebarState.Closed;
+          this.sidebarService.setSidebarStateClosed();
         }
       }, 300);
     }
-  }
-
-  private sidebarStateEqualsChange(isVisible: boolean, state: SidebarState): boolean {
-    console.log(state.toString());
-    return (state === SidebarState.Open && isVisible) || (state === SidebarState.Closed && !isVisible);
   }
 }
