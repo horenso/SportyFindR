@@ -150,8 +150,7 @@ public class SpotEndpointTest implements TestData {
         );
     }
 
-    // TODO: when edit is completed, then uncomment test
-    /*
+
     @Test
     @WithMockUser(roles = "ADMIN")
     public void updateSpot() {
@@ -191,7 +190,7 @@ public class SpotEndpointTest implements TestData {
             () -> assertEquals(spot2.getLocation().getLatitude(), locationMapper.locationToLocationDto(spot3.get().getLocation()).getLatitude())
         );
     }
-*/
+
     @Test
     @WithMockUser(roles = "ADMIN")
     public void getSpotsByLocationTest() {
@@ -293,9 +292,48 @@ public class SpotEndpointTest implements TestData {
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not exist\"")
         );
     }
-
-    // TODO: add a new negative update Spot Test Case
-
+    //TODO: Update Spot negative test case
+/*
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void updateSpotWithWrongId() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        Category category2 = Category.builder()
+            .name(CAT_NAME2)
+            .build();
+        Location location = Location.builder()
+            .latitude(10.0)
+            .longitude(10.0)
+            .build();
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .location(location)
+            .category(category)
+            .build();
+        categoryRepository.save(category);
+        categoryRepository.save(category2);
+        locationRepository.save(location);
+        spotRepository.save(spot);
+        SpotDto spot2 = SpotDto.builder()
+            .id(spot.getId())
+            .name(TEST_NEWS_SUMMARY)
+            .description(TEST_NEWS_TEXT)
+            .location(locationMapper.locationToLocationDto(location))
+            .category(categoryMapper.categoryToCategoryDto(category2))
+            .build();
+        spotEndpoint.update(spot2);
+        Optional<Spot> spot3 = spotRepository.findById(spot2.getId());
+        assertAll(
+            () -> assertEquals(spot2.getName(), spot3.get().getName()),
+            () -> assertEquals(spot2.getDescription(), spot3.get().getDescription()),
+            () -> assertEquals(spot2.getCategory(), categoryMapper.categoryToCategoryDto(spot3.get().getCategory())),
+            () -> assertEquals(spot2.getLocation().getLongitude(), locationMapper.locationToLocationDto(spot3.get().getLocation()).getLongitude()),
+            () -> assertEquals(spot2.getLocation().getLatitude(), locationMapper.locationToLocationDto(spot3.get().getLocation()).getLatitude())
+        );
+    }
+*/
     @Test
     @WithMockUser(roles = "ADMIN")
     public void getSpotsByLocationTestWithWrongLocation() {

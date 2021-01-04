@@ -1,17 +1,19 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ReactionDto;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,6 +67,16 @@ public class ReactionEndpointTest implements TestData {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
     }
+/*
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void updateReaction() {
+        ReactionDto reactionDto = ReactionDto.builder()
+            .messageId(msg.getId())
+            .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
+            .build();
 
-    // ToDo: write Endpoint Test
+    }
+*/
 }
+
