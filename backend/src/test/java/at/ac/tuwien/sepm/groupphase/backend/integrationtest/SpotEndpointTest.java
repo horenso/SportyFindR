@@ -292,8 +292,6 @@ public class SpotEndpointTest implements TestData {
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not exist\"")
         );
     }
-    //TODO: Update Spot negative test case
-/*
     @Test
     @WithMockUser(roles = "ADMIN")
     public void updateSpotWithWrongId() {
@@ -317,23 +315,18 @@ public class SpotEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         SpotDto spot2 = SpotDto.builder()
-            .id(spot.getId())
+            .id(spot.getId()+1)
             .name(TEST_NEWS_SUMMARY)
             .description(TEST_NEWS_TEXT)
             .location(locationMapper.locationToLocationDto(location))
             .category(categoryMapper.categoryToCategoryDto(category2))
             .build();
-        spotEndpoint.update(spot2);
-        Optional<Spot> spot3 = spotRepository.findById(spot2.getId());
+        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.update(spot2));
         assertAll(
-            () -> assertEquals(spot2.getName(), spot3.get().getName()),
-            () -> assertEquals(spot2.getDescription(), spot3.get().getDescription()),
-            () -> assertEquals(spot2.getCategory(), categoryMapper.categoryToCategoryDto(spot3.get().getCategory())),
-            () -> assertEquals(spot2.getLocation().getLongitude(), locationMapper.locationToLocationDto(spot3.get().getLocation()).getLongitude()),
-            () -> assertEquals(spot2.getLocation().getLatitude(), locationMapper.locationToLocationDto(spot3.get().getLocation()).getLatitude())
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not Exist\"")
         );
     }
-*/
+
     @Test
     @WithMockUser(roles = "ADMIN")
     public void getSpotsByLocationTestWithWrongLocation() {

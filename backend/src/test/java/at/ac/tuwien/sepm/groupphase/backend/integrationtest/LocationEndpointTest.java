@@ -82,18 +82,14 @@ public class LocationEndpointTest implements TestData {
             () -> assertEquals(locationDto.getLongitude(), location.getLongitude())
         );
     }
-    //negative Test
-    //TODO: Fix ErrorHandling
-    /*
     @Test
     @WithMockUser(roles = "ADMIN")
     public void getAllLocationsWhenThereAreNoLocations() {
-        Throwable e = assertThrows(ResponseStatusException.class, () -> locationEndpoint.findAll());
         assertAll(
-            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"\"No locations could be found.\"\"")
+            () -> assertTrue(locationEndpoint.findAll().isEmpty())
         );
     }
-    */
+    //negative Test
     @Test
     @WithMockUser(roles = "ADMIN")
     public void getOneLocationWithWrongId() {

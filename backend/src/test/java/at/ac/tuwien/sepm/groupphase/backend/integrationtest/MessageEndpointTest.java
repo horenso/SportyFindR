@@ -140,5 +140,41 @@ public class MessageEndpointTest implements TestData {
     }
     //negative tests
     //TODO: negative create message test?
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createMessageTestT() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        Location location = Location.builder()
+            .latitude(10.0)
+            .longitude(10.0)
+            .build();
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .location(location)
+            .category(category)
+            .build();
+        categoryRepository.save(category);
+        locationRepository.save(location);
+        spotRepository.save(spot);
+        MessageDto messageDto = MessageDto.builder()
+            .spotId(spot.getId())
+            .content(MESSAGE_CONTENT)
+            .build();
+        MessageDto messageDto1 = messageEndpoint.create(messageDto);
+        messageDto.setId(messageDto1.getId());
+        messageDto.setPublishedAt(messageDto1.getPublishedAt());
+        Optional<Message> message = messageRepository.findById(messageDto.getId());
+        assertAll(
+            () -> assertNotEquals(null, message),
+            () -> assertEquals(messageDto.getId(), message.get().getId()),
+            () -> assertEquals(messageDto.getContent(), message.get().getContent()),
+            () -> assertEquals(messageDto.getSpotId(), message.get().getSpot().getId()),
+            () -> assertEquals(messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS),message.get().getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
+            () -> assertEquals(messageDto.getDownVotes(),message.get().getDownVotes()),
+            () -> assertEquals(messageDto.getUpVotes(), message.get().getUpVotes())
+        );
+    }
     //TODO: negative delete message
 }

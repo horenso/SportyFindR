@@ -134,7 +134,7 @@ public class ReactionServiceTest implements TestData {
 
         reactionService.create(rct);
         assertAll(
-            () -> assertThrows(NotFoundException.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
+            () -> assertThrows(NotFoundException2.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
         );
     }
 }
