@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
@@ -33,9 +34,9 @@ public class SimpleMessageService implements MessageService {
     private final MessageValidator validator;
 
     @Override
-    public List<Message> findBySpot(Long spotId) {
-        if (spotRepository.getOne(spotId) == null) {
-            throw new NotFoundException(String.format("Spot with id %d not found.", spotId));
+    public List<Message> findBySpot(Long spotId) throws NotFoundException2{
+        if (spotRepository.findById(spotId).isEmpty()) {
+            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
         List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
@@ -56,11 +57,11 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message getById(Long id) throws ServiceException {
+    public Message getById(Long id) throws NotFoundException2 {
         log.debug("get message with id {}", id);
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException2();
         }
         Message message = messageOptional.get();
         setReactions(message);
@@ -68,10 +69,10 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException {
+    public void deleteById(Long id) throws NotFoundException2 {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException(String.format("No message with id %d found!", id));
+            throw new NotFoundException2(String.format("No message with id %d found!", id));
         }
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);

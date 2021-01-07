@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
@@ -25,8 +26,11 @@ public class SimpleReactionService implements ReactionService {
     private final SpotSubscriptionService spotSubscriptionService;
 
     @Override
-    public Reaction create(Reaction reaction) {
+    public Reaction create(Reaction reaction) throws NotFoundException2{
         log.debug("Create new Reaction {}", reaction);
+        if(messageRepository.findById(reaction.getMessage().getId()).isEmpty()){
+            throw new NotFoundException2("Message does not Exist");
+        }
         reaction.setPublishedAt(LocalDateTime.now());
         Reaction newReaction = reactionRepository.save(reaction);
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(newReaction.getMessage().getId());
@@ -34,21 +38,21 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException {
+    public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException2 {
         log.debug("Get reactions for message with id {}", messageId);
         Optional<Message> optionalMessage = messageRepository.findById(messageId);
         if (optionalMessage.isEmpty()) {
-            throw new NotFoundException("Message with ID " + messageId + " cannot be found!");
+            throw new NotFoundException2("Message with ID " + messageId + " cannot be found!");
         } else {
             return reactionRepository.getReactionsByMessageId(messageId);
         }
     }
 
     @Override
-    public void deleteById(Long reactionId) throws NotFoundException {
+    public void deleteById(Long reactionId) throws NotFoundException2 {
         Optional<Reaction> reactionOptional = reactionRepository.findById(reactionId);
         if (reactionOptional.isEmpty()) {
-            throw new NotFoundException(String.format("Reaction with id %d not found.", reactionId));
+            throw new NotFoundException2(String.format("Reaction with id %d not found.", reactionId));
         }
         Reaction reaction = reactionOptional.get();
         reactionRepository.deleteById(reactionId);
@@ -56,9 +60,9 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public Reaction change(Reaction reaction) {
-        if (reactionRepository.getOne(reaction.getId()) == null) {
-            throw new NotFoundException(String.format("Reaction with id %d not found.", reaction.getId()));
+    public Reaction change(Reaction reaction) throws NotFoundException2{
+        if (reactionRepository.findById(reaction.getId()).isEmpty()) {
+            throw new NotFoundException2(String.format("Reaction with id %d not found.", reaction.getId()));
         }
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
         Reaction newReaction = reactionRepository.getOne(reaction.getId());

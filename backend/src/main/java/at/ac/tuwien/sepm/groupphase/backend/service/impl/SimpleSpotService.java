@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
@@ -68,8 +69,20 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot update(Spot spot) throws ServiceException {
-        return this.spotRepository.save(spot);
+    public Spot update(Spot spot) throws NotFoundException2,ValidationException {
+        if (spotRepository.findById(spot.getId()).isEmpty()){
+            throw new NotFoundException2("Spot does not Exist");
+        }
+        if (spot.getCategory().getId() == null) {
+            throw new ValidationException("Spot must have a Category");
+        }
+        if (categoryRepository.findById(spot.getCategory().getId()).isEmpty()) {
+            throw new ValidationException("Category does not Exist");
+        }
+        if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
+            throw new ValidationException("Location does not Exist");
+        }
+        return spotRepository.save(spot);
     }
 
     @Override
@@ -107,10 +120,10 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot getOneById(Long spotId) {
+    public Spot getOneById(Long spotId) throws NotFoundException2{
         Optional<Spot> spotOptional = this.spotRepository.getOneById(spotId);
         if (spotOptional.isEmpty()) {
-            throw new NotFoundException("Spot with ID " + spotId + " cannot be found!");
+            throw new NotFoundException2("Spot with ID " + spotId + " cannot be found!");
         }
         return spotOptional.get();
     }

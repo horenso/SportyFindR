@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +62,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {HibernateException.class})
     protected ResponseEntity<Object> sqlEntryFailed(RuntimeException ex, WebRequest request) {
-        LOGGER.warn("Could not save into database", ex);
-        return handleExceptionInternal(ex, "Could not save into database", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        LOGGER.warn("Database error", ex);
+        return handleExceptionInternal(ex, "Database error", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+    @ExceptionHandler(value = {EmptyResultDataAccessException.class})
+    protected ResponseEntity<Object> sqlResultEmpty(RuntimeException ex, WebRequest request) {
+        LOGGER.warn("Could not be found in database", ex);
+        return handleExceptionInternal(ex, "Could not be found in database", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }
