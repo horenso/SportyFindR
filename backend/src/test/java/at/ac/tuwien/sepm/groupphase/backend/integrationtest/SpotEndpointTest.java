@@ -61,6 +61,7 @@ public class SpotEndpointTest implements TestData {
     public void afterEach() {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     //positive tests

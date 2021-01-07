@@ -61,16 +61,52 @@ public class CategoryEndpointTest implements TestData{
             () -> assertEquals(categoryDtos.get(1).getName(), category2.getName())
         );
     }
-    //negative Tests
-    //TODO: fix exceptionHandling
-    /*
     @Test
     @WithMockUser(roles = "ADMIN")
     public void getAllCategoriesWhenThereAreNoCategories() {
-        Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.getAll());
+        List<CategoryDto> categoryDtos = categoryEndpoint.getAll();
         assertAll(
-            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"No categories could be found.\"")
+            () -> assertEquals(categoryDtos.size(), 0)
         );
     }
-   */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createCategory() {
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryDto.setId(categoryEndpoint.create(categoryDto).getId());
+        List<Category> categories = categoryRepository.findAll();
+        assertAll(
+            () -> assertEquals(categories.size(), 1),
+            () -> assertEquals(categories.get(0).getId(), categoryDto.getId()),
+            () -> assertEquals(categories.get(0).getName(), categoryDto.getName())
+        );
+    }
+    //negative Tests
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createCategoryWithId() {
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name(CAT_NAME)
+            .id(1L)
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.create(categoryDto));
+        assertAll(
+            () -> assertEquals(0, categoryRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Id must be null\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createCategoryWithEmptyName() {
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name("")
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.create(categoryDto));
+        assertAll(
+            () -> assertEquals(0, categoryRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Category must have a name\"")
+        );
+    }
 }

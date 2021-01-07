@@ -30,6 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -92,15 +93,15 @@ public class MessageEndpointTest implements TestData {
         MessageDto messageDto1 = messageEndpoint.create(messageDto);
         messageDto.setId(messageDto1.getId());
         messageDto.setPublishedAt(messageDto1.getPublishedAt());
-        Optional<Message> message = messageRepository.findById(messageDto.getId());
+        List<Message> message = messageRepository.findAll();
         assertAll(
             () -> assertNotEquals(null, message),
-            () -> assertEquals(messageDto.getId(), message.get().getId()),
-            () -> assertEquals(messageDto.getContent(), message.get().getContent()),
-            () -> assertEquals(messageDto.getSpotId(), message.get().getSpot().getId()),
-            () -> assertEquals(messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS),message.get().getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
-            () -> assertEquals(messageDto.getDownVotes(),message.get().getDownVotes()),
-            () -> assertEquals(messageDto.getUpVotes(), message.get().getUpVotes())
+            () -> assertEquals(messageDto.getId(), message.get(0).getId()),
+            () -> assertEquals(messageDto.getContent(), message.get(0).getContent()),
+            () -> assertEquals(messageDto.getSpotId(), message.get(0).getSpot().getId()),
+            () -> assertEquals(messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS),message.get(0).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
+            () -> assertEquals(messageDto.getDownVotes(),message.get(0).getDownVotes()),
+            () -> assertEquals(messageDto.getUpVotes(), message.get(0).getUpVotes())
         );
     }
     @Test
@@ -139,10 +140,9 @@ public class MessageEndpointTest implements TestData {
         );
     }
     //negative tests
-    //TODO: negative create message test?
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void createMessageTestT() {
+    public void createMessageWithWrongSpotIdTest() {
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -159,22 +159,49 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         MessageDto messageDto = MessageDto.builder()
-            .spotId(spot.getId())
+            .spotId(spot.getId()+1)
             .content(MESSAGE_CONTENT)
             .build();
-        MessageDto messageDto1 = messageEndpoint.create(messageDto);
-        messageDto.setId(messageDto1.getId());
-        messageDto.setPublishedAt(messageDto1.getPublishedAt());
-        Optional<Message> message = messageRepository.findById(messageDto.getId());
+        Throwable e = assertThrows(ResponseStatusException.class, () -> messageEndpoint.create(messageDto));
         assertAll(
-            () -> assertNotEquals(null, message),
-            () -> assertEquals(messageDto.getId(), message.get().getId()),
-            () -> assertEquals(messageDto.getContent(), message.get().getContent()),
-            () -> assertEquals(messageDto.getSpotId(), message.get().getSpot().getId()),
-            () -> assertEquals(messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS),message.get().getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
-            () -> assertEquals(messageDto.getDownVotes(),message.get().getDownVotes()),
-            () -> assertEquals(messageDto.getUpVotes(), message.get().getUpVotes())
+            () -> assertEquals(0, messageRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not Exist\"")
         );
     }
-    //TODO: negative delete message
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void deleteMessageWithWrongIdTest() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        Location location = Location.builder()
+            .latitude(10.0)
+            .longitude(10.0)
+            .build();
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .location(location)
+            .category(category)
+            .build();
+        categoryRepository.save(category);
+        locationRepository.save(location);
+        spotRepository.save(spot);
+        Message message = Message.builder()
+            .spot(spot)
+            .content(MESSAGE_CONTENT)
+            .downVotes(0)
+            .publishedAt(LocalDateTime.of(2021,01,04,18,19,20,100))
+            .build();
+        messageRepository.save(message);
+        List<Message> messages1 = messageRepository.findAll();
+        assertAll(
+            () -> assertFalse(messages1.isEmpty())
+        );
+        Long id =message.getId()+1;
+        Throwable e = assertThrows(ResponseStatusException.class, () ->  messageEndpoint.deleteById(id));
+        assertAll(
+            () -> assertEquals(1, messageRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"No message with id "+ id + " found!\"")
+        );
+    }
 }
