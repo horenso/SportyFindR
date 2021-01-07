@@ -25,7 +25,7 @@ public interface MessageService {
      * @param message to be saved
      * @return created message entry
      */
-    Message create(Message message);
+    Message create(Message message) throws NotFoundException2;
 
     Message getById(Long id) throws NotFoundException2;
 

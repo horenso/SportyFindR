@@ -38,7 +38,7 @@ public class MessageEndpoint {
         try {
             List<Message> messages = this.messageService.findBySpot(spotId);
             return messageMapper.messageListToMessageDtoList(messages);
-        }catch (NotFoundException2 e){
+        } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -51,9 +51,14 @@ public class MessageEndpoint {
     public MessageDto create(@Valid @RequestBody MessageDto messageDto) {
         log.info("POST /api/v1/messages body: {}", messageDto);
         MessageDto newMessage;
-        newMessage = messageMapper.messageToMessageDto(
-            messageService.create(messageMapper.messageDtoToMessage(messageDto)));
-        return newMessage;
+        try {
+            newMessage = messageMapper.messageToMessageDto(
+                messageService.create(messageMapper.messageDtoToMessage(messageDto)));
+            return newMessage;
+        } catch (NotFoundException2 e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured("ROLE_ADMIN")

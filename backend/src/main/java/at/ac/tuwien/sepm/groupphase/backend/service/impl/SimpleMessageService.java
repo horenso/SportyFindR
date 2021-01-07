@@ -48,8 +48,11 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message create(Message message) {
+    public Message create(Message message) throws NotFoundException2 {
         log.debug("create message in spot with id {}", message.getSpot().getId());
+        if(spotRepository.findById(message.getSpot().getId()).isEmpty()){
+            throw new NotFoundException2("Spot does not Exist");
+        }
         message.setPublishedAt(LocalDateTime.now());
         Message savedMessage = messageRepository.save(message);
         spotSubscriptionService.dispatchNewMessage(savedMessage);
