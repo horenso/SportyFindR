@@ -57,21 +57,6 @@ public class LocationEndpoint {
     }
 
     @Secured("ROLE_ADMIN")
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    @ApiOperation(value = "Create a new location", authorizations = {@Authorization(value = "apiKey")})
-    public LocationDto create(@Valid @RequestBody LocationDto locationDto) {
-        LOGGER.info("POST /api/v1/locations body: {}", locationDto);
-        try {
-            return locationMapper.locationToLocationDto(
-                locationService.create(locationMapper.locationDtoToLocation(locationDto)));
-        } catch (ValidationException e) {
-            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
-
-    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
     @ApiOperation(value = "Filter locations by distance and categories of spots",
