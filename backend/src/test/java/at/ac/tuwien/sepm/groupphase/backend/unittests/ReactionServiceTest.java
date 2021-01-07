@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.unittests;
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
@@ -84,7 +85,7 @@ public class ReactionServiceTest implements TestData {
     }
 
     @Test
-    public void reactionCreateReturnsReaction() {
+    public void reactionCreateReturnsReaction() throws NotFoundException2{
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
@@ -102,7 +103,7 @@ public class ReactionServiceTest implements TestData {
     }
 
     @Test
-    public void reactionFindReactionByMessageId() {
+    public void reactionFindReactionByMessageId() throws NotFoundException2 {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
@@ -121,7 +122,7 @@ public class ReactionServiceTest implements TestData {
     }
 
     @Test
-    public void reactionThrowExceptionByIncorrectMessageId() {
+    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2{
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface ReactionService {
      * @param reaction to be stored
      * @return created Reaction Entity
      */
-    Reaction create(Reaction reaction);
+    Reaction create(Reaction reaction) throws NotFoundException2;
 
     /**
      * Searches all Reactions belonging to a corresponding message
@@ -22,9 +23,9 @@ public interface ReactionService {
      * @return List of Reactions belonging to that message
      * @throws NotFoundException if the message does not exist in persistence
      */
-    List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException;
+    List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException2;
 
-    void deleteById(Long reactionId) throws NotFoundException;
+    void deleteById(Long reactionId) throws NotFoundException2;
 
-    Reaction change(Reaction reaction) throws NotFoundException;
+    Reaction change(Reaction reaction) throws NotFoundException2;
 }

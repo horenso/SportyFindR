@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
@@ -40,7 +41,7 @@ public class LocationEndpoint {
         log.info("Get /api/v1/locations/{}", id);
         try {
             return locationMapper.locationToLocationDto(locationService.getOneById(id));
-        } catch (NotFoundException e) {
+        } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -52,13 +53,7 @@ public class LocationEndpoint {
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> findAll() {
         LOGGER.info("GET /api/v1/locations");
-
-        try {
-            return locationMapper.entityToListDto((locationService.findAll()));
-        } catch (NotFoundException e) {
-            LOGGER.error("No locations could be found.");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
+        return locationMapper.entityToListDto((locationService.findAll()));
     }
 
     @Secured("ROLE_ADMIN")
@@ -70,7 +65,7 @@ public class LocationEndpoint {
         try {
             return locationMapper.locationToLocationDto(
                 locationService.create(locationMapper.locationDtoToLocation(locationDto)));
-        } catch (ServiceException | ValidationException e) {
+        } catch (ValidationException e) {
             LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
