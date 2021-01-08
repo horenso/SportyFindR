@@ -23,10 +23,9 @@
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
       <label for="spotCreateCategory"></label>
-      <mat-select id="spotCreateCategory" formControlName="category">
-        <mat-option *ngFor="let category of categories" [value]="category">
-          {{category.name}}
-        </mat-option>
+      <mat-select id="spotCreateCategory" formControlName="category" [compareWith]='compareCategory'>
+        <mat-option *ngFor="let category of categories" [value]="category"
+          >{{category.name}}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
