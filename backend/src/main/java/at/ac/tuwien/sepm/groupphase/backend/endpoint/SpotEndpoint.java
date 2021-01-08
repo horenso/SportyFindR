@@ -71,7 +71,7 @@ public class SpotEndpoint {
         log.info("DELETE /api/v1/spots/{}", id);
         try {
             return DeletedSpotResponseDto.builder().deletedLocation(spotService.deleteById(id)).build();
-        } catch (NotFoundException | ValidationException e) {
+        } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

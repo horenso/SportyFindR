@@ -63,24 +63,26 @@ public class SimpleHashtagService implements HashtagService {
 
     @Override
     public void getHashtags(Spot spot) {
-        String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
-        String[] words = spot.getDescription().split("\\s+");
-        List<String> hashtags = new ArrayList<>();
-        for(String word : words){
-            if (Pattern.matches(hashtagPattern, word)){
-                hashtags.add(word.substring(1));
+        if(spot.getDescription()!=null) {
+            String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
+            String[] words = spot.getDescription().split("\\s+");
+            List<String> hashtags = new ArrayList<>();
+            for (String word : words) {
+                if (Pattern.matches(hashtagPattern, word)) {
+                    hashtags.add(word.substring(1));
+                }
             }
-        }
 
-        for(String hashtag : hashtags){
-            if (hashtagRepository.findHashtagByName(hashtag).isPresent()){
-                Hashtag hashtag1 = hashtagRepository.findHashtagByName(hashtag).get();
-                hashtag1.addSpot(spot);
-                hashtagRepository.save(hashtag1);
-            } else {
-                Hashtag hashtag1 = new Hashtag(hashtag);
-                hashtag1.addSpot(spot);
-                hashtagRepository.save(hashtag1);
+            for (String hashtag : hashtags) {
+                if (hashtagRepository.findHashtagByName(hashtag).isPresent()) {
+                    Hashtag hashtag1 = hashtagRepository.findHashtagByName(hashtag).get();
+                    hashtag1.addSpot(spot);
+                    hashtagRepository.save(hashtag1);
+                } else {
+                    Hashtag hashtag1 = new Hashtag(hashtag);
+                    hashtag1.addSpot(spot);
+                    hashtagRepository.save(hashtag1);
+                }
             }
         }
     }

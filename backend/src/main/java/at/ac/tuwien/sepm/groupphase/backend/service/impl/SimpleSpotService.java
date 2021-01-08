@@ -86,16 +86,19 @@ public class SimpleSpotService implements SpotService {
         return spotRepository.save(spot);
     }
     @Override
-    public boolean deleteById(Long id) throws ValidationException {
+    public boolean deleteById(Long id) throws ValidationException, ServiceException {
         log.debug("Delete Spot with id {}", id);
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
         }
-
-        List<Message> messages = messageService.findBySpot(id);
-        for(Message message : messages){
-            messageService.deleteById(message.getId());
+        try {
+            List<Message> messages = messageService.findBySpot(id);
+            for (Message message : messages) {
+                messageService.deleteById(message.getId());
+            }
+        }catch (NotFoundException2 e){
+            throw new ServiceException(e.getMessage());
         }
         hashtagService.deleteSpotInHashtags(spotRepository.findById(id).get());
         spotRepository.deleteById(id);

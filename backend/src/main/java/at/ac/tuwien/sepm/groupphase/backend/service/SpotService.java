@@ -36,7 +36,7 @@ public interface SpotService {
      * @return true if the host location was deleted, otherwise false
      * @throws ValidationException if no spot with this id is known
      */
-    boolean deleteById(Long id) throws ValidationException;
+    boolean deleteById(Long id) throws ValidationException, ServiceException;
 
     /**
      * Get all spots within one Location. This list cannot be empty since since a location
