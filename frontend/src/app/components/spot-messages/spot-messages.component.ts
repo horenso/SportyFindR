@@ -8,6 +8,7 @@ import {SpotService} from 'src/app/services/spot.service';
 import {parseIntStrictly} from '../../util/parse-int';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {MapService} from 'src/app/services/map.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-spot-messages',
@@ -32,7 +33,8 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
     private sidebarService: SidebarService,
     private activedRoute: ActivatedRoute,
     private mapService: MapService,
-    private router: Router) {
+    private router: Router,
+    private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -76,6 +78,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
       (result: Message) => {
         this.addMessage(result);
         this.messageForm.reset();
+        this.notificationService.success(result.content);
       }
     );
   }

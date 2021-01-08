@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from 'src/app/dtos/message';
 import {Reaction, ReactionType} from 'src/app/dtos/reaction';
-import {faArrowDown, faArrowUp, faTrash, IconDefinition} from '@fortawesome/free-solid-svg-icons';
 import {ReactionService} from 'src/app/services/reaction.service';
 
 @Component({
@@ -21,10 +20,6 @@ export class MessageComponent implements OnInit {
   reaction: Reaction;
 
   alreadyReacted = false;
-
-  deleteSymbol: IconDefinition = faTrash;
-  upVoteSymbol: IconDefinition = faArrowUp;
-  downVoteSymbol: IconDefinition = faArrowDown;
 
   constructor(private reactionService: ReactionService) {
   }
