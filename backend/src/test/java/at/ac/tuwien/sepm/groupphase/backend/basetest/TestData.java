@@ -39,4 +39,17 @@ public interface TestData {
     String CAT_NAME= "Soccer";
     String CAT_NAME2= "Parkour";
     String MESSAGE_CONTENT = "Hello";
+    Double LAT = 10.0;
+    Double LONG = 10.0;
+    Double LAT2 = -110.0;
+    Double LONG2 = -110.0;
+    Double LAT4 = 10.0000001;
+    Double LONG4 = 10.0000001;
+    String EMPTY_NAME = "";
+    LocalDateTime DATE = LocalDateTime.of(2021,1,4,18,19,20,100);
+    int ZERO =0;
+    LocalDateTime DATE2 = LocalDateTime.of(2021,5,24,1,15,3,140);
+    Double LAT3= 91.57;
+    Double LONG3 = -20.3;
+    Double RADIUS = 0.001;
 }

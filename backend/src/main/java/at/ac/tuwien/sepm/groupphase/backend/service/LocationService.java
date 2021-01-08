@@ -45,5 +45,5 @@ public interface LocationService {
      * @param radius     determining the maximum distance of filtered locations from user
      * @return List of locations containing spots that match the filter criteria
      */
-    List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws NotFoundException, ServiceException;
+    List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws NotFoundException2, ServiceException;
 }

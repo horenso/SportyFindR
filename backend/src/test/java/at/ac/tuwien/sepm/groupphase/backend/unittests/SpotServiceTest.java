@@ -41,8 +41,8 @@ public class SpotServiceTest implements TestData {
             .id(ID)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
