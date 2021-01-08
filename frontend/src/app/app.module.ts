@@ -25,6 +25,7 @@ import {SpotFormComponent} from './components/spot-form/spot-form.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
 import {MaterialModule} from './material/material.module';
+import { TextWithHashtagsComponent } from './components/text-with-hashtags/text-with-hashtags.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {MaterialModule} from './material/material.module';
     CreateNewSpotComponent,
     SpotFormComponent,
     PageNotFoundComponent,
-    EditSpotComponent
+    EditSpotComponent,
+    TextWithHashtagsComponent
   ],
   imports: [
     BrowserModule,

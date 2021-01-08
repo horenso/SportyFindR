@@ -2,7 +2,7 @@
   <div class="message-row you-message">
     <div class="message-content">
       <div class="message-author"><b>{{author}}</b></div>
-      <div class="message-text">{{message.content}}</div>
+      <app-text-with-hashtags [text]='message.content'></app-text-with-hashtags>
       <div class="message-date">{{message.publishedAt | messageDate}}</div>
     </div>
 

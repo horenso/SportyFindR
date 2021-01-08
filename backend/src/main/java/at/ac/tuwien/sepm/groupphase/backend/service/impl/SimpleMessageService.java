@@ -1,14 +1,17 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.HashtagRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
@@ -18,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +34,8 @@ public class SimpleMessageService implements MessageService {
     private final MessageRepository messageRepository;
     private final ReactionRepository reactionRepository;
     private final SpotRepository spotRepository;
+    private final HashtagService hashtagService;
     private final SpotSubscriptionService spotSubscriptionService;
-    private final SpotService spotService;
     private final MessageValidator validator;
 
     @Override
@@ -41,9 +46,7 @@ public class SimpleMessageService implements MessageService {
         log.debug("Find all messages");
         List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
         // TODO: THIS IS VERY INEFFICIENT!
-        messageList.forEach(message -> {
-            setReactions(message);
-        });
+        messageList.forEach(this::setReactions);
         return messageList;
     }
 
@@ -55,6 +58,7 @@ public class SimpleMessageService implements MessageService {
         }
         message.setPublishedAt(LocalDateTime.now());
         Message savedMessage = messageRepository.save(message);
+        hashtagService.getHashtags(message);
         spotSubscriptionService.dispatchNewMessage(savedMessage);
         return savedMessage;
     }
@@ -77,6 +81,7 @@ public class SimpleMessageService implements MessageService {
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
         }
+        hashtagService.deleteMessageInHashtags(messageOptional.get());
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
@@ -138,4 +143,6 @@ public class SimpleMessageService implements MessageService {
         }
 
     }
+
+
 }
