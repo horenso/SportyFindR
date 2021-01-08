@@ -72,13 +72,12 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME)
             .build();
         LocationDto locationDto = LocationDto.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         SpotDto spotDto = SpotDto.builder()
             .name(NAME)
             .location(locationDto)
-            .category(categoryDto)
             .build();
         spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
         spotDto.setId(spotEndpoint.create(spotDto).getId());
@@ -100,14 +99,13 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME)
             .build();
         LocationDto locationDto = LocationDto.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         locationDto = locationMapper.locationToLocationDto(locationRepository.save(locationMapper.locationDtoToLocation(locationDto)));
         SpotDto spotDto = SpotDto.builder()
             .name(NAME)
             .location(locationDto)
-            .category(categoryDto)
             .build();
         spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
         spotDto.setId(spotEndpoint.create(spotDto).getId());
@@ -129,8 +127,8 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
@@ -162,8 +160,8 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME2)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
@@ -202,8 +200,8 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME2)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
@@ -238,6 +236,33 @@ public class SpotEndpointTest implements TestData {
             () -> assertEquals(spots.get(1).getLocation(), locationMapper.locationToLocationDto(spot2.getLocation()))
         );
     }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void getSpotsByIdTest() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .location(location)
+            .category(category)
+            .build();
+        categoryRepository.save(category);
+        locationRepository.save(location);
+        spotRepository.save(spot);
+        SpotDto spot2 = spotEndpoint.getOneById(spot.getId());
+        assertAll(
+            () -> assertEquals(spot2.getId(), spot.getId()),
+            () -> assertEquals(spot2.getName(), spot.getName()),
+            () -> assertEquals(spot2.getDescription(), spot.getDescription()),
+            () -> assertEquals(spot2.getCategory(), categoryMapper.categoryToCategoryDto(spot.getCategory())),
+            () -> assertEquals(spot2.getLocation(), locationMapper.locationToLocationDto(spot.getLocation()))
+        );
+    }
 
     //negative tests
     @Test
@@ -248,19 +273,81 @@ public class SpotEndpointTest implements TestData {
             .build();
         LocationDto locationDto = LocationDto.builder()
             .id(ID)
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         SpotDto spotDto = SpotDto.builder()
             .name(NAME)
             .location(locationDto)
-            .category(categoryDto)
             .build();
         spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
         Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
         assertAll(
             () -> assertEquals(0, spotRepository.findAll().size()),
             () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Location does not Exist\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createSpotWithAnInvalidLocation() {
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name(CAT_NAME)
+            .build();
+        LocationDto locationDto = LocationDto.builder()
+            .longitude(LONG)
+            .build();
+        SpotDto spotDto = SpotDto.builder()
+            .name(NAME)
+            .location(locationDto)
+            .build();
+        spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
+        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
+        assertAll(
+            () -> assertEquals(0, spotRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Latitude must not be Null\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createSpotWithId() {
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name(CAT_NAME)
+            .build();
+        LocationDto locationDto = LocationDto.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        SpotDto spotDto = SpotDto.builder()
+            .id(ID)
+            .name(NAME)
+            .location(locationDto)
+            .build();
+        spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
+        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
+        assertAll(
+            () -> assertEquals(0, spotRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Id must be null\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void createSpotWithoutACategory() {
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name(CAT_NAME)
+            .build();
+        LocationDto locationDto = LocationDto.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        SpotDto spotDto = SpotDto.builder()
+            .category(categoryDto)
+            .name(NAME)
+            .location(locationDto)
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
+        assertAll(
+            () -> assertEquals(0, spotRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Spot must have a Category\"")
         );
     }
 
@@ -271,8 +358,8 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
@@ -293,6 +380,7 @@ public class SpotEndpointTest implements TestData {
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not exist\"")
         );
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     public void updateSpotWithWrongId() {
@@ -303,8 +391,8 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME2)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
@@ -338,8 +426,8 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME2)
             .build();
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
             .name(NAME)
@@ -363,6 +451,30 @@ public class SpotEndpointTest implements TestData {
         Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.getSpotsByLocation(id));
         assertAll(
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Location with ID " + id + " cannot be found!\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void getSpotsByIdWithWrongId() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .location(location)
+            .category(category)
+            .build();
+        categoryRepository.save(category);
+        locationRepository.save(location);
+        spotRepository.save(spot);
+        Long id = spot.getId() + 1;
+        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.getOneById(id));
+        assertAll(
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot with ID " +id+" cannot be found!\"")
         );
     }
 }

@@ -47,26 +47,26 @@ public class ReactionServiceTest implements TestData {
     public void beforeEach() {
         Location loc = locationRepository.save(
             Location.builder()
-                .latitude(91.57)
-                .longitude(-20.3)
+                .latitude(LAT3)
+                .longitude(LONG3)
                 .build()
         );
 
         Category cat = categoryRepository.save(
             Category.builder()
-                .name("foo")
+                .name(CAT_NAME)
                 .build()
         );
 
         Spot spot = Spot.builder()
-            .name("bar")
-            .description("Lorem ipsum")
+            .name(SPOT_NAME)
+            .description(SPOT_DESCRIPTION)
             .location(loc)
             .category(cat)
             .build();
         this.msg = Message.builder()
-            .content("dolor")
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
+            .content(MESSAGE_CONTENT)
+            .publishedAt(DATE)
             .spot(spot)
             .build();
 
@@ -89,7 +89,7 @@ public class ReactionServiceTest implements TestData {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
+            .publishedAt(DATE2)
             .message(msg)
             .build();
 
@@ -126,7 +126,7 @@ public class ReactionServiceTest implements TestData {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
+            .publishedAt(DATE)
             .message(msg)
             .build();
 

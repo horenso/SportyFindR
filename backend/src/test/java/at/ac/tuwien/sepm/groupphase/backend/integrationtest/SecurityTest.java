@@ -85,8 +85,8 @@ public class SecurityTest implements TestData {
             .build();
         category = categoryRepository.save(category);
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         location = locationRepository.save(location);
         Spot spot = Spot.builder()

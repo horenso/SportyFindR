@@ -71,7 +71,7 @@ public class LocationEndpoint {
 
         try {
             return locationMapper.entityToListDto(locationService.filter(categoryId, latitude, longitude, radius));
-        } catch (ServiceException e) {
+        } catch (ServiceException | NotFoundException2 e) {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

@@ -69,8 +69,8 @@ public class ReactionEndpointTest implements TestData {
             .build();
         categoryRepository.save(category);
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
@@ -101,14 +101,14 @@ public class ReactionEndpointTest implements TestData {
     }
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void updateReaction() {
+    public void changeReaction() {
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
         categoryRepository.save(category);
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
@@ -151,7 +151,107 @@ public class ReactionEndpointTest implements TestData {
             () -> assertEquals(reactionDto.getMessageId(), reactions2.get(0).getMessage().getId())
         );
     }
-
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void getReactionByMessage() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        Reaction reaction = Reaction.builder()
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction);
+        Reaction reaction2 = Reaction.builder()
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction2);
+        Reaction reaction3 = Reaction.builder()
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_UP)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction3);
+        List<ReactionDto> reactions = reactionEndpoint.getReactionsByMessage(msg.getId());
+        assertAll(
+            () -> assertEquals(3, reactions.size()),
+            () -> assertEquals(reaction.getId(), reactions.get(0).getId()),
+            () -> assertEquals(reaction.getType(), reactionMapper.reactionDtoTypeToReactionType(reactions.get(0).getType())),
+            () -> assertEquals(reaction.getMessage().getId(), reactions.get(0).getMessageId()),
+            () -> assertEquals(reaction2.getId(), reactions.get(1).getId()),
+            () -> assertEquals(reaction2.getType(), reactionMapper.reactionDtoTypeToReactionType(reactions.get(1).getType())),
+            () -> assertEquals(reaction2.getMessage().getId(), reactions.get(1).getMessageId()),
+            () -> assertEquals(reaction3.getId(), reactions.get(2).getId()),
+            () -> assertEquals(reaction3.getType(), reactionMapper.reactionDtoTypeToReactionType(reactions.get(2).getType())),
+            () -> assertEquals(reaction3.getMessage().getId(), reactions.get(2).getMessageId())
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void deleteReaction() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        Reaction reaction = Reaction.builder()
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction);
+        List<Reaction> reactions1 = reactionRepository.findAll();
+        assertAll(
+            () -> assertEquals(1, reactions1.size()),
+            () -> assertEquals(reaction.getId(), reactions1.get(0).getId()),
+            () -> assertEquals(reaction.getType(), reactions1.get(0).getType()),
+            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId())
+        );
+        reactionEndpoint.deleteById(reaction.getId());
+        List<Reaction> reactions2 = reactionRepository.findAll();
+        assertAll(
+            () -> assertEquals(0, reactions2.size())
+        );
+    }
     //negative Tests
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -161,8 +261,8 @@ public class ReactionEndpointTest implements TestData {
             .build();
         categoryRepository.save(category);
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
@@ -190,14 +290,14 @@ public class ReactionEndpointTest implements TestData {
     }
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void updateReactionWithWrongId() {
+    public void changeReactionWithWrongId() {
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
         categoryRepository.save(category);
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
@@ -235,6 +335,95 @@ public class ReactionEndpointTest implements TestData {
         assertAll(
             () -> assertEquals(1, reactionRepository.findAll().size()),
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Message does not Exist\"")
+        );
+        List<Reaction> reactions2 = reactionRepository.findAll();
+        assertAll(
+            () -> assertEquals(1, reactions2.size()),
+            () -> assertEquals(reaction.getId(), reactions2.get(0).getId()),
+            () -> assertEquals(reaction.getType(), (reactions2.get(0).getType())),
+            () -> assertEquals(reaction.getMessage().getId(), reactions2.get(0).getMessage().getId())
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void getReactionByMessageWithWrongId() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        Reaction reaction = Reaction.builder()
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction);
+        Long id = msg.getId()+1;
+        Throwable e = assertThrows(ResponseStatusException.class, () -> reactionEndpoint.getReactionsByMessage(id));
+        assertAll(
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Message with ID " + id + " cannot be found!\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void deleteReactionWithWrongId() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        Reaction reaction = Reaction.builder()
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction);
+        List<Reaction> reactions1 = reactionRepository.findAll();
+        assertAll(
+            () -> assertEquals(1, reactions1.size()),
+            () -> assertEquals(reaction.getId(), reactions1.get(0).getId()),
+            () -> assertEquals(reaction.getType(), reactions1.get(0).getType()),
+            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId())
+        );
+        Long id = reaction.getId()+1;
+        Throwable e = assertThrows(ResponseStatusException.class, () -> reactionEndpoint.deleteById(id));
+        assertAll(
+            () -> assertEquals(1, reactionRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Reaction with id "+ id +" not found.\"")
         );
         List<Reaction> reactions2 = reactionRepository.findAll();
         assertAll(

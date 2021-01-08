@@ -83,13 +83,32 @@ public class CategoryEndpointTest implements TestData{
             () -> assertEquals(categories.get(0).getName(), categoryDto.getName())
         );
     }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void deleteCategory() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        List<Category> categories = categoryRepository.findAll();
+        assertAll(
+            () -> assertEquals(categories.size(), 1),
+            () -> assertEquals(categories.get(0).getId(), category.getId()),
+            () -> assertEquals(categories.get(0).getName(), category.getName())
+        );
+        categoryEndpoint.delete(category.getId());
+        List<Category> categories2 = categoryRepository.findAll();
+        assertAll(
+            () -> assertEquals(categories2.size(), 0)
+        );
+    }
     //negative Tests
     @Test
     @WithMockUser(roles = "ADMIN")
     public void createCategoryWithId() {
         CategoryDto categoryDto = CategoryDto.builder()
             .name(CAT_NAME)
-            .id(1L)
+            .id(ID)
             .build();
         Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.create(categoryDto));
         assertAll(
@@ -101,12 +120,38 @@ public class CategoryEndpointTest implements TestData{
     @WithMockUser(roles = "ADMIN")
     public void createCategoryWithEmptyName() {
         CategoryDto categoryDto = CategoryDto.builder()
-            .name("")
+            .name(EMPTY_NAME)
             .build();
         Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.create(categoryDto));
         assertAll(
             () -> assertEquals(0, categoryRepository.findAll().size()),
             () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Category must have a name\"")
+        );
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void deleteCategoryWithWrongId() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        List<Category> categories = categoryRepository.findAll();
+        assertAll(
+            () -> assertEquals(categories.size(), 1),
+            () -> assertEquals(categories.get(0).getId(), category.getId()),
+            () -> assertEquals(categories.get(0).getName(), category.getName())
+        );
+        Long id = category.getId()+1;
+        Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.delete(id));
+        assertAll(
+            () -> assertEquals(1, categoryRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"There is no category with id "+ id +"\"")
+        );
+        List<Category> categories2 = categoryRepository.findAll();
+        assertAll(
+            () -> assertEquals(categories2.size(), 1),
+            () -> assertEquals(categories2.get(0).getId(), category.getId()),
+            () -> assertEquals(categories2.get(0).getName(), category.getName())
         );
     }
 }

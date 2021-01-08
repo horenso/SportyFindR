@@ -68,7 +68,7 @@ public class SimpleMessageService implements MessageService {
         log.debug("get message with id {}", id);
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2();
+            throw new NotFoundException2("No messages found");
         }
         Message message = messageOptional.get();
         setReactions(message);
