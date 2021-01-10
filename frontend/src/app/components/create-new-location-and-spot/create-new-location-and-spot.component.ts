@@ -27,16 +27,15 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     if (this.sidebarService.markerLocation != null) {
       this.sidebarService.markerLocation.changeIcon(IconType.Default);
     }
-    this.marker = this.mapService.getCreationMarker();
+    this.marker = this.mapService.addDraggableMarker();
   }
 
   saveSpot(newSpot: MLocSpot) {
     newSpot.markerLocation = new MLocation(null, this.marker.getLatLng().lat, this.marker.getLatLng().lng);
-    console.log(newSpot.category);
-    this.spotService.createSpot(newSpot).subscribe(result => {
+    this.spotService.create(newSpot).subscribe(result => {
       const newMarkerLocation = result.markerLocation;
       this.mapService.addMarkerToLocations(newMarkerLocation);
-      this.mapService.destroyCreationMarker();
+      this.mapService.removeDraggableMarker();
       this.router.navigate(['..']);
       this.sidebarService.changeVisibilityAndFocus({isVisible: false});
     });
@@ -48,6 +47,6 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.mapService.destroyCreationMarker();
+    this.mapService.removeDraggableMarker();
   }
 }

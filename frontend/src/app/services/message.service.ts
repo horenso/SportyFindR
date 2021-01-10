@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
 import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
@@ -9,7 +9,7 @@ import {Globals} from '../global/globals';
 })
 export class MessageService {
 
-  private messageBaseUri: string = this.globals.backendUri + '/messages';
+  private messageBaseUri: string = `${this.globals.backendUri}/messages`;
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
@@ -19,8 +19,10 @@ export class MessageService {
    * @param spotId spot to get messages from
    * @returns list of messages
    */
-  getMessagesBySpot(spotId: number): Observable<Message[]> {
-    return this.httpClient.get<Message[]>(this.messageBaseUri + '?spot=' + spotId);
+  getBySpotId(spotId: number): Observable<Message[]> {
+    console.log('Get all messages from spot: ' + spotId);
+    const params = new HttpParams().set('spot', spotId.toString());
+    return this.httpClient.get<Message[]>(this.messageBaseUri, {params: params});
   }
 
   /**
@@ -28,17 +30,27 @@ export class MessageService {
    * @param message to be saved
    * @returns message entity
    */
-  saveMessage(message: Message): Observable<Message> {
+  create(message: Message): Observable<Message> {
     return this.httpClient.post<Message>(this.messageBaseUri, message);
   }
 
-  getMessageById(id: number): Observable<Message> {
+  /**
+   * Get one message by id
+   * @param id of te message
+   * @returns message entity
+   */
+  getById(id: number): Observable<Message> {
     console.log('Get message with id ' + id);
-    return this.httpClient.get<Message>(this.messageBaseUri + '/' + id);
+    return this.httpClient.get<Message>(`${this.messageBaseUri}/${id}`);
   }
 
+  /**
+   * Delete one message by id
+   * @param id of the message, that should be deleted
+   * @returns an empty object once it concludes
+   */
   deleteById(id: number): Observable<{}> {
     console.log('Delete message with id ' + id);
-    return this.httpClient.delete<Message>(this.messageBaseUri + '/' + id);
+    return this.httpClient.delete<Message>(`${this.messageBaseUri}/${id}`);
   }
 }

@@ -56,7 +56,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
         this.spot = this.sidebarService.spot;
         this.getMessagesAndStartEventHandling();
       } else {
-        this.spotService.getSpotById(this.spotId).subscribe(result => {
+        this.spotService.getById(this.spotId).subscribe(result => {
           this.spot = result;
           this.getMessagesAndStartEventHandling();
         });
@@ -74,7 +74,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
 
   submitDialog() {
     const newMessage = new Message(null, this.messageForm.value.content, null, this.spot.id);
-    this.messageService.saveMessage(newMessage).subscribe(
+    this.messageService.create(newMessage).subscribe(
       (result: Message) => {
         this.addMessage(result);
         this.messageForm.reset();
@@ -111,10 +111,9 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
   }
 
   private getMessagesAndStartEventHandling(): void {
-    this.messageService.getMessagesBySpot(this.spot.id).subscribe(result => {
+    this.messageService.getBySpotId(this.spot.id).subscribe(result => {
       this.messageList = result;
-      console.log('Loaded messages:');
-      console.log(this.messageList);
+      console.log(`Loaded ${result.length} messages.`);
     });
     this.handleEvents();
   }
@@ -126,7 +125,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
   }
 
   private handleEvents(): void {
-    this.spotService.observeEvents(this.spot.id).subscribe({
+    this.spotService.openSseConnection(this.spot.id).subscribe({
       next: (event) => {
         const newMessage: Message = JSON.parse(event.data);
         console.log(event.type, event.data);

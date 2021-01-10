@@ -42,7 +42,7 @@ export class SpotFormComponent implements OnInit, OnChanges {
       this.setValues();
     }
 
-    this.categoryService.getAllCategories().subscribe(result => {
+    this.categoryService.getAll().subscribe(result => {
       this.categories = result;
     });
   }

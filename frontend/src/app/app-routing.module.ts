@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {CreateNewLocationAndSpotComponent} from './components/create-new-location-and-spot/create-new-location-and-spot.component';
-import { CreateNewSpotComponent } from './components/create-new-spot/create-new-spot.component';
-import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
+import {CreateNewSpotComponent} from './components/create-new-spot/create-new-spot.component';
+import {EditSpotComponent} from './components/edit-spot/edit-spot.component';
 import {HomeComponent} from './components/home/home.component';
 import {LoginComponent} from './components/login/login.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';

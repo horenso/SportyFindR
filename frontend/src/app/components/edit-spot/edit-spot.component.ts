@@ -34,7 +34,7 @@ export class EditSpotComponent implements OnInit {
           return;
         }
           console.log('Correct: ' + spotId);
-          this.spotService.getSpotById(spotId).subscribe(result => {
+          this.spotService.getById(spotId).subscribe(result => {
             this.spot = result;
           });
       });
@@ -45,9 +45,9 @@ export class EditSpotComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
-  updateSpot(spot: MLocSpot): void {
+  update(spot: MLocSpot): void {
     console.log('update spot: ' + JSON.stringify(spot));
-    this.spotService.updateSpot(spot).subscribe(result => {
+    this.spotService.update(spot).subscribe(result => {
       console.log('Spot updated!');
       this.sidebarService.spot = result;
       this.router.navigate(['../'], { relativeTo: this.activatedRoute });

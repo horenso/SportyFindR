@@ -40,7 +40,7 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
         console.log('it is not a number!');
       } else {
         console.log('Correct: ' + this.locationId);
-        this.spotService.getSpotsByLocation(this.locationId).subscribe(
+        this.spotService.getByLocationId(this.locationId).subscribe(
           result => {
             this.spots = result;
           },

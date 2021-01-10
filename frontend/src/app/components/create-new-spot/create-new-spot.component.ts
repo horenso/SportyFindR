@@ -42,7 +42,7 @@ export class CreateNewSpotComponent implements OnInit {
       if (this.sidebarService.markerLocation != null && this.sidebarService.markerLocation.id === this.locationId) {
         this.mLocation = this.sidebarService.markerLocation;
       } else {
-        this.locationService.getLocationById(this.locationId).subscribe(result => {
+        this.locationService.getById(this.locationId).subscribe(result => {
           this.mLocation = result;
           this.sidebarService.markerLocation = result;
         });
@@ -55,7 +55,7 @@ export class CreateNewSpotComponent implements OnInit {
     console.log(this.locationId);
     
     newSpot.markerLocation = new MLocation(this.locationId, 0.0, 0.0);
-    this.spotService.createSpot(newSpot).subscribe(result => {
+    this.spotService.create(newSpot).subscribe(result => {
       this.router.navigate(['../../'], {relativeTo: this.activedRoute});
       console.log(result);
     });
