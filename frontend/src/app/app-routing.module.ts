@@ -8,6 +8,7 @@ import {LoginComponent} from './components/login/login.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {SpotMessagesComponent} from './components/spot-messages/spot-messages.component';
 import {ViewSpotsComponent} from './components/view-spots/view-spots.component';
+import {HashtagComponent} from './components/hashtag/hashtag.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent, children: [
@@ -18,6 +19,7 @@ const routes: Routes = [
     {path: 'locations/:locId/spots/:spotId', component: SpotMessagesComponent},
   ]},
   {path: 'login', component: LoginComponent},
+  {path: 'hashtag', component: HashtagComponent},
   {path: '**', component: PageNotFoundComponent},
 ];
 

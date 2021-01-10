@@ -26,6 +26,7 @@ import {PageNotFoundComponent} from './components/page-not-found/page-not-found.
 import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
 import {MaterialModule} from './material/material.module';
 import { TextWithHashtagsComponent } from './components/text-with-hashtags/text-with-hashtags.component';
+import { HashtagComponent } from './components/hashtag/hashtag.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { TextWithHashtagsComponent } from './components/text-with-hashtags/text-
     SpotFormComponent,
     PageNotFoundComponent,
     EditSpotComponent,
-    TextWithHashtagsComponent
+    TextWithHashtagsComponent,
+    HashtagComponent
   ],
   imports: [
     BrowserModule,

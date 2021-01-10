@@ -3,6 +3,7 @@ import {AuthService} from '../../services/auth.service';
 import {SidebarService, SidebarState} from '../../services/sidebar.service';
 import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
+import {HashtagService} from '../../services/hashtag.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,8 @@ export class HomeComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private sidebarService: SidebarService,
-    private router: Router) {
+    private router: Router,
+    private hashtagService: HashtagService) {
   }
 
   ngOnInit() {
@@ -32,6 +34,8 @@ export class HomeComponent implements OnInit {
     this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.sidebarActive = change.isVisible;
     });
+
+
   }
 
   onSidebarActive(sidebarActive: boolean) {
