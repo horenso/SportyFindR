@@ -1,0 +1,25 @@
+<div>
+  Hashtag: #{{hashtag.name}}
+  <div>
+    <button (click)="showSpots()">Show spots</button>
+  </div>
+  <div>
+    <button (click)="showMessages()">Show messages</button>
+  </div>
+
+  <div *ngIf="spotsFlag"> Spots of this hashtag:
+    <ul>
+      <li *ngFor="let spot of hashtag.spotsList">{{ spot.name }}</li>
+    </ul>
+  </div>
+
+  <div *ngIf="messagesFlag"> Messages of this hashtag:
+    <ul>
+      <li *ngFor="let message of hashtag.messagesList">{{ message.content }}</li>
+    </ul>
+  </div>
+  <div *ngIf="messagesFlag || spotsFlag">
+    <button (click)="hideBoth()">Hide</button>
+  </div>
+
+</div>
