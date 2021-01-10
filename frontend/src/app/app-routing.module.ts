@@ -19,7 +19,7 @@ const routes: Routes = [
     {path: 'locations/:locId/spots/:spotId', component: SpotMessagesComponent},
   ]},
   {path: 'login', component: LoginComponent},
-  {path: 'hashtag', component: HashtagComponent},
+  {path: 'hashtags/:hashtagName', component: HashtagComponent},
   {path: '**', component: PageNotFoundComponent},
 ];
 
