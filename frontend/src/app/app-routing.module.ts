@@ -6,16 +6,16 @@ import {EditSpotComponent} from './components/edit-spot/edit-spot.component';
 import {HomeComponent} from './components/home/home.component';
 import {LoginComponent} from './components/login/login.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
-import {SpotMessagesComponent} from './components/spot-messages/spot-messages.component';
-import {ViewSpotsComponent} from './components/view-spots/view-spots.component';
+import {SpotViewComponent} from './components/spot-view/spot-view.component';
+import {LocationViewComponent} from './components/location-view/location-view.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent, children: [
     {path: 'locations/new', component: CreateNewLocationAndSpotComponent},
-    {path: 'locations/:locId', component: ViewSpotsComponent},
+    {path: 'locations/:locId', component: LocationViewComponent},
     {path: 'locations/:locId/spots/new', component: CreateNewSpotComponent},
     {path: 'locations/:locId/spots/:spotId/edit', component: EditSpotComponent},
-    {path: 'locations/:locId/spots/:spotId', component: SpotMessagesComponent},
+    {path: 'locations/:locId/spots/:spotId', component: SpotViewComponent},
   ]},
   {path: 'login', component: LoginComponent},
   {path: '**', component: PageNotFoundComponent},

@@ -100,9 +100,4 @@ export class MessageComponent implements OnInit {
       this.reactionService.change(this.reaction).subscribe(result => this.reaction.id = result.id);
     }
   }
-
-  private create(reactionType: ReactionType): void {
-    this.reaction.type = reactionType;
-    this.reactionService.create(this.reaction).subscribe(result => this.reaction.id = result.id);
-  }
 }

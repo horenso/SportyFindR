@@ -19,8 +19,10 @@ export class MapService {
   private removeMarkerLocSubject = new Subject<number>();
   public removeMarkerLocObservable = this.removeMarkerLocSubject.asObservable();
 
-  constructor(private sidebarService: SidebarService, private ngZone: NgZone, private router: Router) {
-  }
+  constructor(
+    private sidebarService: SidebarService,
+    private ngZone: NgZone,
+    private router: Router) {}
 
   public addMarkerToLocations(markerLocation: MLocation) {
     this.setClickFunction(markerLocation);
@@ -90,8 +92,6 @@ export class MapService {
     markerLocation.changeIcon(IconType.Edit);
     this.sidebarService.markerLocation = markerLocation;
 
-    this.ngZone.run(() => {
-      this.router.navigate(['locations', markerLocation.id]);
-    });
+    this.ngZone.run(() => this.router.navigate(['locations', markerLocation.id]));
   }
 }

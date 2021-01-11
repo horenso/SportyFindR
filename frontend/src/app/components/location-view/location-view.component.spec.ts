@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {ViewSpotsComponent} from './view-spots.component';
+import {ViewSpotsComponent} from './location-view.component';
 
 describe('ViewSpotsComponent', () => {
   let component: ViewSpotsComponent;
