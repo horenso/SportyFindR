@@ -1,5 +1,18 @@
 <div>
-  Hashtag: #{{hashtag.name}}
+  <div class="row">
+    <div class="col-auto backButton">
+      <button mat-icon-button color="primary" class="icon" (click)='onClose()'>
+        <mat-icon>arrow_back_ios_new</mat-icon>
+      </button>
+    </div>
+
+    <div class="col title">
+      <h2 class="heading">Hashtag #{{hashtag.name}}</h2>
+    </div>
+
+    <div class="col-auto spacer">
+    </div>
+  </div>
   <div>
     <button (click)="showSpots()">Show spots</button>
   </div>
@@ -8,9 +21,12 @@
   </div>
 
   <div *ngIf="spotsFlag"> Spots of this hashtag:
-    <ul>
-      <li *ngFor="let spot of hashtag.spotsList">{{ spot.name }}</li>
-    </ul>
+    <div *ngFor="let spot of hashtag.spotsList">
+      <button mat-flat-button color="primary" (click)='goToSpot(spot)'>
+        <mat-icon class="spot-icon">sports_basketball</mat-icon>
+        {{spot.name}}
+      </button>
+    </div>
   </div>
 
   <div *ngIf="messagesFlag"> Messages of this hashtag:

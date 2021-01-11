@@ -7,6 +7,7 @@ import {Spot} from '../../dtos/spot';
 import {Message} from '../../dtos/message';
 import {Hashtag} from '../../dtos/hashtag';
 import {parseIntStrictly} from '../../util/parse-int';
+import {IconType} from '../../util/m-location';
 
 @Component({
   selector: 'app-hashtag',
@@ -51,5 +52,16 @@ export class HashtagComponent implements OnInit {
   hideBoth(): void {
     this.spotsFlag = false;
     this.messagesFlag = false;
+  }
+
+
+  goToSpot(spot: Spot) {
+    this.router.navigate(['locations', spot.location.id, 'spots', spot.id]);
+  }
+
+  onClose(): void {
+    this.router.navigate(['..']);
+    // this.sidebarService.markerLocation?.changeIcon(IconType.Default);
+    // this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 }

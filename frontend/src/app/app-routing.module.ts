@@ -16,10 +16,10 @@ const routes: Routes = [
     {path: 'locations/:locId', component: ViewSpotsComponent},
     {path: 'locations/:locId/spots/new', component: CreateNewSpotComponent},
     {path: 'locations/:locId/spots/:spotId/edit', component: EditSpotComponent},
+      {path: 'hashtags/:hashtagName', component: HashtagComponent},
     {path: 'locations/:locId/spots/:spotId', component: SpotMessagesComponent},
   ]},
   {path: 'login', component: LoginComponent},
-  {path: 'hashtags/:hashtagName', component: HashtagComponent},
   {path: '**', component: PageNotFoundComponent},
 ];
 
