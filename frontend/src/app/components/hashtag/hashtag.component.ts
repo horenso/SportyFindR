@@ -8,6 +8,7 @@ import {Message} from '../../dtos/message';
 import {Hashtag} from '../../dtos/hashtag';
 import {parseIntStrictly} from '../../util/parse-int';
 import {IconType} from '../../util/m-location';
+import {MessageService} from '../../services/message.service';
 
 @Component({
   selector: 'app-hashtag',
@@ -20,13 +21,15 @@ export class HashtagComponent implements OnInit {
   hashtagName: string;
   spotsFlag: boolean = false;
   messagesFlag: boolean = false;
+  public messageList: Message[] = [];
 
   constructor(
     public authService: AuthService,
     private router: Router,
     private hashtagService: HashtagService,
     private activedRoute: ActivatedRoute,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService,
+    private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -37,6 +40,7 @@ export class HashtagComponent implements OnInit {
     this.hashtagService.getHashtagByName(this.hashtagName).subscribe(result => {
       console.log(result);
       this.hashtag = result;
+      this.messageList = result.messagesList;
     });
     }
 
@@ -64,5 +68,11 @@ export class HashtagComponent implements OnInit {
     this.router.navigate(['..']);
     this.sidebarService.markerLocation?.changeIcon(IconType.Default);
     this.sidebarService.changeVisibilityAndFocus({isVisible: false});
+  }
+
+  deleteOneMessage(message: Message): void {
+    this.messageService.deleteById(message.id).subscribe(result => {
+    this.messageList = this.messageList.filter(m => message.id !== m.id);
+    });
   }
 }

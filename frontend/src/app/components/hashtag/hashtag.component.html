@@ -13,11 +13,10 @@
     <div class="col-auto spacer">
     </div>
   </div>
+
   <div>
-    <button (click)="showSpots()">Show spots</button>
-  </div>
-  <div>
-    <button (click)="showMessages()">Show messages</button>
+    <a mat-raised-button class="spots-btn" (click)="spotsFlag == true ? hideBoth() : showSpots()">Spots</a>
+    <a mat-raised-button class="messages-btn" (click)="messagesFlag == true ? hideBoth() : showMessages()">Messages</a>
   </div>
 
   <div *ngIf="spotsFlag"> Spots of this hashtag:
@@ -30,12 +29,11 @@
   </div>
 
   <div *ngIf="messagesFlag"> Messages of this hashtag:
-    <ul>
-      <li *ngFor="let message of hashtag.messagesList">{{ message.content }}</li>
-    </ul>
-  </div>
-  <div *ngIf="messagesFlag || spotsFlag">
-    <button (click)="hideBoth()">Hide</button>
+    <div *ngFor="let message of messageList" class="message">
+      <app-message
+        (deleteMessage)='deleteOneMessage($event)'
+        [message]='message'></app-message>
+    </div>
   </div>
 
 </div>
