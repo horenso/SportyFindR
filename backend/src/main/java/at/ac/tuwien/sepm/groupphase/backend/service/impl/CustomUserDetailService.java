@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -22,10 +23,18 @@ public class CustomUserDetailService implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CustomUserDetailService(UserRepository userRepository) {
+    public CustomUserDetailService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public ApplicationUser createApplicationUser(ApplicationUser user) {
+        ApplicationUser apUser = new ApplicationUser(null, user.getName(), user.getEmail(), this.passwordEncoder.encode(user.getPassword()), user.getEnabled(), user.getRoles());
+        return this.userRepository.save(apUser);
     }
 
     @Override
@@ -53,4 +62,5 @@ public class CustomUserDetailService implements UserService {
         if (applicationUser != null) return applicationUser;
         throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
     }
+
 }
