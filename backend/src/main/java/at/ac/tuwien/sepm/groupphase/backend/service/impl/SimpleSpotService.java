@@ -70,6 +70,8 @@ public class SimpleSpotService implements SpotService {
 
     @Override
     public Spot update(Spot spot) throws ServiceException {
+        hashtagService.deleteSpotInHashtags(spot);
+        hashtagService.getHashtags(spot);
         return this.spotRepository.save(spot);
     }
     @Override
