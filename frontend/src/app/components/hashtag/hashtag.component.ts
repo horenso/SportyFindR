@@ -25,7 +25,8 @@ export class HashtagComponent implements OnInit {
     public authService: AuthService,
     private router: Router,
     private hashtagService: HashtagService,
-    private activedRoute: ActivatedRoute) {
+    private activedRoute: ActivatedRoute,
+    private sidebarService: SidebarService) {
   }
 
   ngOnInit(): void {
@@ -61,7 +62,7 @@ export class HashtagComponent implements OnInit {
 
   onClose(): void {
     this.router.navigate(['..']);
-    // this.sidebarService.markerLocation?.changeIcon(IconType.Default);
-    // this.sidebarService.changeVisibilityAndFocus({isVisible: false});
+    this.sidebarService.markerLocation?.changeIcon(IconType.Default);
+    this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 }
