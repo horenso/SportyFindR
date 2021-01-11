@@ -1,17 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import { Subscriber } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
 import {MLocSpot} from 'src/app/util/m-loc-spot';
 import {parsePositiveInteger} from 'src/app/util/parse-int';
+import {SubSink} from 'subsink';
 
 @Component({
   selector: 'app-edit-spot',
   templateUrl: './edit-spot.component.html',
   styleUrls: ['./edit-spot.component.scss']
 })
-export class EditSpotComponent implements OnInit {
+export class EditSpotComponent implements OnInit, OnDestroy {
+
+  private subs = new SubSink();
 
   spot: MLocSpot = null;
 
@@ -29,22 +33,26 @@ export class EditSpotComponent implements OnInit {
       this.spot = this.sidebarService.spot;
     } else {
       let spotId: number;
-      this.activedRoute.params.subscribe(params => {
+      this.subs.add(this.activedRoute.params.subscribe(params => {
         spotId = parsePositiveInteger(params.spotId);
         if (isNaN(spotId)) {
           this.notificationService.error(NotificationService.spotIdNotInt);
           return;
         }
 
-        this.spotService.getById(spotId).subscribe(
+        this.subs.add(this.spotService.getById(spotId).subscribe(
           result => {
             this.spot = result;
           }, error => {
             this.notificationService.error(NotificationService.errorLoadingSpot);
           }
-        );
-      });
+        ));
+      }));
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   onCancel(): void {
@@ -52,7 +60,7 @@ export class EditSpotComponent implements OnInit {
   }
 
   update(spot: MLocSpot): void {
-    this.spotService.update(spot).subscribe(
+    this.subs.add(this.spotService.update(spot).subscribe(
       result => {
         this.notificationService.success(`Spot ${result.name} updated!`);
         this.sidebarService.spot = result;
@@ -60,6 +68,6 @@ export class EditSpotComponent implements OnInit {
       }, error => {
         this.notificationService.error(NotificationService.errorLoadingSpot);
       }
-    );
+    ));
   }
 }

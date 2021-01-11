@@ -1,15 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription;
 
   selectedLocationId: number = null;
 
@@ -29,9 +32,15 @@ export class HomeComponent implements OnInit {
       this.sidebarService.setSidebarStateClosed();
     }
 
-    this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+    this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.sidebarActive = change.isVisible;
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onSidebarActive(sidebarActive: boolean) {
