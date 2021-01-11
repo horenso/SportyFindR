@@ -22,7 +22,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('hi');
     this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
     if (this.sidebarActive) {
       this.sidebarService.setSidebarStateOpen();

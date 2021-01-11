@@ -21,7 +21,8 @@ export class EditSpotComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private spotService: SpotService,
-    private notificationService: NotificationService) {}
+    private notificationService: NotificationService) {
+  }
 
   ngOnInit(): void {
     if (this.sidebarService.spot != null) {

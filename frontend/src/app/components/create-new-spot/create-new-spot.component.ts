@@ -25,8 +25,7 @@ export class CreateNewSpotComponent implements OnInit {
     private spotService: SpotService,
     private router: Router,
     private activedRoute: ActivatedRoute,
-    private notificationService: NotificationService
-  ) {
+    private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {

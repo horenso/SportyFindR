@@ -24,7 +24,8 @@ export class SpotFormComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     private categoryService: CategoryService,
-    private notificationService: NotificationService) {}
+    private notificationService: NotificationService) {
+  }
 
   ngOnChanges(): void {
     if (this.spotForm != null && this.spot != null) {

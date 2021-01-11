@@ -16,7 +16,9 @@ export class SpotService {
   // Current EventSource of a spot subscribtion, there can at most be one subscribtion
   private eventSource: EventSource = null;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   /**

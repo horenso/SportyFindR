@@ -22,7 +22,8 @@ export class MapService {
   constructor(
     private sidebarService: SidebarService,
     private ngZone: NgZone,
-    private router: Router) {}
+    private router: Router) {
+  }
 
   public addMarkerToLocations(markerLocation: MLocation) {
     this.setClickFunction(markerLocation);

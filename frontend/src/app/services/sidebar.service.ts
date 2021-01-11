@@ -15,6 +15,9 @@ export enum SidebarState { Open, Opening, Closed, Closing }
 })
 export class SidebarService {
 
+  constructor() {
+  }
+
   private sidebarState: SidebarState = null;
 
   private changeVisibilityAndFocusSubject = new BehaviorSubject<VisibilityFocusChange>({isVisible: false});
@@ -40,9 +43,6 @@ export class SidebarService {
 
   public isSidebarClosed(): boolean {
     return this.sidebarState === SidebarState.Closed;
-  }
-
-  constructor() {
   }
 
   public changeVisibilityAndFocus(change: VisibilityFocusChange): void {

@@ -11,7 +11,9 @@ export class MessageService {
 
   private messageBaseUri: string = `${this.globals.backendUri}/messages`;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   /**

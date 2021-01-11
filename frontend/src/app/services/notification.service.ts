@@ -21,7 +21,8 @@ export class NotificationService {
     private toastr: ToastrService,
     private router: Router,
     private sidebarService: SidebarService,
-    private ngZone: NgZone) {}
+    private ngZone: NgZone) {
+  }
 
   success(message: string) {
     console.log('Success: ' + message);

@@ -11,7 +11,9 @@ export class ReactionService {
 
   private reactionBaseUri: string = `${this.globals.backendUri}/reactions`;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   /**

@@ -11,7 +11,9 @@ export class CategoryService {
 
   private categoryBaseUri: string = `${this.globals.backendUri}/categories`;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   /**

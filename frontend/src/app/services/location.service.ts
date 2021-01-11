@@ -13,7 +13,9 @@ export class LocationService {
 
   private locationBaseUri: string = `${this.globals.backendUri}/locations`;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   private static translateToMarkerLocation(location: Location): MLocation {
