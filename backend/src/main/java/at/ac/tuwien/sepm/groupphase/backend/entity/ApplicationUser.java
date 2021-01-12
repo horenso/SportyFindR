@@ -24,14 +24,13 @@ public class ApplicationUser {
     private String name;
 
     @Column(nullable = false, unique = true)
-    @Length(min = 3, max = 30)
+    @Length(min = 6, max = 30)
     private String email;
 
     @Column(nullable = false)
     @Length(min = 7)
     private String password;
 
-    @Column(nullable = false)
     private Boolean enabled = false;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

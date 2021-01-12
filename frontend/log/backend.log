@@ -28,15 +28,15 @@
 2020-12-29 20:08:38.617  INFO 28442 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2020-12-29 20:08:38.617  INFO 28442 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2020-12-29 20:08:38.621  INFO 28442 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
-2020-12-29 20:08:38.848  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated user admin@email.com
+2020-12-29 20:08:38.848  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
 2020-12-29 20:08:39.103  INFO 28442 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:09:05.788  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated user admin@email.com
+2020-12-29 20:09:05.788  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
 2020-12-29 20:09:05.826  INFO 28442 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:09:08.278  INFO 28442 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:09:47.364  INFO 28442 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:09:51.440  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:10:05.841  INFO 28442 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 20:10:13.600  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated user admin@email.com
+2020-12-29 20:10:13.600  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
 2020-12-29 20:10:13.624  INFO 28442 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:10:33.235  INFO 28442 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:10:33.833  INFO 28442 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
@@ -95,7 +95,7 @@
 2020-12-29 20:31:18.412  INFO 29967 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
 2020-12-29 20:31:18.486  INFO 29967 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:31:29.544  INFO 29967 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 20:31:38.829  INFO 29967 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated user admin@email.com
+2020-12-29 20:31:38.829  INFO 29967 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
 2020-12-29 20:31:38.871  INFO 29967 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
 2020-12-29 20:32:10.100  INFO 29967 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
 2020-12-29 20:38:40.598  INFO 29967 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
