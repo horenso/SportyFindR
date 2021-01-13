@@ -67,7 +67,7 @@ public class CategoryEndpoint {
     }
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/all")
-    @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Get all categories")
     public List<CategoryDto> getAll() {
         LOGGER.info("GET /api/v1/categories/all");
         return categoryMapper.entityToListDto((categoryService.findAll()));

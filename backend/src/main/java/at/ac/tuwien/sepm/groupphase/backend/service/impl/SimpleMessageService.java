@@ -4,10 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
@@ -78,12 +75,13 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException2 {
+    public void deleteById(Long id) throws NotFoundException2, WrongUserException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
         }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            throw new NotFoundException2("You can only delete your own messages");
+            Object o =(SecurityContextHolder.getContext().getAuthentication());
+            throw new WrongUserException("You can only delete your own messages");
         }
         hashtagService.deleteMessageInHashtags(messageOptional.get());
         reactionRepository.deleteAllByMessage_Id(id);

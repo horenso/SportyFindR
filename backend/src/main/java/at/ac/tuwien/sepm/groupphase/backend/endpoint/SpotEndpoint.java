@@ -4,10 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.DeletedSpotResponseDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import io.swagger.annotations.ApiOperation;
@@ -60,8 +57,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    //TODO:fix role
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
@@ -72,10 +68,12 @@ public class SpotEndpoint {
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (WrongUserException e) {
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    //TODO:fix role
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
     @ApiOperation(value = "Update an spot", authorizations = {@Authorization(value = "apiKey")})
@@ -86,7 +84,7 @@ public class SpotEndpoint {
                 spotService.update(spotMapper.spotDtoToSpot(spotDto)));
             log.info("{}", updated);
             return updated;
-        } catch (ValidationException e) {
+        } catch (WrongUserException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }catch (NotFoundException2 e){

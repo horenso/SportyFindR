@@ -58,7 +58,7 @@ public class ReactionEndpoint {
         }
     }
 //TODO:fix role
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
@@ -72,7 +72,7 @@ public class ReactionEndpoint {
         }
     }
     //TODO:fix role
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete one reaction by id", authorizations = {@Authorization(value = "apiKey")})

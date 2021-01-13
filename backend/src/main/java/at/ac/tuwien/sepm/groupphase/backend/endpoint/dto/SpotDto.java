@@ -35,5 +35,6 @@ public class SpotDto {
     @Valid
     private CategoryDto category;
 
+    private UserDto owner;
 }
 
