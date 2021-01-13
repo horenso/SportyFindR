@@ -22,6 +22,7 @@ public class DefaultLoginGenerator {
 
     // Parameters
     private static final String ADMIN_ROLE_NAME = "ADMIN";
+    private static final String USER_ROLE_NAME = "USER";
     private static final String ADMIN_USER_NAME = "defaultAdmin";
     private static final String ADMIN_EMAIL = "admin@sportyfindr.at";
     private static final String ADMIN_PASSWORD = "sp0rtiF1ndM3";
@@ -37,8 +38,14 @@ public class DefaultLoginGenerator {
     @PostConstruct
     private void generateAdminLogin() throws ValidationException, NotFoundException2 {
         try {
-            Role adminRole = this.generateAdminRole();
-            this.generateAdminUser(adminRole);
+            Role adminRole = this.generateRole(ADMIN_ROLE_NAME);
+            Role userRole = this.generateRole(USER_ROLE_NAME);
+
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(adminRole);
+            roles.add(userRole);
+
+            this.generateAdminUser(roles);
         } catch (ValidationException e) {
             throw new ValidationException(e);
         } catch (NotFoundException2 e) {
@@ -46,27 +53,25 @@ public class DefaultLoginGenerator {
         }
     }
 
-    private Role generateAdminRole() throws ValidationException, NotFoundException2 {
-        Role adminRole = new Role(null, ADMIN_ROLE_NAME, null);
-        if (!roleService.roleExistsByName(ADMIN_ROLE_NAME)) {
+    private Role generateRole(String roleName) throws ValidationException, NotFoundException2 {
+        if (!roleService.roleExistsByName(roleName)) {
             try {
-                return roleService.create(adminRole);
+                Role role = new Role(null, roleName, null);
+                return roleService.create(role);
             } catch (ValidationException e) {
                 throw new ValidationException("Couldn't create Admin Role", e);
             }
         } else {
-            System.out.println("Admin Role was already created");
+            System.out.println("Role " + roleName + " was already created");
             try {
-                return roleService.findRoleByName(ADMIN_ROLE_NAME);
+                return roleService.findRoleByName(roleName);
             } catch (NotFoundException2 e) {
-                throw new NotFoundException2("Admin role not found", e);
+                throw new NotFoundException2(roleName +" role not found", e);
             }
         }
     }
 
-    private void generateAdminUser(Role adminRole) throws ValidationException, NotFoundException2 {
-        HashSet<Role> roles = new HashSet<>();
-        roles.add(adminRole);
+    private void generateAdminUser(HashSet<Role> roles) throws ValidationException, NotFoundException2 {
         if (!userService.userExistsByEmail(ADMIN_EMAIL)) {
             try {
                 ApplicationUser user = new ApplicationUser(null, ADMIN_USER_NAME, ADMIN_EMAIL, ADMIN_PASSWORD, true, roles);
