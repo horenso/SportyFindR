@@ -65,8 +65,6 @@ public class CategoryEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
-    //    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/all")
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})

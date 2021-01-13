@@ -32,7 +32,7 @@ public class HashtagEndpoint {
     private final HashtagService hashtagService;
     private final HashtagMapper hashtagMapper;
 
-    @Secured("ROLE_ADMIN")
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{name}")
     @ApiOperation(value = "Get a hashtag by name", authorizations = {@Authorization(value = "apiKey")})

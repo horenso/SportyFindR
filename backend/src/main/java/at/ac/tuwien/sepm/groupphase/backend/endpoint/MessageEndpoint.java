@@ -44,7 +44,7 @@ public class MessageEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create one new message", authorizations = {@Authorization(value = "apiKey")})

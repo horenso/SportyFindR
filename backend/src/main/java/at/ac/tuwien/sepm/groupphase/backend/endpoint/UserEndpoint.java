@@ -82,10 +82,10 @@ public class UserEndpoint {
 
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/all")
+    @GetMapping(value = "")
     @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
     public List<UserDto> getAll() {
-        LOGGER.info("GET /api/v1/users/all");
+        LOGGER.info("GET /api/v1/users");
         return userMapper.applicationUserListToUserDtoList(userService.findAll());
     }
 
