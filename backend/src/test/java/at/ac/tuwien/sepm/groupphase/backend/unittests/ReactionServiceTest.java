@@ -81,7 +81,6 @@ public class ReactionServiceTest implements TestData {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
-        // ToDo: Remove everything
     }
 
     @Test

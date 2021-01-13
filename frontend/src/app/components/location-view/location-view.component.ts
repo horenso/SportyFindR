@@ -5,16 +5,16 @@ import {SidebarService} from 'src/app/services/sidebar.service';
 import {Subscription} from 'rxjs';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {ActivatedRoute, Router} from '@angular/router';
-import {parseIntStrictly} from '../../util/parse-int';
-import { IconType } from 'src/app/util/m-location';
-import { Icon } from 'leaflet';
+import {parsePositiveInteger} from '../../util/parse-int';
+import {IconType} from 'src/app/util/m-location';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
-  selector: 'app-view-spots',
-  templateUrl: './view-spots.component.html',
-  styleUrls: ['./view-spots.component.scss']
+  selector: 'app-location-view',
+  templateUrl: './location-view.component.html',
+  styleUrls: ['./location-view.component.scss']
 })
-export class ViewSpotsComponent implements OnInit, OnDestroy {
+export class LocationViewComponent implements OnInit, OnDestroy {
 
   locationId: number = null;
 
@@ -27,25 +27,25 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
     private spotService: SpotService,
     private sidebarService: SidebarService,
     private route: Router,
-    private activedRoute: ActivatedRoute
-  ) {
+    private activedRoute: ActivatedRoute,
+    private notificationService: NotificationService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
     this.activedRoute.params.subscribe(params => {
 
-      this.locationId = parseIntStrictly(params.locId);
+      this.locationId = parsePositiveInteger(params.locId);
 
       if (isNaN(this.locationId)) {
-        console.log('it is not a number!');
+        this.notificationService.navigateHomeAndShowError(NotificationService.locIdNotInt);
       } else {
-        console.log('Correct: ' + this.locationId);
-        this.spotService.getSpotsByLocation(this.locationId).subscribe(
+        this.spotService.getByLocationId(this.locationId).subscribe(
           result => {
             this.spots = result;
           },
           error => {
-            console.log('could not find location!');
+            this.notificationService.navigateHomeAndShowError('Error loading location!');
           }
         );
       }

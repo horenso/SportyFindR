@@ -42,9 +42,7 @@ export class MLocation extends Marker {
   public id: number;
 
   constructor(location: Location)
-
   constructor(id: number, latitude: number, longitude: number)
-
   constructor(locationOrId?: Location | number, latitude?: number, longitude?: number) {
     // This is not very elegant but atm we only have two cases so let's use that to our advantage
     // Problem is, that type checking only works for primitive types but not for self defined classes

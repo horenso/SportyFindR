@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {AuthRequest} from '../../dtos/auth-request';
+import { NotificationService } from 'src/app/services/notification.service';
 
 
 @Component({
@@ -19,7 +20,14 @@ export class LoginComponent implements OnInit {
   error: boolean = false;
   errorMessage: string = '';
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService) {
+  }
+
+  ngOnInit() {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(8)]]
@@ -35,6 +43,7 @@ export class LoginComponent implements OnInit {
       const authRequest: AuthRequest = new AuthRequest(this.loginForm.controls.username.value, this.loginForm.controls.password.value);
       this.authenticateUser(authRequest);
     } else {
+      this.notificationService.error('Invalid input!');
       console.log('Invalid input');
     }
   }
@@ -47,7 +56,7 @@ export class LoginComponent implements OnInit {
     console.log('Try to authenticate user: ' + authRequest.email);
     this.authService.loginUser(authRequest).subscribe(
       () => {
-        console.log('Successfully logged in user: ' + authRequest.email);
+        this.notificationService.success('Successfully logged in user: ' + authRequest.email);
         this.router.navigate(['']);
       },
       error => {
@@ -59,6 +68,7 @@ export class LoginComponent implements OnInit {
         } else {
           this.errorMessage = error.error;
         }
+        this.notificationService.error(this.errorMessage);
       }
     );
   }
@@ -69,8 +79,4 @@ export class LoginComponent implements OnInit {
   vanishError() {
     this.error = false;
   }
-
-  ngOnInit() {
-  }
-
 }

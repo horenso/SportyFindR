@@ -52,4 +52,5 @@ public interface TestData {
     Double LAT3= 91.57;
     Double LONG3 = -20.3;
     Double RADIUS = 0.001;
+    String HASHTAG_NAME= "best";
 }

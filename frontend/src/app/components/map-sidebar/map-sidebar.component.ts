@@ -11,8 +11,7 @@ export class MapSidebarComponent implements OnInit {
   @Input() visibleStart: boolean = true;
   public visible: boolean = true;
 
-  constructor(
-    private sidebarService: SidebarService) {
+  constructor(private sidebarService: SidebarService) {
   }
 
   ngOnInit(): void {

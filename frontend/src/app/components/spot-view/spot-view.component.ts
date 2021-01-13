@@ -5,17 +5,17 @@ import {Message} from 'src/app/dtos/message';
 import {MessageService} from 'src/app/services/message.service';
 import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
-import {parseIntStrictly} from '../../util/parse-int';
+import {parsePositiveInteger} from '../../util/parse-int';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {MapService} from 'src/app/services/map.service';
 import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
-  selector: 'app-spot-messages',
-  templateUrl: './spot-messages.component.html',
-  styleUrls: ['./spot-messages.component.scss']
+  selector: 'app-spot-view',
+  templateUrl: './spot-view.component.html',
+  styleUrls: ['./spot-view.component.scss']
 })
-export class SpotMessagesComponent implements OnInit, OnDestroy {
+export class SpotViewComponent implements OnInit, OnDestroy {
 
   @Output() goBack = new EventEmitter();
 
@@ -39,27 +39,31 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.activedRoute.params.subscribe(params => {
-      this.locationId = parseIntStrictly(params.locId);
-      this.spotId = parseIntStrictly(params.spotId);
+      this.locationId = parsePositiveInteger(params.locId);
+      this.spotId = parsePositiveInteger(params.spotId);
 
       if (isNaN(this.locationId)) {
-        console.log('Invalid location!');
+        this.notificationService.navigateHomeAndShowError(NotificationService.locIdNotInt);
         return;
       }
 
       if (isNaN(this.spotId)) {
-        console.log('Invalid spot!');
+        this.notificationService.navigateHomeAndShowError(NotificationService.spotIdNotInt);
         return;
       }
 
       if (this.sidebarService.spot != null && this.sidebarService.spot.id === this.spotId) {
+        // SidebarService has the spot because it was just clicked on from within a location
         this.spot = this.sidebarService.spot;
         this.getMessagesAndStartEventHandling();
       } else {
-        this.spotService.getSpotById(this.spotId).subscribe(result => {
-          this.spot = result;
-          this.getMessagesAndStartEventHandling();
-        });
+        this.spotService.getById(this.spotId).subscribe(
+          result => {
+            this.spot = result;
+            this.getMessagesAndStartEventHandling();
+          }, error => {
+            this.notificationService.navigateHomeAndShowError('Error loading spot!');
+          });
       }
     });
 
@@ -74,7 +78,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
 
   submitDialog() {
     const newMessage = new Message(null, this.messageForm.value.content, null, this.spot.id);
-    this.messageService.saveMessage(newMessage).subscribe(
+    this.messageService.create(newMessage).subscribe(
       (result: Message) => {
         this.addMessage(result);
         this.messageForm.reset();
@@ -111,11 +115,14 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
   }
 
   private getMessagesAndStartEventHandling(): void {
-    this.messageService.getMessagesBySpot(this.spot.id).subscribe(result => {
-      this.messageList = result;
-      console.log('Loaded messages:');
-      console.log(this.messageList);
-    });
+    this.messageService.getBySpotId(this.spot.id).subscribe(
+      result => {
+        this.messageList = result;
+        console.log(`Loaded ${result.length} messages.`);
+      }, error => {
+        this.notificationService.error('Error loading messages!');
+        console.log(error);
+      });
     this.handleEvents();
   }
 
@@ -126,7 +133,7 @@ export class SpotMessagesComponent implements OnInit, OnDestroy {
   }
 
   private handleEvents(): void {
-    this.spotService.observeEvents(this.spot.id).subscribe({
+    this.spotService.openSseConnection(this.spot.id).subscribe({
       next: (event) => {
         const newMessage: Message = JSON.parse(event.data);
         console.log(event.type, event.data);

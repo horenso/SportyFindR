@@ -83,7 +83,7 @@ export class MapComponent implements OnInit {
   }
 
   private getLocationsAndConvertToLayerGroup() {
-    this.locationService.getAllMarkerLocations().subscribe(
+    this.locationService.getAll().subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();

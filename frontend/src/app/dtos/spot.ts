@@ -7,7 +7,6 @@ export class Spot {
     public name: string,
     public description: string,
     public category: Category,
-    public location: Location
-  ) {
+    public location: Location) {
   }
 }

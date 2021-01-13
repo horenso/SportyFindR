@@ -1,27 +1,49 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { SidebarService } from './sidebar.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
 
-	constructor(private toastr: ToastrService) { }
+  /**
+   * Some common error messages:
+   */
+  static spotIdNotInt = 'Spot ID must be a positive integer!';
+  static locIdNotInt = 'Location ID must be a positive integer!';
+  static errorLoadingSpot = 'Could not load Spot!';
+  static errorLoadingLoc = 'Could bot load Location!';
+  static errorSavingSpot = 'Something went wrong saving the Spot!';
 
-	success(message: string) {
-		console.log('Success: ' + message);
-		this.toastr.success(message);
-	}
+  constructor(
+    private toastr: ToastrService,
+    private router: Router,
+    private sidebarService: SidebarService,
+    private ngZone: NgZone) {
+  }
 
-	warning(message: string) {
-		this.toastr.warning(message);
-	}
+  success(message: string) {
+    console.log('Success: ' + message);
+    this.toastr.success(message);
+  }
 
-	error(message: string) {
-		this.toastr.error(message);
-	}
+  warning(message: string) {
+    this.toastr.warning(message);
+  }
 
-	info(message: string) {
-		this.toastr.info(message);
-	}
+  error(message: string) {
+    this.toastr.error(message);
+  }
+
+  info(message: string) {
+    this.toastr.info(message);
+  }
+
+  navigateHomeAndShowError(message: string) {
+    this.error(message);
+    this.ngZone.run(() => this.router.navigate(['']));
+    setTimeout(() => this.sidebarService.changeVisibilityAndFocus({isVisible: false}));
+  }
 }
