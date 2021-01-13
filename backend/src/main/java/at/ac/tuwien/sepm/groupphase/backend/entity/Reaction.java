@@ -35,5 +35,5 @@ public class Reaction {
         THUMBS_DOWN
     }
 
-    //TODO Add userID once users are implemented
+    //TODO Add userID once applicationUsers are implemented
 }
