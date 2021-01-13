@@ -1,40 +1,48 @@
-<form *ngIf='spotForm != null' [formGroup]="spotForm" class="spotForm">
-
-  <!-- Name -->
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Name</mat-label>
-      <label for="spotCreateName"></label>
-      <input matInput formControlName='name' id="spotCreateName">
-    </mat-form-field>
+<div class="inSidebar">
+  <div class="sidebarTopRow">
+    <h1>{{title}}</h1>
   </div>
 
-  <!-- Description -->
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Description</mat-label>
-      <label for="spotCreateDescription"></label>
-      <textarea matInput formControlName='description' id="spotCreateDescription"></textarea>
-    </mat-form-field>
-  </div>
 
-  <!-- Category -->
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Category</mat-label>
-      <label for="spotCreateCategory"></label>
-      <mat-select id="spotCreateCategory" formControlName="category" [compareWith]='compareCategory'>
-        <mat-option *ngFor="let category of categories" [value]="category"
-          >{{category.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <form *ngIf='spotForm != null' [formGroup]="spotForm" class="spotForm sidebarScrollableSection">
 
-  <!-- Buttons -->
-  <div>
+    <!-- Name -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <label for="spotCreateName"></label>
+        <input matInput formControlName='name' id="spotCreateName">
+      </mat-form-field>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <label for="spotCreateDescription"></label>
+        <textarea matInput formControlName='description' id="spotCreateDescription"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Category -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <label for="spotCreateCategory"></label>
+        <mat-select id="spotCreateCategory" formControlName="category" [compareWith]='compareCategory'>
+          <mat-option *ngFor="let category of categories" [value]="category"
+            >{{category.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
     <a mat-raised-button class="cancel-btn" (click)="onCancel()">Cancel</a>
     <a mat-raised-button class="create-btn" color="accent" (click)="onConfirm()"
-       [disabled]="spotForm.invalid || !spotForm.dirty">{{spot == null ? 'Create' : 'Update'}}</a>
-  </div>
+      [disabled]="spotForm.invalid || !spotForm.dirty">{{spot == null ? 'Create' : 'Update'}}</a>
+  </form>
 
-</form>
+  <!-- <div class="sidebarBottomRow"> -->
+    <!-- Buttons -->
+
+  <!-- </div> -->
+</div>

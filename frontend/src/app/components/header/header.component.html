@@ -1,21 +1,13 @@
 <mat-toolbar color="primary" class="mat-elevation-z4 header">
 
-  <span>SportyFindR</span>
+  <a href="" id="homeLink"><span>SportyFindr</span></a>
 
   <span class="spacer"></span>
 
-  <!--
-  <div id="new-loc-new-spot">
-    <a mat-button class="create" (click)="createLocationWithSpot()" id="create-spot">New Location</a>
-  </div>
-  -->
+  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()" 
+    routerLink="/login" routerLinkActive="active">Login</a>
 
-  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">
-    Login
-  </a>
-
-  <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()" (click)="authService.logoutUser()" routerLink="/">
-    Logout
-  </a>
+  <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
+    (click)="authService.logoutUser()" routerLink="/">Logout</a>
 
 </mat-toolbar>

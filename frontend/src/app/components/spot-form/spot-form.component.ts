@@ -8,13 +8,14 @@ import {MLocSpot} from '../../util/m-loc-spot';
 
 
 @Component({
-  selector: 'app-spot-form',
+  selector: 'app-spot-form [title]',
   templateUrl: './spot-form.component.html',
   styleUrls: ['./spot-form.component.scss']
 })
 export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() spot: MLocSpot = null;
+  @Input() title: string = '';
 
   @Output() cancel = new EventEmitter();
   @Output() confirm = new EventEmitter<MLocSpot>();

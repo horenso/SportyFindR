@@ -1,19 +1,47 @@
 /* You can add global styles to this file, and also import other style files */
-body {
-  background-color: whitesmoke;
-}
 
 html, body {
   height: 100%;
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  background-color: whitesmoke;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 // toast styles:
-
 .toast-container {
   margin: 20px;
+}
+
+// Global sidebar classes:host
+
+.inSidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebarTopRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: blue;
+  flex: 0 0 60px;
+  height: 50px;
+}
+
+.sidebarScrollableSection {
+  overflow: auto;
+  background-color: chartreuse;
+  flex: 1 1 auto;
+}
+
+.sidebarBottomRow {
+  background-color: coral;
+  flex: 0 0 min-content;
+  height: 50px;
 }

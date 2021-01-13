@@ -85,6 +85,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subs.add(this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.changeVisibilityAndFocus(change);
     }));
+
+    setTimeout(() => this.map.invalidateSize({pan: false}));
   }
 
   private getLocationsAndConvertToLayerGroup() {

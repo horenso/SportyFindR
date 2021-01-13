@@ -1,43 +1,36 @@
 @import "src/app/app.variables";
 
-.map-sidebar {
+#mapSidebar {
   position: fixed;
   pointer-events: none;
-  top: $topHeader; // spacing for the header - maybe to be removed later
+
+  top: 64px;
+  @media (max-width: 599px) {
+    top: 56px;
+  }
   bottom: 0;
-  width: $sidebarWidth + $sidebarHandleWidth;
+  width: $sidebarWidth;
 }
 
-.map-sidebar > * {
+#mapSidebar > * {
   pointer-events: all;
 }
 
-.map-sidebar.active {
+.active {
   right: 0;
   transition: right $sidebarTransitionTime;
   transition-timing-function: $sidebarTransitionFunction;
 }
 
-.map-sidebar.inactive {
+.inactive {
   right: -$sidebarWidth;
   transition: right $sidebarTransitionTime;
   transition-timing-function: $sidebarTransitionFunction;
 }
 
-.map-sidebar .sidebar-handle {
-  position: absolute;
-  left: 0;
-  bottom: 25px;
-  width: $sidebarHandleWidth;
-  height: 50px;
-  background-color: burlywood;
-}
-
-.map-sidebar .sidebarContent {
-  position: absolute;
-  left: $sidebarHandleWidth;
+.sidebarContent {
+  box-sizing: border-box;
   width: $sidebarWidth;
   height: 100%;
-  padding: 16px;
-  top: 12px;
+  border-left: 2px solid lightgray;
 }
