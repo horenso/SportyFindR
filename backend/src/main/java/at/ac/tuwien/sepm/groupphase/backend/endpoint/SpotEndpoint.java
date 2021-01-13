@@ -34,7 +34,6 @@ public class SpotEndpoint {
     private final SpotSubscriptionService spotSubscriptionService;
     private final SpotMapper spotMapper;
 
-    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     @ApiOperation(value = "Get one spot by id", authorizations = {@Authorization(value = "apiKey")})
@@ -47,8 +46,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
@@ -62,7 +60,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-
+    //TODO:fix role
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
@@ -76,7 +74,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
+    //TODO:fix role
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
