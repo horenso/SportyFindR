@@ -28,13 +28,14 @@ public class SimpleRoleService implements RoleService {
 
     @Override
     public Role create(Role role) throws ValidationException {
-        Role newRole = new Role(null, role.getName().toUpperCase(Locale.ROOT), role.getApplicationUsers());
+        Role newRole = new Role(null, role.getName().toUpperCase(Locale.ROOT), null);
         if (false) {
             // ToDo: sanity check name (only A-Za-z0-9)
             // ToDo: sanity check users (only existing users)
             throw new ValidationException("Role invalid");
         }
-
+        newRole = roleRepository.save(newRole);
+        newRole.setApplicationUsers(role.getApplicationUsers());
         return this.roleRepository.save(newRole);
     }
 

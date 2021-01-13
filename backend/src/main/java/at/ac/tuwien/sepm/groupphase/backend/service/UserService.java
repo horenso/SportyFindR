@@ -76,4 +76,11 @@ public interface UserService extends UserDetailsService {
      * @throws NotFoundException2 if the role was not found
      */
     List<ApplicationUser> findApplicationUserByRoleId(Long roleId) throws NotFoundException2;
+
+    /**
+     * check if user with email exists
+     * @param email of user to search
+     * @return true if user exists
+     */
+    boolean userExistsByEmail(String email);
 }

@@ -44,8 +44,10 @@ public class CustomUserDetailService implements UserService {
             // ToDo check user validity
             throw new ValidationException("User invalid");
         }
-        ApplicationUser apUser = new ApplicationUser(null, user.getName(), user.getEmail(), this.passwordEncoder.encode(user.getPassword()), user.getEnabled(), user.getRoles());
-        return this.userRepository.save(apUser);
+        ApplicationUser newUser = new ApplicationUser(null, user.getName(), user.getEmail(), this.passwordEncoder.encode(user.getPassword()), user.getEnabled(), null);
+        newUser = userRepository.save(newUser);
+        newUser.setRoles(user.getRoles());
+        return this.userRepository.save(newUser);
     }
 
     @Override
@@ -114,6 +116,7 @@ public class CustomUserDetailService implements UserService {
         }
     }
 
+    @Override
     public List<ApplicationUser> findApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
         LOGGER.debug("Find application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
@@ -123,5 +126,10 @@ public class CustomUserDetailService implements UserService {
         }
     }
 
+    @Override
+    public boolean userExistsByEmail(String email) {
+        LOGGER.debug("Check if user exists by email");
+        return userRepository.findApplicationUserByEmail(email).isPresent();
+    }
 
 }
