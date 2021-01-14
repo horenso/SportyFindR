@@ -67,7 +67,7 @@ public interface UserService extends UserDetailsService {
      * @return updated ApplicationUser
      * @throws NotFoundException2 if the user was not found
      */
-    ApplicationUser update(ApplicationUser user) throws NotFoundException2;
+    ApplicationUser update(ApplicationUser user) throws NotFoundException2, ValidationException;
 
     /**
      * find users having to a certain role

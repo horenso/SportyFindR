@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class Role {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Length(min = 3, max = 15)
     private String name;
 
     @ManyToMany(mappedBy = "roles")

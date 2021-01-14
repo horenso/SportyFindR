@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -56,4 +57,11 @@ public interface RoleService {
      * @return List of Roles
      */
     List<Role> findAll();
+
+    /**
+     * finds all roles associated with the provided user
+     * @param applicationUser user to search for
+     * @return list of roles associated with the user
+     */
+    List<Role> findRolesByUser(ApplicationUser applicationUser);
 }

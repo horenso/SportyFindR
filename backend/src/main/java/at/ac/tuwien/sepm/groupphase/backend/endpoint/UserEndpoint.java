@@ -60,7 +60,7 @@ public class UserEndpoint {
             );
             LOGGER.info("{}", updatedUser);
             return updatedUser;
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException2 | ValidationException e) {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -82,17 +82,17 @@ public class UserEndpoint {
 
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/all")
+    @GetMapping(value = "")
     @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
     public List<UserDto> getAll() {
-        LOGGER.info("GET /api/v1/users/all");
+        LOGGER.info("GET /api/v1/users");
         return userMapper.applicationUserListToUserDtoList(userService.findAll());
     }
 
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/byRole/{id}")
-    @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Get users by role", authorizations = {@Authorization(value = "apiKey")})
     public List<UserDto> getUsersByRole(@PathVariable("id") Long id) {
         LOGGER.info("GET /api/v1/users/byRole/{}", id);
         try {
