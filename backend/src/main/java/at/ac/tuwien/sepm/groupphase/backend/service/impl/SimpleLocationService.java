@@ -58,16 +58,16 @@ public class SimpleLocationService implements LocationService {
     public List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws ServiceException, NotFoundException2 {
         log.debug("Searching for locations within a distance of at most " + radius + " km, containing spots with category: " + categoryId);
         List<Location> locations;
-        if (categoryId!=null&&categoryId!=0) {
+        if (categoryId != null && categoryId != 0) {
             locations = locationRepository.filter(categoryId);
-        }else {
+        } else {
             locations = locationRepository.findAll();
         }
         if (locations.isEmpty()) {
             throw new NotFoundException2("No Location with these parameters found.");
         } else {
             try {
-                if (radius!=null&&radius != 0) {      // if search parameters contain radius data
+                if (radius != null && radius != 0) {      // if search parameters contain radius data
                     return validator.validateLocationDistance(latitude, longitude, radius, locations);
                 } else {
                     return locations;       // search by category only

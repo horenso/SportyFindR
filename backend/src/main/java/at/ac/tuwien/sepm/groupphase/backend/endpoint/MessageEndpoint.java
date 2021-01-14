@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -11,12 +12,17 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -93,18 +99,23 @@ public class MessageEndpoint {
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
-    @ApiOperation(value = "Filter messages by distance, time and category", authorizations = {@Authorization(value = "apiKey")})
-    public List<MessageDto> filter(@RequestParam(required = false) Long categoryId,
-                                   @RequestParam(required = false) Double latitude,
-                                   @RequestParam(required = false) Double longitude,
-                                   @RequestParam(required = false) Double radius,
-                                   @RequestParam(required = false) LocalDateTime time) {
+    @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
+    public Page<MessageDto> filter(
+        @PageableDefault(size = 10)
+        @SortDefault.SortDefaults({
+            @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
+            Pageable pageable,
+        @RequestParam(required = false) Long categoryId,
+        @RequestParam(required = false) Long hashtagId,
+        @RequestParam(required = false) LocalDateTime time) {
 
         log.info("GET /api/v1/messages/filter?" +
-            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&time=" + time);
+            "categoryId=" + categoryId + "&hashtagId=" + hashtagId + "&time=" + time);
+
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryId, hashtagId, time);
 
         try {
-            return messageMapper.entityToListDto(messageService.filter(categoryId, latitude, longitude, radius, time));
+            return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
