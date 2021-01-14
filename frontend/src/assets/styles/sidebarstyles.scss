@@ -1,0 +1,37 @@
+/**
+* Global Sidebar styles for all sidebar components
+*/
+
+.inSidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebarTopRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  // background-color: blue;
+  flex: 0 0 60px;
+  height: 50px;
+}
+
+.sidebarScrollableSection {
+  overflow: auto;
+  // background-color: chartreuse;
+  flex: 1 1 auto;
+}
+
+.sidebarBottomRow {
+  // background-color: coral;
+  flex: 0 0 min-content;
+  height: 50px;
+}
+
+.sidebarTitle {
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+}

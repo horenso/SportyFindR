@@ -15,7 +15,7 @@
     <app-text-with-hashtags [text]='spot.description'></app-text-with-hashtags>
   </div>
 
-  <div class="sidebarScrollableSection messageArea">
+  <div #messageArea class="sidebarScrollableSection messageArea">
     <div *ngFor="let message of messageList" class="message">
       <app-message
       (deleteMessage)='deleteOneMessage($event)'
@@ -23,21 +23,15 @@
     </div>
   </div>
 
-  <div class="sidebarBottomRow">
-    <form [formGroup]="messageForm">
-      
-      <mat-form-field appearance="outline" class="messageForm">
-        <mat-label>New message</mat-label>
-        <label for="messages"></label>
-        <input matInput formControlName="content" id="messages">
-      </mat-form-field>
-    
+  <div class="sidebarBottomRow messageWritingRow">
+    <mat-form-field appearance="outline">
+      <mat-label>New message</mat-label>
+      <input matInput #messageInput (keydown.enter)="submitDialog()" [(ngModel)]='newMessage' id="messages" autocomplete="off">
+    </mat-form-field>  
     <button mat-icon-button id="sendButton" color="primary" (click)="submitDialog()">
       <mat-icon>send</mat-icon>
     </button>
-  </form>
   </div>
-  
 </div>
 
 <mat-menu #menu="matMenu" xPosition="before" yPosition="below">
@@ -49,5 +43,4 @@
     <mat-icon>delete</mat-icon>
     <span>Delete Spot</span>
   </button>
-  sdfsfd
 </mat-menu>
