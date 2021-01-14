@@ -6,7 +6,6 @@ import {HashtagService} from '../../services/hashtag.service';
 import {Spot} from '../../dtos/spot';
 import {Message} from '../../dtos/message';
 import {Hashtag} from '../../dtos/hashtag';
-import {parseIntStrictly} from '../../util/parse-int';
 import {IconType} from '../../util/m-location';
 import {MessageService} from '../../services/message.service';
 
@@ -17,7 +16,7 @@ import {MessageService} from '../../services/message.service';
 })
 export class HashtagComponent implements OnInit {
 
-  hashtag: Hashtag;
+  hashtag: {} = {};
   hashtagName: string;
   spotsFlag: boolean = false;
   messagesFlag: boolean = false;
