@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.CategoryDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.CategoryMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
@@ -59,7 +60,7 @@ public class CategoryEndpoint {
         LOGGER.info("DELETE /api/v1/categories id: {}", id);
         try {
             categoryService.deleteById(id);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException2 e) {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -71,13 +72,6 @@ public class CategoryEndpoint {
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})
     public List<CategoryDto> getAll() {
         LOGGER.info("GET /api/v1/categories/all");
-
-        try {
-            return categoryMapper.entityToListDto((categoryService.findAll()));
-        } catch (NotFoundException e) {
-            LOGGER.error("No categories could be found.");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
+        return categoryMapper.entityToListDto((categoryService.findAll()));
     }
 }

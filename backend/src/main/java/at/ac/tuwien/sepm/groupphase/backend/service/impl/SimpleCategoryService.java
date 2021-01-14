@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
@@ -38,24 +39,18 @@ public class SimpleCategoryService implements CategoryService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException {
+    public void deleteById(Long id) throws NotFoundException2 {
         LOGGER.debug("Delete Category with id {}", id);
-
-        try {
-            categoryRepository.deleteById(id);
-        } catch (NotFoundException e) {
-            throw new NotFoundException("There is no category with id " + id);
+        if (categoryRepository.findById(id).isEmpty()) {
+            throw new NotFoundException2("There is no category with id " + id);
         }
+        categoryRepository.deleteById(id);
+
     }
 
     @Override
     public List<Category> findAll() {
         LOGGER.debug("Get all categories.");
-        try {
-            return categoryRepository.findAll();
-        } catch (NotFoundException e) {
-            LOGGER.error("No categories found.");
-            throw new NotFoundException(e.getMessage());
-        }
+        return categoryRepository.findAll();
     }
 }

@@ -3,6 +3,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
@@ -69,22 +70,35 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot update(Spot spot) throws ServiceException {
-        hashtagService.deleteSpotInHashtags(spot);
-        hashtagService.getHashtags(spot);
-        return this.spotRepository.save(spot);
+    public Spot update(Spot spot) throws NotFoundException2,ValidationException {
+        if (spotRepository.findById(spot.getId()).isEmpty()){
+            throw new NotFoundException2("Spot does not Exist");
+        }
+        if (spot.getCategory().getId() == null) {
+            throw new ValidationException("Spot must have a Category");
+        }
+        if (categoryRepository.findById(spot.getCategory().getId()).isEmpty()) {
+            throw new ValidationException("Category does not Exist");
+        }
+        if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
+            throw new ValidationException("Location does not Exist");
+        }
+        return spotRepository.save(spot);
     }
     @Override
-    public boolean deleteById(Long id) throws ValidationException {
+    public boolean deleteById(Long id) throws ValidationException, ServiceException {
         log.debug("Delete Spot with id {}", id);
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
         }
-
-        List<Message> messages = messageService.findBySpot(id);
-        for(Message message : messages){
-            messageService.deleteById(message.getId());
+        try {
+            List<Message> messages = messageService.findBySpot(id);
+            for (Message message : messages) {
+                messageService.deleteById(message.getId());
+            }
+        }catch (NotFoundException2 e){
+            throw new ServiceException(e.getMessage());
         }
         hashtagService.deleteSpotInHashtags(spotRepository.findById(id).get());
         spotRepository.deleteById(id);
@@ -108,10 +122,10 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot getOneById(Long spotId) {
+    public Spot getOneById(Long spotId) throws NotFoundException2{
         Optional<Spot> spotOptional = this.spotRepository.getOneById(spotId);
         if (spotOptional.isEmpty()) {
-            throw new NotFoundException("Spot with ID " + spotId + " cannot be found!");
+            throw new NotFoundException2("Spot with ID " + spotId + " cannot be found!");
         }
         return spotOptional.get();
     }

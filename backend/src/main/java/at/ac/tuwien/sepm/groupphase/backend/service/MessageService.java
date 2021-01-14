@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ public interface MessageService {
      * @param spotId id of the spot
      * @return ordered list of al message entries
      */
-    List<Message> findBySpot(Long spotId);
+    List<Message> findBySpot(Long spotId) throws NotFoundException2;
 
 
     /**
@@ -24,11 +25,11 @@ public interface MessageService {
      * @param message to be saved
      * @return created message entry
      */
-    Message create(Message message);
+    Message create(Message message) throws NotFoundException2;
 
-    Message getById(Long id) throws ServiceException;
+    Message getById(Long id) throws NotFoundException2;
 
-    void deleteById(Long id) throws NotFoundException;
+    void deleteById(Long id) throws NotFoundException2;
 
     /**
      * Finds locations containing spots that match the filter criteria

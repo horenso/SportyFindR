@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {SidebarService, SidebarState} from '../../services/sidebar.service';
+import {SidebarService} from '../../services/sidebar.service';
 import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
 import {HashtagService} from '../../services/hashtag.service';
@@ -26,9 +26,9 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
     if (this.sidebarActive) {
-      this.sidebarService.sidebarState = SidebarState.Open;
+      this.sidebarService.setSidebarStateOpen();
     } else {
-      this.sidebarService.sidebarState = SidebarState.Closed;
+      this.sidebarService.setSidebarStateClosed();
     }
 
     this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {

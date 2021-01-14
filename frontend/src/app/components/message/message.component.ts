@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from 'src/app/dtos/message';
 import {Reaction, ReactionType} from 'src/app/dtos/reaction';
-import {faArrowDown, faArrowUp, faTrash, IconDefinition} from '@fortawesome/free-solid-svg-icons';
 import {ReactionService} from 'src/app/services/reaction.service';
 
 @Component({
@@ -22,10 +21,6 @@ export class MessageComponent implements OnInit {
 
   alreadyReacted = false;
 
-  deleteSymbol: IconDefinition = faTrash;
-  upVoteSymbol: IconDefinition = faArrowUp;
-  downVoteSymbol: IconDefinition = faArrowDown;
-
   constructor(private reactionService: ReactionService) {
   }
 
@@ -41,12 +36,12 @@ export class MessageComponent implements OnInit {
         break;
       }
       case ReactionType.THUMBS_DOWN: {
-        this.changeReaction(this.reaction, ReactionType.THUMBS_UP);
+        this.change(this.reaction, ReactionType.THUMBS_UP);
         break;
       }
       case ReactionType.NEUTRAL: {
         this.reaction.type = ReactionType.THUMBS_UP;
-        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+        this.reactionService.create(this.reaction).subscribe(result => this.reaction.id = result.id);
         break;
       }
     }
@@ -55,7 +50,7 @@ export class MessageComponent implements OnInit {
   public onDownVote(): void {
     switch (this.reaction.type) {
       case ReactionType.THUMBS_UP: {
-        this.changeReaction(this.reaction, ReactionType.THUMBS_DOWN);
+        this.change(this.reaction, ReactionType.THUMBS_DOWN);
         break;
       }
       case ReactionType.THUMBS_DOWN: {
@@ -65,7 +60,7 @@ export class MessageComponent implements OnInit {
       }
       case ReactionType.NEUTRAL: {
         this.reaction.type = ReactionType.THUMBS_DOWN;
-        this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+        this.reactionService.create(this.reaction).subscribe(result => this.reaction.id = result.id);
         break;
       }
     }
@@ -99,15 +94,10 @@ export class MessageComponent implements OnInit {
     }
   }
 
-  private changeReaction(reaction: Reaction, newType: ReactionType): void {
+  private change(reaction: Reaction, newType: ReactionType): void {
     if (reaction.id != null) {
       this.reaction.type = newType;
-      this.reactionService.changeReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
+      this.reactionService.change(this.reaction).subscribe(result => this.reaction.id = result.id);
     }
-  }
-
-  private createReaction(reactionType: ReactionType): void {
-    this.reaction.type = reactionType;
-    this.reactionService.createReaction(this.reaction).subscribe(result => this.reaction.id = result.id);
   }
 }

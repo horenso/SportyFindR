@@ -9,16 +9,19 @@ import {Category} from '../dtos/category';
 })
 export class CategoryService {
 
-  private categoryBaseUri: string = this.globals.backendUri + '/categories';
+  private categoryBaseUri: string = `${this.globals.backendUri}/categories`;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   /**
    * Loads all categories
    * @returns list of categories
    */
-  getAllCategories(): Observable<Category[]> {
-    return this.httpClient.get<[]>(this.categoryBaseUri + '/all');
+  getAll(): Observable<Category[]> {
+    console.log('Get all categories');
+    return this.httpClient.get<[]>(`${this.categoryBaseUri}/all`);
   }
 }

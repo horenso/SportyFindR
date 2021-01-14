@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { NotificationService } from 'src/app/services/notification.service';
 import {Category} from '../../dtos/category';
 import {CategoryService} from '../../services/category.service';
 import {MLocSpot} from '../../util/m-loc-spot';
@@ -22,7 +23,8 @@ export class SpotFormComponent implements OnInit, OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    private categoryService: CategoryService) {
+    private categoryService: CategoryService,
+    private notificationService: NotificationService) {
   }
 
   ngOnChanges(): void {
@@ -42,9 +44,14 @@ export class SpotFormComponent implements OnInit, OnChanges {
       this.setValues();
     }
 
-    this.categoryService.getAllCategories().subscribe(result => {
-      this.categories = result;
-    });
+    this.categoryService.getAll().subscribe(
+      result => {
+        this.categories = result;
+      }, error => {
+        this.notificationService.error('Error loading categories!');
+        console.log(error);
+      }
+    );
   }
 
   private setValues(): void {
@@ -59,7 +66,6 @@ export class SpotFormComponent implements OnInit, OnChanges {
   }
 
   onConfirm(): void {
-    console.log('confirming: ');
     const val = this.spotForm.value;
     const newSpot = new MLocSpot(null, val.name, val.description, val.category, null);
     

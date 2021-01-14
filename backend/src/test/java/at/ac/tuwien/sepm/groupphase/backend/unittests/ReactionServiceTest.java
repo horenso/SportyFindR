@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.unittests;
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
@@ -46,26 +47,26 @@ public class ReactionServiceTest implements TestData {
     public void beforeEach() {
         Location loc = locationRepository.save(
             Location.builder()
-                .latitude(91.57)
-                .longitude(-20.3)
+                .latitude(LAT3)
+                .longitude(LONG3)
                 .build()
         );
 
         Category cat = categoryRepository.save(
             Category.builder()
-                .name("foo")
+                .name(CAT_NAME)
                 .build()
         );
 
         Spot spot = Spot.builder()
-            .name("bar")
-            .description("Lorem ipsum")
+            .name(SPOT_NAME)
+            .description(SPOT_DESCRIPTION)
             .location(loc)
             .category(cat)
             .build();
         this.msg = Message.builder()
-            .content("dolor")
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
+            .content(MESSAGE_CONTENT)
+            .publishedAt(DATE)
             .spot(spot)
             .build();
 
@@ -80,15 +81,14 @@ public class ReactionServiceTest implements TestData {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
-        // ToDo: Remove everything
     }
 
     @Test
-    public void reactionCreateReturnsReaction() {
+    public void reactionCreateReturnsReaction() throws NotFoundException2{
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
+            .publishedAt(DATE2)
             .message(msg)
             .build();
 
@@ -102,7 +102,7 @@ public class ReactionServiceTest implements TestData {
     }
 
     @Test
-    public void reactionFindReactionByMessageId() {
+    public void reactionFindReactionByMessageId() throws NotFoundException2 {
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
@@ -121,11 +121,11 @@ public class ReactionServiceTest implements TestData {
     }
 
     @Test
-    public void reactionThrowExceptionByIncorrectMessageId() {
+    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2{
 
         Reaction rct = Reaction.builder()
             .type(Reaction.ReactionType.THUMBS_UP)
-            .publishedAt(LocalDateTime.of(2019, 11, 13, 12, 15, 0, 0))
+            .publishedAt(DATE)
             .message(msg)
             .build();
 
@@ -133,7 +133,7 @@ public class ReactionServiceTest implements TestData {
 
         reactionService.create(rct);
         assertAll(
-            () -> assertThrows(NotFoundException.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
+            () -> assertThrows(NotFoundException2.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
         );
     }
 }

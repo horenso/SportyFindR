@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
@@ -41,7 +42,7 @@ public class SpotEndpoint {
         log.info("Get /api/v1/spots/{}", id);
         try {
             return spotMapper.spotToSpotDto(spotService.getOneById(id));
-        } catch (NotFoundException e) {
+        } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -70,7 +71,7 @@ public class SpotEndpoint {
         log.info("DELETE /api/v1/spots/{}", id);
         try {
             return DeletedSpotResponseDto.builder().deletedLocation(spotService.deleteById(id)).build();
-        } catch (NotFoundException | ValidationException e) {
+        } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -87,9 +88,12 @@ public class SpotEndpoint {
                 spotService.update(spotMapper.spotDtoToSpot(spotDto)));
             log.info("{}", updated);
             return updated;
-        } catch (ServiceException e) {
+        } catch (ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }catch (NotFoundException2 e){
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 

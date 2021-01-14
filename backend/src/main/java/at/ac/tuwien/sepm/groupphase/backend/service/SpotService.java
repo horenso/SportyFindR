@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 
@@ -24,7 +25,7 @@ public interface SpotService {
      * @return spot as it is saved in the system
      * @throws ServiceException if the spot entity is not valid
      */
-    Spot update(Spot spot) throws ServiceException;
+    Spot update(Spot spot) throws NotFoundException2, ValidationException;
 
 
     /**
@@ -35,7 +36,7 @@ public interface SpotService {
      * @return true if the host location was deleted, otherwise false
      * @throws ValidationException if no spot with this id is known
      */
-    boolean deleteById(Long id) throws ValidationException;
+    boolean deleteById(Long id) throws ValidationException, ServiceException;
 
     /**
      * Get all spots within one Location. This list cannot be empty since since a location
@@ -54,5 +55,5 @@ public interface SpotService {
      * @return the spot entity
      * @throws NotFoundException if the spot was not found
      */
-    Spot getOneById(Long spotId);
+    Spot getOneById(Long spotId) throws NotFoundException2;
 }

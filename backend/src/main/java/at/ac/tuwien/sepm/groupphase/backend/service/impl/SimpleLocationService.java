@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
@@ -28,24 +29,17 @@ public class SimpleLocationService implements LocationService {
     private final LocationValidator validator;
 
     @Override
-    public Location getOneById(Long locationId) {
+    public Location getOneById(Long locationId) throws NotFoundException2 {
         Optional<Location> locationOptional = locationRepository.getOneById(locationId);
         if (locationOptional.isEmpty()) {
-            throw new NotFoundException("Location with ID " + locationId + " cannot be found!");
+            throw new NotFoundException2("Location with ID " + locationId + " cannot be found!");
         }
         return locationOptional.get();
     }
 
     @Override
     public List<Location> findAll() {
-
-        LOGGER.debug("Get all categories.");
-        try {
-            return locationRepository.findAll();
-        } catch (NotFoundException e) {
-            LOGGER.error("No locations found.");
-            throw new NotFoundException(e.getMessage());
-        }
+        return locationRepository.findAll();
     }
 
     @Override
@@ -61,17 +55,19 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws ServiceException {
+    public List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws ServiceException, NotFoundException2 {
         log.debug("Searching for locations within a distance of at most " + radius + " km, containing spots with category: " + categoryId);
-
-
-        List<Location> locations = locationRepository.filter(categoryId);
-
+        List<Location> locations;
+        if (categoryId!=null&&categoryId!=0) {
+            locations = locationRepository.filter(categoryId);
+        }else {
+            locations = locationRepository.findAll();
+        }
         if (locations.isEmpty()) {
-            throw new ServiceException("No Location with these parameters found.");
+            throw new NotFoundException2("No Location with these parameters found.");
         } else {
             try {
-                if (radius != 0) {      // if search parameters contain radius data
+                if (radius!=null&&radius != 0) {      // if search parameters contain radius data
                     return validator.validateLocationDistance(latitude, longitude, radius, locations);
                 } else {
                     return locations;       // search by category only

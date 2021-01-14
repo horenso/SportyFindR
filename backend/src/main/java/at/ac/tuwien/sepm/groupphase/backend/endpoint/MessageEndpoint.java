@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import io.swagger.annotations.ApiOperation;
@@ -34,8 +35,13 @@ public class MessageEndpoint {
     public List<MessageDto> findBySpot(
         @RequestParam(name = "spot") Long spotId) {
         log.info("GET /api/v1/messages?spot={}", spotId);
-        List<Message> messages = this.messageService.findBySpot(spotId);
-        return messageMapper.messageListToMessageDtoList(messages);
+        try {
+            List<Message> messages = this.messageService.findBySpot(spotId);
+            return messageMapper.messageListToMessageDtoList(messages);
+        } catch (NotFoundException2 e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured("ROLE_ADMIN")
@@ -45,9 +51,14 @@ public class MessageEndpoint {
     public MessageDto create(@Valid @RequestBody MessageDto messageDto) {
         log.info("POST /api/v1/messages body: {}", messageDto);
         MessageDto newMessage;
-        newMessage = messageMapper.messageToMessageDto(
-            messageService.create(messageMapper.messageDtoToMessage(messageDto)));
-        return newMessage;
+        try {
+            newMessage = messageMapper.messageToMessageDto(
+                messageService.create(messageMapper.messageDtoToMessage(messageDto)));
+            return newMessage;
+        } catch (NotFoundException2 e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured("ROLE_ADMIN")
@@ -58,7 +69,7 @@ public class MessageEndpoint {
         log.info("GET /api/v1/messages/{}", id);
         try {
             return messageMapper.messageToMessageDto(messageService.getById(id));
-        } catch (NotFoundException | ServiceException e) {
+        } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -72,7 +83,7 @@ public class MessageEndpoint {
         log.info("DELETE /api/v1/messages/{}", id);
         try {
             messageService.deleteById(id);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

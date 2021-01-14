@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Route, Router } from '@angular/router';
-import { SidebarService } from 'src/app/services/sidebar.service';
-import { SpotService } from 'src/app/services/spot.service';
-import { MLocSpot } from 'src/app/util/m-loc-spot';
-import { parseIntStrictly } from 'src/app/util/parse-int';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import { NotificationService } from 'src/app/services/notification.service';
+import {SidebarService} from 'src/app/services/sidebar.service';
+import {SpotService} from 'src/app/services/spot.service';
+import {MLocSpot} from 'src/app/util/m-loc-spot';
+import {parsePositiveInteger} from 'src/app/util/parse-int';
 
 @Component({
   selector: 'app-edit-spot',
@@ -19,8 +20,9 @@ export class EditSpotComponent implements OnInit {
     private sidebarService: SidebarService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private spotService: SpotService
-    ) { }
+    private spotService: SpotService,
+    private notificationService: NotificationService) {
+  }
 
   ngOnInit(): void {
     if (this.sidebarService.spot != null) {
@@ -28,15 +30,19 @@ export class EditSpotComponent implements OnInit {
     } else {
       let spotId: number;
       this.activedRoute.params.subscribe(params => {
-        spotId = parseIntStrictly(params.spotId);
+        spotId = parsePositiveInteger(params.spotId);
         if (isNaN(spotId)) {
-          console.log('it is not a number!');
+          this.notificationService.error(NotificationService.spotIdNotInt);
           return;
         }
-          console.log('Correct: ' + spotId);
-          this.spotService.getSpotById(spotId).subscribe(result => {
+
+        this.spotService.getById(spotId).subscribe(
+          result => {
             this.spot = result;
-          });
+          }, error => {
+            this.notificationService.error(NotificationService.errorLoadingSpot);
+          }
+        );
       });
     }
   }
@@ -45,12 +51,15 @@ export class EditSpotComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 
-  updateSpot(spot: MLocSpot): void {
-    console.log('update spot: ' + JSON.stringify(spot));
-    this.spotService.updateSpot(spot).subscribe(result => {
-      console.log('Spot updated!');
-      this.sidebarService.spot = result;
-      this.router.navigate(['../'], { relativeTo: this.activatedRoute });
-    });
+  update(spot: MLocSpot): void {
+    this.spotService.update(spot).subscribe(
+      result => {
+        this.notificationService.success(`Spot ${result.name} updated!`);
+        this.sidebarService.spot = result;
+        this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+      }, error => {
+        this.notificationService.error(NotificationService.errorLoadingSpot);
+      }
+    );
   }
 }

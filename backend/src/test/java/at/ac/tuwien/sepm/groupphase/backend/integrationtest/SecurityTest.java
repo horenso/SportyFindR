@@ -85,8 +85,8 @@ public class SecurityTest implements TestData {
             .build();
         category = categoryRepository.save(category);
         Location location = Location.builder()
-            .latitude(10.0)
-            .longitude(10.0)
+            .latitude(LAT)
+            .longitude(LONG)
             .build();
         location = locationRepository.save(location);
         Spot spot = Spot.builder()
@@ -96,13 +96,12 @@ public class SecurityTest implements TestData {
             .category(category)
             .build();
         spot = spotRepository.save(spot);
-
+        id= spot.getId();
         message = Message.builder()
             .spot(spot)
             .content(TEST_NEWS_TITLE)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build();
-        id = messageRepository.save(message).getId();
     }
 
     @AfterEach
