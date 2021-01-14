@@ -25,6 +25,7 @@ import { EditSpotComponent } from './components/edit-spot/edit-spot.component';
 import {MaterialModule} from './material/material.module';
 import { TextWithHashtagsComponent } from './components/text-with-hashtags/text-with-hashtags.component';
 import { ToastrModule } from 'ngx-toastr';
+import { UserManagerComponent } from './components/user-manager/user-manager.component';
 
 const toastrSettings = {
   timeOut: 3000,
@@ -50,6 +51,7 @@ const toastrSettings = {
     PageNotFoundComponent,
     EditSpotComponent,
     TextWithHashtagsComponent,
+    UserManagerComponent,
   ],
   imports: [
     BrowserModule,
