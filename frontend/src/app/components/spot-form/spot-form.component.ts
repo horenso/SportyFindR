@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { NotificationService } from 'src/app/services/notification.service';
 import {Category} from '../../dtos/category';
@@ -68,7 +68,7 @@ export class SpotFormComponent implements OnInit, OnChanges {
   onConfirm(): void {
     const val = this.spotForm.value;
     const newSpot = new MLocSpot(null, val.name, val.description, val.category, null);
-    
+
     if (this.spot != null) {
       newSpot.id = this.spot.id;
       newSpot.markerLocation = this.spot.markerLocation;

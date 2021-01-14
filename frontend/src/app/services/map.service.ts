@@ -66,7 +66,7 @@ export class MapService {
     return this.draggableMarker;
   }
 
-  /** 
+  /**
    * If a draggable marker exists on the map it gets removed
    */
   public removeDraggableMarker(): void {

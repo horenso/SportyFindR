@@ -1,7 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {SpotService} from '../../services/spot.service';
-import {SidebarService} from '../../services/sidebar.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-text-with-hashtags [text]',
@@ -31,7 +29,7 @@ export class TextWithHashtagsComponent implements OnInit {
   public onClickedHashtag(hashtag: string): void {
     console.log('Clicked on hashtag: ' + hashtag);
     this.route.navigate(['hashtags', hashtag.substr(1)]);
-    //this.clickedHashtag.emit(hashtag);
+    // this.clickedHashtag.emit(hashtag);
 
   }
 
