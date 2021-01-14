@@ -40,10 +40,18 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public ApplicationUser createApplicationUser(ApplicationUser user) throws ValidationException {
-        if (false) {
-            // ToDo check user validity
-            throw new ValidationException("User invalid");
+        if (user.getId() != null) {
+            throw new ValidationException("Id must be null.");
         }
+        if (userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
+            throw new ValidationException("Email address is invalid: it is already in use by another user.");
+        }
+
+        ValidationException valException = this.validateUser(user);
+        if (valException != null) {
+            throw valException;
+        }
+
         ApplicationUser newUser = new ApplicationUser(null, user.getName(), user.getEmail(), this.passwordEncoder.encode(user.getPassword()), user.getEnabled(), null);
         newUser = userRepository.save(newUser);
         newUser.setRoles(user.getRoles());
@@ -67,9 +75,24 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser update(ApplicationUser user) throws NotFoundException2 {
+    public ApplicationUser update(ApplicationUser user) throws NotFoundException2, ValidationException {
+        if (user.getId() == null) {
+            throw new ValidationException("Id must not be null for updated user.");
+        }
+        ValidationException valException = this.validateUser(user);
+        if (valException != null) {
+            throw valException;
+        }
         Optional<ApplicationUser> rUser = userRepository.findApplicationUserById(user.getId());
+
         if (rUser.isPresent()) {
+
+            if (!rUser.get().getEmail().equals(user.getEmail())) {
+                if (userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
+                    throw new ValidationException("Email address is invalid: it is already in use by another user.");
+                }
+            }
+
             this.userRepository.save(user);
             return findApplicationUserById(user.getId());
         } else {
@@ -130,6 +153,27 @@ public class CustomUserDetailService implements UserService {
     public boolean userExistsByEmail(String email) {
         LOGGER.debug("Check if user exists by email");
         return userRepository.findApplicationUserByEmail(email).isPresent();
+    }
+
+    private ValidationException validateUser(ApplicationUser user) {
+        if (!user.getEmail().matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")) {
+            return new ValidationException("Email address is not valid.");
+        }
+        if (user.getName().length() < 3 || user.getName().length() > 30) {
+            return new ValidationException("User name must be at least 3 and at most 30 characters.");
+        }
+        if (user.getPassword().length() < 7) {
+            return new ValidationException("Password must be at least 7 characters long.");
+        }
+        if (user.getEnabled() == null) {
+            return new ValidationException("User must either be enabled or disabled.");
+        }
+        for (Role role : user.getRoles()) {
+            if (roleRepository.findRoleByName(role.getName()).isEmpty()) {
+                return new ValidationException("Role " + role.getName() + "does not exist.");
+            }
+        }
+        return null;
     }
 
 }

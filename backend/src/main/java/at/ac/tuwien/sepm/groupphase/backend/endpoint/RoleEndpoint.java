@@ -35,10 +35,10 @@ public class RoleEndpoint {
 
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/all")
+    @GetMapping(value = "")
     @ApiOperation(value = "Get all roles", authorizations = {@Authorization(value = "apiKey")})
     public List<RoleDto> getAll() {
-        LOGGER.info("GET /api/v1/roles/all");
+        LOGGER.info("GET /api/v1/roles");
         return roleMapper.roleListToRoleDtoList(roleService.findAll());
     }
 
