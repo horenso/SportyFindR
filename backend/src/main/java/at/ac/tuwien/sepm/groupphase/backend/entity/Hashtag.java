@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Hashtag {
     private Long id;
 
     @Column(nullable = false)
+    @Length(min = 1, max = 64)
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER)
