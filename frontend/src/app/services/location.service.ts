@@ -65,6 +65,6 @@ export class LocationService {
   }
 
   private requestAllLocations(): Observable<Location[]> {
-    return this.httpClient.get<[]>(this.locationBaseUri);
+    return this.httpClient.get<Location[]>(this.locationBaseUri);
   }
 }
