@@ -7,7 +7,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 export class MessageDatePipe implements PipeTransform {
 
   static timeFormat = 'HH:mm';
-  static dateFormat = 'm/d/y, HH:mm';
+  static dateFormat = 'd/M/y, HH:mm';
 
   transform(value: string): string {
     const now = Date.now();
@@ -18,7 +18,7 @@ export class MessageDatePipe implements PipeTransform {
 
     if (differenceDateDays === 0) {
       return 'today, ' + datePipe.transform(value, MessageDatePipe.timeFormat);
-    } else if (differenceDateDays === 1) {
+    } else if (differenceDateDays === -1) {
       return 'yesterday, ' + datePipe.transform(value, MessageDatePipe.timeFormat);
     } else {
       return datePipe.transform(value, MessageDatePipe.dateFormat);

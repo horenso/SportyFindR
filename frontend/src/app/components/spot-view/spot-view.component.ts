@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
@@ -16,7 +16,7 @@ import {SubSink} from 'subsink';
   templateUrl: './spot-view.component.html',
   styleUrls: ['./spot-view.component.scss']
 })
-export class SpotViewComponent implements OnInit, OnDestroy {
+export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() goBack = new EventEmitter();
 
@@ -25,7 +25,10 @@ export class SpotViewComponent implements OnInit, OnDestroy {
   public spot: MLocSpot;
 
   public messageList: Message[] = [];
-  public messageForm: FormGroup;
+  public newMessage: string = '';
+
+  @ViewChild('messageArea') private messageArea: ElementRef;
+  @ViewChild('messageInput') private messageInput: ElementRef;
 
   private subs = new SubSink();
 
@@ -69,10 +72,6 @@ export class SpotViewComponent implements OnInit, OnDestroy {
           }));
       }
     }));
-
-    this.messageForm = this.formBuilder.group({
-      content: [null, [Validators.required, Validators.minLength(1)]],
-    });
   }
 
   ngOnDestroy(): void {
@@ -80,12 +79,24 @@ export class SpotViewComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
+  ngAfterViewInit(): void {
+    if (this.messageInput != null) {
+      this.messageInput.nativeElement.focus();
+    } else {
+      console.log(this.messageInput);
+    }
+  }
+
   submitDialog() {
-    const newMessage = new Message(null, this.messageForm.value.content, null, this.spot.id);
+    if (this.newMessage?.length < 1) {
+      return;
+    }
+    const newMessage = new Message(null, this.newMessage, null, this.spot.id);
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);
-        this.messageForm.reset();
+        this.newMessage = '';
+        setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {
         this.notificationService.error('Error sending message!');
         console.error(error);
@@ -125,6 +136,7 @@ export class SpotViewComponent implements OnInit, OnDestroy {
       result => {
         this.messageList = result;
         console.log(`Loaded ${result.length} messages.`);
+        setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {
         this.notificationService.error('Error loading messages!');
         console.log(error);
@@ -161,5 +173,9 @@ export class SpotViewComponent implements OnInit, OnDestroy {
         }
       }
     }));
+  }
+
+  private scrollMessageAreaBottom(): void {
+    this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
   }
 }

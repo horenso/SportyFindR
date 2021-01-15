@@ -1,7 +1,13 @@
-<div class="text">
-	<ng-container *ngFor='let token of tokens'>
-		<span *ngIf='isHashtag(token); else noHashtag' class="hashtag" 
-			(click)='onClickedHashtag(token)' (mousedown)='preventDefault($event)'>{{token}}</span>
-		<ng-template #noHashtag>{{token}}</ng-template>
-	</ng-container>
+<div #textArea class="textArea" [ngClass]="getTextAreaClass()">
+  <ng-container *ngFor='let token of tokens'>
+    <span *ngIf='isHashtag(token); else noHashtag' class="hashtag" 
+      (click)='onClickedHashtag(token)' (mousedown)='preventDefault($event)'>{{token}}</span>
+    <ng-template #noHashtag>{{token}}</ng-template>
+  </ng-container>
+</div>
+
+<div id="showButton">
+  <button mat-button *ngIf="textTooLong" (click)='showAll = !showAll'>
+    {{showAll ? 'Show less' : 'Show more'}}
+  </button>
 </div>

@@ -1,4 +1,3 @@
-<h1>New Spot within existing locaton</h1>
-
-<app-spot-form (cancel)="cancel()"
-               (confirm)="saveSpot($event)"></app-spot-form>
+<app-spot-form [title]="'New Spot within Locaton'" 
+  (cancel)="cancel()"
+  (confirm)="saveSpot($event)"></app-spot-form>

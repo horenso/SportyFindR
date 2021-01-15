@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
 import {Subscription} from 'rxjs';
+import {HashtagService} from 'src/app/services/hashtag.service';
 
 @Component({
   selector: 'app-home',

@@ -1,38 +1,24 @@
-<div class="message">
-  <div class="message-row you-message">
-    <div class="message-content">
-      <div class="message-author"><b>{{author}}</b></div>
+<div id="messageRow">
+  <div id="messageBody" class="youMessage">
+    <div id="titleRow">
+      <div id="author"><b>{{author}}</b></div>
+      <div id="date">{{message.publishedAt | messageDate}}</div>
+    </div>
+    <div id="contentRow">
       <app-text-with-hashtags [text]='message.content'></app-text-with-hashtags>
-      <div class="message-date">{{message.publishedAt | messageDate}}</div>
     </div>
-
-    <div class="row">
-      <ng-container *ngIf="getUpvoteCount() > 0">
-        <p class="count">{{getUpvoteCount()}}</p>
-      </ng-container>
-      <button mat-icon-button (click)='onUpVote()' [class]="reaction.type === 'THUMBS_UP' ? 'button-enabled' : 'button-disabled'"
-              class="upVoteButton"
-              type="button">
-        <mat-icon>thumb_up</mat-icon>
-      </button>
-
-      <ng-container *ngIf="getDownVoteCount() > 0">
-        <p class="count2">{{getDownVoteCount()}}</p>
-      </ng-container>
-      <button mat-icon-button (click)='onDownVote()' [class]="reaction.type === 'THUMBS_DOWN' ? 'button-enabled' : 'button-disabled'"
-              class="downVoteButton"
-              type="button">
-        <mat-icon>thumb_down</mat-icon>
-      </button>
-
-      <div class="col text-right">
-        <button mat-icon-button (click)='onDelete()' class="button-warn deleteButton"
-                type="button">
-          <mat-icon>delete</mat-icon>
-        </button>
+    <div id="bottomRow">
+      <div id="ratingButtons">
+        <button mat-icon-button (click)='onUpVote()' 
+          [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
+        {{getUpvoteCountString()}}
+        <button mat-icon-button (click)='onDownVote()' 
+          [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
+        {{getDownVoteCountString()}}
       </div>
+      <button mat-icon-button (click)='onDelete()' id="deleteButton" class="button">
+        <mat-icon>delete</mat-icon>
+      </button>
     </div>
-
   </div>
-
 </div>
