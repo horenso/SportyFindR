@@ -10,7 +10,7 @@
     </button>
   </div>
 
-  <div class="description">
+  <div id="infoSection">
     <h3>{{spot.category.name}}</h3>
     <app-text-with-hashtags [text]='spot.description'></app-text-with-hashtags>
   </div>
@@ -23,10 +23,17 @@
     </div>
   </div>
 
-  <div class="sidebarBottomRow messageWritingRow">
+  <div class="sidebarBottomRow">
     <mat-form-field appearance="outline">
       <mat-label>New message</mat-label>
-      <input matInput #messageInput (keydown.enter)="submitDialog()" [(ngModel)]='newMessage' id="messages" autocomplete="off">
+      <textarea matInput #messageInput
+        id="messageInput"
+        (keydown.enter)="submitDialog()"
+        [(ngModel)]='newMessage'
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="10"
+        autocomplete="off"></textarea>
     </mat-form-field>  
     <button mat-icon-button id="sendButton" color="primary" (click)="submitDialog()">
       <mat-icon>send</mat-icon>

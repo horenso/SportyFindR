@@ -7,9 +7,9 @@ mat-form-field {
   margin: 0.5em;
 }
 
-.messageWritingRow {
+.sidebarBottomRow {
   border-top: 1px solid lightgrey;
-  padding: 1em 1em 1em 1em;
+  padding: 0.5em 0.5em 0.5em 0.5em;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -19,6 +19,11 @@ mat-form-field {
   border-top: 1px solid lightgrey;
 }
 
-#backButton {
-  justify-self: flex-start;
+#messageInput {
+  resize: none;
+}
+
+#infoSection {
+  max-height: 60%;
+  overflow-y: auto;
 }
