@@ -6,10 +6,12 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ public class SimpleReactionService implements ReactionService {
     private final ReactionRepository reactionRepository;
     private final MessageRepository messageRepository;
     private final SpotSubscriptionService spotSubscriptionService;
+    private final UserRepository userRepository;
 
     @Override
     public Reaction create(Reaction reaction) throws NotFoundException2{
@@ -32,6 +35,7 @@ public class SimpleReactionService implements ReactionService {
             throw new NotFoundException2("Message does not Exist");
         }
         reaction.setPublishedAt(LocalDateTime.now());
+        reaction.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
         Reaction newReaction = reactionRepository.save(reaction);
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(newReaction.getMessage().getId());
         return newReaction;

@@ -80,7 +80,6 @@ public class SimpleMessageService implements MessageService {
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
         }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            Object o =(SecurityContextHolder.getContext().getAuthentication());
             throw new WrongUserException("You can only delete your own messages");
         }
         hashtagService.deleteMessageInHashtags(messageOptional.get());
