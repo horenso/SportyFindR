@@ -33,7 +33,7 @@ public class Spot {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade=CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private ApplicationUser owner;
 }

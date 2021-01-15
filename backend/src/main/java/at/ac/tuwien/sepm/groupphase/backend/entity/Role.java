@@ -1,6 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -22,7 +25,14 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonBackReference
+    @JoinTable(
+        name = "applicationUsers_roles",
+        joinColumns = @JoinColumn(name = "roles_id"),
+        inverseJoinColumns = @JoinColumn(name = "applicationuser_id")
+    )
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
 
     @Override

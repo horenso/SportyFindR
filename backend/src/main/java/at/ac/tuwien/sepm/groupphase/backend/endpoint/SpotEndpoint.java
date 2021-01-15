@@ -108,7 +108,6 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
     @ApiOperation(value = "Subscribe to the Server Sent Emitter", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/subscribe")
     @CrossOrigin

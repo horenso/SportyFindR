@@ -18,5 +18,7 @@ public class RoleDto {
     private Long id;
     @NotNull
     private String name;
+
+
     private List<UserDto> users;
 }
