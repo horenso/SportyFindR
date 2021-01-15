@@ -24,8 +24,8 @@ import {SpotFormComponent} from './components/spot-form/spot-form.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {EditSpotComponent} from './components/edit-spot/edit-spot.component';
 import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-with-hashtags.component';
-
 import {MaterialModule} from './material/material.module';
+import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
 
 const toastrSettings = {
@@ -52,6 +52,7 @@ const toastrSettings = {
     PageNotFoundComponent,
     EditSpotComponent,
     TextWithHashtagsComponent,
+    HashtagComponent
   ],
   imports: [
     BrowserModule,

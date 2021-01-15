@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-text-with-hashtags [text]',
@@ -6,6 +7,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrls: ['./text-with-hashtags.component.scss']
 })
 export class TextWithHashtagsComponent implements OnInit {
+
+  constructor(
+    private route: Router
+  ) {
+  }
 
   @Input() text: string;
   @Output() clickedHashtag = new EventEmitter();
@@ -22,10 +28,12 @@ export class TextWithHashtagsComponent implements OnInit {
 
   public onClickedHashtag(hashtag: string): void {
     console.log('Clicked on hashtag: ' + hashtag);
-    this.clickedHashtag.emit(hashtag);
+    this.route.navigate(['hashtags', hashtag.substr(1)]);
+    // this.clickedHashtag.emit(hashtag);
+
   }
 
-  // this is to prevent the double click select on hashtags 
+  // this is to prevent the double click select on hashtags
   public preventDefault(event: MouseEvent): void {
     event.preventDefault();
   }

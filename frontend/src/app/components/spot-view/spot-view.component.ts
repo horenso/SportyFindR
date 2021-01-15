@@ -22,7 +22,7 @@ export class SpotViewComponent implements OnInit, OnDestroy {
   public spotId: number;
   public locationId: number;
   public spot: MLocSpot;
-  
+
   public messageList: Message[] = [];
   public messageForm: FormGroup;
 
