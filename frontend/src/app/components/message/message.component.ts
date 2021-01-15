@@ -77,22 +77,36 @@ export class MessageComponent implements OnInit, OnDestroy {
     this.deleteMessage.emit(this.message);
   }
 
-  public getUpvoteCount(): number {
-    // if (this.reaction.type === ReactionType.THUMBS_UP) {
-    //   return this.message.upVotes + 1;
-    // } else {
-    //   return this.message.upVotes;
-    // }
-    return this.message.upVotes;
+  public getUpvoteCountString(): string {
+    if (this.message?.upVotes > 0) {
+      return this.message.upVotes.toString();
+    } else {
+      return '';
+    }
   }
 
-  public getDownVoteCount(): number {
-    // if (this.reaction.type === ReactionType.THUMBS_DOWN) {
-    //   return this.message.downVotes + 1;
-    // } else {
-    //   return this.message.downVotes;
-    // }
-    return this.message.downVotes;
+  public getDownVoteCountString(): string {
+    if (this.message?.downVotes > 0) {
+      return this.message.downVotes.toString();
+    } else {
+      return '';
+    }
+  }
+
+  public getUpVoteButtonClass(): string[] {
+    if (this.reaction.type === ReactionType.THUMBS_UP) {
+      return ['upVoteButton', 'buttonEnabled'];
+    } else {
+      return ['upVoteButton', 'buttonDisabled'];
+    }
+  }
+
+  public getDownVoteButtonClass(): string[] {
+    if (this.reaction.type === ReactionType.THUMBS_DOWN) {
+      return ['downVoteButton', 'buttonEnabled'];
+    } else {
+      return ['downVoteButton', 'buttonDisabled'];
+    }
   }
 
   private deleteReaction(reaction: Reaction): void {
@@ -102,6 +116,7 @@ export class MessageComponent implements OnInit, OnDestroy {
   }
 
   private change(reaction: Reaction, newType: ReactionType): void {
+    console.log(this.message);
     if (reaction.id != null) {
       this.reaction.type = newType;
       this.subs.add(this.reactionService.change(this.reaction).subscribe(result => this.reaction.id = result.id));

@@ -1,10 +1,10 @@
 <div *ngIf='spot != null' class="inSidebar">
 
   <div class="sidebarTopRow">
-    <button mat-icon-button  class="backButton" color="primary" class="icon" (click)='goBack.emit()' (click)='onGoBack()'>
+    <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='goBack.emit()' (click)='onGoBack()'>
       <mat-icon>arrow_back_ios_new</mat-icon>
     </button>
-    <h2>{{spot.name}}</h2>
+    <div class="sidebarTitle">{{spot.name}}</div>
     <button mat-icon-button color="primary" class="icon" [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -18,8 +18,8 @@
   <div #messageArea class="sidebarScrollableSection messageArea">
     <div *ngFor="let message of messageList" class="message">
       <app-message
-      (deleteMessage)='deleteOneMessage($event)'
-      [message]='message'></app-message>
+        (deleteMessage)='deleteOneMessage($event)'
+        [message]='message'></app-message>
     </div>
   </div>
 

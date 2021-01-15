@@ -3,6 +3,10 @@ mat-form-field {
   flex-grow: 1;
 }
 
+.message {
+  margin: 0.5em;
+}
+
 .messageWritingRow {
   border-top: 1px solid lightgrey;
   padding: 1em 1em 1em 1em;
@@ -13,4 +17,8 @@ mat-form-field {
 
 .sidebarScrollableSection {
   border-top: 1px solid lightgrey;
+}
+
+#backButton {
+  justify-self: flex-start;
 }

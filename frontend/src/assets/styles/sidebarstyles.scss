@@ -2,36 +2,51 @@
 * Global Sidebar styles for all sidebar components
 */
 
+/*
+* This is the wrapper class for all sidebar components
+*/
 .inSidebar {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
+/*
+* Every Component in the sidebar has a fixed topbar of 60px
+*/
 .sidebarTopRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex: 0 0 60px; // No grow or shrink, always 50px high
+  width: 100%;
+  display: grid;
+  grid-template-columns: 10% auto 10%;
   align-items: center;
-  // background-color: blue;
-  flex: 0 0 60px;
-  height: 50px;
+  justify-content: stretch;
+  // justify-content: centerjustify self;
 }
 
+/*
+* The title of each component in the sidebar
+*/
+.sidebarTitle {
+  font-weight: bold;
+  font-size: x-large;
+  margin: 0px 0px 0px 0px;
+  justify-self: center;
+}
+
+/*
+* Everything with overflow belongs into this container
+*/
 .sidebarScrollableSection {
-  overflow: auto;
-  // background-color: chartreuse;
+  overflow-y: auto;
   flex: 1 1 auto;
 }
 
+/*
+* This is an optional row at bottom, that can grow upwards but stays at minimum size otherwise.
+* It should go below sidebarScrollableSection
+*/
 .sidebarBottomRow {
-  // background-color: coral;
   flex: 0 0 min-content;
   height: 50px;
-}
-
-.sidebarTitle {
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
 }

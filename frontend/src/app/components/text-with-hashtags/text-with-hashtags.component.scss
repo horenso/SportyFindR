@@ -1,8 +1,10 @@
 .hashtag {
-	color: #f338a5; // TODO: make this prettier
-	cursor: pointer;
+  color: #f338a5; // TODO: make this prettier
+  cursor: pointer;
 }
 
 .text {
-	white-space: pre-wrap; // to keep new line characters in the text
+  white-space: pre-wrap; // to keep new line characters in the text
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
