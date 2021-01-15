@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   selectedLocationId: number = null;
 
   sidebarActive: boolean = false;
+  filterActive: boolean = true;
 
   constructor(
     public authService: AuthService,

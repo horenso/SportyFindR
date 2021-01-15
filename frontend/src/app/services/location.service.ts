@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import { Observable } from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Location} from '../dtos/location';
 import {MLocation} from '../util/m-location';
+import {Message} from '../dtos/message';
 
 @Injectable({
   providedIn: 'root'
@@ -59,5 +60,32 @@ export class LocationService {
 
   private requestAllLocations(): Observable<Location[]> {
     return this.httpClient.get<[]>(this.locationBaseUri);
+  }
+
+  /**
+   * Searches locations from the backend according to search parameters
+   * @param str containing the search parameters
+   */
+  filterLocation(str: string): Observable<Location[]> {
+    console.log('Search for locations with parameters: ' + str);
+    return this.httpClient.get<Location[]>('http://localhost:8080' + str)
+      .pipe(
+        tap(_ => console.log(`locations: ` + _.length)),
+        catchError(this.handleError<Location[]>('No locations found that fit the parameters.', []))
+      );
+  }
+
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      console.log(`${operation} failed: ${error.message}`);
+      return of(result as T);
+    };
   }
 }

@@ -6,8 +6,14 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
-import {MatOptionModule} from '@angular/material/core';
+import {MatNativeDateModule, MatOptionModule} from '@angular/material/core';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatCardModule} from '@angular/material/card';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatListModule} from '@angular/material/list';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 const MaterialComponents = [
   MatButtonModule,
@@ -18,7 +24,14 @@ const MaterialComponents = [
   MatInputModule,
   MatSelectModule,
   MatOptionModule,
-  MatMenuModule
+  MatMenuModule,
+  MatCardModule,
+  MatTabsModule,
+  MatGridListModule,
+  MatListModule,
+  MatSliderModule,
+  MatDatepickerModule,
+  MatNativeDateModule
 ];
 
 @NgModule({

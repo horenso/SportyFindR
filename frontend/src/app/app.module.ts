@@ -27,6 +27,7 @@ import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-wi
 import {MaterialModule} from './material/material.module';
 import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
+import { FilterMainComponent } from './components/filter-main/filter-main.component';
 
 const toastrSettings = {
   timeOut: 3000,
@@ -34,6 +35,9 @@ const toastrSettings = {
   preventDuplicates: true,
 };
 
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +56,8 @@ const toastrSettings = {
     PageNotFoundComponent,
     EditSpotComponent,
     TextWithHashtagsComponent,
-    HashtagComponent
+    HashtagComponent,
+    FilterMainComponent
   ],
   imports: [
     BrowserModule,
