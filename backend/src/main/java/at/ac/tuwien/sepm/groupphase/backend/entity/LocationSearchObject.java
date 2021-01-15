@@ -2,8 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -11,8 +9,11 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class MessageSearchObject {
+public class LocationSearchObject {
 
     Long categoryId;
-    LocalDateTime time;
+    Double latitude;
+    Double longitude;
+    Double radius;
+
 }

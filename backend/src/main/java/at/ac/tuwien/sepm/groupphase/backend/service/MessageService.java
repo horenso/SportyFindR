@@ -6,8 +6,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +20,15 @@ public interface MessageService {
      * @return ordered list of al message entries
      */
     List<Message> findBySpot(Long spotId) throws NotFoundException2;
+
+    /**
+     * Find all message from one spot ordered by published at date (descending).
+     *
+     * @param spotId id of the spot
+     * @param pageable containing page information
+     * @return ordered list of al message entries
+     */
+    Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2;
 
 
     /**

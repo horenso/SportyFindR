@@ -13,6 +13,7 @@ import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,6 +44,27 @@ public class MessageEndpoint {
         try {
             List<Message> messages = this.messageService.findBySpot(spotId);
             return messageMapper.messageListToMessageDtoList(messages);
+        } catch (NotFoundException2 e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    // for sidebar with pagination
+    @GetMapping(value = "/all")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get page of messages by spot without details", authorizations = {@Authorization(value = "apiKey")})
+    public Page<MessageDto> findBySpotPaged(
+        @PageableDefault(size = 20)
+        @SortDefault.SortDefaults({
+            @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
+            Pageable pageable,
+        @RequestParam(name = "spot") Long spotId) {
+
+        log.info("GET /api/v1/messages?spot={}", spotId);
+
+        try {
+            return messageMapper.messagePageToMessageDtoPage(messageService.findBySpotPaged(spotId, pageable));
         } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -101,18 +122,17 @@ public class MessageEndpoint {
     @GetMapping("/filter")
     @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
-        @PageableDefault(size = 10)
+        @PageableDefault(size = 20)
         @SortDefault.SortDefaults({
             @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
-            Pageable pageable,
+        Pageable pageable,
         @RequestParam(required = false) Long categoryId,
-        @RequestParam(required = false) Long hashtagId,
         @RequestParam(required = false) LocalDateTime time) {
 
         log.info("GET /api/v1/messages/filter?" +
-            "categoryId=" + categoryId + "&hashtagId=" + hashtagId + "&time=" + time);
+            "categoryId=" + categoryId + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryId, hashtagId, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryId, time);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
@@ -120,6 +140,6 @@ public class MessageEndpoint {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-
     }
+
 }

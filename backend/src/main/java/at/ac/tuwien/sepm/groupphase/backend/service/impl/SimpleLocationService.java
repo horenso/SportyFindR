@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.entity.LocationSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
@@ -55,11 +56,11 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws ServiceException, NotFoundException2 {
-        log.debug("Searching for locations within a distance of at most " + radius + " km, containing spots with category: " + categoryId);
+    public List<Location> filter(LocationSearchObject locationSearchObject) throws ServiceException, NotFoundException2 {
+        log.debug("Searching for locations within a distance of at most " + locationSearchObject.getRadius() + " km, containing spots with category: " + locationSearchObject.getCategoryId());
         List<Location> locations;
-        if (categoryId != null && categoryId != 0) {
-            locations = locationRepository.filter(categoryId);
+        if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {
+            locations = locationRepository.filter(locationSearchObject.getCategoryId());
         } else {
             locations = locationRepository.findAll();
         }
@@ -67,8 +68,8 @@ public class SimpleLocationService implements LocationService {
             throw new NotFoundException2("No Location with these parameters found.");
         } else {
             try {
-                if (radius != null && radius != 0) {      // if search parameters contain radius data
-                    return validator.validateLocationDistance(latitude, longitude, radius, locations);
+                if (locationSearchObject.getRadius() != null && locationSearchObject.getRadius() != 0) {      // if search parameters contain radius data
+                    return validator.validateLocationDistance(locationSearchObject.getLatitude(), locationSearchObject.getLongitude(), locationSearchObject.getRadius(), locations);
                 } else {
                     return locations;       // search by category only
                 }

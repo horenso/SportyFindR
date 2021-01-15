@@ -20,9 +20,9 @@ import at.ac.tuwien.sepm.groupphase.backend.validator.MessageValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,21 @@ public class SimpleMessageService implements MessageService {
         // TODO: THIS IS VERY INEFFICIENT!
         messageList.forEach(this::setReactions);
         return messageList;
+    }
+
+    @Override
+    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2{
+        if (spotRepository.findById(spotId).isEmpty()) {
+            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
+        }
+        log.debug("Find all messages");
+        List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
+        // TODO: THIS IS VERY INEFFICIENT!
+        messageList.forEach(this::setReactions);
+
+        List<Long> messageIdList = messageRepository.findBySpotIdOrderByPublishedAtAscLong(spotId);
+
+        return messageRepository.findByIdIn(messageIdList, pageable);
     }
 
     @Override
@@ -99,21 +114,17 @@ public class SimpleMessageService implements MessageService {
 
     @Override
     public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException {
-        log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime() + ", containing the hashtag: " + messageSearchObject.getHashtagId());
+        log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
         if (messageSearchObject.getCategoryId()== null) {
             messageSearchObject.setCategoryId(0L);
-        }
-
-        if (messageSearchObject.getHashtagId()== null) {
-            messageSearchObject.setHashtagId(0L);
         }
 
         if (messageSearchObject.getTime() == null) {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
-        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageSearchObject.getHashtagId(), pageable);
+        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
 
     }
 
