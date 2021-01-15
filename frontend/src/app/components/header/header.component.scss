@@ -1,3 +1,8 @@
+// This is for the site layout
+:host {
+  flex: 0 1 auto;
+}
+
 .spacer {
   flex: 1 1 auto;
 }
@@ -23,5 +28,10 @@
 .mat-toolbar {
   position: relative;
   top: 0;
-  z-index: 3000;
+  z-index: 9000;
+}
+
+#homeLink, #homeLink:hover, #homeLink:focus, #homeLink:active {
+  text-decoration: none;
+  color: inherit;
 }

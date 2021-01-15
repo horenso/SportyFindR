@@ -1,0 +1,42 @@
+.spotButton {
+  width: 100%;
+  height: 55px;
+  margin: 0.5em 0em 0.5em 0em;
+  font-size: large;
+  text-align: left;
+  border: none;
+  outline: none;
+}
+
+.sidebarScrollableSection {
+  padding: 1em 1em 1em 1em;
+}
+
+.spot-icon {
+  margin-right: 20px;
+}
+
+#addButton {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  border: none;
+  outline:none;
+}
+
+.title {
+  font-weight: bold;
+  text-align: center;
+}
+
+.heading {
+  margin-top: 5px;
+  vertical-align: middle;
+}
+
+.icon {
+  vertical-align: middle;
+  border: none;
+  outline: none;
+  display: inline;
+}

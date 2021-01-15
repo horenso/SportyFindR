@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Observable,} from 'rxjs';
+import { Observable } from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Location} from '../dtos/location';
 import {MLocation} from '../util/m-location';
@@ -11,17 +11,24 @@ import {MLocation} from '../util/m-location';
 })
 export class LocationService {
 
-  private locationBaseUri: string = this.globals.backendUri + '/locations';
+  private locationBaseUri: string = `${this.globals.backendUri}/locations`;
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
   private static translateToMarkerLocation(location: Location): MLocation {
     return new MLocation(location);
   }
 
-  public getLocationById(locationId: number): Observable<MLocation> {
-    return this.httpClient.get<Location>(this.locationBaseUri + '/' + locationId).pipe(
+  /**
+   * Get one Location by id
+   * @param locationId of the location
+   * @returns MLocation entity
+   */
+  public getById(locationId: number): Observable<MLocation> {
+    return this.httpClient.get<Location>(`${this.locationBaseUri}/${locationId}`).pipe(
       map(
         (location: Location) => LocationService.translateToMarkerLocation(location)
       )
@@ -32,24 +39,10 @@ export class LocationService {
    * Loads all locations
    * @returns list of MarkerLocations
    */
-  getAllMarkerLocations(): Observable<MLocation[]> {
+  getAll(): Observable<MLocation[]> {
     return this.requestAllLocations().pipe(
       map(
         value => this.translateToMarkerLocations(value)
-      )
-    );
-  }
-
-  /**
-   * Persists location to the backend
-   * @param mLoc to persist
-   * @returns persisted markerLocation
-   */
-  createLocation(mLoc: MLocation): Observable<MLocation> {
-    console.log('Create location with title ' + mLoc.id);
-    return this.httpClient.post<Location>(this.locationBaseUri, mLoc.toLocation()).pipe(
-      map(
-        value => LocationService.translateToMarkerLocation(value)
       )
     );
   }

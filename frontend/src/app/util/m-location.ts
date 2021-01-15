@@ -42,9 +42,7 @@ export class MLocation extends Marker {
   public id: number;
 
   constructor(location: Location)
-
   constructor(id: number, latitude: number, longitude: number)
-
   constructor(locationOrId?: Location | number, latitude?: number, longitude?: number) {
     // This is not very elegant but atm we only have two cases so let's use that to our advantage
     // Problem is, that type checking only works for primitive types but not for self defined classes
@@ -67,9 +65,21 @@ export class MLocation extends Marker {
 
   public changeIcon(type: IconType): void {
     switch (type) {
-      case IconType.Default: this.setIcon(MLocation.iconDefault); break;
-      case IconType.New: this.setIcon(MLocation.iconNew); break;
-      case IconType.Edit: this.setIcon(MLocation.iconEdit); break;
+      case IconType.Default: {
+        this.setIcon(MLocation.iconDefault);
+        this.setZIndexOffset(0);
+        break;
+      }
+      case IconType.New: {
+        this.setIcon(MLocation.iconNew);
+        this.setZIndexOffset(10000);
+        break;
+      }
+      case IconType.Edit: {
+        this.setIcon(MLocation.iconEdit);
+        this.setZIndexOffset(10000);
+        break;
+      }
     }
   }
 

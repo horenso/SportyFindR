@@ -1,18 +1,21 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs';
+import {NotificationService} from 'src/app/services/notification.service';
 import {Category} from '../../dtos/category';
 import {CategoryService} from '../../services/category.service';
 import {MLocSpot} from '../../util/m-loc-spot';
 
 
 @Component({
-  selector: 'app-spot-form',
+  selector: 'app-spot-form [title]',
   templateUrl: './spot-form.component.html',
   styleUrls: ['./spot-form.component.scss']
 })
-export class SpotFormComponent implements OnInit, OnChanges {
+export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() spot: MLocSpot = null;
+  @Input() title: string = '';
 
   @Output() cancel = new EventEmitter();
   @Output() confirm = new EventEmitter<MLocSpot>();
@@ -20,9 +23,12 @@ export class SpotFormComponent implements OnInit, OnChanges {
   spotForm: FormGroup;
   categories: Category[] = [];
 
+  private subscription: Subscription;
+
   constructor(
     private formBuilder: FormBuilder,
-    private categoryService: CategoryService) {
+    private categoryService: CategoryService,
+    private notificationService: NotificationService) {
   }
 
   ngOnChanges(): void {
@@ -42,9 +48,20 @@ export class SpotFormComponent implements OnInit, OnChanges {
       this.setValues();
     }
 
-    this.categoryService.getAllCategories().subscribe(result => {
-      this.categories = result;
-    });
+    this.subscription = this.categoryService.getAll().subscribe(
+      result => {
+        this.categories = result;
+      }, error => {
+        this.notificationService.error('Error loading categories!');
+        console.log(error);
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private setValues(): void {
@@ -59,10 +76,9 @@ export class SpotFormComponent implements OnInit, OnChanges {
   }
 
   onConfirm(): void {
-    console.log('confirming: ');
     const val = this.spotForm.value;
     const newSpot = new MLocSpot(null, val.name, val.description, val.category, null);
-    
+
     if (this.spot != null) {
       newSpot.id = this.spot.id;
       newSpot.markerLocation = this.spot.markerLocation;

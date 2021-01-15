@@ -1,0 +1,33 @@
+mat-form-field {
+  margin-bottom: -1.25em;
+  flex-grow: 1;
+}
+
+.message {
+  margin: 0.5em;
+}
+
+.sidebarBottomRow {
+  border-top: 1px solid lightgrey;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.sidebarScrollableSection {
+  border-top: 1px solid lightgrey;
+}
+
+#messageInput {
+  resize: none;
+}
+
+#infoSection {
+  max-height: 60%;
+  overflow-y: auto;
+}
+
+#categorySpan {
+  font-weight: bold;
+}

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../global/globals';
 import {Observable, Subject} from 'rxjs';
 import {Spot} from '../dtos/spot';
@@ -11,23 +11,26 @@ import {map} from 'rxjs/operators';
 })
 export class SpotService {
 
-  private spotBaseUri: string = this.globals.backendUri + '/spots';
-  private eventSource: EventSource = null;
-
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
   }
 
+  private spotBaseUri: string = `${this.globals.backendUri}/spots`;
+
+  // Current EventSource of a spot subscribtion, there can at most be one subscribtion
+  private eventSource: EventSource = null;
+
   private static translateToMLocSpot(spot: Spot): MLocSpot {
-    console.log(spot);
-    console.log(spot instanceof Spot);
     return new MLocSpot(spot);
   }
 
   /**
-   * Persists spot to the backend
+   * Create one new spot
    * @param mLocSpot to persist
+   * @returns MLocSpot entity
    */
-  createSpot(mLocSpot: MLocSpot): Observable<MLocSpot> {
+  create(mLocSpot: MLocSpot): Observable<MLocSpot> {
     console.log('Create spot with name ' + mLocSpot.name);
     return this.httpClient.post<Spot>(this.spotBaseUri, mLocSpot.toSpot()).pipe(
       map(
@@ -36,14 +39,24 @@ export class SpotService {
     );
   }
 
+  /**
+   * Delete on spot by Id
+   * @param id of the spot that should be deleted
+   * @returns true if the host location was deleted too, else false
+   */
   deleteById(id: number): Observable<boolean> {
     console.log('Delete spot with id ' + id);
-    return this.httpClient.delete<any>(this.spotBaseUri + '/' + id).pipe(
+    return this.httpClient.delete<any>(`${this.spotBaseUri}/${id}`).pipe(
       map(respone => respone.deletedLocation)
     );
   }
 
-  updateSpot(mLocSpot: MLocSpot): Observable<MLocSpot> {
+  /**
+   * Update on spot, the spot must already exist in the system
+   * @param mLocSpot that should be updated
+   * @returns new MLocSpot entity of the updated Spot
+   */
+  update(mLocSpot: MLocSpot): Observable<MLocSpot> {
     console.log('Update spot with name ' + mLocSpot.name);
     return this.httpClient.put<Spot>(this.spotBaseUri, mLocSpot.toSpot()).pipe(
       map(
@@ -52,26 +65,47 @@ export class SpotService {
     );
   }
 
-  getSpotsByLocation(locationId: number): Observable<MLocSpot[]> {
-    return this.httpClient.get<Spot[]>(this.spotBaseUri + '?location=' + locationId).pipe(
+  /**
+   * Get a list of all spots from one location
+   * @param locationId of the location
+   * @returns list of spots, this can never be empty because every location has at least on spot
+   */
+  getByLocationId(locationId: number): Observable<MLocSpot[]> {
+    const params = new HttpParams().set('location', locationId.toString());
+    return this.httpClient.get<Spot[]>(this.spotBaseUri, {params: params}).pipe(
       map(
         (spots: Spot[]) => this.translateToMLocSpots(spots)
       )
     );
   }
 
-  getSpotById(spotId: number): Observable<MLocSpot> {
-    return this.httpClient.get<Spot>(this.spotBaseUri + '/' + spotId).pipe(
+  /**
+   * Get one spot by id
+   * @param spotId of the spot
+   * @returns a MLocSpot entity
+   */
+  getById(spotId: number): Observable<MLocSpot> {
+    return this.httpClient.get<Spot>(`${this.spotBaseUri}/${spotId}`).pipe(
       map(
         (spot: Spot) => SpotService.translateToMLocSpot(spot)
       )
     );
   }
 
-  observeEvents(spotId: number): Subject<any> {
+  /**
+   * Open a new SSE connection to observe message events within a spot
+   * Events include:
+   * 'message/new' if a new message arrieves
+   * 'message/delete' if a message was deleted
+   * 'message/updateReaction' if a message changed reactions
+   * @param spotId of the spot to observe
+   * @returns Subject that emits these events
+   */
+  openSseConnection(spotId: number): Subject<any> {
     console.log('New SSE connection with spot ' + spotId);
     this.closeConnection();
-    this.eventSource = new EventSource(this.globals.backendUri + '/spots/subscribe?spotId=' + spotId);
+    const params = new HttpParams().set('spotId', spotId.toString());
+    this.eventSource = new EventSource(`${this.spotBaseUri}/subscribe?${params.toString()}`);
     const subscription = new Subject();
     this.eventSource.addEventListener('message/new', event => subscription.next(event));
     this.eventSource.addEventListener('message/delete', event => subscription.next(event));
@@ -79,6 +113,10 @@ export class SpotService {
     return subscription;
   }
 
+  /**
+   * Close current SSE connection, if one is open
+   * Only one SSE connection can be open
+   */
   closeConnection(): void {
     if (this.eventSource != null) {
       this.eventSource.close();

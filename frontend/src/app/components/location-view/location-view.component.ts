@@ -2,54 +2,56 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Spot} from '../../dtos/spot';
 import {SpotService} from 'src/app/services/spot.service';
 import {SidebarService} from 'src/app/services/sidebar.service';
-import {Subscription} from 'rxjs';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {ActivatedRoute, Router} from '@angular/router';
-import {parseIntStrictly} from '../../util/parse-int';
-import { IconType } from 'src/app/util/m-location';
-import { Icon } from 'leaflet';
+import {parsePositiveInteger} from '../../util/parse-int';
+import {IconType} from 'src/app/util/m-location';
+import {NotificationService} from 'src/app/services/notification.service';
+import {SubSink} from 'subsink';
 
 @Component({
-  selector: 'app-view-spots',
-  templateUrl: './view-spots.component.html',
-  styleUrls: ['./view-spots.component.scss']
+  selector: 'app-location-view',
+  templateUrl: './location-view.component.html',
+  styleUrls: ['./location-view.component.scss']
 })
-export class ViewSpotsComponent implements OnInit, OnDestroy {
+export class LocationViewComponent implements OnInit, OnDestroy {
 
   locationId: number = null;
 
   public spots: MLocSpot[] = [];
 
-  private locationClickedSubscription: Subscription;
-  private getSpotsSubscription: Subscription;
+  private subs = new SubSink();
 
   constructor(
     private spotService: SpotService,
     private sidebarService: SidebarService,
     private route: Router,
-    private activedRoute: ActivatedRoute
-  ) {
+    private activedRoute: ActivatedRoute,
+    private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
-    this.activedRoute.params.subscribe(params => {
+    this.subs.add(this.activedRoute.params.subscribe(params => {
 
-      this.locationId = parseIntStrictly(params.locId);
+      this.locationId = parsePositiveInteger(params.locId);
 
       if (isNaN(this.locationId)) {
-        console.log('it is not a number!');
+        this.notificationService.navigateHomeAndShowError(NotificationService.locIdNotInt);
       } else {
-        console.log('Correct: ' + this.locationId);
-        this.spotService.getSpotsByLocation(this.locationId).subscribe(
+        this.subs.add(this.spotService.getByLocationId(this.locationId).subscribe(
           result => {
             this.spots = result;
           },
           error => {
-            console.log('could not find location!');
+            this.notificationService.navigateHomeAndShowError('Error loading location!');
           }
-        );
+        ));
       }
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 
   onClose(): void {
@@ -64,10 +66,5 @@ export class ViewSpotsComponent implements OnInit, OnDestroy {
 
   onCreateSpot() {
     this.route.navigate(['locations', this.locationId, 'spots', 'new']);
-  }
-
-  ngOnDestroy() {
-    this.getSpotsSubscription?.unsubscribe();
-    this.locationClickedSubscription?.unsubscribe();
   }
 }
