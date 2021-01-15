@@ -29,7 +29,7 @@ public class Role {
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonBackReference
     @JoinTable(
-        name = "applicationUsers_roles",
+        name = "applicationusers_roles",
         joinColumns = @JoinColumn(name = "roles_id"),
         inverseJoinColumns = @JoinColumn(name = "applicationuser_id")
     )

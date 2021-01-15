@@ -98,7 +98,7 @@ public class SseSubscriptionService implements SpotSubscriptionService {
         Long spotId = message.getSpot().getId();
         message.setSpot(null);
 
-        dispatch(spotId, message, "message/updateReaction");
+        dispatch(spotId, messageMapper.messageToMessageDto(message), "message/updateReaction");
     }
 
     private void dispatch(Long spotId, Object object, String destination) {

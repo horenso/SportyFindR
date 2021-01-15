@@ -39,7 +39,7 @@ public class ApplicationUser {
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
-        name = "applicationUsers_roles",
+        name = "applicationusers_roles",
         joinColumns = @JoinColumn(name = "applicationuser_id"),
         inverseJoinColumns = @JoinColumn(name = "roles_id")
     )

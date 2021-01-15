@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -63,7 +64,7 @@ public class MessageEndpointTest implements TestData {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserMapper userMapper;
+    private SimpleUserMapper simpleUserMapper;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -106,7 +107,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         MessageDto messageDto = MessageDto.builder()
-            .owner(userMapper.applicationUserToUserDto(user))
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
             .spotId(spot.getId())
             .content(MESSAGE_CONTENT)
             .build();
@@ -121,7 +122,7 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), message.get(0).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(messageDto.getDownVotes(), message.get(0).getDownVotes()),
             () -> assertEquals(messageDto.getUpVotes(), message.get(0).getUpVotes()),
-            () -> assertEquals(messageDto.getOwner(),userMapper.applicationUserToUserDto(message.get(0).getOwner()))
+            () -> assertEquals(messageDto.getOwner(), simpleUserMapper.userToSimpleUserDto(message.get(0).getOwner()))
         );
     }
 
@@ -233,14 +234,14 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(message.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messages.get(0).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message.getDownVotes(), messages.get(0).getDownVotes()),
             () -> assertEquals(message.getUpVotes(), messages.get(0).getUpVotes()),
-            () -> assertEquals(message.getOwner(),userMapper.userDtoToApplicationUser(messages.get(0).getOwner())),
+            () -> assertEquals(message.getOwner(),simpleUserMapper.simpleUserDtoToUser(messages.get(0).getOwner())),
             () -> assertEquals(message2.getId(), messages.get(1).getId()),
             () -> assertEquals(message2.getContent(), messages.get(1).getContent()),
             () -> assertEquals(message2.getSpot().getId(), messages.get(1).getSpotId()),
             () -> assertEquals(message2.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messages.get(1).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message2.getDownVotes(), messages.get(1).getDownVotes()),
             () -> assertEquals(message2.getUpVotes(), messages.get(1).getUpVotes()),
-            () -> assertEquals(message2.getOwner(),userMapper.userDtoToApplicationUser(messages.get(1).getOwner()))
+            () -> assertEquals(message2.getOwner(),simpleUserMapper.simpleUserDtoToUser(messages.get(1).getOwner()))
         );
     }
 
@@ -287,7 +288,7 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(message.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message.getDownVotes(), messageDto.getDownVotes()),
             () -> assertEquals(message.getUpVotes(), messageDto.getUpVotes()),
-            () -> assertEquals(message.getOwner(),userMapper.userDtoToApplicationUser(messageDto.getOwner()))
+            () -> assertEquals(message.getOwner(),simpleUserMapper.simpleUserDtoToUser(messageDto.getOwner()))
 
         );
     }
@@ -320,7 +321,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         MessageDto messageDto = MessageDto.builder()
-            .owner(userMapper.applicationUserToUserDto(user))
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
             .spotId(spot.getId() + 1)
             .content(MESSAGE_CONTENT)
             .build();

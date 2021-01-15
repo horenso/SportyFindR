@@ -31,5 +31,5 @@ public class MessageDto {
     @Null(message = "Down Votes must be null")
     private Integer downVotes;
 
-    private UserDto owner;
+    private SimpleUserDto owner;
 }

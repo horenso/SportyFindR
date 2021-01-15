@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -53,10 +54,12 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public void deleteById(Long reactionId) throws NotFoundException2 {
+    public void deleteById(Long reactionId) throws NotFoundException2, WrongUserException {
         Optional<Reaction> reactionOptional = reactionRepository.findById(reactionId);
         if (reactionOptional.isEmpty()) {
             throw new NotFoundException2(String.format("Reaction with id %d not found.", reactionId));
+        }else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new WrongUserException("You can only delete your own messages");
         }
         Reaction reaction = reactionOptional.get();
         reactionRepository.deleteById(reactionId);
@@ -64,9 +67,12 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public Reaction change(Reaction reaction) throws NotFoundException2{
-        if (reactionRepository.findById(reaction.getId()).isEmpty()) {
+    public Reaction change(Reaction reaction) throws NotFoundException2, WrongUserException{
+        Optional<Reaction> reactionOptional = reactionRepository.findById(reaction.getId());
+        if (reactionOptional.isEmpty()) {
             throw new NotFoundException2(String.format("Reaction with id %d not found.", reaction.getId()));
+        }else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new WrongUserException("You can only delete your own messages");
         }
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
         Reaction newReaction = reactionRepository.getOne(reaction.getId());
