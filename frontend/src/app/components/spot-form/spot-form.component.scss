@@ -10,12 +10,22 @@
 //   margin-right: 20px;
 //   width: 174px;
 //   align-content: center;
-//   border: none;
-//   outline: none;
-//   text-decoration: none;
+
 // }
 
 // .mat-form-field {
 //   width: 368px;
 // }
 
+#buttons {
+	display: flex;
+	justify-content: space-between;
+}
+
+.sidebarScrollableSection {
+	padding: 1em 1em 1em 1em;
+}
+
+.sidebarScrollableSection > * {
+	width: 100%;
+}
