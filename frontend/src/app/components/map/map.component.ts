@@ -1,18 +1,21 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {control, Layer, LayerGroup, Map, tileLayer, Point} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
-import { SidebarService, VisibilityFocusChange } from 'src/app/services/sidebar.service';
+import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
 import {MLocation} from '../../util/m-location';
+import {SubSink} from 'subsink';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
 
   @Output() mLocClicked = new EventEmitter();
+
+  private subs = new SubSink();
 
   map: Map;
   leafletOptions = {
@@ -50,12 +53,17 @@ export class MapComponent implements OnInit {
     })
   ];
 
-  private newMarkerSubscription;
-
   constructor(
     private locationService: LocationService,
     private mapService: MapService,
     private sidebarService: SidebarService) {
+  }
+
+  ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   onMapReady(map: Map) {
@@ -65,25 +73,22 @@ export class MapComponent implements OnInit {
     this.mapService.map = map;
 
     this.getLocationsAndConvertToLayerGroup();
-    this.newMarkerSubscription = this.mapService.addMarkerObservable.subscribe(markerLocation => {
+    this.subs.add(this.mapService.addMarkerObservable.subscribe(markerLocation => {
       this.locationList.push(markerLocation);
       this.locMarkerGroup.addLayer(markerLocation);
-    });
+    }));
 
-    this.mapService.removeMarkerLocObservable.subscribe(idToRemove => {
+    this.subs.add(this.mapService.removeMarkerLocObservable.subscribe(idToRemove => {
       this.removeMLocation(idToRemove);
-    });
+    }));
 
-    this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+    this.subs.add(this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.changeVisibilityAndFocus(change);
-    });
-  }
-
-  ngOnInit(): void {
+    }));
   }
 
   private getLocationsAndConvertToLayerGroup() {
-    this.locationService.getAll().subscribe(
+    this.subs.add(this.locationService.getAll().subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();
@@ -91,7 +96,7 @@ export class MapComponent implements OnInit {
       error => {
         console.log('Error retrieving locations from backend: ', error);
       }
-    );
+    ));
   }
 
   private addMarkers(): void {

@@ -1,12 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Icon, Marker} from 'leaflet';
+import {Marker} from 'leaflet';
 import {MapService} from '../../services/map.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {Router} from '@angular/router';
-import { IconType, MLocation } from 'src/app/util/m-location';
-import { SpotService } from 'src/app/services/spot.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import {IconType, MLocation} from 'src/app/util/m-location';
+import {SpotService} from 'src/app/services/spot.service';
+import {NotificationService} from 'src/app/services/notification.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-create-new-location-and-spot',
@@ -14,6 +15,8 @@ import { NotificationService } from 'src/app/services/notification.service';
   styleUrls: ['./create-new-location-and-spot.component.scss']
 })
 export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription;
 
   marker: Marker;
 
@@ -32,9 +35,16 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
     this.marker = this.mapService.addDraggableMarker();
   }
 
+  ngOnDestroy() {
+    this.mapService.removeDraggableMarker();
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
+  }
+
   saveSpot(newSpot: MLocSpot) {
     newSpot.markerLocation = new MLocation(null, this.marker.getLatLng().lat, this.marker.getLatLng().lng);
-    this.spotService.create(newSpot).subscribe(
+    this.subscription = this.spotService.create(newSpot).subscribe(
       result => {
         const newMarkerLocation = result.markerLocation;
         this.mapService.addMarkerToLocations(newMarkerLocation);
@@ -44,15 +54,12 @@ export class CreateNewLocationAndSpotComponent implements OnInit, OnDestroy {
         this.notificationService.success(`New Location with Spot ${result.name} saved.`);
       }, error => {
         this.notificationService.error(NotificationService.errorSavingSpot);
-      });
+      }
+    );
   }
 
   cancel() {
     this.router.navigate(['..']);
     this.sidebarService.changeVisibilityAndFocus({isVisible: false});
-  }
-
-  ngOnDestroy() {
-    this.mapService.removeDraggableMarker();
   }
 }
