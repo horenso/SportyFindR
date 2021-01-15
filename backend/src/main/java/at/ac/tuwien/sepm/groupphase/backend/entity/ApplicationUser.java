@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @Builder
@@ -41,6 +40,15 @@ public class ApplicationUser {
         inverseJoinColumns = { @JoinColumn(name = "role_id") }
     )
     private Set<Role> roles = new HashSet<>();
+
+    public ApplicationUser(Long id, @Length(min = 3, max = 30) String name, @Length(min = 6, max = 30) String email, @Length(min = 7) String password, Boolean enabled, Set<Role> roles) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.roles = Objects.requireNonNullElseGet(roles, HashSet::new);
+    }
 
     @Override
     public boolean equals(Object o) {
