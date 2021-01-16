@@ -1,21 +1,23 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
-import {HashtagService} from '../../services/hashtag.service';
+import {Subscription} from 'rxjs';
+import {HashtagService} from 'src/app/services/hashtag.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription;
 
   selectedLocationId: number = null;
 
   sidebarActive: boolean = false;
-  filterActive: boolean = true;
 
   constructor(
     public authService: AuthService,
@@ -32,11 +34,15 @@ export class HomeComponent implements OnInit {
       this.sidebarService.setSidebarStateClosed();
     }
 
-    this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+    this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.sidebarActive = change.isVisible;
     });
+  }
 
-
+  ngOnDestroy(): void {
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onSidebarActive(sidebarActive: boolean) {

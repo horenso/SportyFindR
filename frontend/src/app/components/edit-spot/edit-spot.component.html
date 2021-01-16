@@ -1,2 +1,5 @@
-<h1>Edit Spot</h1>
-<app-spot-form (cancel)='onCancel()' (confirm)='update($event)' [spot]='spot'></app-spot-form>
+<app-spot-form 
+  [title]="'Edit Spot'"
+  [spot]='spot'
+  (cancel)='onCancel()'
+  (confirm)='update($event)'></app-spot-form>

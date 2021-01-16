@@ -1,81 +1,105 @@
-.you-message {
-  justify-content: end;
-  justify-items: end;
+#titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.message-row {
+#messageRow {
+  max-width: 100%;
   display: grid;
-  grid-template-columns: 100%;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr;
 }
 
-.message-content {
-  padding: 9px 14px;
-  margin-bottom: 5px;
-  min-width: 170px;
-  max-width: 368px;
-  overflow-wrap: break-word;
-}
-
-.message-author {
-  margin-bottom: 4px;
-  justify-items: start;
-  text-align: start;
-}
-
-.you-message .message-content {
-  background: #4051B6;
-  color: #FFFFFF;
-  border: 1px solid #4051B6;
+.youMessage {
+  justify-self: end;
+  background-color: #4051B6;
   border-radius: 14px 14px 0 14px;
-  text-align: start;
 }
 
-.message-date {
+.themMessage {
+  justify-self: start;
+  background-color: #44a023;
+  border-radius: 14px 14px 14px 0px;
+}
+
+#messageBody {
+  color: #FFFFFF;
+  padding: 9px 14px;
+}
+
+#contentRow {
+  margin-bottom: 1em;
+}
+
+#date {
+  margin-left: 1em;
   color: #BEC3E1;
-  margin-top: 4px;
-  text-align: end;
-  //font-size: 13px; maybeee
 }
 
-.count {
-  font-size: 13px;
-  margin-top: 14px;
-  margin-right: 1px;
-
+#bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.count2 {
-  font-size: 13px;
-  margin-top: 14px;
-  margin-right: -6px;
+.button {
+  border: none;
+  outline: none;
 }
 
-.upVoteButton {
-  margin-right: 0.6em;
+#ratingButtons {
+  background-color: rgba($color: #000000, $alpha: 0.1);
+  border-radius: 1000px;
+  padding-right: 1em;
 }
 
-.downVoteButton {
-  margin-left: 0.6em;
+#deleteButton {
+  color: rgb(218, 68, 98);
 }
 
-.button-enabled {
-  background: #FAFAFA;
+.buttonEnabled {
   color: lightskyblue;
-  border: none;
-  outline: none;
 }
 
-.button-disabled {
-  background: #FAFAFA;
+.buttonDisabled {
   color: lightgray;
-  border: none;
-  outline: none;
 }
 
-.button-warn {
-  background: #FAFAFA;
-  color: crimson;
-  border: none;
-  outline: none;
-}
+
+
+
+// .count {
+//   font-size: 13px;
+//   margin-top: 14px;
+//   margin-right: 1px;
+
+// }
+
+// .count2 {
+//   font-size: 13px;
+//   margin-top: 14px;
+//   margin-right: -6px;
+// }
+
+// .upVoteButton {
+//   margin-right: 0.6em;
+// }
+
+// .downVoteButton {
+//   margin-left: 0.6em;
+// }
+
+// .button-enabled {
+//   background: #FAFAFA;
+//   color: lightskyblue;
+//   border: none;
+//   outline: none;
+// }
+
+// .button-disabled {
+//   background: #FAFAFA;
+//   color: lightgray;
+//   border: none;
+//   outline: none;
+// }
+

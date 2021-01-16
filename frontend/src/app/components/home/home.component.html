@@ -1,9 +1,12 @@
-<div class="content">
-  <div [ngClass]="sidebarActive?'sidebar-active':'sidebar-inactive'" id="map-wrapper">
+<div id="wrapper">
+
+  <div [ngClass]="sidebarActive?'sidebarActive':'sidebarInactive'" id="mapArea">
     <app-map (mLocClicked)="onSelectedLoc($event)"></app-map>
-    <div id="new-loc-new-spot">
-      <a mat-raised-button color="accent" (click)="createLocationWithSpot()" id="create-spot">New Location</a>
-    </div>
+    <a mat-raised-button color="accent" (click)="createLocationWithSpot()" id="createLocationButton">New Location</a>
+  </div>
+
+  <div id="sidebar">
+    <app-map-sidebar (sidebarActive)="onSidebarActive($event)" [visibleStart]='sidebarActive'></app-map-sidebar>
   </div>
 
     <!--
@@ -12,10 +15,8 @@
     </a>
     -->
 
-  <app-filter-main></app-filter-main>
+  <div id="filter">
+    <app-filter-main></app-filter-main>
+  </div>
 
-  <app-map-sidebar #rightSidebar
-                   (sidebarActive)="onSidebarActive($event)"
-                   [visibleStart]='sidebarActive'
-  ></app-map-sidebar>
 </div>

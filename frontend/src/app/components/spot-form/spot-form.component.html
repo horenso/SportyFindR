@@ -1,25 +1,34 @@
-<form *ngIf='spotForm != null' [formGroup]="spotForm" class="spotForm">
+<div class="inSidebar">
+  <div class="sidebarTopRow">
+    <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='onCancel()'>
+      <mat-icon>arrow_back_ios_new</mat-icon>
+    </button>
+    <div class="sidebarTitle">{{title}}</div>
+  </div>
 
-  <!-- Name -->
-  <div>
+
+  <form [formGroup]="spotForm" class="sidebarScrollableSection">
+
+    <!-- Name -->
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
       <label for="spotCreateName"></label>
       <input matInput formControlName='name' id="spotCreateName">
     </mat-form-field>
-  </div>
 
-  <!-- Description -->
-  <div>
+    <!-- Description -->
     <mat-form-field appearance="outline">
       <mat-label>Description</mat-label>
       <label for="spotCreateDescription"></label>
-      <textarea matInput formControlName='description' id="spotCreateDescription"></textarea>
+      <textarea matInput 
+        formControlName='description' 
+        id="spotCreateDescription"
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="5"
+        cdkAutosizeMaxRows="30"></textarea>
     </mat-form-field>
-  </div>
 
-  <!-- Category -->
-  <div>
+    <!-- Category -->
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
       <label for="spotCreateCategory"></label>
@@ -28,13 +37,16 @@
           >{{category.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-  </div>
+    
+    <div id="buttons">
+      <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
+      <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
+        [disabled]="spotForm.invalid || !spotForm.dirty">{{spot == null ? 'Create' : 'Update'}}</a>
+    </div>
+  </form>
 
-  <!-- Buttons -->
-  <div>
-    <a mat-raised-button class="cancel-btn" (click)="onCancel()">Cancel</a>
-    <a mat-raised-button class="create-btn" color="accent" (click)="onConfirm()"
-       [disabled]="spotForm.invalid || !spotForm.dirty">{{spot == null ? 'Create' : 'Update'}}</a>
-  </div>
+  <!-- <div class="sidebarBottomRow"> -->
+    <!-- Buttons -->
 
-</form>
+  <!-- </div> -->
+</div>
