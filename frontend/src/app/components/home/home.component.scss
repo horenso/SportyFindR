@@ -38,3 +38,17 @@
   outline: none;
   text-decoration: none;
 }
+
+#filter-button {
+  background: white;
+  position: fixed;
+  top: 23px;
+  left: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  border: none;
+  outline: none;
+  text-decoration: none;
+}

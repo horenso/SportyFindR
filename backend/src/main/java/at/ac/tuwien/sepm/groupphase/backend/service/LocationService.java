@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.entity.LocationSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
@@ -39,11 +40,8 @@ public interface LocationService {
     /**
      * Finds locations containing spots that match the filter criteria
      *
-     * @param categoryId of spot contained in location
-     * @param latitude   of the current location of the user
-     * @param longitude  of the current location of the user
-     * @param radius     determining the maximum distance of filtered locations from user
+     * @param locationSearchObject containing search parameters
      * @return List of locations containing spots that match the filter criteria
      */
-    List<Location> filter(Long categoryId, Double latitude, Double longitude, Double radius) throws NotFoundException2, ServiceException;
+    List<Location> filter(LocationSearchObject locationSearchObject) throws NotFoundException2, ServiceException;
 }

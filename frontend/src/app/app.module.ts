@@ -27,6 +27,7 @@ import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-wi
 import {MaterialModule} from './material/material.module';
 import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
+import { FilterMainComponent } from './components/filter-main/filter-main.component';
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
 
 const toastrSettings = {
@@ -55,6 +56,8 @@ const toastrSettings = {
     TextWithHashtagsComponent,
     HashtagComponent,
     UserManagerComponent,
+    HashtagComponent,
+    FilterMainComponent
   ],
   imports: [
     BrowserModule,

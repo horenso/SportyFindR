@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
@@ -18,6 +19,8 @@ import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import at.ac.tuwien.sepm.groupphase.backend.validator.MessageValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,6 +51,21 @@ public class SimpleMessageService implements MessageService {
         // TODO: THIS IS VERY INEFFICIENT!
         messageList.forEach(this::setReactions);
         return messageList;
+    }
+
+    @Override
+    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2{
+        if (spotRepository.findById(spotId).isEmpty()) {
+            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
+        }
+        log.debug("Find all messages");
+        List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
+        // TODO: THIS IS VERY INEFFICIENT!
+        messageList.forEach(this::setReactions);
+
+        List<Long> messageIdList = messageRepository.findBySpotIdOrderByPublishedAtAscLong(spotId);
+
+        return messageRepository.findByIdIn(messageIdList, pageable);
     }
 
     @Override
@@ -95,52 +113,18 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> filter(Long categoryId,
-                                Double latitude,
-                                Double longitude,
-                                Double radius,
-                                LocalDateTime time) throws NotFoundException, ServiceException {
-        log.debug("Searching for messages of spots within a distance of at most " + radius + " km, belonging to the category " + categoryId + ",not older than: " + time);
+    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException {
+        log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
-        if (categoryId == null) {
-            categoryId = 0L;
+        if (messageSearchObject.getCategoryId()== null) {
+            messageSearchObject.setCategoryId(0L);
         }
 
-        if (latitude == null) {
-            latitude = 0.0;
+        if (messageSearchObject.getTime() == null) {
+            messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
-        if (longitude == null) {
-            longitude = 0.0;
-        }
-
-        if (radius == null) {
-            radius = 0.0;
-        }
-
-        if (time == null) {
-            time = LocalDateTime.MIN;
-        }
-
-        List<Message> messages = messageRepository.filter(categoryId, time);
-
-        if (messages.isEmpty()) {
-            log.error("No Messages with these parameters found.");
-            throw new ServiceException("No Messages with these parameters found.");
-        } else {
-            try {
-                if (radius != 0) {      // if search parameters contain radius data
-                    log.debug("radius > 0");
-                    return validator.validateLocationDistance(latitude, longitude, radius, messages);
-                } else {
-                    log.debug("no radius given: search by category & time only");
-                    return messages;       // search by category and time only
-                }
-            } catch (ValidationException e) {
-                log.error("Invalid Data.");
-                throw new ServiceException(e.getMessage());
-            }
-        }
+        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
 
     }
 
