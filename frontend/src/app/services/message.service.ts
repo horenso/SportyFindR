@@ -62,8 +62,8 @@ export class MessageService {
    * @param str containing the search parameters
    */
   filterMessage(str: string): Observable<Message[]> {
-    console.log('Search for message with parameters: ' + str);
-    return this.httpClient.get<Message[]>('http://localhost:8080' + str)
+    console.log(`Search URL: http://localhost:8080/api/v1/messages${str}`);
+    return this.httpClient.get<Message[]>(`http://localhost:8080/api/v1/messages${str}`)
       .pipe(
         tap(_ => console.log(`messages: ` + _.length)),
         catchError(this.handleError<Message[]>('No messages found that fit the parameters.', []))

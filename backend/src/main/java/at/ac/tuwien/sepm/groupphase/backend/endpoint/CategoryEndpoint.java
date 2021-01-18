@@ -8,6 +8,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,12 @@ import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+
 @RestController
+@Slf4j
 @RequestMapping(value = "/api/v1/categories")
 public class CategoryEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
@@ -41,12 +43,12 @@ public class CategoryEndpoint {
     @PostMapping
     @ApiOperation(value = "Create a new category", authorizations = {@Authorization(value = "apiKey")})
     public CategoryDto create(@Valid @RequestBody CategoryDto categoryDto) {
-        LOGGER.info("POST /api/v1/categories body: {}", categoryDto);
+        log.info("POST /api/v1/categories body: {}", categoryDto);
         try {
             return categoryMapper.categoryToCategoryDto(
                 categoryService.create(categoryMapper.categoryDtoToCategory(categoryDto)));
         } catch (ServiceException | ValidationException e) {
-            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -57,11 +59,11 @@ public class CategoryEndpoint {
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete category", authorizations = {@Authorization(value = "apiKey")})
     public void delete(@PathVariable("id") Long id) {
-        LOGGER.info("DELETE /api/v1/categories id: {}", id);
+        log.info("DELETE /api/v1/categories id: {}", id);
         try {
             categoryService.deleteById(id);
         } catch (NotFoundException2 e) {
-            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
@@ -71,7 +73,7 @@ public class CategoryEndpoint {
     @GetMapping(value = "/all")
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})
     public List<CategoryDto> getAll() {
-        LOGGER.info("GET /api/v1/categories/all");
+        log.info("GET /api/v1/categories/all");
         return categoryMapper.entityToListDto((categoryService.findAll()));
     }
 }

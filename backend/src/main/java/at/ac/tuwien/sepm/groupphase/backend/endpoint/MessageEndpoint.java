@@ -126,13 +126,14 @@ public class MessageEndpoint {
         @SortDefault.SortDefaults({
             @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
         Pageable pageable,
-        @RequestParam(required = false) Long categoryId,
-        @RequestParam(required = false) LocalDateTime time) {
+        @RequestParam(required = false, defaultValue = "0L") Long categoryMes,
+        @RequestParam(required = false, defaultValue = "0L") Long hashtag,
+        @RequestParam(required = false, defaultValue = "-999999999-01-01T00:00:00") LocalDateTime time) {
 
         log.info("GET /api/v1/messages/filter?" +
-            "categoryId=" + categoryId + "&time=" + time);
+            "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryId, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));

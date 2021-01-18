@@ -2,11 +2,25 @@
   width: 288px;
 }
 
-#category-item {
+.buttonCancel {
+  position: absolute;
+  left: 16px;
+}
+
+.buttonConfirm {
+  position: absolute;
+  right: 16px;
+}
+
+#category-item-loc {
   margin-top: 40px;
 }
 
-#category-item2 {
+#category-item-mes {
+  margin-top: 40px;
+}
+
+#hashtag-item {
   margin-top: 40px;
 }
 
@@ -22,6 +36,7 @@
 
 #date-item {
   margin-top: 40px;
+  margin-bottom: 21px;
 }
 
 #filter-card {
@@ -34,7 +49,7 @@
   outline: none;
   text-decoration: none;
   width: 320px;
-  height: 320px;
+  height: auto;
   padding: 16px;
   justify-content: center;
 }
