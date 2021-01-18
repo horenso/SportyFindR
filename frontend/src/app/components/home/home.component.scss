@@ -52,3 +52,8 @@
   outline: none;
   text-decoration: none;
 }
+
+#filter {
+  z-index: 3000;
+  position: absolute;
+}

@@ -53,7 +53,7 @@ public class LocationEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> findAll() {
-        LOGGER.info("GET /api/v1/locations");
+        log.info("GET /api/v1/locations");
         return locationMapper.entityToListDto((locationService.findAll()));
     }
 
@@ -67,7 +67,7 @@ public class LocationEndpoint {
                                     @RequestParam(required = false, defaultValue = "0") Double longitude,
                                     @RequestParam(required = false, defaultValue = "0") Double radius) {
 
-        LOGGER.info("GET /api/v1/locations/filter?" +
+        log.info("GET /api/v1/locations/filter?" +
             "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
 
         LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius);

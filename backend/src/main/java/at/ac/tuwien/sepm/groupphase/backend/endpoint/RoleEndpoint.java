@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/roles")
 public class RoleEndpoint {
@@ -38,7 +40,7 @@ public class RoleEndpoint {
     @GetMapping(value = "")
     @ApiOperation(value = "Get all roles", authorizations = {@Authorization(value = "apiKey")})
     public List<RoleDto> getAll() {
-        LOGGER.info("GET /api/v1/roles");
+        log.info("GET /api/v1/roles");
         return roleMapper.roleListToRoleDtoList(roleService.findAll());
     }
 
@@ -47,12 +49,12 @@ public class RoleEndpoint {
     @PostMapping
     @ApiOperation(value = "Create a new role", authorizations = {@Authorization(value = "apiKey")})
     public RoleDto create(@Valid @RequestBody RoleDto roleDto) {
-        LOGGER.info("POST /api/v1/role body: {}", roleDto);
+        log.info("POST /api/v1/role body: {}", roleDto);
         try {
             return roleMapper.roleToRoleDto(
                 roleService.create(roleMapper.roleDtoToRole(roleDto)));
         } catch (ServiceException | ValidationException e) {
-            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -62,11 +64,11 @@ public class RoleEndpoint {
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete role", authorizations = {@Authorization(value = "apiKey")})
     public void deleteRoleById(@PathVariable("id") Long id) {
-        LOGGER.info("DELETE /api/v1/roles id: {}", id);
+        log.info("DELETE /api/v1/roles id: {}", id);
         try {
             roleService.deleteById(id);
         } catch (NotFoundException2 e) {
-            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
