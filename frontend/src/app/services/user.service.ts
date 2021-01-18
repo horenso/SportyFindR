@@ -24,6 +24,7 @@ export class UserService {
   }
 
   public createUser(user: User): Observable<User> {
+    console.log("Create user", JSON.stringify(user));
     return this.httpClient.post<User>(this.userBaseUri, user);
   }
 

@@ -20,6 +20,8 @@ export class UserManagerComponent implements OnInit {
 
   userForm: FormGroup;
 
+  userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled'];
+
   getAllUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users: User[]) => {
@@ -35,6 +37,9 @@ export class UserManagerComponent implements OnInit {
     this.roleService.getAllRoles().subscribe(
       (roles: Role[]) => {
         this.roles = roles;
+        for (let role of this.roles) {
+          this.userTableColumns.push(role.name);
+        }
       },
       error => {
         console.log("Couldn't retrieve roles from backend. ", error);
@@ -115,5 +120,14 @@ export class UserManagerComponent implements OnInit {
     this.getAllUsers();
     this.getAllRoles();
     this.initUserForm();
+  }
+
+  hasRole(u: User, r: Role): boolean {
+    for (let role of u.roles) {
+      if (role.id == r.id) {
+        return true;
+      }
+    }
+    return false;
   }
 }
