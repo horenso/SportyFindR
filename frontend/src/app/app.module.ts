@@ -31,6 +31,7 @@ import { FilterMainComponent } from './components/filter-main/filter-main.compon
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 
+
 const toastrSettings = {
   timeOut: 3000,
   positionClass: 'toast-bottom-center',

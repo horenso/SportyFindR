@@ -13,13 +13,10 @@ import {NotificationService} from "../../services/notification.service";
 })
 export class UserManagerComponent implements OnInit {
 
-  private users: User[];
-  private user: User;
+  users: User[];
+  user: User;
 
-  private roles: Role[];
-
-  @Output() cancel = new EventEmitter();
-  @Output() confirm = new EventEmitter<User>();
+  roles: Role[];
 
   userForm: FormGroup;
 
@@ -88,8 +85,8 @@ export class UserManagerComponent implements OnInit {
   private initUserForm() {
     this.userForm = this.formBuilder.group({
       userName: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
-      userEmail: [null, Validators.required, Validators.email],
-      userPassword: [null, Validators.required, Validators.minLength(7)],
+      userEmail: [null, [Validators.required, Validators.email]],
+      userPassword: [null, [Validators.required, Validators.minLength(7)]],
       userEnabled: [false],
       userRoles: [null]
     })
@@ -99,11 +96,11 @@ export class UserManagerComponent implements OnInit {
     const val = this.userForm.value;
     const newUser = new User(null, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
 
-    this.confirm.emit(newUser);
+    this.createUser(newUser);
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.initUserForm();
   }
 
   constructor(
