@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from "../../dtos/user";
 import {UserService} from "../../services/user.service";
 import {Role} from "../../dtos/role";
@@ -20,7 +20,7 @@ export class UserManagerComponent implements OnInit {
 
   userForm: FormGroup;
 
-  userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled'];
+  userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled', "Edit", "Delete"];
 
   getAllUsers(): void {
     this.userService.getAllUsers().subscribe(
@@ -37,8 +37,9 @@ export class UserManagerComponent implements OnInit {
     this.roleService.getAllRoles().subscribe(
       (roles: Role[]) => {
         this.roles = roles;
-        for (let role of this.roles) {
-          this.userTableColumns.push(role.name);
+        const editIndex: number = this.userTableColumns.indexOf("Edit");
+        for (let i = 0; i < this.roles.length; i++) {
+          this.userTableColumns.splice(editIndex + i, 0, this.roles[i].name);
         }
       },
       error => {
@@ -52,6 +53,7 @@ export class UserManagerComponent implements OnInit {
     this.userService.createUser(user).subscribe(
       (user: User) => {
         this.users.push(user);
+        console.log(this.users);
       },
       error => {
         console.log("Couldn't save user to the backend. ", error);
@@ -95,13 +97,19 @@ export class UserManagerComponent implements OnInit {
       userEnabled: [false],
       userRoles: [null]
     })
+    this.user = null;
   }
 
   onConfirm(): void {
     const val = this.userForm.value;
-    const newUser = new User(null, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
 
-    this.createUser(newUser);
+    if (this.user == null) {
+      const newUser = new User(null, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
+      this.createUser(newUser);
+    } else {
+      const updateUser = new User(val.id, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
+      this.updateUser(updateUser);
+    }
   }
 
   onCancel(): void {
@@ -129,5 +137,15 @@ export class UserManagerComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  editUser(u: User) {
+    this.user = u;
+    this.userForm.patchValue({
+      userName: this.user.name,
+      userEmail: this.user.email,
+      userEnabled: this.user.enabled,
+      userRoles: this.user.roles
+    })
   }
 }

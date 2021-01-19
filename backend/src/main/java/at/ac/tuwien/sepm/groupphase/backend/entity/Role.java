@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;

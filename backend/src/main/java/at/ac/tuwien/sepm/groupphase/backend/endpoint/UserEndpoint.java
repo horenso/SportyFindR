@@ -117,4 +117,18 @@ public class UserEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @Secured("ROLE_ADMIN")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/byEmail/{email}")
+    @ApiOperation(value = "Get one user by email", authorizations = {@Authorization(value = "apiKey")})
+    public UserDto getOneByEmail(@PathVariable("email") String email) {
+        log.info("GET /api/v1/users/byEmail/{}", email);
+        try {
+            return userMapper.applicationUserToUserDto(userService.findApplicationUserByEmail(email));
+        } catch (NotFoundException2 e) {
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
 }

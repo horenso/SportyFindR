@@ -33,7 +33,10 @@ public class ApplicationUser {
 
     private Boolean enabled = false;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {
+        CascadeType.ALL
+    }
+        , fetch = FetchType.EAGER)
     @JoinTable(
         name = "applicationusers_roles",
         joinColumns = { @JoinColumn(name = "applicationuser_id") },

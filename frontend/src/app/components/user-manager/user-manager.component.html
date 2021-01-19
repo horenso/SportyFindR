@@ -1,47 +1,54 @@
 <h1>User Manager</h1>
+<h2>User Form</h2>
+<mat-card id="create-user" class="user-manager-margin">
+  <mat-card-title *ngIf="user == null; then thenBlock else elseBlock"></mat-card-title>
+    <ng-template #thenBlock>Create User</ng-template>
+    <ng-template #elseBlock>Edit User</ng-template>
+  <mat-card-content>
+    <form [formGroup]="userForm">
+      <!-- Name -->
+      <mat-form-field appearance="fill" class="form-field-full-width">
+        <mat-label>User Name</mat-label>
+        <label for="user-name"></label>
+        <input matInput type="text" formControlName='userName' id="user-name" />
+      </mat-form-field>
 
-<div id="create-user">
-  <form [formGroup]="userForm">
-    <!-- Name -->
-    <mat-form-field appearance="standard">
-      <mat-label>User Name</mat-label>
-      <label for="user-name"></label>
-      <input matInput type="text" formControlName='userName' id="user-name" />
-    </mat-form-field>
+      <!-- Email -->
+      <mat-form-field appearance="fill" class="form-field-full-width">
+        <mat-label>E-Mail Address</mat-label>
+        <label for="user-email"></label>
+        <input type="email" matInput formControlName='userEmail' id="user-email" />
+      </mat-form-field>
 
-    <!-- Email -->
-    <mat-form-field appearance="standard">
-      <mat-label>E-Mail Address</mat-label>
-      <label for="user-email"></label>
-      <input type="email" matInput formControlName='userEmail' id="user-email" />
-    </mat-form-field>
+      <!-- Password -->
+      <mat-form-field appearance="fill" class="form-field-full-width">
+        <mat-label>Password</mat-label>
+        <label for="user-password"></label>
+        <input type="password" matInput formControlName='userPassword' id="user-password" />
+      </mat-form-field>
 
-    <!-- Password -->
-    <mat-form-field appearance="standard">
-      <mat-label>Password</mat-label>
-      <label for="user-password"></label>
-      <input type="password" matInput formControlName='userPassword' id="user-password" />
-    </mat-form-field>
+      <!-- Enabled -->
+      <mat-checkbox formControlName="userEnabled" id="user-enabled" class="form-field-full-width">Enabled</mat-checkbox>
 
-    <!-- Enabled -->
-    <mat-checkbox formControlName="userEnabled" id="user-enabled">Enabled</mat-checkbox>
+      <!-- Roles -->
+      <mat-form-field appearance="standard" class="form-field-full-width">
+        <mat-label>User-Roles</mat-label>
+        <mat-select multiple formControlName="userRoles" id="user-roles">
+          <mat-option *ngFor="let role of roles" [value]="role">{{role.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Roles -->
-    <mat-form-field appearance="standard">
-      <mat-select multiple formControlName="userRoles" id="user-roles">
-        <mat-option *ngFor="let role of roles" [value]="role">{{role.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <div id="buttons">
+        <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
+        <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
+           [disabled]="userForm.invalid || !userForm.dirty">{{user == null ? 'Create' : 'Update'}}</a>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
 
-    <div id="buttons">
-      <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
-      <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
-         [disabled]="userForm.invalid || !userForm.dirty">{{user == null ? 'Create' : 'Update'}}</a>
-    </div>
-  </form>
-</div>
-
-<div id="userList">
+<h2>User List</h2>
+<div id="userList" class="user-manager-margin">
   <table mat-table [dataSource]="users" class="mat-elevation-z8">
 
     <ng-container matColumnDef="ID">
@@ -71,6 +78,16 @@
           <ng-container *ngIf="hasRole(u, r)">Yes</ng-container>
         </td>
       </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="Edit">
+      <th mat-header-cell *matHeaderCellDef>Edit</th>
+      <td mat-cell *matCellDef="let u"><button (click)="editUser(u)" mat-flat-button color="primary">Edit</button></td>
+    </ng-container>
+
+    <ng-container matColumnDef="Delete">
+      <th mat-header-cell *matHeaderCellDef>Delete</th>
+      <td mat-cell *matCellDef="let u"><button (click)="deleteUser(u)" mat-flat-button color="warn">Delete</button></td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="userTableColumns"></tr>
