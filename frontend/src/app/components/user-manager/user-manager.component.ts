@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {User} from "../../dtos/user";
 import {UserService} from "../../services/user.service";
 import {Role} from "../../dtos/role";
@@ -21,6 +21,8 @@ export class UserManagerComponent implements OnInit {
   userForm: FormGroup;
 
   userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled', "Edit", "Delete"];
+
+  @ViewChild('userTable') userTable;
 
   getAllUsers(): void {
     this.userService.getAllUsers().subscribe(
@@ -53,7 +55,7 @@ export class UserManagerComponent implements OnInit {
     this.userService.createUser(user).subscribe(
       (user: User) => {
         this.users.push(user);
-        console.log(this.users);
+        this.userTable.renderRows();
       },
       error => {
         console.log("Couldn't save user to the backend. ", error);
@@ -67,6 +69,7 @@ export class UserManagerComponent implements OnInit {
         const index: number = this.users.indexOf(user);
         if (index !== -1) {
           this.users.splice(index, 1);
+          this.userTable.renderRows();
         }
       },
       error => {
@@ -81,6 +84,7 @@ export class UserManagerComponent implements OnInit {
         const index: number = this.users.indexOf(user);
         if (index !== -1) {
           this.users[index] = updatedUser;
+          this.userTable.renderRows();
         }
       },
       error => {

@@ -49,7 +49,7 @@
 
 <h2>User List</h2>
 <div id="userList" class="user-manager-margin">
-  <table mat-table [dataSource]="users" class="mat-elevation-z8">
+  <table #userTable mat-table [dataSource]="users" class="mat-elevation-z8">
 
     <ng-container matColumnDef="ID">
       <th mat-header-cell *matHeaderCellDef>ID</th>

@@ -25,7 +25,7 @@ public class Role {
     @Length(min = 3, max = 15)
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "roles")
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
 
     public Role(Long id, @Length(min = 3, max = 15) String name, Set<ApplicationUser> applicationUsers) {

@@ -7,8 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -19,14 +18,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CustomUserDetailService implements UserService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -73,7 +71,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public List<ApplicationUser> findAll() {
-        LOGGER.debug("Find all Users");
+        log.debug("Find all Users");
         return this.userRepository.findAll();
     }
 
@@ -99,6 +97,7 @@ public class CustomUserDetailService implements UserService {
                 }
             }
 
+            user.setPassword(this.passwordEncoder.encode(user.getPassword()));
             this.userRepository.save(user);
             return findApplicationUserById(user.getId());
         } else {
@@ -108,7 +107,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        LOGGER.debug("Load all user by email");
+        log.debug("Load all user by email");
         try {
             ApplicationUser applicationUser = findApplicationUserByEmail(email);
 
@@ -125,7 +124,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException2 {
-        LOGGER.debug("Find application user by email");
+        log.debug("Find application user by email");
         Optional<ApplicationUser> oApplicationUser = userRepository.findApplicationUserByEmail(email);
         if (oApplicationUser.isPresent()) {
             return oApplicationUser.get();
@@ -136,7 +135,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public ApplicationUser findApplicationUserById(Long id) throws NotFoundException2 {
-        LOGGER.debug("Find application user by id");
+        log.debug("Find application user by id");
         Optional<ApplicationUser> optionalApplicationUser = userRepository.findApplicationUserById(id);
         if (optionalApplicationUser.isPresent()) {
             return optionalApplicationUser.get();
@@ -147,7 +146,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public List<ApplicationUser> findApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
-        LOGGER.debug("Find application users by role id");
+        log.debug("Find application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
             return userRepository.findApplicationUsersByRolesId(roleId);
         } else {
@@ -157,7 +156,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public boolean userExistsByEmail(String email) {
-        LOGGER.debug("Check if user exists by email");
+        log.debug("Check if user exists by email");
         return userRepository.findApplicationUserByEmail(email).isPresent();
     }
 

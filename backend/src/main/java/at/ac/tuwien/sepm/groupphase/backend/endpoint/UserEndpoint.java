@@ -72,7 +72,7 @@ public class UserEndpoint {
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete user", authorizations = {@Authorization(value = "apiKey")})
     public void deleteUserById(@PathVariable("id") Long id) {
-        log.info("DELETE /api/v1/users id: {}", id);
+        log.info("DELETE /api/v1/users id {}", id);
         try {
             userService.deleteApplicationUserById(id);
         } catch (NotFoundException2 e) {

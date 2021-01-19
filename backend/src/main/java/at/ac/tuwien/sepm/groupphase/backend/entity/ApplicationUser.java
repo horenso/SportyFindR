@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -37,6 +39,7 @@ public class ApplicationUser {
         CascadeType.ALL
     }
         , fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
         name = "applicationusers_roles",
         joinColumns = { @JoinColumn(name = "applicationuser_id") },
