@@ -58,7 +58,6 @@ public class ReactionEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-//TODO:fix role
     @Secured("ROLE_USER")
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
@@ -75,7 +74,6 @@ public class ReactionEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    //TODO:fix role
     @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")

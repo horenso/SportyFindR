@@ -1,14 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.unittests;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,9 +31,17 @@ public class MessageRepositoryTest implements TestData {
     private CategoryRepository categoryRepository;
     @Autowired
     private LocationRepository locationRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Test
     public void givenNothing_whenSaveMessage_thenFindListWithOneElementAndFindMessageById() {
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -50,6 +52,7 @@ public class MessageRepositoryTest implements TestData {
             .build();
         location = locationRepository.save(location);
         Spot spot= Spot.builder()
+            .owner(user)
             .name(SPOT_NAME)
             .description(SPOT_DESCRIPTION)
             .location(location)
@@ -59,6 +62,7 @@ public class MessageRepositoryTest implements TestData {
 
         Message message = Message.builder()
             .spot(spot)
+            .owner(user)
             .content(TEST_NEWS_TITLE)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build();
@@ -76,6 +80,7 @@ public class MessageRepositoryTest implements TestData {
          spotRepository.deleteAll();
          locationRepository.deleteAll();
          categoryRepository.deleteAll();
+         userRepository.deleteAll();
      }
 
 }

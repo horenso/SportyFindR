@@ -57,5 +57,10 @@ public interface TestData {
     Boolean ENABLED = true;
     String USERNAME = "user";
     String PASSWORD = "password";
-
+    String EMAIL2 = "user2@email.com";
+    String USERNAME2 = "user2";
+    String PASSWORD2 = "password2";
+    String EMAIL3 = "user3@email.com";
+    String USERNAME3 = "user3";
+    String PASSWORD3 = "password3";
 }

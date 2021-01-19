@@ -27,7 +27,6 @@ public class Role {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    @JsonBackReference
     @JoinTable(
         name = "applicationusers_roles",
         joinColumns = @JoinColumn(name = "roles_id"),

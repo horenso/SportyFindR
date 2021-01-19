@@ -75,8 +75,7 @@ public class SimpleReactionService implements ReactionService {
             throw new WrongUserException("You can only delete your own messages");
         }
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
-        Reaction newReaction = reactionRepository.getOne(reaction.getId());
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(reaction.getMessage().getId());
-        return newReaction;
+        return reaction;
     }
 }

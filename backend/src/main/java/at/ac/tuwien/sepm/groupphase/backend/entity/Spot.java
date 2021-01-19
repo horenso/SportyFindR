@@ -34,6 +34,6 @@ public class Spot {
     private Category category;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false, updatable = false)
     private ApplicationUser owner;
 }

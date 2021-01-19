@@ -8,12 +8,13 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,8 +42,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(SpringExtension.class)
@@ -71,6 +72,10 @@ public class MessageEndpointTest implements TestData {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MessageService messageService;
+
+
     @AfterEach
     public void afterEach() {
         messageRepository.deleteAll();
@@ -78,10 +83,11 @@ public class MessageEndpointTest implements TestData {
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles= "USER")
     public void createMessageTest() {
         ApplicationUser user = ApplicationUser.builder()
             .email(EMAIL)
@@ -127,8 +133,8 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    public void deleteMessageTest() throws ValidationException {
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles= "USER")
+    public void deleteMessageTest() throws Exception {
         Role role = Role.builder()
             .name("ADMIN")
             .build();
@@ -147,9 +153,7 @@ public class MessageEndpointTest implements TestData {
             .password(PASSWORD)
             .roles(roles)
             .build();
-        userService.createApplicationUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        user= userService.createApplicationUser(user);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -185,8 +189,19 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    public void findMessagesBySpotTest() {
+    @WithMockUser(username = EMAIL, password = PASSWORD)
+    public void findMessagesBySpotTest() throws NotFoundException2, ValidationException {
+        Role role = Role.builder()
+            .name("ADMIN")
+            .build();
+        role = roleService.create(role);
+        Role role2 = Role.builder()
+            .name("USER")
+            .build();
+        role2 = roleService.create(role2);
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(role);
+        roles.add(role2);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -195,6 +210,7 @@ public class MessageEndpointTest implements TestData {
             .longitude(LONG)
             .build();
         ApplicationUser user = ApplicationUser.builder()
+            .roles(roles)
             .email(EMAIL)
             .enabled(ENABLED)
             .name(USERNAME)
@@ -217,7 +233,7 @@ public class MessageEndpointTest implements TestData {
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
-        messageRepository.save(message);
+        messageService.create(message);
         Message message2 = Message.builder()
             .spot(spot)
             .downVotes(ZERO)
@@ -225,7 +241,7 @@ public class MessageEndpointTest implements TestData {
             .content(CAT_NAME)
             .publishedAt(DATE2)
             .build();
-        messageRepository.save(message2);
+        messageService.create(message2);
         List<MessageDto> messages = messageEndpoint.findBySpot(spot.getId());
         assertAll(
             () -> assertEquals(message.getId(), messages.get(0).getId()),
@@ -234,14 +250,14 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(message.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messages.get(0).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message.getDownVotes(), messages.get(0).getDownVotes()),
             () -> assertEquals(message.getUpVotes(), messages.get(0).getUpVotes()),
-            () -> assertEquals(message.getOwner(),simpleUserMapper.simpleUserDtoToUser(messages.get(0).getOwner())),
+            () -> assertEquals(simpleUserMapper.userToSimpleUserDto(message.getOwner()),(messages.get(0).getOwner())),
             () -> assertEquals(message2.getId(), messages.get(1).getId()),
             () -> assertEquals(message2.getContent(), messages.get(1).getContent()),
             () -> assertEquals(message2.getSpot().getId(), messages.get(1).getSpotId()),
             () -> assertEquals(message2.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messages.get(1).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message2.getDownVotes(), messages.get(1).getDownVotes()),
             () -> assertEquals(message2.getUpVotes(), messages.get(1).getUpVotes()),
-            () -> assertEquals(message2.getOwner(),simpleUserMapper.simpleUserDtoToUser(messages.get(1).getOwner()))
+            () -> assertEquals(simpleUserMapper.userToSimpleUserDto(message2.getOwner()),(messages.get(1).getOwner()))
         );
     }
 
