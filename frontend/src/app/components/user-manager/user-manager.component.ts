@@ -81,6 +81,7 @@ export class UserManagerComponent implements OnInit {
   updateUser(user: User) {
     this.userService.updateUser(user).subscribe(
       (updatedUser: User) => {
+        // ToDo make update user list work.
         const index: number = this.users.indexOf(user);
         if (index !== -1) {
           this.users[index] = updatedUser;
@@ -111,9 +112,10 @@ export class UserManagerComponent implements OnInit {
       const newUser = new User(null, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
       this.createUser(newUser);
     } else {
-      const updateUser = new User(val.id, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
+      const updateUser = new User(this.user.id, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
       this.updateUser(updateUser);
     }
+    this.initUserForm();
   }
 
   onCancel(): void {
@@ -153,3 +155,7 @@ export class UserManagerComponent implements OnInit {
     })
   }
 }
+
+// ToDo: number of chars in password (7 vs 8)
+// ToDo: user update without password update
+// ToDo: user dto and role dto only have ids not complete objects

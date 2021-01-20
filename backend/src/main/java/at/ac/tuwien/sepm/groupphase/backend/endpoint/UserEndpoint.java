@@ -54,7 +54,7 @@ public class UserEndpoint {
     @PutMapping
     @ApiOperation(value = "Update a user", authorizations = {@Authorization(value = "apiKey")})
     public UserDto update(@Valid @RequestBody UserDto userDto) {
-        log.info("POST /api/v1/users body: {}:", userDto);
+        log.info("PUT /api/v1/users body: {}:", userDto);
         try {
             UserDto updatedUser = userMapper.applicationUserToUserDto(
                 userService.update(userMapper.userDtoToApplicationUser(userDto))

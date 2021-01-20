@@ -88,16 +88,18 @@ public class CustomUserDetailService implements UserService {
 
         if (rUser.isPresent()) {
 
-            if (!rUser.get().getEmail().equals(user.getEmail())) {
-                if (userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
-                    throw new ValidationException("Email address is invalid: it is already in use by another user.");
-                }
-                if (userRepository.findApplicationUserByName(user.getName()).isPresent()) {
-                    throw new ValidationException("User name is invalid: it is already in use by another user.");
-                }
+            if (!rUser.get().getEmail().equals(user.getEmail()) && userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
+                throw new ValidationException("Email address is invalid: it is already in use by another user.");
+            }
+            if (!rUser.get().getName().equals(user.getName()) && userRepository.findApplicationUserByName(user.getName()).isPresent()) {
+                throw new ValidationException("User name is invalid: it is already in use by another user.");
             }
 
-            user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+            if (user.getPassword() == null || user.getPassword().equals("")) {
+                user.setPassword(rUser.get().getPassword());
+            } else {
+                user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+            }
             this.userRepository.save(user);
             return findApplicationUserById(user.getId());
         } else {
