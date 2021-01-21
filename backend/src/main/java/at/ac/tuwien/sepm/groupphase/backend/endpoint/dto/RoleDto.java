@@ -20,5 +20,5 @@ public class RoleDto {
     @NotNull
     @Length(min = 3, max = 15)
     private String name;
-    private List<UserDto> users;
+    private List<Long> userIds;
 }

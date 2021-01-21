@@ -33,8 +33,8 @@
       <!-- Roles -->
       <mat-form-field appearance="standard" class="form-field-full-width">
         <mat-label>User-Roles</mat-label>
-        <mat-select multiple formControlName="userRoles" id="user-roles">
-          <mat-option *ngFor="let role of roles" [value]="role">{{role.name}}</mat-option>
+        <mat-select multiple formControlName="userRoleIds" id="user-roles">
+          <mat-option *ngFor="let role of roles" [value]="role.id">{{role.name}}</mat-option>
         </mat-select>
       </mat-form-field>
 

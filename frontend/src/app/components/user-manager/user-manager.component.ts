@@ -11,6 +11,7 @@ import {NotificationService} from "../../services/notification.service";
   templateUrl: './user-manager.component.html',
   styleUrls: ['./user-manager.component.scss']
 })
+
 export class UserManagerComponent implements OnInit {
 
   users: User[];
@@ -81,8 +82,9 @@ export class UserManagerComponent implements OnInit {
   updateUser(user: User) {
     this.userService.updateUser(user).subscribe(
       (updatedUser: User) => {
-        // ToDo make update user list work.
-        const index: number = this.users.indexOf(user);
+        const index: number = this.users.findIndex(
+          (el: User) => el.id == updatedUser.id
+        );
         if (index !== -1) {
           this.users[index] = updatedUser;
           this.userTable.renderRows();
@@ -98,21 +100,22 @@ export class UserManagerComponent implements OnInit {
     this.userForm = this.formBuilder.group({
       userName: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
       userEmail: [null, [Validators.required, Validators.email]],
-      userPassword: [null, [Validators.required, Validators.minLength(7)]],
+      userPassword: [null, null],
       userEnabled: [false],
-      userRoles: [null]
+      userRoleIds: [null]
     })
     this.user = null;
+    this.toggleUserPasswordValidator();
   }
 
   onConfirm(): void {
     const val = this.userForm.value;
 
     if (this.user == null) {
-      const newUser = new User(null, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
+      const newUser = new User(null, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoleIds);
       this.createUser(newUser);
     } else {
-      const updateUser = new User(this.user.id, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoles);
+      const updateUser = new User(this.user.id, val.userName, val.userEmail, val.userPassword, val.userEnabled, val.userRoleIds);
       this.updateUser(updateUser);
     }
     this.initUserForm();
@@ -137,8 +140,8 @@ export class UserManagerComponent implements OnInit {
   }
 
   hasRole(u: User, r: Role): boolean {
-    for (let role of u.roles) {
-      if (role.id == r.id) {
+    for (let roleId of u.roleIds) {
+      if (roleId == r.id) {
         return true;
       }
     }
@@ -151,11 +154,17 @@ export class UserManagerComponent implements OnInit {
       userName: this.user.name,
       userEmail: this.user.email,
       userEnabled: this.user.enabled,
-      userRoles: this.user.roles
+      userRoleIds: this.user.roleIds
     })
+    this.toggleUserPasswordValidator();
+  }
+
+  private toggleUserPasswordValidator() {
+    if (this.user == null) {
+      this.userForm.get('userPassword').setValidators([Validators.minLength(7), Validators.required]);
+    } else {
+      this.userForm.get('userPassword').setValidators(Validators.minLength(7));
+    }
+    this.userForm.get('userPassword').updateValueAndValidity();
   }
 }
-
-// ToDo: number of chars in password (7 vs 8)
-// ToDo: user update without password update
-// ToDo: user dto and role dto only have ids not complete objects

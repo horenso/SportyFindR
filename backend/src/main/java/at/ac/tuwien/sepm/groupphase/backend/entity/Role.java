@@ -1,8 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -39,12 +37,12 @@ public class Role {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return getName().equals(role.getName());
+        return getId().equals(role.getId()) && getName().equals(role.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName());
+        return Objects.hash(getId(), getName());
     }
 
     @Override

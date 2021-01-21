@@ -80,7 +80,7 @@ public class DefaultLoginGenerator {
         } else {
             log.info("Admin User was already created, updating admin user.");
             try {
-                ApplicationUser user = userService.findApplicationUserByEmail(ADMIN_EMAIL);
+                ApplicationUser user = userService.getApplicationUserByEmail(ADMIN_EMAIL);
                 user.setName(ADMIN_USER_NAME);
                 user.setEmail(ADMIN_EMAIL);
                 user.setPassword(ADMIN_PASSWORD);

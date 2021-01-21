@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import org.aspectj.weaver.ast.Not;
 
 import java.util.List;
 
@@ -64,4 +65,12 @@ public interface RoleService {
      * @return list of roles associated with the user
      */
     List<Role> findRolesByUser(ApplicationUser applicationUser);
+
+    /**
+     * Finds a Role by id
+     * @param id role to search for
+     * @return Role
+     * @throws NotFoundException2 if role does not exist
+     */
+    Role getById(Long id) throws NotFoundException2;
 }

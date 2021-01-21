@@ -101,7 +101,7 @@ public class CustomUserDetailService implements UserService {
                 user.setPassword(this.passwordEncoder.encode(user.getPassword()));
             }
             this.userRepository.save(user);
-            return findApplicationUserById(user.getId());
+            return getApplicationUserById(user.getId());
         } else {
             throw new NotFoundException2("User cannot be updated as user does not exist.");
         }
@@ -111,7 +111,7 @@ public class CustomUserDetailService implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.debug("Load all user by email");
         try {
-            ApplicationUser applicationUser = findApplicationUserByEmail(email);
+            ApplicationUser applicationUser = getApplicationUserByEmail(email);
 
             List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList();
             List<Role> roles = roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
@@ -125,7 +125,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException2 {
+    public ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException2 {
         log.debug("Find application user by email");
         Optional<ApplicationUser> oApplicationUser = userRepository.findApplicationUserByEmail(email);
         if (oApplicationUser.isPresent()) {
@@ -136,7 +136,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserById(Long id) throws NotFoundException2 {
+    public ApplicationUser getApplicationUserById(Long id) throws NotFoundException2 {
         log.debug("Find application user by id");
         Optional<ApplicationUser> optionalApplicationUser = userRepository.findApplicationUserById(id);
         if (optionalApplicationUser.isPresent()) {
@@ -147,7 +147,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public List<ApplicationUser> findApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
+    public List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
         log.debug("Find application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
             return userRepository.findApplicationUsersByRolesId(roleId);
@@ -169,8 +169,18 @@ public class CustomUserDetailService implements UserService {
         if (user.getName().length() < 3 || user.getName().length() > 30) {
             return new ValidationException("User name must be at least 3 and at most 30 characters.");
         }
-        if (user.getPassword().length() < 7) {
-            return new ValidationException("Password must be at least 7 characters long.");
+        if (user.getPassword() != null) {
+            if (user.getPassword().length() < 7) {
+                return new ValidationException("Password must be at least 7 characters long.");
+            }
+        } else {
+            if (user.getId() == null || userRepository.findApplicationUserById(user.getId()).isEmpty()) {
+                return new ValidationException("Password must be at least 7 characters long.");
+            } else {
+                if (userRepository.findApplicationUserById(user.getId()).get().getPassword().length() < 7) {
+                    return new ValidationException("Password must be at least 7 characters long.");
+                }
+            }
         }
         if (user.getEnabled() == null) {
             return new ValidationException("User must either be enabled or disabled.");

@@ -105,4 +105,14 @@ public class SimpleRoleService implements RoleService {
     public List<Role> findRolesByUser(ApplicationUser applicationUser) {
         return roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
     }
+
+    @Override
+    public Role getById(Long id) throws NotFoundException2 {
+        Optional<Role> role = roleRepository.findRoleById(id);
+        if (role.isPresent()) {
+            return role.get();
+        } else {
+            throw new NotFoundException2("Role with ID " + id + "does not exist.");
+        }
+    }
 }
