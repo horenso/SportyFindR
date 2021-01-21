@@ -25,13 +25,8 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
     @Fetch(value = FetchMode.SUBSELECT)
-    @JoinTable(
-        name = "applicationusers_roles",
-        joinColumns = @JoinColumn(name = "roles_id"),
-        inverseJoinColumns = @JoinColumn(name = "applicationuser_id")
-    )
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
 
     @Override

@@ -101,7 +101,7 @@ public class SimpleSpotService implements SpotService {
         try {
             List<Message> messages = messageService.findBySpot(id);
             for (Message message : messages) {
-                messageService.deleteById(message.getId());
+                messageService.deleteByIdWithoutAuthentication(message.getId());
             }
         }catch (NotFoundException2 e){
             throw new ServiceException(e.getMessage());

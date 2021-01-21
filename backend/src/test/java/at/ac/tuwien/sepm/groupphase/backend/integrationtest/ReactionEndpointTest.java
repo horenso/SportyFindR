@@ -58,6 +58,8 @@ public class ReactionEndpointTest implements TestData {
     @Autowired
     private RoleService roleService;
     private HashSet<Role> roles = new HashSet<>();
+    @Autowired
+    private RoleRepository roleRepository;
 
     @BeforeEach
     public void beforeEach() throws ValidationException {
@@ -86,6 +88,7 @@ public class ReactionEndpointTest implements TestData {
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     //positive tests
@@ -274,7 +277,7 @@ public class ReactionEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
     public void deleteReaction() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -286,6 +289,7 @@ public class ReactionEndpointTest implements TestData {
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .description(DESCRIPTION)
             .location(location)
@@ -293,12 +297,14 @@ public class ReactionEndpointTest implements TestData {
             .build();
         spotRepository.save(spot);
         Message msg = Message.builder()
+            .owner(user)
             .content(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .spot(spot)
             .build();
         messageRepository.save(msg);
         Reaction reaction = Reaction.builder()
+            .owner(user)
             .message(msg)
             .type(Reaction.ReactionType.THUMBS_DOWN)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
@@ -309,7 +315,9 @@ public class ReactionEndpointTest implements TestData {
             () -> assertEquals(1, reactions1.size()),
             () -> assertEquals(reaction.getId(), reactions1.get(0).getId()),
             () -> assertEquals(reaction.getType(), reactions1.get(0).getType()),
-            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId())
+            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId()),
+            () -> assertEquals(reaction.getOwner(), reactions1.get(0).getOwner())
+
         );
         reactionEndpoint.deleteById(reaction.getId());
         List<Reaction> reactions2 = reactionRepository.findAll();
@@ -320,7 +328,7 @@ public class ReactionEndpointTest implements TestData {
 
     //negative Tests
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
     public void createReactionWithoutValidCategory() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -332,6 +340,7 @@ public class ReactionEndpointTest implements TestData {
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .description(DESCRIPTION)
             .location(location)
@@ -339,12 +348,14 @@ public class ReactionEndpointTest implements TestData {
             .build();
         spotRepository.save(spot);
         Message msg = Message.builder()
+            .owner(user)
             .content(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .spot(spot)
             .build();
         messageRepository.save(msg);
         ReactionDto reactionDto = ReactionDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
             .messageId(msg.getId() + 1)
             .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
             .build();
@@ -356,7 +367,7 @@ public class ReactionEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
     public void changeReactionWithWrongId() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -368,6 +379,7 @@ public class ReactionEndpointTest implements TestData {
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .description(DESCRIPTION)
             .location(location)
@@ -375,12 +387,14 @@ public class ReactionEndpointTest implements TestData {
             .build();
         spotRepository.save(spot);
         Message msg = Message.builder()
+            .owner(user)
             .content(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .spot(spot)
             .build();
         messageRepository.save(msg);
         Reaction reaction = Reaction.builder()
+            .owner(user)
             .message(msg)
             .type(Reaction.ReactionType.THUMBS_DOWN)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
@@ -391,7 +405,9 @@ public class ReactionEndpointTest implements TestData {
             () -> assertEquals(1, reactions1.size()),
             () -> assertEquals(reaction.getId(), reactions1.get(0).getId()),
             () -> assertEquals(reaction.getType(), reactions1.get(0).getType()),
-            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId())
+            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId()),
+            () -> assertEquals(reaction.getOwner(), reactions1.get(0).getOwner())
+
         );
         ReactionDto reactionDto = ReactionDto.builder()
             .messageId(msg.getId() + 1)
@@ -408,12 +424,14 @@ public class ReactionEndpointTest implements TestData {
             () -> assertEquals(1, reactions2.size()),
             () -> assertEquals(reaction.getId(), reactions2.get(0).getId()),
             () -> assertEquals(reaction.getType(), (reactions2.get(0).getType())),
-            () -> assertEquals(reaction.getMessage().getId(), reactions2.get(0).getMessage().getId())
+            () -> assertEquals(reaction.getMessage().getId(), reactions2.get(0).getMessage().getId()),
+            () -> assertEquals(reaction.getOwner(), reactions2.get(0).getOwner())
+
         );
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
     public void getReactionByMessageWithWrongId() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -425,6 +443,7 @@ public class ReactionEndpointTest implements TestData {
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .description(DESCRIPTION)
             .location(location)
@@ -432,12 +451,14 @@ public class ReactionEndpointTest implements TestData {
             .build();
         spotRepository.save(spot);
         Message msg = Message.builder()
+            .owner(user)
             .content(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .spot(spot)
             .build();
         messageRepository.save(msg);
         Reaction reaction = Reaction.builder()
+            .owner(user)
             .message(msg)
             .type(Reaction.ReactionType.THUMBS_DOWN)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
@@ -451,7 +472,7 @@ public class ReactionEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
     public void deleteReactionWithWrongId() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -463,6 +484,7 @@ public class ReactionEndpointTest implements TestData {
             .build();
         locationRepository.save(location);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .description(DESCRIPTION)
             .location(location)
@@ -470,12 +492,14 @@ public class ReactionEndpointTest implements TestData {
             .build();
         spotRepository.save(spot);
         Message msg = Message.builder()
+            .owner(user)
             .content(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .spot(spot)
             .build();
         messageRepository.save(msg);
         Reaction reaction = Reaction.builder()
+            .owner(user)
             .message(msg)
             .type(Reaction.ReactionType.THUMBS_DOWN)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
@@ -486,7 +510,9 @@ public class ReactionEndpointTest implements TestData {
             () -> assertEquals(1, reactions1.size()),
             () -> assertEquals(reaction.getId(), reactions1.get(0).getId()),
             () -> assertEquals(reaction.getType(), reactions1.get(0).getType()),
-            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId())
+            () -> assertEquals(reaction.getMessage().getId(), reactions1.get(0).getMessage().getId()),
+            () -> assertEquals(reaction.getOwner(), reactions1.get(0).getOwner())
+
         );
         Long id = reaction.getId() + 1;
         Throwable e = assertThrows(ResponseStatusException.class, () -> reactionEndpoint.deleteById(id));
@@ -499,7 +525,9 @@ public class ReactionEndpointTest implements TestData {
             () -> assertEquals(1, reactions2.size()),
             () -> assertEquals(reaction.getId(), reactions2.get(0).getId()),
             () -> assertEquals(reaction.getType(), (reactions2.get(0).getType())),
-            () -> assertEquals(reaction.getMessage().getId(), reactions2.get(0).getMessage().getId())
+            () -> assertEquals(reaction.getMessage().getId(), reactions2.get(0).getMessage().getId()),
+            () -> assertEquals(reaction.getOwner(), reactions2.get(0).getOwner())
+
         );
     }
 }

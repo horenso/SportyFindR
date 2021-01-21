@@ -32,6 +32,8 @@ public interface MessageService {
     Message getById(Long id) throws NotFoundException2;
 
     void deleteById(Long id) throws NotFoundException2, WrongUserException;
+    void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, WrongUserException;
+
 
     /**
      * Finds locations containing spots that match the filter criteria

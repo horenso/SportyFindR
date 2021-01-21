@@ -66,10 +66,10 @@ public class CategoryEndpoint {
         }
     }
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/all")
+    @GetMapping
     @ApiOperation(value = "Get all categories")
     public List<CategoryDto> getAll() {
-        LOGGER.info("GET /api/v1/categories/all");
+        LOGGER.info("GET /api/v1/categories");
         return categoryMapper.entityToListDto((categoryService.findAll()));
     }
 }

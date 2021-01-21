@@ -87,6 +87,17 @@ public class SimpleMessageService implements MessageService {
         messageRepository.deleteById(id);
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
     }
+    @Override
+    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, WrongUserException {
+        Optional<Message> messageOptional = messageRepository.findById(id);
+        if (messageOptional.isEmpty()) {
+            throw new NotFoundException2(String.format("No message with id %d found!", id));
+        }
+        hashtagService.deleteMessageInHashtags(messageOptional.get());
+        reactionRepository.deleteAllByMessage_Id(id);
+        messageRepository.deleteById(id);
+        spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
+    }
 
     private void setReactions(Message message) {
         message.setUpVotes(
