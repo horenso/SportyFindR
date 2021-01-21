@@ -5,15 +5,11 @@ import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageInquiryDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
+import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +26,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -69,17 +68,37 @@ public class SecurityTest implements TestData {
 
     @Autowired
     private SecurityProperties securityProperties;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private RoleRepository roleRepository;
+    private HashSet<Role> roles = new HashSet<>();
     private Long id;
-
+    private ApplicationUser user;
+    private Role role;
     private Message message = Message.builder()
         .content(TEST_NEWS_SUMMARY)
         .publishedAt(TEST_NEWS_PUBLISHED_AT)
         .build();
 
     @BeforeEach
-    public void beforeEach() {
+    public void beforeEach() throws ValidationException {
         messageRepository.deleteAll();
+        role = Role.builder()
+            .name("USER")
+            .build();
+        role = roleService.create(role);
+        this.roles.add(role);
+        this.user = ApplicationUser.builder()
+            .roles(roles)
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -90,6 +109,7 @@ public class SecurityTest implements TestData {
             .build();
         location = locationRepository.save(location);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(SPOT_NAME)
             .description(SPOT_DESCRIPTION)
             .location(location)
@@ -98,6 +118,7 @@ public class SecurityTest implements TestData {
         spot = spotRepository.save(spot);
         id= spot.getId();
         message = Message.builder()
+            .owner(user)
             .spot(spot)
             .content(TEST_NEWS_TITLE)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
@@ -110,12 +131,14 @@ public class SecurityTest implements TestData {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test
     public void givenUserLoggedIn_whenFindAll_then200() throws Exception {
         MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_BASE_URI + "?spot=" + id)
-            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andReturn();
         MockHttpServletResponse response = mvcResult.getResponse();
@@ -144,7 +167,7 @@ public class SecurityTest implements TestData {
         MvcResult mvcResult = this.mockMvc.perform(post(MESSAGE_BASE_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .content(body)
-            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(ADMIN_USER, ADMIN_ROLES)))
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, ADMIN_ROLES)))
             .andDo(print())
             .andReturn();
         MockHttpServletResponse response = mvcResult.getResponse();
@@ -169,7 +192,7 @@ public class SecurityTest implements TestData {
     }
 
     @Test
-    public void givenUserLoggedIn_whenPost_then403() throws Exception {
+    public void givenUserLoggedIn_whenPost_then201() throws Exception {
         message.setPublishedAt(null);
         MessageDto messageDto = messageMapper.messageToMessageDto(message);
         String body = objectMapper.writeValueAsString(messageDto);
@@ -177,11 +200,11 @@ public class SecurityTest implements TestData {
         MvcResult mvcResult = this.mockMvc.perform(post(MESSAGE_BASE_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .content(body)
-            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andReturn();
         MockHttpServletResponse response = mvcResult.getResponse();
 
-        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
     }
 }

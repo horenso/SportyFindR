@@ -35,10 +35,7 @@ public class ApplicationUser {
 
     private Boolean enabled = false;
 
-    @ManyToMany(cascade = {
-        CascadeType.ALL
-    }
-        , fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
         name = "applicationusers_roles",

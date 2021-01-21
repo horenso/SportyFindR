@@ -7,6 +7,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +43,9 @@ public interface MessageService {
 
     Message getById(Long id) throws NotFoundException2;
 
-    void deleteById(Long id) throws NotFoundException2;
+    void deleteById(Long id) throws NotFoundException2, WrongUserException;
+    void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, WrongUserException;
+
 
     /**
      * Finds locations containing spots that match the filter criteria

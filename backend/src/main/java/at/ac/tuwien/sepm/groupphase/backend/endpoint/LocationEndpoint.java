@@ -34,7 +34,7 @@ public class LocationEndpoint {
     private final LocationService locationService;
     private final LocationMapper locationMapper;
 
-    @Secured("ROLE_ADMIN")
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     @ApiOperation(value = "Get one location by id", authorizations = {@Authorization(value = "apiKey")})
@@ -48,7 +48,6 @@ public class LocationEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})
@@ -57,7 +56,7 @@ public class LocationEndpoint {
         return locationMapper.entityToListDto((locationService.findAll()));
     }
 
-    @Secured("ROLE_ADMIN")
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
     @ApiOperation(value = "Filter locations by distance and categories of spots",

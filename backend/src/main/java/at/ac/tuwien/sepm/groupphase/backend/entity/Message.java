@@ -54,6 +54,10 @@ public class Message {
     @Transient
     private Integer downVotes;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private ApplicationUser owner;
+
   /*  @ManyToMany( mappedBy = "messagesList")
     private List<Hashtag> hashtagsList = new ArrayList<>();
 

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -38,13 +39,26 @@ public class ReactionServiceTest implements TestData {
     private ReactionRepository reactionRepository;
     @Autowired
     private ReactionService reactionService;
+    @Autowired
+    private UserRepository userRepository;
 
 //    private final ReactionService reactionService = new SimpleReactionService(reactionRepository, messageRepository);
 
     private Message msg;
+    private ApplicationUser user;
 
     @BeforeEach
     public void beforeEach() {
+
+
+        this.user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
+
         Location loc = locationRepository.save(
             Location.builder()
                 .latitude(LAT3)
@@ -59,12 +73,14 @@ public class ReactionServiceTest implements TestData {
         );
 
         Spot spot = Spot.builder()
+            .owner(user)
             .name(SPOT_NAME)
             .description(SPOT_DESCRIPTION)
             .location(loc)
             .category(cat)
             .build();
         this.msg = Message.builder()
+            .owner(user)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .spot(spot)
@@ -81,12 +97,15 @@ public class ReactionServiceTest implements TestData {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
-    public void reactionCreateReturnsReaction() throws NotFoundException2{
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
+    public void reactionCreateReturnsReaction() throws NotFoundException2 {
 
         Reaction rct = Reaction.builder()
+            .owner(user)
             .type(Reaction.ReactionType.THUMBS_UP)
             .publishedAt(DATE2)
             .message(msg)
@@ -97,33 +116,39 @@ public class ReactionServiceTest implements TestData {
             () -> assertTrue(reaction.getId() > 0),
             () -> assertEquals(rct.getType(), reaction.getType()),
             () -> assertEquals(rct.getMessage(), reaction.getMessage()),
-            () -> assertEquals(rct.getPublishedAt(), reaction.getPublishedAt())
+            () -> assertEquals(rct.getPublishedAt(), reaction.getPublishedAt()),
+            () -> assertEquals(rct.getOwner(), reaction.getOwner())
         );
     }
 
     @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
     public void reactionFindReactionByMessageId() throws NotFoundException2 {
 
         Reaction rct = Reaction.builder()
+            .owner(user)
             .type(Reaction.ReactionType.THUMBS_UP)
             .message(msg)
             .build();
 
         Long msgId = msg.getId();
-        Reaction createReaction = reactionService.create(rct);
+        reactionService.create(rct);
         Reaction reaction = reactionService.getReactionsByMessageId(msgId).get(0); // should be the first in the list
         assertAll(
             () -> assertTrue(reaction.getId() > 0),
             () -> assertEquals(rct.getType(), reaction.getType()),
             () -> assertEquals(rct.getMessage().getId(), reaction.getMessage().getId()),
+            () -> assertEquals(rct.getOwner(), reaction.getOwner()),
             () -> assertEquals(rct.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), reaction.getPublishedAt().truncatedTo(ChronoUnit.MILLIS))
         );
     }
 
     @Test
-    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2{
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
+    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2 {
 
         Reaction rct = Reaction.builder()
+            .owner(user)
             .type(Reaction.ReactionType.THUMBS_UP)
             .publishedAt(DATE)
             .message(msg)

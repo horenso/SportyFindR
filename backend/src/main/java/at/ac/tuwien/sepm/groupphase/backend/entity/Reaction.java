@@ -30,6 +30,9 @@ public class Reaction {
     @JoinColumn(name = "message_id", nullable = false)
     private Message message;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private ApplicationUser owner;
     public enum ReactionType {
         THUMBS_UP,
         THUMBS_DOWN

@@ -68,12 +68,11 @@ public class CategoryEndpoint {
         }
     }
 
-    //    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/all")
+    @GetMapping
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})
     public List<CategoryDto> getAll() {
-        log.info("GET /api/v1/categories/all");
+        log.info("GET /api/v1/categories");
         return categoryMapper.entityToListDto((categoryService.findAll()));
     }
 }
