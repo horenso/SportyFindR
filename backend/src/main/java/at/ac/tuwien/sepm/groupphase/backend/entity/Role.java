@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor()
 @Getter
 @Setter
 @Builder
@@ -23,11 +22,18 @@ public class Role {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Length(min = 3, max = 15)
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
     @Fetch(value = FetchMode.SUBSELECT)
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
+
+    public Role(Long id, @Length(min = 3, max = 15) String name, Set<ApplicationUser> applicationUsers) {
+        this.id = id;
+        this.name = name;
+        this.applicationUsers = Objects.requireNonNullElseGet(applicationUsers, HashSet::new);
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,0 +1,51 @@
+<h1>User Manager</h1>
+
+<div id="create-user">
+  <form [formGroup]="userForm">
+    <!-- Name -->
+    <mat-form-field appearance="standard">
+      <mat-label>User Name</mat-label>
+      <label for="user-name"></label>
+      <input matInput type="text" formControlName='userName' id="user-name" />
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="standard">
+      <mat-label>E-Mail Address</mat-label>
+      <label for="user-email"></label>
+      <input type="email" matInput formControlName='userEmail' id="user-email" />
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field appearance="standard">
+      <mat-label>Password</mat-label>
+      <label for="user-password"></label>
+      <input type="password" matInput formControlName='userPassword' id="user-password" />
+    </mat-form-field>
+
+    <!-- Enabled -->
+    <mat-checkbox formControlName="userEnabled" id="user-enabled">Enabled</mat-checkbox>
+
+    <!-- Roles -->
+    <mat-form-field appearance="standard">
+      <mat-select multiple formControlName="userRoles" id="user-roles">
+        <mat-option *ngFor="let role of roles" [value]="role.id">{{role.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div id="buttons">
+      <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
+      <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
+         [disabled]="userForm.invalid || !userForm.dirty">{{user == null ? 'Create' : 'Update'}}</a>
+    </div>
+  </form>
+</div>
+
+<div id="userList">
+  <table mat-table class="mat-elevation-z8">
+    <ng-container matColumnDef="ID">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let u">{{u.id}}</td>
+    </ng-container>
+  </table>
+</div>

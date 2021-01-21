@@ -1,21 +1,31 @@
-.create-btn{
-  width: 174px;
-  align-content: center;
-  border: none;
-  outline: none;
-  text-decoration: none;
+// .create-btn{
+//   width: 174px;
+//   align-content: center;
+//   border: none;
+//   outline: none;
+//   text-decoration: none;
+// }
+
+// .cancel-btn{
+//   margin-right: 20px;
+//   width: 174px;
+//   align-content: center;
+
+// }
+
+// .mat-form-field {
+//   width: 368px;
+// }
+
+#buttons {
+	display: flex;
+	justify-content: space-between;
 }
 
-.cancel-btn{
-  margin-right: 20px;
-  width: 174px;
-  align-content: center;
-  border: none;
-  outline: none;
-  text-decoration: none;
+.sidebarScrollableSection {
+	padding: 1em 1em 1em 1em;
 }
 
-.mat-form-field {
-  width: 368px;
+.sidebarScrollableSection > * {
+	width: 100%;
 }
-

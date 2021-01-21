@@ -24,9 +24,13 @@ import {SpotFormComponent} from './components/spot-form/spot-form.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {EditSpotComponent} from './components/edit-spot/edit-spot.component';
 import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-with-hashtags.component';
-
 import {MaterialModule} from './material/material.module';
+import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
+import { FilterMainComponent } from './components/filter-main/filter-main.component';
+import { UserManagerComponent } from './components/user-manager/user-manager.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+
 
 const toastrSettings = {
   timeOut: 3000,
@@ -52,18 +56,23 @@ const toastrSettings = {
     PageNotFoundComponent,
     EditSpotComponent,
     TextWithHashtagsComponent,
+    HashtagComponent,
+    UserManagerComponent,
+    HashtagComponent,
+    FilterMainComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    FormsModule,
-    LeafletModule,
-    MaterialModule,
-    ToastrModule.forRoot(toastrSettings),
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        FormsModule,
+        LeafletModule,
+        MaterialModule,
+        ToastrModule.forRoot(toastrSettings),
+        MatCheckboxModule,
+    ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })

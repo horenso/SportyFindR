@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
@@ -8,23 +8,29 @@ import {SpotService} from 'src/app/services/spot.service';
 import {parsePositiveInteger} from '../../util/parse-int';
 import {MLocSpot} from '../../util/m-loc-spot';
 import {MapService} from 'src/app/services/map.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import {NotificationService} from 'src/app/services/notification.service';
+import {SubSink} from 'subsink';
 
 @Component({
   selector: 'app-spot-view',
   templateUrl: './spot-view.component.html',
   styleUrls: ['./spot-view.component.scss']
 })
-export class SpotViewComponent implements OnInit, OnDestroy {
+export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() goBack = new EventEmitter();
 
   public spotId: number;
   public locationId: number;
   public spot: MLocSpot;
-  
+
   public messageList: Message[] = [];
-  public messageForm: FormGroup;
+  public newMessage: string = '';
+
+  @ViewChild('messageArea') private messageArea: ElementRef;
+  @ViewChild('messageInput') private messageInput: ElementRef;
+
+  private subs = new SubSink();
 
   constructor(
     private messageService: MessageService,
@@ -38,7 +44,7 @@ export class SpotViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.activedRoute.params.subscribe(params => {
+    this.subs.add(this.activedRoute.params.subscribe(params => {
       this.locationId = parsePositiveInteger(params.locId);
       this.spotId = parsePositiveInteger(params.spotId);
 
@@ -57,34 +63,45 @@ export class SpotViewComponent implements OnInit, OnDestroy {
         this.spot = this.sidebarService.spot;
         this.getMessagesAndStartEventHandling();
       } else {
-        this.spotService.getById(this.spotId).subscribe(
+        this.subs.add(this.spotService.getById(this.spotId).subscribe(
           result => {
             this.spot = result;
             this.getMessagesAndStartEventHandling();
           }, error => {
             this.notificationService.navigateHomeAndShowError('Error loading spot!');
-          });
+          }));
       }
-    });
-
-    this.messageForm = this.formBuilder.group({
-      content: [null, [Validators.required, Validators.minLength(1)]],
-    });
+    }));
   }
 
   ngOnDestroy(): void {
     this.spotService.closeConnection();
+    this.subs.unsubscribe();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.messageInput != null) {
+      this.messageInput.nativeElement.focus();
+    } else {
+      console.log(this.messageInput);
+    }
   }
 
   submitDialog() {
-    const newMessage = new Message(null, this.messageForm.value.content, null, this.spot.id);
-    this.messageService.create(newMessage).subscribe(
-      (result: Message) => {
+    if (this.newMessage?.length < 1) {
+      return;
+    }
+    const newMessage = new Message(null, this.newMessage, null, this.spot.id);
+    this.subs.add(this.messageService.create(newMessage).subscribe(
+      result => {
         this.addMessage(result);
-        this.messageForm.reset();
-        this.notificationService.success(result.content);
+        this.newMessage = '';
+        setTimeout(() => this.scrollMessageAreaBottom());
+      }, error => {
+        this.notificationService.error('Error sending message!');
+        console.error(error);
       }
-    );
+    ));
   }
 
   onGoBack(): void {
@@ -92,13 +109,13 @@ export class SpotViewComponent implements OnInit, OnDestroy {
   }
 
   deleteOneMessage(message: Message): void {
-    this.messageService.deleteById(message.id).subscribe(result => {
+    this.subs.add(this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
-    });
+    }));
   }
 
   deleteSpot(spotId: number) {
-    this.spotService.deleteById(spotId).subscribe(result => {
+    this.subs.add(this.spotService.deleteById(spotId).subscribe(result => {
       if (result) { // if the location was deleted
         this.mapService.removeMarkerLocation(this.locationId);
         this.router.navigate(['']);
@@ -106,7 +123,7 @@ export class SpotViewComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['locations', this.locationId]);
       }
-    });
+    }));
   }
 
   editSpot(): void {
@@ -115,14 +132,15 @@ export class SpotViewComponent implements OnInit, OnDestroy {
   }
 
   private getMessagesAndStartEventHandling(): void {
-    this.messageService.getBySpotId(this.spot.id).subscribe(
+    this.subs.add(this.messageService.getBySpotId(this.spot.id).subscribe(
       result => {
         this.messageList = result;
         console.log(`Loaded ${result.length} messages.`);
+        setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {
         this.notificationService.error('Error loading messages!');
         console.log(error);
-      });
+      }));
     this.handleEvents();
   }
 
@@ -133,7 +151,7 @@ export class SpotViewComponent implements OnInit, OnDestroy {
   }
 
   private handleEvents(): void {
-    this.spotService.openSseConnection(this.spot.id).subscribe({
+    this.subs.add(this.spotService.openSseConnection(this.spot.id).subscribe({
       next: (event) => {
         const newMessage: Message = JSON.parse(event.data);
         console.log(event.type, event.data);
@@ -154,6 +172,10 @@ export class SpotViewComponent implements OnInit, OnDestroy {
           }
         }
       }
-    });
+    }));
+  }
+
+  private scrollMessageAreaBottom(): void {
+    this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
   }
 }

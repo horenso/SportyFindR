@@ -65,9 +65,21 @@ export class MLocation extends Marker {
 
   public changeIcon(type: IconType): void {
     switch (type) {
-      case IconType.Default: this.setIcon(MLocation.iconDefault); break;
-      case IconType.New: this.setIcon(MLocation.iconNew); break;
-      case IconType.Edit: this.setIcon(MLocation.iconEdit); break;
+      case IconType.Default: {
+        this.setIcon(MLocation.iconDefault);
+        this.setZIndexOffset(0);
+        break;
+      }
+      case IconType.New: {
+        this.setIcon(MLocation.iconNew);
+        this.setZIndexOffset(10000);
+        break;
+      }
+      case IconType.Edit: {
+        this.setIcon(MLocation.iconEdit);
+        this.setZIndexOffset(10000);
+        break;
+      }
     }
   }
 

@@ -1,10 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
+import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +22,31 @@ public class SimpleRoleService implements RoleService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final RoleRepository roleRepository;
+    private final UserService userService;
 
     @Autowired
-    public SimpleRoleService(RoleRepository roleRepository) {
+    public SimpleRoleService(RoleRepository roleRepository, UserService userService) {
         this.roleRepository = roleRepository;
+        this.userService = userService;
     }
 
     @Override
     public Role create(Role role) throws ValidationException {
-        Role newRole = new Role(null, role.getName().toUpperCase(Locale.ROOT), null);
-        if (false) {
-            // ToDo: sanity check name (only A-Za-z0-9)
-            // ToDo: sanity check users (only existing users)
-            throw new ValidationException("Role invalid");
+        if (role.getId() != null) {
+            throw new ValidationException("Id must be null!");
         }
+        if (!role.getName().matches("[a-zA-Z0-9]*")) {
+            throw new ValidationException("Name must not contain characters other than A-Z and 0-9.");
+        }
+        if (role.getName().length() < 3 || role.getName().length() > 15) {
+            throw new ValidationException("Name must be at least 3 and at most 15 characters long.");
+        }
+        for (ApplicationUser user : role.getApplicationUsers()) {
+            if (!userService.userExistsByEmail(user.getEmail())) {
+                throw new ValidationException("User " + user.getEmail() + "does not exist in the data base.");
+            }
+        }
+        Role newRole = new Role(null, role.getName().toUpperCase(Locale.ROOT), null);
         newRole = roleRepository.save(newRole);
         newRole.setApplicationUsers(role.getApplicationUsers());
         return this.roleRepository.save(newRole);
@@ -88,5 +101,10 @@ public class SimpleRoleService implements RoleService {
     public List<Role> findAll() {
         LOGGER.debug("Find all roles");
         return roleRepository.findAll();
+    }
+
+    @Override
+    public List<Role> findRolesByUser(ApplicationUser applicationUser) {
+        return roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
     }
 }

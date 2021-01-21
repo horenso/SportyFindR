@@ -1,0 +1,40 @@
+.mat-form-field {
+  width: 288px;
+}
+
+#category-item {
+  margin-top: 40px;
+}
+
+#category-item2 {
+  margin-top: 40px;
+}
+
+#radius{
+  width: 288px;
+  margin-bottom: -10px;
+}
+
+#radius-header{
+  margin-top: 20px;
+  margin-bottom: -20px;
+}
+
+#date-item {
+  margin-top: 40px;
+}
+
+#filter-card {
+  z-index: 2000;
+  background: white;
+  position: fixed;
+  top: 80px;
+  left: 64px;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  width: 320px;
+  height: 320px;
+  padding: 16px;
+  justify-content: center;
+}

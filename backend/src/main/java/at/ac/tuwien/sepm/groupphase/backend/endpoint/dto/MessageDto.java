@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -20,6 +21,7 @@ public class MessageDto {
     private LocalDateTime publishedAt;
 
     @NotNull(message = "Content must not be null")
+    @Size(min = 1, max = 500, message = "Content must be between 1 and 512 characters long")
     private String content;
 
     @NotNull(message = "SpotId must not be null")

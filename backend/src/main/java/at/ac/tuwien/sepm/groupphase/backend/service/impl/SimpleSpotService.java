@@ -87,6 +87,8 @@ public class SimpleSpotService implements SpotService {
         if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
             throw new ValidationException("Location does not Exist");
         }
+        hashtagService.deleteSpotInHashtags(spot);
+        hashtagService.getHashtags(spot);
         return spotRepository.save(spot);
     }
     @Override

@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Globals} from '../global/globals';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -54,5 +55,32 @@ export class MessageService {
   deleteById(id: number): Observable<{}> {
     console.log('Delete message with id ' + id);
     return this.httpClient.delete<Message>(`${this.messageBaseUri}/${id}`);
+  }
+
+  /**
+   * Searches messages from the backend according to search parameters
+   * @param str containing the search parameters
+   */
+  filterMessage(str: string): Observable<Message[]> {
+    console.log('Search for message with parameters: ' + str);
+    return this.httpClient.get<Message[]>('http://localhost:8080' + str)
+      .pipe(
+        tap(_ => console.log(`messages: ` + _.length)),
+        catchError(this.handleError<Message[]>('No messages found that fit the parameters.', []))
+      );
+  }
+
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      console.log(`${operation} failed: ${error.message}`);
+      return of(result as T);
+    };
   }
 }

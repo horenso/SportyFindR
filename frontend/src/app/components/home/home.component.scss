@@ -1,36 +1,49 @@
 @import "src/app/app.variables";
 
-.jumbotron {
-  background: none
+:host {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  display: inline-block;
+  // border: 4px dotted black;
+  // display: flex;
 }
 
-#map-wrapper {
-  position: absolute;
-  top: 64px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  //margin-top: $topHeader; // spacing for the header - maybe to be removed later
+#wrapper {
+  height: 100%;
 }
 
-#map-wrapper.sidebar-active {
+#mapArea {
+  height: 100%;
+  flex: 1fr;
+}
+
+.sidebarActive {
   margin-right: $sidebarWidth;
   transition: margin-right $sidebarTransitionTime;
   transition-timing-function: $sidebarTransitionFunction;
-
 }
 
-#map-wrapper.sidebar-inactive {
+.sidebarInactive {
   margin-right: 0;
   transition: margin-right $sidebarTransitionTime;
   transition-timing-function: $sidebarTransitionFunction;
 }
 
-#create-spot {
+#createLocationButton {
   z-index: 2000;
-  position: absolute;
+  position: fixed;
   bottom: 32px;
   left: 8px;
+  border: none;
+  outline: none;
+  text-decoration: none;
+}
+
+#filter-button {
+  background: white;
+  position: fixed;
+  top: 23px;
+  left: 64px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,4 +51,9 @@
   border: none;
   outline: none;
   text-decoration: none;
+}
+
+#filter {
+  z-index: 3000;
+  position: absolute;
 }

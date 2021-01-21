@@ -1,25 +1,29 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { NotificationService } from 'src/app/services/notification.service';
+import {Subscription} from 'rxjs';
+import {NotificationService} from 'src/app/services/notification.service';
 import {Category} from '../../dtos/category';
 import {CategoryService} from '../../services/category.service';
 import {MLocSpot} from '../../util/m-loc-spot';
 
 
 @Component({
-  selector: 'app-spot-form',
+  selector: 'app-spot-form [title]',
   templateUrl: './spot-form.component.html',
   styleUrls: ['./spot-form.component.scss']
 })
-export class SpotFormComponent implements OnInit, OnChanges {
+export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() spot: MLocSpot = null;
+  @Input() title: string = '';
 
   @Output() cancel = new EventEmitter();
   @Output() confirm = new EventEmitter<MLocSpot>();
 
   spotForm: FormGroup;
   categories: Category[] = [];
+
+  private subscription: Subscription;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,7 +48,7 @@ export class SpotFormComponent implements OnInit, OnChanges {
       this.setValues();
     }
 
-    this.categoryService.getAll().subscribe(
+    this.subscription = this.categoryService.getAll().subscribe(
       result => {
         this.categories = result;
       }, error => {
@@ -52,6 +56,12 @@ export class SpotFormComponent implements OnInit, OnChanges {
         console.log(error);
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private setValues(): void {
@@ -68,7 +78,7 @@ export class SpotFormComponent implements OnInit, OnChanges {
   onConfirm(): void {
     const val = this.spotForm.value;
     const newSpot = new MLocSpot(null, val.name, val.description, val.category, null);
-    
+
     if (this.spot != null) {
       newSpot.id = this.spot.id;
       newSpot.markerLocation = this.spot.markerLocation;

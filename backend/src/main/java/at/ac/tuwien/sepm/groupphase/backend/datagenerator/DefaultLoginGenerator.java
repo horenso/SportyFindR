@@ -6,19 +6,17 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 
+@Slf4j
 @Profile("generateDefaultLogin")
 @Component
 public class DefaultLoginGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // Parameters
     private static final String ADMIN_ROLE_NAME = "ADMIN";
@@ -62,7 +60,7 @@ public class DefaultLoginGenerator {
                 throw new ValidationException("Couldn't create Admin Role", e);
             }
         } else {
-            System.out.println("Role " + roleName + " was already created");
+            log.info("Role " + roleName + " was already created");
             try {
                 return roleService.findRoleByName(roleName);
             } catch (NotFoundException2 e) {
@@ -80,7 +78,7 @@ public class DefaultLoginGenerator {
                 throw new ValidationException("Couldn't create Admin User", e);
             }
         } else {
-            System.out.println("Admin User was already created, updating admin user.");
+            log.info("Admin User was already created, updating admin user.");
             try {
                 ApplicationUser user = userService.findApplicationUserByEmail(ADMIN_EMAIL);
                 user.setName(ADMIN_USER_NAME);
