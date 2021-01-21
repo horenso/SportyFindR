@@ -29,7 +29,8 @@ import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
 import { FilterMainComponent } from './components/filter-main/filter-main.component';
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
-import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 const toastrSettings = {
@@ -72,6 +73,7 @@ const toastrSettings = {
         MaterialModule,
         ToastrModule.forRoot(toastrSettings),
         MatCheckboxModule,
+        MatPaginatorModule,
     ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

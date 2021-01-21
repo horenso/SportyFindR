@@ -12,11 +12,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -54,11 +52,16 @@ public class RoleEndpoint {
     public RoleDto create(@Valid @RequestBody RoleDto roleDto) {
         log.info("POST /api/v1/role body: {}", roleDto);
         try {
+            Role newRole = roleMapper.roleDtoToRole(roleDto);
+            newRole.setApplicationUsers(this.enrichUserSet(newRole.getApplicationUsers()));
             return roleMapper.roleToRoleDto(
                 roleService.create(roleMapper.roleDtoToRole(roleDto)));
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NotFoundException2 e) {
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 
@@ -76,7 +79,7 @@ public class RoleEndpoint {
         }
     }
 
-    private Set<ApplicationUser> enrichRoleSet(Set<ApplicationUser> users) throws NotFoundException2 {
+    private Set<ApplicationUser> enrichUserSet(Set<ApplicationUser> users) throws NotFoundException2 {
         Set<ApplicationUser> returnUsers = new HashSet<>();
         for (ApplicationUser user : users) {
             if (user.getName() == null || user.getEmail() == null) {
