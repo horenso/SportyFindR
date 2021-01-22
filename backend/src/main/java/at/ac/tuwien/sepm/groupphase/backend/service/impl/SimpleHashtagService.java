@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class SimpleHashtagService implements HashtagService {
 
-    private final MessageRepository messageRepository;
     private final HashtagRepository hashtagRepository;
     private final String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
 
