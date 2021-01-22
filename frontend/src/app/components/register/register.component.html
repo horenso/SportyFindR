@@ -1,0 +1,66 @@
+<div *ngIf="error" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Authentication problems!</strong> {{ errorMessage }}
+  <button (click)="vanishError()" aria-label="Close" class="close" data-dismiss="alert" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<h1>Register</h1>
+
+<form (ngSubmit)="register()" [formGroup]="registerForm" class="form">
+  <!-- Username -->
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <label for="inputUsername"></label>
+      <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
+             name="username" type="text">
+      <div *ngIf="submitted && registerForm.controls.username.errors" class="error">
+        <mat-error *ngIf="registerForm.controls.username.errors.required">Your username is required!</mat-error>
+      </div>
+    </mat-form-field>
+  </div>
+
+  <!-- E-Mail -->
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>E-Mail</mat-label>
+      <label for="inputEmail"></label>
+      <input matInput aria-describedby="emailHelp" formControlName="email" id="inputEmail"
+             name="email" type="text">
+      <div *ngIf="submitted && registerForm.controls.email.errors" class="error">
+        <mat-error *ngIf="registerForm.controls.email.errors.required">Your e-mail is required!</mat-error>
+      </div>
+    </mat-form-field>
+  </div>
+
+  <!-- Password -->
+  <form [formGroup]="myForm">
+    <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <label for="password"></label>
+      <input matInput placeholder="New password" formControlName="password" required type="password" id="password">
+      <mat-error *ngIf="myForm.hasError('required', 'password')">
+        Please enter your newpassword
+      </mat-error>
+    </mat-form-field>
+    </div>
+
+    <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Confirm password</mat-label>
+      <label for="confirmPassword"></label>
+      <input matInput formControlName="confirmPassword" [errorStateMatcher]="matcher" type="password" id="confirmPassword">
+      <mat-error *ngIf="myForm.hasError('notSame')">
+        Passwords do not match
+      </mat-error>
+    </mat-form-field>
+    </div>
+  </form>
+
+
+  <button mat-raised-button color="accent" class="float-right loginButton">Register</button>
+
+</form>
+

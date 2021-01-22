@@ -28,6 +28,7 @@ import {MaterialModule} from './material/material.module';
 import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
+import {RegisterComponent} from './components/register/register.component';
 
 const toastrSettings = {
   timeOut: 3000,
@@ -55,6 +56,7 @@ const toastrSettings = {
     TextWithHashtagsComponent,
     HashtagComponent,
     UserManagerComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
