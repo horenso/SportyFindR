@@ -5,52 +5,37 @@
   </button>
 </div>
 
-<div class="pt-5">
-  <div class="row">
-    <div class="col-md-6 mx-auto">
-      <span class="anchor" id="formLogin"></span>
+<h1>Login</h1>
 
-      <div class="card rounded-0">
-        <div class="card-header">
-          <h3 class="mb-0">Login</h3>
-        </div>
-
-        <div class="card-body">
-          <form (ngSubmit)="loginUser()" [formGroup]="loginForm" class="form">
-            <!-- Username -->
-            <div>
-              <mat-form-field appearance="outline">
-                <mat-label>Name</mat-label>
-                <label for="inputUsername"></label>
-                <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
-                       name="username" type="text">
-                <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
-                  <mat-error *ngIf="loginForm.controls.username.errors.required">Your username is required!</mat-error>
-                </div>
-              </mat-form-field>
-            </div>
-
-            <!-- Password -->
-            <div>
-              <mat-form-field appearance="outline">
-                <mat-label>Password</mat-label>
-                <label for="password"></label>
-                <input matInput formControlName="password" id="password"
-                       name="password" type="password">
-                <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
-                  <mat-error *ngIf="loginForm.controls.password.errors.required">Your password is required!</mat-error>
-                  <mat-error *ngIf="loginForm.controls.password.errors.minlength">Your password must be at least 8 characters long!</mat-error>
-                </div>
-              </mat-form-field>
-            </div>
-
-            <button mat-raised-button color="accent" (click)="loginUser()" class="float-right loginButton">Login</button>
-
-          </form>
-        </div>
-
+<form (ngSubmit)="loginUser()" [formGroup]="loginForm" class="form">
+  <!-- Username -->
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <label for="inputUsername"></label>
+      <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
+              name="username" type="text">
+      <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
+        <mat-error *ngIf="loginForm.controls.username.errors.required">Your username is required!</mat-error>
       </div>
-
-    </div>
+    </mat-form-field>
   </div>
-</div>
+
+  <!-- Password -->
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <label for="password"></label>
+      <input matInput formControlName="password" id="password"
+              name="password" type="password">
+      <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
+        <mat-error *ngIf="loginForm.controls.password.errors.required">Your password is required!</mat-error>
+        <mat-error *ngIf="loginForm.controls.password.errors.minlength">Your password must be at least 8 characters long!</mat-error>
+      </div>
+    </mat-form-field>
+  </div>
+
+  <button mat-raised-button color="accent" (click)="loginUser()" class="float-right loginButton">Login</button>
+
+</form>
+

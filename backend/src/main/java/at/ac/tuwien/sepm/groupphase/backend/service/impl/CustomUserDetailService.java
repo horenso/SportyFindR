@@ -46,6 +46,9 @@ public class CustomUserDetailService implements UserService {
         if (userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
             throw new ValidationException("Email address is invalid: it is already in use by another user.");
         }
+        if (userRepository.findApplicationUserByName(user.getName()).isPresent()) {
+            throw new ValidationException("User name is invalid: it is already in use by another user.");
+        }
 
         ValidationException valException = this.validateUser(user);
         if (valException != null) {
@@ -90,6 +93,9 @@ public class CustomUserDetailService implements UserService {
             if (!rUser.get().getEmail().equals(user.getEmail())) {
                 if (userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
                     throw new ValidationException("Email address is invalid: it is already in use by another user.");
+                }
+                if (userRepository.findApplicationUserByName(user.getName()).isPresent()) {
+                    throw new ValidationException("User name is invalid: it is already in use by another user.");
                 }
             }
 

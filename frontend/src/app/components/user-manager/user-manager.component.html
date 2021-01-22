@@ -1,1 +1,43 @@
-<p>user-manager works!</p>
+<h1>User Manager</h1>
+
+<div id="create-user">
+  <form class="user-form">
+    <!-- Name -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>User Name</mat-label>
+        <label for="userName"></label>
+        <input matInput formControlName='name' id="userName">
+      </mat-form-field>
+    </div>
+
+    <!-- Email -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>E-Mail Address</mat-label>
+        <label for="userEmail"></label>
+        <input type="email" matInput formControlName='email' id="userEmail">
+      </mat-form-field>
+    </div>
+
+    <!-- Password -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <label for="userPassword"></label>
+        <input type="password" matInput formControlName='password' id="userPassword">
+      </mat-form-field>
+    </div>
+
+    <!-- Name -->
+    <div>
+      <mat-form-field appearance="outline">
+        <selection class="user-enabled">
+          <mat-checkbox>Enabled</mat-checkbox>
+        </selection>
+      </mat-form-field>
+    </div>
+
+    <!-- Roles -->
+  </form>
+</div>

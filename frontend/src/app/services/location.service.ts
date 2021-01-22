@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Observable,} from 'rxjs';
+import { Observable } from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Location} from '../dtos/location';
 import {MLocation} from '../util/m-location';
@@ -58,6 +58,6 @@ export class LocationService {
   }
 
   private requestAllLocations(): Observable<Location[]> {
-    return this.httpClient.get<[]>(this.locationBaseUri);
+    return this.httpClient.get<Location[]>(this.locationBaseUri);
   }
 }

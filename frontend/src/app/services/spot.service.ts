@@ -11,14 +11,18 @@ import {map} from 'rxjs/operators';
 })
 export class SpotService {
 
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals) {
+  }
+
   private spotBaseUri: string = `${this.globals.backendUri}/spots`;
 
   // Current EventSource of a spot subscribtion, there can at most be one subscribtion
   private eventSource: EventSource = null;
 
-  constructor(
-    private httpClient: HttpClient,
-    private globals: Globals) {
+  private static translateToMLocSpot(spot: Spot): MLocSpot {
+    return new MLocSpot(spot);
   }
 
   /**
@@ -128,9 +132,5 @@ export class SpotService {
       }
     );
     return mLocSpots;
-  }
-
-  private static translateToMLocSpot(spot: Spot): MLocSpot {
-    return new MLocSpot(spot);
   }
 }

@@ -61,7 +61,7 @@ public class RoleEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete role", authorizations = {@Authorization(value = "apiKey")})
-    public void deleteUserById(@PathVariable("id") Long id) {
+    public void deleteRoleById(@PathVariable("id") Long id) {
         LOGGER.info("DELETE /api/v1/roles id: {}", id);
         try {
             roleService.deleteById(id);
