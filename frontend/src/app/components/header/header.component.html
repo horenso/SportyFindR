@@ -4,10 +4,13 @@
 
   <span class="spacer"></span>
 
-  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()" 
+  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()"
     routerLink="/login" routerLinkActive="active">Login</a>
 
   <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
     (click)="authService.logoutUser()" routerLink="/">Logout</a>
+
+  <a mat-raised-button color="accent" *ngIf="authService.isLoggedIn()"
+     routerLink="/account" routerLinkActive="active">My Account</a>
 
 </mat-toolbar>
