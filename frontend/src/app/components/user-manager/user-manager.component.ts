@@ -37,7 +37,8 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
         this.dataSource.data = users;
       },
       error => {
-        console.log('Couldn\'t retrieve users from backend. ', error);
+        console.log(`Couldn\'t retrieve users from backend.
+        `, error);
       }
     );
   }
@@ -53,6 +54,8 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
       },
       error => {
         console.log('Couldn\'t retrieve roles from backend. ', error);
+        this.notificationService.error(`Couldn\'t retrieve roles from backend.
+        ` + error.message);
       }
     );
 
@@ -63,10 +66,12 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
       (user: User) => {
         this.users.push(user);
         this.dataSource.data = this.users;
-//        this.userTable.renderRows();
+        this.notificationService.success('Created user (ID: ' + user.id + ', Name: ' + user.name + ')');
       },
       error => {
         console.log('Couldn\'t save user to the backend. ', error);
+        this.notificationService.error(`Couldn\'t save user to the backend.
+        ` + error.message);
       }
     );
   }
@@ -78,11 +83,13 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
         if (index !== -1) {
           this.users.splice(index, 1);
           this.dataSource.data = this.users;
-//          this.userTable.renderRows();
+          this.notificationService.success('Deleted user (ID: ' + user.id + ', Name: ' + user.name + ')');
         }
       },
       error => {
         console.log('Couldn\'t remove user from the backend. ', error);
+        this.notificationService.error(`Couldn\'t remove user from the backend.
+        ` + error.message);
       }
     );
   }
@@ -96,11 +103,13 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
         if (index !== -1) {
           this.users[index] = updatedUser;
           this.dataSource.data = this.users;
-//          this.userTable.renderRows();
+          this.notificationService.success('Updated user (ID: ' + updatedUser.id + ', Name: ' + updatedUser.name + ')');
         }
       },
       error => {
         console.log('Couldn\'t update user ', user, '. ', error);
+        this.notificationService.error(`Couldn\'t update user ` + user.id + `.
+        ` + error.message);
       }
     );
   }
