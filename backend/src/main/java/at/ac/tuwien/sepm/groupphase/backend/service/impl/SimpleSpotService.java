@@ -64,7 +64,7 @@ public class SimpleSpotService implements SpotService {
         }
         spot.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
         Spot savedSpot = spotRepository.save(spot);
-        hashtagService.getHashtags(spot);
+        hashtagService.acquireHashtags(spot);
         return savedSpot;
     }
 
@@ -88,7 +88,7 @@ public class SimpleSpotService implements SpotService {
             throw new ValidationException("Location does not Exist");
         }
         hashtagService.deleteSpotInHashtags(spot);
-        hashtagService.getHashtags(spot);
+        hashtagService.acquireHashtags(spot);
         return spotRepository.save(spot);
     }
     @Override

@@ -26,6 +26,7 @@ public class SimpleHashtagService implements HashtagService {
 
     private final MessageRepository messageRepository;
     private final HashtagRepository hashtagRepository;
+    private final String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
 
     @Override
     public Hashtag getByName(String name) {
@@ -38,8 +39,7 @@ public class SimpleHashtagService implements HashtagService {
     }
 
     @Override
-    public void getHashtags(Message message){
-        String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
+    public void acquireHashtags(Message message){
         String[] words = message.getContent().split("\\s+");
         List<String> hashtags = new ArrayList<>();
         for(String word : words){
@@ -62,9 +62,8 @@ public class SimpleHashtagService implements HashtagService {
     }
 
     @Override
-    public void getHashtags(Spot spot) {
+    public void acquireHashtags(Spot spot) {
         if(spot.getDescription()!=null) {
-            String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
             String[] words = spot.getDescription().split("\\s+");
             List<String> hashtags = new ArrayList<>();
             for (String word : words) {

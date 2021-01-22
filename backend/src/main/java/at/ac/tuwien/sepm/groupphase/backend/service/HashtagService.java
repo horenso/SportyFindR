@@ -27,14 +27,14 @@ public interface HashtagService {
      *
      * @param message to get the hashtags from
      */
-    void getHashtags(Message message);
+    void acquireHashtags(Message message);
 
     /**
      * Get all hashtags from a spot description
      *
      * @param spot to get the hashtags from
      */
-    void getHashtags(Spot spot);
+    void acquireHashtags(Spot spot);
 
     /**
      * Remove a message from the hashtags
