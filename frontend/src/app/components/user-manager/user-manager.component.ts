@@ -1,10 +1,12 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {User} from "../../dtos/user";
-import {UserService} from "../../services/user.service";
-import {Role} from "../../dtos/role";
-import {RoleService} from "../../services/role.service";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NotificationService} from "../../services/notification.service";
+import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import {User} from '../../dtos/user';
+import {UserService} from '../../services/user.service';
+import {Role} from '../../dtos/role';
+import {RoleService} from '../../services/role.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {NotificationService} from '../../services/notification.service';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-user-manager',
@@ -12,7 +14,7 @@ import {NotificationService} from "../../services/notification.service";
   styleUrls: ['./user-manager.component.scss']
 })
 
-export class UserManagerComponent implements OnInit {
+export class UserManagerComponent implements OnInit, AfterViewInit {
 
   users: User[];
   user: User;
@@ -21,34 +23,38 @@ export class UserManagerComponent implements OnInit {
 
   userForm: FormGroup;
 
-  userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled', "Edit", "Delete"];
+  userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled', 'Edit', 'Delete'];
+
+  dataSource: MatTableDataSource<User>;
 
   @ViewChild('userTable') userTable;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   getAllUsers(): void {
     this.userService.getAllUsers().subscribe(
       (users: User[]) => {
         this.users = users;
+        this.dataSource.data = users;
       },
       error => {
-        console.log("Couldn't retrieve users from backend. ", error);
+        console.log('Couldn\'t retrieve users from backend. ', error);
       }
-    )
+    );
   }
 
   private getAllRoles() {
     this.roleService.getAllRoles().subscribe(
       (roles: Role[]) => {
         this.roles = roles;
-        const editIndex: number = this.userTableColumns.indexOf("Edit");
+        const editIndex: number = this.userTableColumns.indexOf('Edit');
         for (let i = 0; i < this.roles.length; i++) {
           this.userTableColumns.splice(editIndex + i, 0, this.roles[i].name);
         }
       },
       error => {
-        console.log("Couldn't retrieve roles from backend. ", error);
+        console.log('Couldn\'t retrieve roles from backend. ', error);
       }
-    )
+    );
 
   }
 
@@ -56,12 +62,13 @@ export class UserManagerComponent implements OnInit {
     this.userService.createUser(user).subscribe(
       (user: User) => {
         this.users.push(user);
-        this.userTable.renderRows();
+        this.dataSource.data = this.users;
+//        this.userTable.renderRows();
       },
       error => {
-        console.log("Couldn't save user to the backend. ", error);
+        console.log('Couldn\'t save user to the backend. ', error);
       }
-    )
+    );
   }
 
   deleteUser(user: User) {
@@ -70,40 +77,42 @@ export class UserManagerComponent implements OnInit {
         const index: number = this.users.indexOf(user);
         if (index !== -1) {
           this.users.splice(index, 1);
-          this.userTable.renderRows();
+          this.dataSource.data = this.users;
+//          this.userTable.renderRows();
         }
       },
       error => {
-        console.log("Couldn't remove user from the backend. ", error);
+        console.log('Couldn\'t remove user from the backend. ', error);
       }
-    )
+    );
   }
 
   updateUser(user: User) {
     this.userService.updateUser(user).subscribe(
       (updatedUser: User) => {
         const index: number = this.users.findIndex(
-          (el: User) => el.id == updatedUser.id
+          (el: User) => el.id === updatedUser.id
         );
         if (index !== -1) {
           this.users[index] = updatedUser;
-          this.userTable.renderRows();
+          this.dataSource.data = this.users;
+//          this.userTable.renderRows();
         }
       },
       error => {
-        console.log("Couldn't update user ", user, ". ", error);
+        console.log('Couldn\'t update user ', user, '. ', error);
       }
-    )
+    );
   }
 
-  private initUserForm() {
+  private initUserForm(): void {
     this.userForm = this.formBuilder.group({
       userName: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
       userEmail: [null, [Validators.required, Validators.email]],
       userPassword: [null, null],
       userEnabled: [false],
       userRoleIds: [null]
-    })
+    });
     this.user = null;
     this.toggleUserPasswordValidator();
   }
@@ -134,14 +143,19 @@ export class UserManagerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSource = new MatTableDataSource<User>();
     this.getAllUsers();
     this.getAllRoles();
     this.initUserForm();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
   hasRole(u: User, r: Role): boolean {
-    for (let roleId of u.roleIds) {
-      if (roleId == r.id) {
+    for (const roleId of u.roleIds) {
+      if (roleId === r.id) {
         return true;
       }
     }
@@ -155,7 +169,7 @@ export class UserManagerComponent implements OnInit {
       userEmail: this.user.email,
       userEnabled: this.user.enabled,
       userRoleIds: this.user.roleIds
-    })
+    });
     this.toggleUserPasswordValidator();
   }
 
