@@ -21,7 +21,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
   hashtags: Hashtag[];
-  radius: number = 2;
+  radius: number = 0;
   strLoc: string;
   strMes: string;
 
@@ -30,10 +30,10 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   panelOpenState = false;
 
+  distanceActive = false;
+
   sidebarActive: boolean = false;
   private subscription: Subscription;
-
-  paramMessage = new BehaviorSubject<string>('categoryMes=&hashtag=&time=');
 
   constructor(private formBuilder: FormBuilder,
               private categoryService: CategoryService,

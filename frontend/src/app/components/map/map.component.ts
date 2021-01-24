@@ -103,8 +103,10 @@ export class MapComponent implements OnInit, OnDestroy {
       );
     }));
 
+    /*
     this.map.on('moveend', this.changeLocationView);
     this.map.on('zoomend', this.changeLocationView);
+     */
 
 
     setTimeout(() => this.map.invalidateSize({pan: false}));
