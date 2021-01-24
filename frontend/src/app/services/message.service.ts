@@ -4,6 +4,7 @@ import {Message} from '../dtos/message';
 import {Observable, of} from 'rxjs';
 import {Globals} from '../global/globals';
 import {catchError, tap} from 'rxjs/operators';
+import {Page} from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class MessageService {
   }
 
   /**
-   * Saves a new message in a spesific spot
+   * Saves a new message in a specific spot
    * @param message to be saved
    * @returns message entity
    */
@@ -61,26 +62,8 @@ export class MessageService {
    * Searches messages from the backend according to search parameters
    * @param str containing the search parameters
    */
-  filterMessage(str: string): Observable<Message[]> {
-    console.log(`Search URL: http://localhost:8080/api/v1/messages${str}`);
-    return this.httpClient.get<Message[]>(`http://localhost:8080/api/v1/messages${str}`)
-      .pipe(
-        tap(_ => console.log(`messages: ` + _.length)),
-        catchError(this.handleError<Message[]>('No messages found that fit the parameters.', []))
-      );
-  }
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
+  filterMessage(str: string): Observable<Page<Message>> {
+    console.log(`Search URL: http://localhost:8080/api/v1/messages/filter${str}`);
+    return this.httpClient.get<Page<Message>>(`http://localhost:8080/api/v1/messages/filter${str}`);
   }
 }

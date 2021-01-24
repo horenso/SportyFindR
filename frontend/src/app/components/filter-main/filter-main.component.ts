@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Category} from '../../dtos/category';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
@@ -9,6 +9,7 @@ import {MessageService} from '../../services/message.service';
 import {LocationService} from '../../services/location.service';
 import {Hashtag} from '../../dtos/hashtag';
 import {HashtagService} from '../../services/hashtag.service';
+import {SidebarService} from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-filter-main',
@@ -26,6 +27,11 @@ export class FilterMainComponent implements OnInit {
   messageForm: FormGroup;
   locationForm: FormGroup;
 
+  panelOpenState = false;
+
+  sidebarActive: boolean = false;
+  private subscription: Subscription;
+
   paramMessage = new BehaviorSubject<string>('categoryMes=&hashtag=&time=');
   paramLocation = new BehaviorSubject<string>('categoryLoc=&latitude=&longitude=&radius=');
 
@@ -34,6 +40,7 @@ export class FilterMainComponent implements OnInit {
               private messageService: MessageService,
               private hashtagService: HashtagService,
               private locationService: LocationService,
+              private sidebarService: SidebarService,
               private notificationService: NotificationService,
               private serializer: UrlSerializer,
               private router: Router) {
@@ -57,6 +64,17 @@ export class FilterMainComponent implements OnInit {
     this.getAllHashtags();
     this.buildMessageForm();
     this.buildLocationForm();
+
+    this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
+    if (this.sidebarActive) {
+      this.sidebarService.setSidebarStateOpen();
+    } else {
+      this.sidebarService.setSidebarStateClosed();
+    }
+
+    this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+      this.sidebarActive = change.isVisible;
+    });
   }
 
   updateSetting(event) {
@@ -70,11 +88,8 @@ export class FilterMainComponent implements OnInit {
       longitude: this.locationForm.get('longitude').value,
       radius: this.locationForm.get('radius').value,
     };
-    console.log('MAH FIRST URL: ' + this.strLoc);
     this.strLoc = this.serializer.serialize(this.router.createUrlTree([], { queryParams: formData }));
-    console.log('MAH URL: ' + this.strLoc);
     this.paramLocation.next(this.strLoc);
-    console.log('MAH PARAM URL: ' + this.paramLocation.getValue());
     this.locationService.filterLocation(this.strLoc);
   }
 
@@ -84,12 +99,13 @@ export class FilterMainComponent implements OnInit {
       hashtag: this.messageForm.get('hashtag').value,
       time: this.messageForm.get('time').value
     };
-    console.log('MAH FIRST URL: ' + this.strMes);
     this.strMes = this.serializer.serialize(this.router.createUrlTree([], { queryParams: formData }));
-    console.log('MAH URL: ' + this.strMes);
     this.paramMessage.next(this.strMes);
-    console.log('MAH PARAM URL: ' + this.paramLocation.getValue());
+
     this.messageService.filterMessage(this.strMes);
+
+    this.sidebarService.changeVisibilityAndFocus({isVisible: true});
+    this.sidebarActive = true;
   }
 
   buildLocationForm(): void {
@@ -108,15 +124,6 @@ export class FilterMainComponent implements OnInit {
       time: new FormControl('')
     });
   }
-
-  public compareCategory(a: Category, b: Category): boolean {
-    return a?.id === b?.id;
-  }
-
-  public compareHashtag(a: Hashtag, b: Hashtag): boolean {
-    return a?.id === b?.id;
-  }
-
 
   getAllCategories(): void {
     this.categoryService.getAll().subscribe(
@@ -140,8 +147,8 @@ export class FilterMainComponent implements OnInit {
     );
   }
 
-  formatLabel(value: number) {
-      return Math.round(value) + 'km';
+  onSidebarActive(sidebarActive: boolean) {
+    this.sidebarActive = sidebarActive;
   }
 
 }

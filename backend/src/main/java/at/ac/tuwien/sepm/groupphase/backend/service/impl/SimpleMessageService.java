@@ -117,25 +117,28 @@ public class SimpleMessageService implements MessageService {
     public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
-        /*if (messageSearchObject.getCategoryId()== null) {
+        if (messageSearchObject.getCategoryId()== null) {
             messageSearchObject.setCategoryId(0L);
         }
-         */
 
-        /*if (messageSearchObject.getTime() == null) {
+
+        if (messageSearchObject.getTime() == null) {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
-         */
+
 
         if (messageSearchObject.getHashtagId() != null){
             Long hashtagId = messageSearchObject.getHashtagId();
             Hashtag hashtag = hashtagService.getOneById(hashtagId);
             List<Message> messageList = hashtag.getMessagesList();
+            log.info(messageList.toString());
             List<Long> messageIds = new LinkedList<>();
 
             for (Message m : messageList){
                 messageIds.add(m.getId());
             }
+
+            log.info(messageIds.toString());
 
             return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
         }

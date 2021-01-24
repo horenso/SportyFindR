@@ -39,17 +39,19 @@
   margin-bottom: 21px;
 }
 
-#filter-card {
+#filter-expansion{
   z-index: 2000;
-  background: white;
   position: fixed;
-  top: 80px;
+  top: 77px;
   left: 64px;
-  border: none;
-  outline: none;
-  text-decoration: none;
-  width: 320px;
-  height: auto;
-  padding: 16px;
-  justify-content: center;
+  width: 370px;
+}
+
+#title{
+  position: absolute;
+  top: 8px;
+}
+
+#tabs{
+  margin-top: -20px;
 }

@@ -14,6 +14,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatListModule} from '@angular/material/list';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 const MaterialComponents = [
   MatButtonModule,
@@ -31,7 +32,8 @@ const MaterialComponents = [
   MatListModule,
   MatSliderModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatExpansionModule,
 ];
 
 @NgModule({
