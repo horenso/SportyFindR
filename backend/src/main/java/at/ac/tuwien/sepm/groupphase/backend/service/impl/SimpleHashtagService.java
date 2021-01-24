@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
@@ -30,6 +31,11 @@ public class SimpleHashtagService implements HashtagService {
     @Override
     public Hashtag getByName(String name) {
         return hashtagRepository.getHashtagByNameEquals(name);
+    }
+
+    @Override
+    public Hashtag getOneById(Long id) {
+        return hashtagRepository.getOneById(id);
     }
 
     @Override
@@ -111,5 +117,11 @@ public class SimpleHashtagService implements HashtagService {
                 hashtagRepository.save(hashtag);
             }
         }
+    }
+
+    @Override
+    public List<Hashtag> findAll() {
+       log.debug("Get all hashtags.");
+        return hashtagRepository.findAll();
     }
 }

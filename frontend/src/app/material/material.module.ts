@@ -16,6 +16,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTableModule} from "@angular/material/table";
+import {MatExpansionModule} from '@angular/material/expansion';
 
 const MaterialComponents = [
   MatButtonModule,
@@ -33,6 +34,8 @@ const MaterialComponents = [
   MatListModule,
   MatSliderModule,
   MatDatepickerModule,
+  MatNativeDateModule,
+  MatExpansionModule,
   MatNativeDateModule,
   MatCheckboxModule,
   MatTableModule

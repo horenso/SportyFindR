@@ -67,8 +67,8 @@ export class LocationService {
    * @param str containing the search parameters
    */
   filterLocation(str: string): Observable<Location[]> {
-    console.log('Search for locations with parameters: ' + str);
-    return this.httpClient.get<Location[]>('http://localhost:8080' + str)
+    console.log('Search URL: ' + 'http://localhost:8080/api/v1' + str);
+    return this.httpClient.get<Location[]>('http://localhost:8080/api/v1' + str)
       .pipe(
         tap(_ => console.log(`locations: ` + _.length)),
         catchError(this.handleError<Location[]>('No locations found that fit the parameters.', []))

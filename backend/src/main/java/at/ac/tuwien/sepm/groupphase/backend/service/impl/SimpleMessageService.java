@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -132,10 +133,27 @@ public class SimpleMessageService implements MessageService {
             messageSearchObject.setCategoryId(0L);
         }
 
+
         if (messageSearchObject.getTime() == null) {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
+
+        if (messageSearchObject.getHashtagId() != null){
+            Long hashtagId = messageSearchObject.getHashtagId();
+            Hashtag hashtag = hashtagService.getOneById(hashtagId);
+            List<Message> messageList = hashtag.getMessagesList();
+            log.info(messageList.toString());
+            List<Long> messageIds = new LinkedList<>();
+
+            for (Message m : messageList){
+                messageIds.add(m.getId());
+            }
+
+            log.info(messageIds.toString());
+
+            return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
+        }
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
 
     }

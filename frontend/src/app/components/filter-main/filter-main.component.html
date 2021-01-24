@@ -1,84 +1,105 @@
-<mat-card id="filter-card">
+<mat-expansion-panel (opened)="panelOpenState = true"
+                     (closed)="panelOpenState = false"
+                      id="filter-expansion">
+  <mat-expansion-panel-header>
+    <mat-panel-title id="title">
+      <h2>Filter</h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-list id="list">
+    <mat-tab-group id="tabs">
+      <!-- Location Filter -->
+      <mat-tab label="Locations">
+        <form [formGroup]="locationForm" class="locationForm">
 
-<mat-list id="list">
+          <!-- Category -->
+          <mat-list-item id="category-item-loc">
+            <mat-form-field appearance="outline">
+              <mat-label>Category</mat-label>
+              <label for="CategoryLoc"></label>
+              <mat-select id="CategoryLoc" formControlName="categoryLoc">
+                <mat-option *ngFor="let category of categories" [value]="category.id"
+                >{{category.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-list-item>
 
-  <mat-list-item>
-    <mat-card-title id="card-title">Filter</mat-card-title>
-  </mat-list-item>
+          <!-- Radius -->
+          <mat-list-item id="radius-header">
+            <h4><b>Distance</b></h4>
+          </mat-list-item>
+          <mat-list-item id="radius-item">
+            <mat-slider
+              id="radius"
+              (change)="updateSetting($event)"
+              step="5"
+              min="1"
+              max="800"
+              formControlName="radius"
+              [value]="radius"
+            ></mat-slider>
+          </mat-list-item>
+          <mat-list-item>
+            <h4>{{radius}} km</h4>
+          </mat-list-item>
 
-  <mat-tab-group id="tabs">
-    <!-- Location Filter -->
-    <mat-tab label="Locations">
-      <form [formGroup]="locationForm" class="locationForm">
+          <mat-list-item id="buttonsLoc">
+            <a mat-raised-button class="buttonCancel" (click)="cancel()">Cancel</a>
+            <a mat-raised-button class="buttonConfirm" color="accent" (click)="filterLoc()">Go!</a>
+          </mat-list-item>
 
-        <!-- Category -->
-        <mat-list-item id="category-item">
-          <mat-form-field appearance="outline">
-            <mat-label>Category</mat-label>
-            <label for="CategoryLoc"></label>
-            <mat-select id="CategoryLoc" formControlName="categoryLoc" [compareWith]='compareCategory'>
-              <mat-option *ngFor="let category of categories" [value]="category"
-              >{{category.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-list-item>
+        </form>
 
-        <!-- Radius -->
-        <mat-list-item id="radius-header">
-          <h4><b>Distance</b></h4>
-        </mat-list-item>
-        <mat-list-item id="radius-item">
-          <mat-slider
-            id="radius"
-            (change)="updateSetting($event)"
-            step="5"
-            min="1"
-            max="10000"
-            formControlName="radius"
-            [value]="radius"
-          ></mat-slider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4>{{radius}} km</h4>
-        </mat-list-item>
+      </mat-tab>
 
-      </form>
+      <!-- Message Filter -->
+      <mat-tab label="Messages">
+        <form [formGroup]="messageForm" class="messageForm">
 
-    </mat-tab>
+          <!-- Category -->
+          <mat-list-item id="category-item-mes">
+            <mat-form-field appearance="outline">
+              <mat-label>Category</mat-label>
+              <label for="CategoryMes"></label>
+              <mat-select id="CategoryMes" formControlName="categoryMes">
+                <mat-option *ngFor="let category of categories" [value]="category.id"
+                >{{category.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-list-item>
 
-    <!-- Message Filter -->
-    <mat-tab label="Messages">
-    <form [formGroup]="messageForm" class="messageForm">
+          <!-- Hashtag -->
+          <mat-list-item id="hashtag-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Hashtag</mat-label>
+              <label for="Hashtag"></label>
+              <mat-select id="Hashtag" formControlName="hashtag">
+                <mat-option *ngFor="let hashtag of hashtags" [value]="hashtag.id"
+                >{{hashtag.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-list-item>
 
-      <!-- Category -->
-      <mat-list-item id="category-item2">
-        <mat-form-field appearance="outline">
-          <mat-label>Category</mat-label>
-          <label for="CategoryMes"></label>
-          <mat-select id="CategoryMes" formControlName="categoryMes" [compareWith]='compareCategory'>
-            <mat-option *ngFor="let category of categories" [value]="category"
-            >{{category.name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-list-item>
+          <!-- Date -->
+          <mat-list-item id="date-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Choose a date</mat-label>
+              <label for="Date"></label>
+              <input id="Date" matInput [matDatepicker]="picker" formControlName="time">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </mat-list-item>
 
+          <mat-list-item id="buttonsMes">
+            <a mat-raised-button class="buttonCancel" (click)="onCancel()">Cancel</a>
+            <a mat-raised-button class="buttonConfirm" color="accent" (click)="filterMes()">Go!</a>
+          </mat-list-item>
 
-      <!-- Date -->
-      <mat-list-item id="date-item">
-        <mat-form-field appearance="outline">
-          <mat-label>Choose a date</mat-label>
-          <label for="Date"></label>
-          <input id="Date" matInput [matDatepicker]="picker" formControlName="time">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </mat-list-item>
+        </form>
+      </mat-tab>
 
-    </form>
-    </mat-tab>
+    </mat-tab-group>
 
-  </mat-tab-group>
-
-</mat-list>
-
-</mat-card>
+  </mat-list>
+</mat-expansion-panel>

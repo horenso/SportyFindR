@@ -52,6 +52,21 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                          @Param("time") LocalDateTime time,
                          Pageable pageable);
 
+    /**
+     * Find messages that match the filter criteria
+     *
+     * @param categoryId of spots contained in location
+     * @param time ... messages not older than stated time
+     * @param messageIds ... list of messages after hashtag check
+     * @return List of messages that match the filter criteria
+     */
+    @EntityGraph("message-with-spots")
+    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt <= :time AND m.id IN :list")
+    Page<Message> filterHash(@Param("cat") Long categoryId,
+                             @Param("time") LocalDateTime time,
+                             @Param("list") List<Long> messageIds,
+                             Pageable pageable);
+
     List<Message> findAllBySpot_Id(Long spotId);
 
     Page<Message> findByIdIn(List<Long> ids, Pageable pageable);
