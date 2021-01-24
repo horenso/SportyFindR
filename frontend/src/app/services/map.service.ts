@@ -4,6 +4,7 @@ import {IconType, MLocation} from '../util/m-location';
 import {SidebarService} from './sidebar.service';
 import {Map, Marker, Point} from 'leaflet';
 import {Router} from '@angular/router';
+import {FilterLocation} from '../dtos/filter-location';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,9 @@ export class MapService {
 
   private removeMarkerLocSubject = new Subject<number>();
   public removeMarkerLocObservable = this.removeMarkerLocSubject.asObservable();
+
+  private updateLocationFilterSubject = new Subject<FilterLocation>();
+  public updateLocationFilterObservable = this.updateLocationFilterSubject.asObservable();
 
   constructor(
     private sidebarService: SidebarService,
@@ -94,5 +98,9 @@ export class MapService {
     this.sidebarService.markerLocation = markerLocation;
 
     this.ngZone.run(() => this.router.navigate(['locations', markerLocation.id]));
+  }
+
+  public updateFilter(filterLocation: FilterLocation): void {
+    this.updateLocationFilterSubject.next(filterLocation);
   }
 }

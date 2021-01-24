@@ -13,8 +13,6 @@ import java.util.List;
 @Component
 public class LocationValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     public List<Location> validateLocationDistance(Double latitude, Double longitude, Double radius, List<Location> locations) throws ValidationException {
 
         List<Location> result = new LinkedList<>();

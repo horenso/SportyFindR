@@ -1,17 +1,17 @@
 <div class="inSidebar">
   <div class="sidebarTopRow">
     <button mat-icon-button color="primary" (click)='onClose()'>
-      <mat-icon>arrow_back_ios_new</mat-icon>
+      <mat-icon>close</mat-icon>
     </button>
-    
+
     <div class="sidebarTitle">Spots</div>
   </div>
-  
+
   <div class="sidebarScrollableSection">
-    <button *ngFor="let spot of spots" 
-      class="spotButton" 
-      mat-flat-button 
-      color="primary" 
+    <button *ngFor="let spot of spots"
+      class="spotButton"
+      mat-flat-button
+      color="primary"
       (click)='onSelectedSpot(spot)'><mat-icon class="spot-icon">sports_basketball</mat-icon>{{spot.name}}</button>
   </div>
 </div>

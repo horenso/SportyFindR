@@ -59,17 +59,16 @@ public class LocationEndpoint {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
-    @ApiOperation(value = "Filter locations by distance and categories of spots",
-        authorizations = {@Authorization(value = "apiKey")})
-    public List<LocationDto> filter(@RequestParam(required = false) Long categoryId,
-                                    @RequestParam(required = false, defaultValue = "0") Double latitude,
-                                    @RequestParam(required = false, defaultValue = "0") Double longitude,
+    @ApiOperation(value = "Filter locations by distance and categories of spots", authorizations = {@Authorization(value = "apiKey")})
+    public List<LocationDto> filter(@RequestParam(required = false) Long categoryLoc,
+                                    @RequestParam(required = false) Double latitude,
+                                    @RequestParam(required = false) Double longitude,
                                     @RequestParam(required = false, defaultValue = "0") Double radius) {
 
         log.info("GET /api/v1/locations/filter?" +
-            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
+            "categoryLoc=" + categoryLoc + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
 
-        LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius);
+        LocationSearchObject locationSearchObject = new LocationSearchObject(categoryLoc, latitude, longitude, radius);
 
         try {
             return locationMapper.entityToListDto(locationService.filter(locationSearchObject));

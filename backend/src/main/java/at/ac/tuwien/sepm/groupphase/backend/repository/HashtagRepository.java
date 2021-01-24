@@ -19,4 +19,6 @@ public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
     List<Hashtag> findHashtagsBySpotsListContains(Spot spot);
 
     Hashtag getHashtagByNameEquals(String name);
+
+    Hashtag getOneById(Long id);
 }

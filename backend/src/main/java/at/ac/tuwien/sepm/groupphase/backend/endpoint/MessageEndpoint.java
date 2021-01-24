@@ -65,7 +65,7 @@ public class MessageEndpoint {
             Pageable pageable,
         @RequestParam(name = "spot") Long spotId) {
 
-        log.info("GET /api/v1/messages?spot={}", spotId);
+        log.info("GET /api/v1/messages/all?spot={}", spotId);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.findBySpotPaged(spotId, pageable));
@@ -119,21 +119,22 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
         @PageableDefault(size = 20)
         @SortDefault.SortDefaults({
             @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
         Pageable pageable,
-        @RequestParam(required = false) Long categoryId,
+        @RequestParam(required = false) Long categoryMes,
+        @RequestParam(required = false) Long hashtag,
         @RequestParam(required = false) LocalDateTime time) {
 
-        log.info("GET /api/v1/messages/filter?" +
-            "categoryId=" + categoryId + "&time=" + time);
+        log.info("IM HERE!");
+        log.info("GET /api/v1/messages/?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryId, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));

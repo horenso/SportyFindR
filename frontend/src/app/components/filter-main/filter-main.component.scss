@@ -2,11 +2,25 @@
   width: 288px;
 }
 
-#category-item {
+.buttonCancel {
+  position: absolute;
+  left: 16px;
+}
+
+.buttonConfirm {
+  position: absolute;
+  right: 16px;
+}
+
+#category-item-loc {
   margin-top: 40px;
 }
 
-#category-item2 {
+#category-item-mes {
+  margin-top: 40px;
+}
+
+#hashtag-item {
   margin-top: 40px;
 }
 
@@ -22,19 +36,22 @@
 
 #date-item {
   margin-top: 40px;
+  margin-bottom: 21px;
 }
 
-#filter-card {
+#filter-expansion{
   z-index: 2000;
-  background: white;
   position: fixed;
-  top: 80px;
+  top: 77px;
   left: 64px;
-  border: none;
-  outline: none;
-  text-decoration: none;
-  width: 320px;
-  height: 320px;
-  padding: 16px;
-  justify-content: center;
+  width: 370px;
+}
+
+#title{
+  position: absolute;
+  top: 8px;
+}
+
+#tabs{
+  margin-top: -20px;
 }
