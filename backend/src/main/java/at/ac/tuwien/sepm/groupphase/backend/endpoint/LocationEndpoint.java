@@ -67,7 +67,7 @@ public class LocationEndpoint {
                                     @RequestParam(required = false, defaultValue = "0") Double radius) {
 
         log.info("GET /api/v1/locations/filter?" +
-            "categoryLoc=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
+            "categoryLoc=" + categoryLoc + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
 
         LocationSearchObject locationSearchObject = new LocationSearchObject(categoryLoc, latitude, longitude, radius);
 
