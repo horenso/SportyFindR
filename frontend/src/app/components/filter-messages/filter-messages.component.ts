@@ -4,6 +4,8 @@ import {MessageService} from '../../services/message.service';
 import {IconType} from '../../util/m-location';
 import {Router} from '@angular/router';
 import {SidebarService} from '../../services/sidebar.service';
+import {SubSink} from 'subsink';
+import {Page} from '../../models/page.model';
 
 @Component({
   selector: 'app-filter-messages',
@@ -14,13 +16,27 @@ export class FilterMessagesComponent implements OnInit {
 
   @Output() goBack = new EventEmitter();
 
-  public messages: Message[];
+  private subs = new SubSink();
+
+  public messagePage: Message[];
 
   constructor(private messageService: MessageService,
               private route: Router,
               private sidebarService: SidebarService) { }
 
   ngOnInit(): void {
+
+    this.subs.add(this.messageService.updateMessageFilterObservable.subscribe(change => {
+      this.messageService.filterMessage({
+        categoryMes: change.categoryMes,
+        hashtag: change.hashtag,
+        time: change.time
+      }).subscribe(
+        (result: Page<Message>) => {
+          // add page to list method zeugs here ?
+        }
+      );
+    }));
   }
 
   onClose(): void {

@@ -66,13 +66,17 @@ export class LocationService {
    * Searches locations from the backend according to search parameters
    * @param filterLocation containing the search parameters
    */
-  filterLocation(filterLocation: FilterLocation): Observable<Location[]> {
+  filterLocation(filterLocation: FilterLocation): Observable<MLocation[]> {
     const params = new HttpParams()
       .set('categoryLoc', filterLocation.categoryLoc.toString())
       .set('latitude', filterLocation.latitude.toString())
       .set('longitude', filterLocation.longitude.toString())
       .set('radius', filterLocation.radius.toString());
     console.log(params.toString());
-    return this.httpClient.get<Location[]>(`${this.locationBaseUri}/filter`, {params: params});
+    return this.httpClient.get<Location[]>(`${this.locationBaseUri}/filter`, {params: params}).pipe(
+      map(
+        value => this.translateToMarkerLocations(value)
+      )
+    );
   }
 }

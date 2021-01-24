@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {control, Layer, LayerGroup, Map, tileLayer, Point, latLng, LatLng, LatLngBounds} from 'leaflet';
+import {control, Layer, LayerGroup, Map, tileLayer, Point, latLng, LatLng, LatLngBounds, Circle} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
@@ -87,21 +87,25 @@ export class MapComponent implements OnInit, OnDestroy {
     }));
 
     this.subs.add(this.mapService.updateLocationFilterObservable.subscribe(change => {
-      this.viewLocations(change.radius);
+      // this.viewLocations(change.radius);
       this.locationService.filterLocation({
         categoryLoc: change.categoryLoc,
         latitude: this.map.getCenter().lat,
         longitude: this.map.getCenter().lng,
         radius: change.radius
-      }).subscribe(result => {
-        console.log('wohoo locatino');
-      });
+      }).subscribe(
+        (result: MLocation[]) => {
+          this.locMarkerGroup.clearLayers();
+          this.locationList = result;
+          this.addMarkers();
+          // this.circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
+        }
+      );
     }));
 
-    /*
     this.map.on('moveend', this.changeLocationView);
     this.map.on('zoomend', this.changeLocationView);
-     */
+
 
     setTimeout(() => this.map.invalidateSize({pan: false}));
   }

@@ -59,8 +59,7 @@ public class LocationEndpoint {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
-    @ApiOperation(value = "Filter locations by distance and categories of spots",
-        authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Filter locations by distance and categories of spots", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> filter(@RequestParam(required = false) Long categoryLoc,
                                     @RequestParam(required = false) Double latitude,
                                     @RequestParam(required = false) Double longitude,

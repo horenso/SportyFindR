@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {Globals} from '../global/globals';
 import {catchError, tap} from 'rxjs/operators';
 import {Page} from '../models/page.model';
 import {FilterMessagesComponent} from '../components/filter-messages/filter-messages.component';
 import {FilterMessage} from '../dtos/filter-message';
 import {Location} from '../dtos/location';
+import {FilterLocation} from '../dtos/filter-location';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,9 @@ import {Location} from '../dtos/location';
 export class MessageService {
 
   private messageBaseUri: string = `${this.globals.backendUri}/messages`;
+
+  private updateMessageFilterSubject = new Subject<FilterMessage>();
+  public updateMessageFilterObservable = this.updateMessageFilterSubject.asObservable();
 
   constructor(
     private httpClient: HttpClient,
@@ -59,6 +63,10 @@ export class MessageService {
   deleteById(id: number): Observable<{}> {
     console.log('Delete message with id ' + id);
     return this.httpClient.delete<Message>(`${this.messageBaseUri}/${id}`);
+  }
+
+  public updateMessageFilter(filterMessage: FilterMessage): void {
+    this.updateMessageFilterSubject.next(filterMessage);
   }
 
   /**

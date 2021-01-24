@@ -21,7 +21,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
   hashtags: Hashtag[];
-  radius: number = 0;
+  radius: number = 2;
   strLoc: string;
   strMes: string;
 
@@ -84,17 +84,15 @@ export class FilterMainComponent implements OnInit, OnDestroy {
       categoryLoc: this.locationForm.get('categoryLoc').value,
       latitude: null,
       longitude: null,
-      radius: this.locationForm.get('radius').value
+      radius: this.radius
     });
   }
 
   filterMes(): void {
-    this.messageService.filterMessage({
+    this.messageService.updateMessageFilter({
       categoryMes: this.messageForm.get('categoryMes').value,
       hashtag: this.messageForm.get('hashtag').value,
       time: this.messageForm.get('time').value
-    }).subscribe(result => {
-      console.log("lala");
     });
 
     this.sidebarService.changeVisibilityAndFocus({isVisible: true});
