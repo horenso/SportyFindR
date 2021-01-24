@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Category} from '../../dtos/category';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
@@ -10,13 +10,14 @@ import {LocationService} from '../../services/location.service';
 import {Hashtag} from '../../dtos/hashtag';
 import {HashtagService} from '../../services/hashtag.service';
 import {SidebarService} from '../../services/sidebar.service';
+import {MapService} from '../../services/map.service';
 
 @Component({
   selector: 'app-filter-main',
   templateUrl: './filter-main.component.html',
   styleUrls: ['./filter-main.component.scss']
 })
-export class FilterMainComponent implements OnInit {
+export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
   hashtags: Hashtag[];
@@ -33,7 +34,6 @@ export class FilterMainComponent implements OnInit {
   private subscription: Subscription;
 
   paramMessage = new BehaviorSubject<string>('categoryMes=&hashtag=&time=');
-  paramLocation = new BehaviorSubject<string>('categoryLoc=&latitude=&longitude=&radius=');
 
   constructor(private formBuilder: FormBuilder,
               private categoryService: CategoryService,
@@ -41,6 +41,7 @@ export class FilterMainComponent implements OnInit {
               private hashtagService: HashtagService,
               private locationService: LocationService,
               private sidebarService: SidebarService,
+              private mapService: MapService,
               private notificationService: NotificationService,
               private serializer: UrlSerializer,
               private router: Router) {
@@ -65,16 +66,13 @@ export class FilterMainComponent implements OnInit {
     this.buildMessageForm();
     this.buildLocationForm();
 
-    this.sidebarActive = !(this.router.routerState.snapshot.url.toString() === '/');
-    if (this.sidebarActive) {
-      this.sidebarService.setSidebarStateOpen();
-    } else {
-      this.sidebarService.setSidebarStateClosed();
-    }
-
     this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.sidebarActive = change.isVisible;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   updateSetting(event) {
@@ -82,30 +80,26 @@ export class FilterMainComponent implements OnInit {
   }
 
   filterLoc(): void {
-    const formData = {
+    this.mapService.updateFilter({
       categoryLoc: this.locationForm.get('categoryLoc').value,
-      latitude: this.locationForm.get('latitude').value,
-      longitude: this.locationForm.get('longitude').value,
-      radius: this.locationForm.get('radius').value,
-    };
-    this.strLoc = this.serializer.serialize(this.router.createUrlTree([], { queryParams: formData }));
-    this.paramLocation.next(this.strLoc);
-    this.locationService.filterLocation(this.strLoc);
+      latitude: null,
+      longitude: null,
+      radius: this.locationForm.get('radius').value
+    });
   }
 
   filterMes(): void {
-    const formData = {
+    this.messageService.filterMessage({
       categoryMes: this.messageForm.get('categoryMes').value,
       hashtag: this.messageForm.get('hashtag').value,
       time: this.messageForm.get('time').value
-    };
-    this.strMes = this.serializer.serialize(this.router.createUrlTree([], { queryParams: formData }));
-    this.paramMessage.next(this.strMes);
-
-    this.messageService.filterMessage(this.strMes);
+    }).subscribe(result => {
+      console.log("lala");
+    });
 
     this.sidebarService.changeVisibilityAndFocus({isVisible: true});
     this.sidebarActive = true;
+    this.router.navigate(['filter/messages']);
   }
 
   buildLocationForm(): void {

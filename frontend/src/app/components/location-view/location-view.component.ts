@@ -26,12 +26,12 @@ export class LocationViewComponent implements OnInit, OnDestroy {
     private spotService: SpotService,
     private sidebarService: SidebarService,
     private route: Router,
-    private activedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
-    this.subs.add(this.activedRoute.params.subscribe(params => {
+    this.subs.add(this.activatedRoute.params.subscribe(params => {
 
       this.locationId = parsePositiveInteger(params.locId);
 

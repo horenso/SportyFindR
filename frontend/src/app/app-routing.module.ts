@@ -9,7 +9,8 @@ import {PageNotFoundComponent} from './components/page-not-found/page-not-found.
 import {SpotViewComponent} from './components/spot-view/spot-view.component';
 import {LocationViewComponent} from './components/location-view/location-view.component';
 import {HashtagComponent} from './components/hashtag/hashtag.component';
-import {UserManagerComponent} from "./components/user-manager/user-manager.component";
+import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
+import {UserManagerComponent} from './components/user-manager/user-manager.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent, children: [
@@ -19,6 +20,7 @@ const routes: Routes = [
     {path: 'locations/:locId/spots/:spotId/edit', component: EditSpotComponent},
     {path: 'locations/:locId/spots/:spotId', component: SpotViewComponent},
     {path: 'hashtags/:hashtagName', component: HashtagComponent},
+      {path: 'filter/messages', component: FilterMessagesComponent},
   ]},
   {path: 'login', component: LoginComponent},
   {path: 'user-admin', component: UserManagerComponent},

@@ -5,6 +5,9 @@ import {Observable, of} from 'rxjs';
 import {Globals} from '../global/globals';
 import {catchError, tap} from 'rxjs/operators';
 import {Page} from '../models/page.model';
+import {FilterMessagesComponent} from '../components/filter-messages/filter-messages.component';
+import {FilterMessage} from '../dtos/filter-message';
+import {Location} from '../dtos/location';
 
 @Injectable({
   providedIn: 'root'
@@ -60,10 +63,14 @@ export class MessageService {
 
   /**
    * Searches messages from the backend according to search parameters
-   * @param str containing the search parameters
+   * @param filterMessage containing the search parameters
    */
-  filterMessage(str: string): Observable<Page<Message>> {
-    console.log(`Search URL: http://localhost:8080/api/v1/messages/filter${str}`);
-    return this.httpClient.get<Page<Message>>(`http://localhost:8080/api/v1/messages/filter${str}`);
+  filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
+    const params = new HttpParams()
+      .set('categoryMes', filterMessage.categoryMes.toString())
+      .set('hashtag', filterMessage.hashtag.toString())
+      .set('time', filterMessage.time.toString());
+    console.log(params.toString());
+    return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }
 }

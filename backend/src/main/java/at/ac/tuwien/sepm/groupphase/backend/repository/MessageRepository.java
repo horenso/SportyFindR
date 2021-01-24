@@ -58,7 +58,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @param categoryId of spots contained in location
      * @param time ... messages not older than stated time
      * @param messageIds ... list of messages after hashtag check
-     * @return List of messages that match the filter criteria
+     * @return Page of messages that match the filter criteria
      */
     @EntityGraph("message-with-spots")
     @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt <= :time AND m.id IN :list")

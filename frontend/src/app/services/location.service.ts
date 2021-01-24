@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../global/globals';
-import {Observable, of} from 'rxjs';
-import {catchError, map, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Location} from '../dtos/location';
 import {MLocation} from '../util/m-location';
-import {Message} from '../dtos/message';
+import {FilterLocation} from '../dtos/filter-location';
 
 @Injectable({
   providedIn: 'root'
@@ -64,28 +64,15 @@ export class LocationService {
 
   /**
    * Searches locations from the backend according to search parameters
-   * @param str containing the search parameters
+   * @param filterLocation containing the search parameters
    */
-  filterLocation(str: string): Observable<Location[]> {
-    console.log('Search URL: ' + 'http://localhost:8080/api/v1' + str);
-    return this.httpClient.get<Location[]>('http://localhost:8080/api/v1' + str)
-      .pipe(
-        tap(_ => console.log(`locations: ` + _.length)),
-        catchError(this.handleError<Location[]>('No locations found that fit the parameters.', []))
-      );
-  }
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
+  filterLocation(filterLocation: FilterLocation): Observable<Location[]> {
+    const params = new HttpParams()
+      .set('categoryLoc', filterLocation.categoryLoc.toString())
+      .set('latitude', filterLocation.latitude.toString())
+      .set('longitude', filterLocation.longitude.toString())
+      .set('radius', filterLocation.radius.toString());
+    console.log(params.toString());
+    return this.httpClient.get<Location[]>(`${this.locationBaseUri}/filter`, {params: params});
   }
 }
