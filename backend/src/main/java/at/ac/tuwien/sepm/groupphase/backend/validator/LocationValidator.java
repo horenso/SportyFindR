@@ -23,9 +23,6 @@ public class LocationValidator {
             }
         }
 
-        if (result.isEmpty()) {
-            throw new ValidationException("No Location within " + radius + "km found.");
-        }
         return result;
     }
 
