@@ -27,7 +27,6 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/categories")
 public class CategoryEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
@@ -48,7 +47,7 @@ public class CategoryEndpoint {
             return categoryMapper.categoryToCategoryDto(
                 categoryService.create(categoryMapper.categoryDtoToCategory(categoryDto)));
         } catch (ServiceException | ValidationException e) {
-            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -63,7 +62,7 @@ public class CategoryEndpoint {
         try {
             categoryService.deleteById(id);
         } catch (NotFoundException2 e) {
-            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }

@@ -15,7 +15,13 @@
     <app-text-with-hashtags [text]='spot.description'></app-text-with-hashtags>
   </div>
 
-  <div #messageArea class="sidebarScrollableSection messageArea">
+  <div #messageArea class="sidebarScrollableSection messageArea" 
+    infiniteScroll
+    [infiniteScrollUpDistance]="1"
+    [infiniteScrollThrottle]="50"
+    [alwaysCallback]=false
+    [scrollWindow]=false
+    (scrolledUp)="onScroll()">
     <div *ngFor="let message of messageList" class="message">
       <app-message
         (deleteMessage)='deleteOneMessage($event)'

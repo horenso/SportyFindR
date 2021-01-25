@@ -14,8 +14,10 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatListModule} from '@angular/material/list';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {MatTableModule} from "@angular/material/table";
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatTableModule} from '@angular/material/table';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 const MaterialComponents = [
   MatButtonModule,
@@ -34,8 +36,11 @@ const MaterialComponents = [
   MatSliderModule,
   MatDatepickerModule,
   MatNativeDateModule,
+  MatExpansionModule,
+  MatNativeDateModule,
   MatCheckboxModule,
-  MatTableModule
+  MatTableModule,
+  MatSlideToggleModule
 ];
 
 @NgModule({

@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
@@ -9,22 +8,18 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
-import at.ac.tuwien.sepm.groupphase.backend.validator.MessageValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +31,6 @@ public class SimpleMessageService implements MessageService {
     private final SpotRepository spotRepository;
     private final HashtagService hashtagService;
     private final SpotSubscriptionService spotSubscriptionService;
-    private final MessageValidator validator;
     private final UserRepository userRepository;
 
     @Override
@@ -132,10 +126,26 @@ public class SimpleMessageService implements MessageService {
             messageSearchObject.setCategoryId(0L);
         }
 
+
         if (messageSearchObject.getTime() == null) {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
+        if (messageSearchObject.getHashtagId() != null){
+            Long hashtagId = messageSearchObject.getHashtagId();
+            Hashtag hashtag = hashtagService.getOneById(hashtagId);
+            List<Message> messageList = hashtag.getMessagesList();
+            log.info(messageList.toString());
+            List<Long> messageIds = new LinkedList<>();
+
+            for (Message m : messageList){
+                messageIds.add(m.getId());
+            }
+
+            log.info(messageIds.toString());
+
+            return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
+        }
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
 
     }

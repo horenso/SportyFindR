@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {Globals} from '../global/globals';
 import {catchError, tap} from 'rxjs/operators';
 import { MessagePage } from '../dtos/message-page';
+import { FilterMessage } from '../dtos/filter-message';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,9 @@ import { MessagePage } from '../dtos/message-page';
 export class MessageService {
 
   private messageBaseUri: string = `${this.globals.backendUri}/messages`;
+
+  private updateMessageFilterSubject = new Subject<FilterMessage>();
+  public updateMessageFilterObservable = this.updateMessageFilterSubject.asObservable();
 
   constructor(
     private httpClient: HttpClient,
@@ -25,12 +30,14 @@ export class MessageService {
    */
   getBySpotId(spotId: number): Observable<MessagePage> {
     console.log('Get all messages from spot: ' + spotId);
-    const params = new HttpParams().set('spotId', spotId.toString());
+    const params = new HttpParams()
+      .set('spotId', spotId.toString())
+      .set('size', '10');
     return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 
   /**
-   * Saves a new message in a spesific spot
+   * Saves a new message in a specific spot
    * @param message to be saved
    * @returns message entity
    */
@@ -58,30 +65,20 @@ export class MessageService {
     return this.httpClient.delete<Message>(`${this.messageBaseUri}/${id}`);
   }
 
-  /**
-   * Searches messages from the backend according to search parameters
-   * @param str containing the search parameters
-   */
-  filterMessage(str: string): Observable<Message[]> {
-    console.log('Search for message with parameters: ' + str);
-    return this.httpClient.get<Message[]>('http://localhost:8080' + str)
-      .pipe(
-        tap(_ => console.log(`messages: ` + _.length)),
-        catchError(this.handleError<Message[]>('No messages found that fit the parameters.', []))
-      );
+  public updateMessageFilter(filterMessage: FilterMessage): void {
+    this.updateMessageFilterSubject.next(filterMessage);
   }
 
   /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
+   * Searches messages from the backend according to search parameters
+   * @param filterMessage containing the search parameters
    */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
+  filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
+    const params = new HttpParams()
+      .set('categoryMes', filterMessage.categoryMes.toString())
+      .set('hashtag', filterMessage.hashtag.toString())
+      .set('time', filterMessage.time.toString());
+    console.log(params.toString());
+    return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }
 }

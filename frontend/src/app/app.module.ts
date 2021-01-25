@@ -31,6 +31,8 @@ import { FilterMainComponent } from './components/filter-main/filter-main.compon
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { FilterMessagesComponent } from './components/filter-messages/filter-messages.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
 const toastrSettings = {
@@ -60,21 +62,23 @@ const toastrSettings = {
     HashtagComponent,
     UserManagerComponent,
     HashtagComponent,
-    FilterMainComponent
+    FilterMainComponent,
+    FilterMessagesComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        FormsModule,
-        LeafletModule,
-        MaterialModule,
-        ToastrModule.forRoot(toastrSettings),
-        MatCheckboxModule,
-        MatPaginatorModule,
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    InfiniteScrollModule,
+    FormsModule,
+    LeafletModule,
+    MaterialModule,
+    ToastrModule.forRoot(toastrSettings),
+    MatCheckboxModule,
+    MatPaginatorModule,
+  ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })

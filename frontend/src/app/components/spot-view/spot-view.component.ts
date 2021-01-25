@@ -32,19 +32,22 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subs = new SubSink();
 
+  private currentPage: number = 0;
+  private lastPage: boolean = false;
+
   constructor(
     private messageService: MessageService,
     private spotService: SpotService,
     private formBuilder: FormBuilder,
     private sidebarService: SidebarService,
-    private activedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private mapService: MapService,
     private router: Router,
     private notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
-    this.subs.add(this.activedRoute.params.subscribe(params => {
+    this.subs.add(this.activatedRoute.params.subscribe(params => {
       this.locationId = parsePositiveInteger(params.locId);
       this.spotId = parsePositiveInteger(params.spotId);
 
@@ -136,6 +139,10 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   editSpot(): void {
     this.sidebarService.spot = this.spot;
     this.router.navigate(['locations', this.locationId, 'spots', this.spotId, 'edit']);
+  }
+
+  onScroll(): void {
+    console.log('load new messages now!');
   }
 
   private getMessagesAndStartEventHandling(): void {
