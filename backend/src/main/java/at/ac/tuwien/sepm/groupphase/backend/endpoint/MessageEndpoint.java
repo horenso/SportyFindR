@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -130,11 +130,11 @@ public class MessageEndpoint {
         Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
         @RequestParam(required = false) Long hashtag,
-        @RequestParam(required = false) String time) {
+        @RequestParam(required = false, defaultValue = "9999-12-12") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
         log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time.atStartOfDay());
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));

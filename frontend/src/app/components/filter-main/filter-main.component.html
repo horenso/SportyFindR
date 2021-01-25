@@ -27,8 +27,8 @@
           <!-- Radius -->
           <mat-list-item id="radius-header">
             <h4><b>Distance</b></h4>
+            <mat-slide-toggle (change)="changeState()" id="distance-toggle"></mat-slide-toggle>
           </mat-list-item>
-          <mat-slide-toggle (change)="changeState()"></mat-slide-toggle><br>
           <div>
             <mat-list-item id="radius-item">
               <mat-slider
