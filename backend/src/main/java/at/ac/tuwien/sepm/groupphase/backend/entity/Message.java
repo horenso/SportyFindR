@@ -7,9 +7,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @NamedEntityGraph(
-    name = "message-with-spots",
+    name = "message-with-spots-and-owner",
     attributeNodes = {
-        @NamedAttributeNode(value = "spot", subgraph = "spot-subgraph")
+        @NamedAttributeNode(value = "spot", subgraph = "spot-subgraph"),
+        @NamedAttributeNode(value = "owner", subgraph = "owner-subgraph")
     },
 
     subgraphs = {
@@ -18,6 +19,17 @@ import java.time.LocalDateTime;
             attributeNodes = {
                 @NamedAttributeNode("location"),
                 @NamedAttributeNode("category")
+            }
+        ),
+        @NamedSubgraph(
+            name = "owner-subgraph",
+            attributeNodes = {
+                @NamedAttributeNode("id"),
+                @NamedAttributeNode("name"),
+                @NamedAttributeNode("email"),
+                @NamedAttributeNode("password"),
+                @NamedAttributeNode("enabled"),
+                @NamedAttributeNode("roles")
             }
         )
     }

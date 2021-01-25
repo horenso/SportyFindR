@@ -17,6 +17,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private subs = new SubSink();
 
+  private circle;
+
   map: Map;
   leafletOptions = {
     center: [48.208174, 16.37819],
@@ -94,23 +96,28 @@ export class MapComponent implements OnInit, OnDestroy {
         radius: change.radius
       }).subscribe(
         (result: MLocation[]) => {
-          this.locMarkerGroup.clearLayers();
           this.locationList = result;
           this.addMarkers();
-          const circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
+          if (this.circle != null) {
+            this.map.removeLayer(this.circle);
+          }
+          this.circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
         }
       );
     }));
 
     this.map.on('moveend', () => { this.changeLocationView(); });
-    this.map.on('zoomend', () => { this.changeLocationView(); });
 
     setTimeout(() => this.map.invalidateSize({pan: false}));
   }
 
   private changeLocationView() {
+    if (this.circle != null) {
+      this.map.removeLayer(this.circle);
+    }
     console.log('first', this.layers);
     const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
+    // add max south north
     const radius = (width / 2) * 111;
     this.subs.add(this.locationService.filterLocation({
       categoryLoc: 0,
@@ -119,8 +126,9 @@ export class MapComponent implements OnInit, OnDestroy {
       radius: radius
     }).subscribe(
       (result: MLocation[]) => {
-        this.locMarkerGroup.clearLayers();
         this.locationList = result;
+        console.log('LOCATION LIST: ', this.locationList);
+        // this.circle = new Circle(this.map.getCenter(), radius * 1000).addTo(this.map);
         this.addMarkers();
     }));
 }
@@ -135,7 +143,15 @@ export class MapComponent implements OnInit, OnDestroy {
  */
 
   private getLocationsAndConvertToLayerGroup() {
-    this.subs.add(this.locationService.getAll().subscribe(
+    const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
+    // add max south north
+    const radius = (width / 2) * 111;
+    this.subs.add(this.locationService.filterLocation({
+      categoryLoc: 0,
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      radius: radius
+    }).subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();
@@ -147,6 +163,9 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addMarkers(): void {
+    if (this.locMarkerGroup != null) {
+      this.map.removeLayer(this.locMarkerGroup);
+    }
     this.locMarkerGroup = new LayerGroup<MLocation>();
     this.locationList.forEach(
       (mLoc: MLocation) => {

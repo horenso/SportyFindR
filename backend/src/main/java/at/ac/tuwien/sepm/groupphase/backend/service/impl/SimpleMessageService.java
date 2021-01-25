@@ -119,10 +119,10 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException {
+    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
-        if (messageSearchObject.getCategoryId()== null) {
+        if (messageSearchObject.getCategoryId() == null) {
             messageSearchObject.setCategoryId(0L);
         }
 

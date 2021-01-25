@@ -132,15 +132,15 @@ public class MessageEndpoint {
         @RequestParam(required = false) LocalDateTime time) {
 
         log.info("IM HERE!");
-        log.info("GET /api/v1/messages/?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
+        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
         MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {
-            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
