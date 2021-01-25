@@ -54,5 +54,5 @@ public interface MessageService {
      * @param pageable containing page information
      * @return Page with messages containing spots that match the filter criteria
      */
-    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException;
+    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException;
 }

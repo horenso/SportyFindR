@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -129,18 +130,17 @@ public class MessageEndpoint {
         Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
         @RequestParam(required = false) Long hashtag,
-        @RequestParam(required = false) LocalDateTime time) {
+        @RequestParam(required = false, defaultValue = "9999-12-12") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("IM HERE!");
-        log.info("GET /api/v1/messages/?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
+        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time.atStartOfDay());
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {
-            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
