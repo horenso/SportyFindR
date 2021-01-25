@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -278,6 +279,78 @@ public class UserEndpointTest implements TestData {
             () -> assertThat(foundUsers, hasItems(createdUser1)),
             () -> assertThat(foundUsers, hasItems(createdUser2)),
             () -> assertThat(foundUsers, hasSize(2))
+        );
+    }
+
+    // negative tests
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void createUserWithoutPassword() {
+        NewUserDto userDto = NewUserDto.builder()
+            .name("TestUser")
+            .email("hallo@welt.net")
+            .enabled(true)
+            .build();
+
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.create(userDto))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void updateUserWithAlreadyTakenEmail() {
+        NewUserDto userDto1 = NewUserDto.builder()
+            .name("TestUser1")
+            .email("hallo@welt1.net")
+            .password("1234567")
+            .enabled(true)
+            .build();
+        UserDto createdUser1 = userEndpoint.create(userDto1);
+        NewUserDto userDto2 = NewUserDto.builder()
+            .name("TestUser2")
+            .email("hallo@welt2.net")
+            .password("1234567")
+            .enabled(true)
+            .build();
+        UserDto createdUser2 = userEndpoint.create(userDto2);
+
+        createdUser1.setEmail(createdUser2.getEmail());
+
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.update(createdUser1))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void deleteInexistingUser() {
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.deleteUserById(1L))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void findByInexistingRole() {
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.getUsersByRole(1L))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void findByInexistingId() {
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.getOneById(1L))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void findByInexistingEmail() {
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.getOneByEmail("not@existing.com"))
         );
     }
 }
