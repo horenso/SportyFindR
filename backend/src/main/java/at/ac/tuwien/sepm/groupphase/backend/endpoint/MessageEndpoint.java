@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -14,15 +13,13 @@ import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,10 +36,10 @@ public class MessageEndpoint {
     private final MessageService messageService;
     private final MessageMapper messageMapper;
 
-    @GetMapping
+    @GetMapping("old")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of messages without details", authorizations = {@Authorization(value = "apiKey")})
-    public List<MessageDto> findBySpot(
+    public List<MessageDto> findBySpotOld(
         @RequestParam(name = "spot") Long spotId) {
         log.info("GET /api/v1/messages?spot={}", spotId);
         try {
@@ -55,17 +52,17 @@ public class MessageEndpoint {
     }
 
     // for sidebar with pagination
-    @GetMapping(value = "/all")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get page of messages by spot without details", authorizations = {@Authorization(value = "apiKey")})
-    public Page<MessageDto> findBySpotPaged(
-        @PageableDefault(size = 20)
-        @SortDefault.SortDefaults({
-            @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
-            Pageable pageable,
-        @RequestParam(name = "spot") Long spotId) {
+    @ApiOperation(value = "Get page of messages without details by spot", authorizations = {@Authorization(value = "apiKey")})
+    public Page<MessageDto> findBySpot(
+        @RequestParam(name = "spotId") Long spotId,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size) {
 
-        log.info("GET /api/v1/messages?spot={}", spotId);
+        log.info("GET /api/v1/messages?spotId={} page: (size: {}, page: {})", spotId, size, page);
+
+        Pageable pageable = PageRequest.of(page, size);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.findBySpotPaged(spotId, pageable));

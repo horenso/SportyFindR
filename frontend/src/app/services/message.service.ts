@@ -4,6 +4,7 @@ import {Message} from '../dtos/message';
 import {Observable, of} from 'rxjs';
 import {Globals} from '../global/globals';
 import {catchError, tap} from 'rxjs/operators';
+import { MessagePage } from '../dtos/message-page';
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +23,10 @@ export class MessageService {
    * @param spotId spot to get messages from
    * @returns list of messages
    */
-  getBySpotId(spotId: number): Observable<Message[]> {
+  getBySpotId(spotId: number): Observable<MessagePage> {
     console.log('Get all messages from spot: ' + spotId);
-    const params = new HttpParams().set('spot', spotId.toString());
-    return this.httpClient.get<Message[]>(this.messageBaseUri, {params: params});
+    const params = new HttpParams().set('spotId', spotId.toString());
+    return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 
   /**

@@ -87,7 +87,14 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  submitDialog() {
+  keydown(event: KeyboardEvent): void {
+    if (event.code === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.submitDialog();
+    }
+  }
+
+  submitDialog(): void {
     if (this.newMessage?.length < 1) {
       return;
     }
@@ -134,8 +141,8 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private getMessagesAndStartEventHandling(): void {
     this.subs.add(this.messageService.getBySpotId(this.spot.id).subscribe(
       result => {
-        this.messageList = result;
-        console.log(`Loaded ${result.length} messages.`);
+        this.messageList = result.content;
+        console.log(`Loaded ${result.size} messages.`);
         setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {
         this.notificationService.error('Error loading messages!');

@@ -29,7 +29,7 @@ export class TextWithHashtagsComponent implements OnInit, AfterViewInit {
     const lineHeight = parseInt(window.getComputedStyle(this.textAreaElement.nativeElement).lineHeight);
     const elementHeight = this.textAreaElement.nativeElement.scrollHeight;
 
-    setTimeout(() => this.textTooLong = (elementHeight / lineHeight) > this.maxRows);
+    setTimeout(() => this.textTooLong = (elementHeight / lineHeight) >= this.maxRows);
   }
 
   public isHashtag(word: string) {
