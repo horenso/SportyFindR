@@ -73,7 +73,7 @@ export class LocationService {
       .set('longitude', filterLocation.longitude.toString())
       .set('radius', filterLocation.radius.toString());
     console.log(params.toString());
-    return this.httpClient.get<Location[]>(`${this.locationBaseUri}/filter`, {params: params}).pipe(
+    return this.httpClient.get<Location[]>(`${this.locationBaseUri}`, {params: params}).pipe(
       map(
         value => this.translateToMarkerLocations(value)
       )
