@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode
-@Builder
+@SuperBuilder
 public class UserDto {
 
     private Long id;
