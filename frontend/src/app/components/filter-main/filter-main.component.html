@@ -72,15 +72,32 @@
             </mat-form-field>
           </mat-list-item>
 
+          <!-- Username
+          <mat-list-item id="user-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <label for="user"></label>
+              <input id="user" formControlName="user" matInput>
+            </mat-form-field>
+          </mat-list-item>
+          -->
+
           <!-- Hashtag -->
           <mat-list-item id="hashtag-item">
             <mat-form-field appearance="outline">
               <mat-label>Hashtag</mat-label>
               <label for="Hashtag"></label>
-              <mat-select id="Hashtag" formControlName="hashtag">
-                <mat-option *ngFor="let hashtag of hashtags" [value]="hashtag.id"
-                >{{hashtag.name}}</mat-option>
-              </mat-select>
+              <input id="Hashtag"
+                     type="text"
+                     matInput
+                     formControlName="hashtag"
+                     [formControl]="myControl"
+                     [matAutocomplete]="auto">
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectedOption($event)">
+                <mat-option *ngFor="let hashtag of filteredOptions | async" [value]="hashtag.name">
+                  {{hashtag.name}}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
           </mat-list-item>
 

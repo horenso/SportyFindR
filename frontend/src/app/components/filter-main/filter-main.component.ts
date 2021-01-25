@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Category} from '../../dtos/category';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
@@ -11,6 +11,8 @@ import {Hashtag} from '../../dtos/hashtag';
 import {HashtagService} from '../../services/hashtag.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {MapService} from '../../services/map.service';
+import {map, startWith} from 'rxjs/operators';
+import {SimpleHashtag} from '../../dtos/simpleHashtag';
 
 @Component({
   selector: 'app-filter-main',
@@ -20,7 +22,7 @@ import {MapService} from '../../services/map.service';
 export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
-  hashtags: Hashtag[];
+  hashtags: SimpleHashtag[];
   radius: number = 0;
   strLoc: string;
   strMes: string;
@@ -31,6 +33,10 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   panelOpenState = false;
 
   disabled = true;
+
+  filteredOptions: Observable<SimpleHashtag[]>;
+  myControl = new FormControl();
+  selection: string;
 
   sidebarActive: boolean = false;
   private subscription: Subscription;
@@ -75,6 +81,12 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  private _filter(name: string): SimpleHashtag[] {
+    const filterValue = name.toLowerCase();
+
+    return this.hashtags.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+  }
+
   updateSetting(event) {
     this.radius = event.value;
   }
@@ -88,13 +100,16 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  selectedOption(event) {
+    this.selection = event.option.value;
+  }
+
   filterMes(): void {
     this.messageService.updateMessageFilter({
       categoryMes: this.messageForm.get('categoryMes').value,
-      hashtag: this.messageForm.get('hashtag').value,
+      hashtag: this.selection,
       time: this.messageForm.get('time').value
     });
-
     this.sidebarService.changeVisibilityAndFocus({isVisible: true});
     this.sidebarActive = true;
     this.router.navigate(['filter/messages']);
@@ -132,6 +147,12 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.hashtagService.getAll().subscribe(
       result => {
         this.hashtags = result;
+        this.filteredOptions = this.myControl.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.name),
+            map(name => name ? this._filter(name) : this.hashtags.slice())
+          );
       }, error => {
         this.notificationService.error('Error loading hashtags!');
         console.log(error);

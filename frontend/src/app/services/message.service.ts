@@ -78,6 +78,9 @@ export class MessageService {
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
     let time = filterMessage.time;
     time = this.datePipe.transform(time, 'yyyy-MM-dd');
+    if (time == null) {
+      time = '1000-01-01';
+    }
     const params = new HttpParams()
       .set('categoryMes', filterMessage.categoryMes.toString())
       .set('hashtag', filterMessage.hashtag.toString())
