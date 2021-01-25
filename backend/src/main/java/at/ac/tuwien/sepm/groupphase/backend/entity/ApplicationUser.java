@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Builder
@@ -35,6 +36,7 @@ public class ApplicationUser {
 
     private Boolean enabled = false;
 
+    @Singular
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
@@ -44,6 +46,7 @@ public class ApplicationUser {
     )
     private Set<Role> roles = new HashSet<>();
 
+/*
     public ApplicationUser(Long id, @Length(min = 3, max = 30) String name, @Length(min = 6, max = 30) String email, @Length(min = 7) String password, Boolean enabled, Set<Role> roles) {
         this.id = id;
         this.name = name;
@@ -52,6 +55,7 @@ public class ApplicationUser {
         this.enabled = enabled;
         this.roles = Objects.requireNonNullElseGet(roles, HashSet::new);
     }
+*/
 
     @Override
     public boolean equals(Object o) {

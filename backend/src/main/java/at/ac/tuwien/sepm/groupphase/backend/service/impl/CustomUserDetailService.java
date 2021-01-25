@@ -137,7 +137,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public ApplicationUser getApplicationUserById(Long id) throws NotFoundException2 {
-        log.debug("Find application user by id");
+        log.debug("Get application user by id");
         Optional<ApplicationUser> optionalApplicationUser = userRepository.findApplicationUserById(id);
         if (optionalApplicationUser.isPresent()) {
             return optionalApplicationUser.get();
@@ -148,7 +148,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
-        log.debug("Find application users by role id");
+        log.debug("Get application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
             return userRepository.findApplicationUsersByRolesId(roleId);
         } else {
