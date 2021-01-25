@@ -87,7 +87,6 @@ export class MapComponent implements OnInit, OnDestroy {
     }));
 
     this.subs.add(this.mapService.updateLocationFilterObservable.subscribe(change => {
-      // this.viewLocations(change.radius);
       this.locationService.filterLocation({
         categoryLoc: change.categoryLoc,
         latitude: this.map.getCenter().lat,
@@ -98,20 +97,34 @@ export class MapComponent implements OnInit, OnDestroy {
           this.locMarkerGroup.clearLayers();
           this.locationList = result;
           this.addMarkers();
-          // this.circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
+          const circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
         }
       );
     }));
 
-    /*
-    this.map.on('moveend', this.changeLocationView);
-    this.map.on('zoomend', this.changeLocationView);
-     */
-
+    this.map.on('moveend', () => { this.changeLocationView(); });
+    this.map.on('zoomend', () => { this.changeLocationView(); });
 
     setTimeout(() => this.map.invalidateSize({pan: false}));
   }
 
+  private changeLocationView() {
+    console.log('first', this.layers);
+    const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
+    const radius = (width / 2) * 111;
+    this.subs.add(this.locationService.filterLocation({
+      categoryLoc: 0,
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      radius: radius
+    }).subscribe(
+      (result: MLocation[]) => {
+        this.locMarkerGroup.clearLayers();
+        this.locationList = result;
+        this.addMarkers();
+    }));
+}
+/*
   public viewLocations(radius: number) {
     radius = radius / 111;
     const corner1 = new LatLng(this.map.getCenter().lat + radius, this.map.getCenter().lng + radius);
@@ -119,19 +132,7 @@ export class MapComponent implements OnInit, OnDestroy {
     const bounds = new LatLngBounds(corner1, corner2);
     this.map.fitBounds(bounds);
   }
-
-  private changeLocationView() {
-    const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
-    const radius = (width / 2) * 111;
-    this.locationService.filterLocation({
-      categoryLoc: null,
-      latitude: this.map.getCenter().lat,
-      longitude: this.map.getCenter().lng,
-      radius: radius
-    }).subscribe(result => {
-      console.log('wohoo locatino');
-    });
-}
+ */
 
   private getLocationsAndConvertToLayerGroup() {
     this.subs.add(this.locationService.getAll().subscribe(
