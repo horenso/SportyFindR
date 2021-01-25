@@ -47,7 +47,7 @@ public class UserEndpoint {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (NotFoundException2 e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
@@ -70,7 +70,7 @@ public class UserEndpoint {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (NotFoundException2 e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
