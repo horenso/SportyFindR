@@ -31,7 +31,7 @@ export class MapComponent implements OnInit, OnDestroy {
     maxZoom: 20,
   };
   private locationList: MLocation[];
-  private locMarkerGroup: LayerGroup<MLocation>;
+  private locMarkerGroup: LayerGroup<MLocation> = new LayerGroup<MLocation>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
@@ -127,7 +127,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }).subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
-        console.log('LOCATION LIST: ', this.locationList);
+        console.log('LOCATION LIST 1: ', this.locationList);
         // this.circle = new Circle(this.map.getCenter(), radius * 1000).addTo(this.map);
         this.addMarkers();
     }));
@@ -163,10 +163,10 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addMarkers(): void {
-    if (this.locMarkerGroup != null) {
-      this.map.removeLayer(this.locMarkerGroup);
+    if (this.locMarkerGroup.getLayers().length > 0) {
+      this.locMarkerGroup.clearLayers();
     }
-    this.locMarkerGroup = new LayerGroup<MLocation>();
+    console.log(this.locMarkerGroup);
     this.locationList.forEach(
       (mLoc: MLocation) => {
         this.mapService.setClickFunction(mLoc);
@@ -175,6 +175,7 @@ export class MapComponent implements OnInit, OnDestroy {
     );
     this.layers.push(this.locMarkerGroup);
   }
+
 
   public removeMLocation(id: number) {
     const found = this.locationList.find(ele => ele.id === id);

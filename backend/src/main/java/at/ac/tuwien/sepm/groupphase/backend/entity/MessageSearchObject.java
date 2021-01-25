@@ -15,5 +15,5 @@ public class MessageSearchObject {
 
     Long categoryId;
     Long hashtagId;
-    LocalDateTime time;
+    String time;
 }

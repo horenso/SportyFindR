@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -129,9 +130,8 @@ public class MessageEndpoint {
         Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
         @RequestParam(required = false) Long hashtag,
-        @RequestParam(required = false) LocalDateTime time) {
+        @RequestParam(required = false) String time) {
 
-        log.info("IM HERE!");
         log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
         MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);

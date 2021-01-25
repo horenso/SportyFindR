@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {NotificationService} from 'src/app/services/notification.service';
@@ -8,7 +8,7 @@ import {MLocSpot} from '../../util/m-loc-spot';
 
 
 @Component({
-  selector: 'app-spot-form [title]',
+  selector: 'app-spot-form [title] [lastLayer]',
   templateUrl: './spot-form.component.html',
   styleUrls: ['./spot-form.component.scss']
 })
@@ -16,6 +16,7 @@ export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() spot: MLocSpot = null;
   @Input() title: string = '';
+  @Input() lastLayer: boolean = true;
 
   @Output() cancel = new EventEmitter();
   @Output() confirm = new EventEmitter<MLocSpot>();

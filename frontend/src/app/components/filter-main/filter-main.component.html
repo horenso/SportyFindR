@@ -28,8 +28,11 @@
           <mat-list-item id="radius-header">
             <h4><b>Distance</b></h4>
           </mat-list-item>
+          <mat-slide-toggle (change)="changeState()"></mat-slide-toggle><br>
+          <div>
             <mat-list-item id="radius-item">
               <mat-slider
+                [disabled]="disabled"
                 id="radius"
                 (change)="updateSetting($event)"
                 step="1"
@@ -39,9 +42,10 @@
                 [value]="radius"
               ></mat-slider>
             </mat-list-item>
-          <mat-list-item>
-            <h4>{{radius}} km</h4>
-          </mat-list-item>
+            <mat-list-item>
+              <h4>{{radius}} km</h4>
+            </mat-list-item>
+          </div>
 
           <mat-list-item id="buttonsLoc">
             <a mat-raised-button class="buttonCancel" (click)="cancel()">Cancel</a>

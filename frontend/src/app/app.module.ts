@@ -32,6 +32,7 @@ import { UserManagerComponent } from './components/user-manager/user-manager.com
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { FilterMessagesComponent } from './components/filter-messages/filter-messages.component';
+import {DatePipe} from '@angular/common';
 
 
 const toastrSettings = {
@@ -74,10 +75,8 @@ const toastrSettings = {
         LeafletModule,
         MaterialModule,
         ToastrModule.forRoot(toastrSettings),
-        MatCheckboxModule,
-        MatPaginatorModule,
     ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {

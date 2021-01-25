@@ -128,7 +128,7 @@ public class SimpleMessageService implements MessageService {
 
 
         if (messageSearchObject.getTime() == null) {
-            messageSearchObject.setTime(LocalDateTime.MIN);
+            messageSearchObject.setTime("-999999999-01-01");
         }
 
         if (messageSearchObject.getHashtagId() != null){

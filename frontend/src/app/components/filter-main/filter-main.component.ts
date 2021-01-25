@@ -30,7 +30,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   panelOpenState = false;
 
-  distanceActive = false;
+  disabled = true;
 
   sidebarActive: boolean = false;
   private subscription: Subscription;
@@ -143,4 +143,8 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.sidebarActive = sidebarActive;
   }
 
+  changeState() {
+    this.disabled = !this.disabled;
+    this.radius = 0;
+  }
 }

@@ -49,7 +49,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @EntityGraph("message-with-spots")
     @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt <= :time")
     Page<Message> filter(@Param("cat") Long categoryId,
-                         @Param("time") LocalDateTime time,
+                         @Param("time") String time,
                          Pageable pageable);
 
     /**
@@ -63,7 +63,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @EntityGraph("message-with-spots-and-owner")
     @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt <= :time AND m.id IN :list")
     Page<Message> filterHash(@Param("cat") Long categoryId,
-                             @Param("time") LocalDateTime time,
+                             @Param("time") String time,
                              @Param("list") List<Long> messageIds,
                              Pageable pageable);
 
