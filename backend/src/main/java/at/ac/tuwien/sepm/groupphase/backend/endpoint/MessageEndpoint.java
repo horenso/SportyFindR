@@ -88,6 +88,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get one message by id", authorizations = {@Authorization(value = "apiKey")})
@@ -100,6 +101,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
     @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
@@ -116,6 +118,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
@@ -140,5 +143,4 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
 }

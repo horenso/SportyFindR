@@ -143,17 +143,29 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onScroll(): void {
-    if (!this.lastPage) {
-      this.currentPage++;
-      this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
-        result => {
-          result.content.forEach(message => {
-            this.messageList.unshift(message);
-          });
-          this.lastPage = result.last;
-        }
-      ));
+    console.log(this.messageArea.nativeElement.scrollTop)
+    console.log('hi');
+    if (this.lastPage) {
+      return;
     }
+    const messageArea = this.messageArea.nativeElement;
+    const scrollOffset = messageArea.scrollHeight + messageArea.scrollTop;
+    this.currentPage++;
+    this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
+      result => {
+        result.content.forEach(message => {
+          this.messageList.unshift(message);
+        });
+        this.lastPage = result.last;
+
+        setTimeout( () => {
+          messageArea.scrollTop = messageArea.scrollHeight - scrollOffset;
+        });
+
+        // setTimeout(() => this.messageArea.nativeElement.scrollTop = height);
+        // messageArea.scrollTop = messageArea.height - scroll;
+      }
+    ));
   }
 
   private getMessagesAndStartEventHandling(): void {
@@ -162,7 +174,11 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this.messageList = result.content;
         this.lastPage = result.last;
         console.log(`Loaded ${result.size} messages.`);
-        setTimeout(() => this.scrollMessageAreaBottom());
+        setTimeout(() => {
+          this.scrollMessageAreaBottom();
+          console.log(this.messageArea.nativeElement.scrollHeight);
+          console.log(this.messageArea.nativeElement.scrollTop);
+        });
       }, error => {
         this.notificationService.error('Error loading messages!');
         console.log(error);
