@@ -91,7 +91,7 @@ public class SimpleMessageService implements MessageService {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
-        }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+        }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
             throw new WrongUserException("You can only delete your own messages");
         }
         hashtagService.deleteMessageInHashtags(messageOptional.get());
@@ -100,7 +100,7 @@ public class SimpleMessageService implements MessageService {
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
     }
     @Override
-    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, WrongUserException {
+    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2 {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));

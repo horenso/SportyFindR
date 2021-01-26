@@ -43,7 +43,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
@@ -57,7 +57,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
@@ -73,7 +73,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
     @ApiOperation(value = "Update an spot", authorizations = {@Authorization(value = "apiKey")})

@@ -72,7 +72,7 @@ public class MessageEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create one new message", authorizations = {@Authorization(value = "apiKey")})
@@ -100,7 +100,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete one message by id", authorizations = {@Authorization(value = "apiKey")})
