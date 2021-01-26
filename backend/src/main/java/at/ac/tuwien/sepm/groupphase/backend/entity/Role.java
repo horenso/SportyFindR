@@ -26,10 +26,20 @@ public class Role {
     @Length(min = 3, max = 15)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
-    @Fetch(value = FetchMode.SUBSELECT)
     @Singular
-    private Set<ApplicationUser> applicationUsers = new HashSet<>();
+//    @Fetch(value = FetchMode.SUBSELECT)
+    @ManyToMany(
+        targetEntity = ApplicationUser.class,
+//        mappedBy = "roles",
+        cascade = {
+//            CascadeType.DETACH,
+//            CascadeType.REFRESH,
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+        },
+        fetch = FetchType.EAGER
+        )
+    private Set<ApplicationUser> applicationUsers;
 
 /*
     public Role(Long id, @Length(min = 3, max = 15) String name, Set<ApplicationUser> applicationUsers) {

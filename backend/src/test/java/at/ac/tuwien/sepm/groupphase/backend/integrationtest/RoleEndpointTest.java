@@ -18,9 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,12 +72,15 @@ public class RoleEndpointTest implements TestData {
         ApplicationUser savedUser = userRepository.save(newUser);
         List<Long> userList = new ArrayList<>();
         userList.add(savedUser.getId());
+
         RoleDto roleDto = RoleDto.builder()
             .name("TestRole")
             .userIds(userList)
             .build();
         RoleDto createdRole =  roleEndpoint.create(roleDto);
         Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
+
+        ApplicationUser user = userRepository.findApplicationUserById(savedUser.getId()).get();
         assertAll(
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), createdRole.getName()),
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), foundRole.getName()),

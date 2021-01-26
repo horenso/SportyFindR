@@ -6,7 +6,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,14 +36,23 @@ public class ApplicationUser {
     private Boolean enabled = false;
 
     @Singular
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
+//    @Fetch(value = FetchMode.SUBSELECT)
+    @ManyToMany(
+        targetEntity = Role.class,
+        cascade = {
+//            CascadeType.DETACH,
+//            CascadeType.REFRESH,
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+        },
+        fetch = FetchType.EAGER
+    )
     @JoinTable(
         name = "applicationusers_roles",
-        joinColumns = { @JoinColumn(name = "applicationuser_id") },
-        inverseJoinColumns = { @JoinColumn(name = "role_id") }
+        joinColumns = { @JoinColumn(name = "applicationuser_id", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
 
 /*
     public ApplicationUser(Long id, @Length(min = 3, max = 30) String name, @Length(min = 6, max = 30) String email, @Length(min = 7) String password, Boolean enabled, Set<Role> roles) {
