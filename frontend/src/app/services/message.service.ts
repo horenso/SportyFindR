@@ -28,11 +28,12 @@ export class MessageService {
    * @param spotId spot to get messages from
    * @returns list of messages
    */
-  getBySpotId(spotId: number): Observable<MessagePage> {
-    console.log('Get all messages from spot: ' + spotId);
+  getBySpotId(spotId: number, page: number, size: number): Observable<MessagePage> {
+    console.log(`Get one page of messages from spot ${spotId}, page: ${page}, size: ${size}`);
     const params = new HttpParams()
       .set('spotId', spotId.toString())
-      .set('size', '10');
+      .set('page', page.toString())
+      .set('size', size.toString())
     return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 

@@ -17,7 +17,7 @@ export class MessageComponent implements OnInit, OnDestroy {
   
   @Output() deleteMessage = new EventEmitter();
   
-  author: string = 'Anonymous'; // in Version 3 the user name will be displayed
+  author: string = ''; // in Version 3 the user name will be displayed
   reaction: Reaction;
 
   alreadyReacted = false;

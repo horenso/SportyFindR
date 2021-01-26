@@ -56,9 +56,9 @@ public class MessageEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get page of messages without details by spot", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> findBySpot(
-        @RequestParam(name = "spotId") Long spotId,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size) {
+        @RequestParam Long spotId,
+        @RequestParam(defaultValue = "0", required = false) int page,
+        @RequestParam(defaultValue = "5", required = false) int size) {
 
         log.info("GET /api/v1/messages?spotId={} page: (size: {}, page: {})", spotId, size, page);
 

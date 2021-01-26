@@ -19,6 +19,10 @@ mat-form-field {
   border-top: 1px solid lightgrey;
 }
 
+cdk-virtual-scroll-viewport {
+  flex: 1 1 auto;
+}
+
 #messageInput {
   resize: none;
 }

@@ -33,6 +33,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { FilterMessagesComponent } from './components/filter-messages/filter-messages.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 
 const toastrSettings = {
@@ -76,6 +77,7 @@ const toastrSettings = {
     LeafletModule,
     MaterialModule,
     ToastrModule.forRoot(toastrSettings),
+    ScrollingModule,
     MatCheckboxModule,
     MatPaginatorModule,
   ],

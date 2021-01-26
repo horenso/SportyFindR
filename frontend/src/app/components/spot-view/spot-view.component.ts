@@ -33,7 +33,8 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private subs = new SubSink();
 
   private currentPage: number = 0;
-  private lastPage: boolean = false;
+  public lastPage: boolean = false;
+  private pageSize: number = 10;
 
   constructor(
     private messageService: MessageService,
@@ -101,7 +102,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.newMessage?.length < 1) {
       return;
     }
-    const newMessage = new Message(null, this.newMessage, null, this.spot.id);
+    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id);
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);
@@ -142,13 +143,24 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onScroll(): void {
-    console.log('load new messages now!');
+    if (!this.lastPage) {
+      this.currentPage++;
+      this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
+        result => {
+          result.content.forEach(message => {
+            this.messageList.unshift(message);
+          });
+          this.lastPage = result.last;
+        }
+      ));
+    }
   }
 
   private getMessagesAndStartEventHandling(): void {
-    this.subs.add(this.messageService.getBySpotId(this.spot.id).subscribe(
+    this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
       result => {
         this.messageList = result.content;
+        this.lastPage = result.last;
         console.log(`Loaded ${result.size} messages.`);
         setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {

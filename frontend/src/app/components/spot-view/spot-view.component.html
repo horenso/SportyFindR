@@ -15,9 +15,19 @@
     <app-text-with-hashtags [text]='spot.description'></app-text-with-hashtags>
   </div>
 
+  <!-- <div #messageArea > -->
+  <cdk-virtual-scroll-viewport class="sidebarScrollableSection messageArea" itemSize="120">
+    <div *cdkVirtualFor="let message of messageList" class="message">
+      <app-message
+      (deleteMessage)='deleteOneMessage($event)'
+      [message]='message'></app-message>
+    </div>
+  </cdk-virtual-scroll-viewport>
+  <!-- </div> -->
+    
   <div #messageArea class="sidebarScrollableSection messageArea" 
     infiniteScroll
-    [infiniteScrollUpDistance]="1"
+    [infiniteScrollUpDistance]="2"
     [infiniteScrollThrottle]="50"
     [alwaysCallback]=false
     [scrollWindow]=false
@@ -29,12 +39,12 @@
     </div>
   </div>
 
-  <div class="sidebarBottomRow">
+  <!-- <div class="sidebarBottomRow">
     <mat-form-field appearance="outline">
       <mat-label>New message</mat-label>
       <textarea matInput #messageInput
         id="messageInput"
-        (keydown.enter)="submitDialog()"
+        (keydown)="keydown($event)"
         [(ngModel)]='newMessage'
         cdkTextareaAutosize
         cdkAutosizeMinRows="1"
@@ -44,7 +54,7 @@
     <button mat-icon-button id="sendButton" color="primary" (click)="submitDialog()">
       <mat-icon>send</mat-icon>
     </button>
-  </div>
+  </div> -->
 </div>
 
 <mat-menu #menu="matMenu" xPosition="before" yPosition="below">
