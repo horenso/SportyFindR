@@ -10,6 +10,7 @@ import {Observable} from "rxjs";
 export class UserService {
 
   private userBaseUri: string = this.globals.backendUri + '/users';
+  private activeUser: string;
 
   public getAllUsers(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.userBaseUri);
@@ -36,7 +37,7 @@ export class UserService {
   }
 
   getUserByEmail(email: string) {
-    return this.httpClient.get<User>(this.userBaseUri + '/byEmail' + email);
+    return this.httpClient.get<User>(this.userBaseUri + '/byEmail/' + email);
   }
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }

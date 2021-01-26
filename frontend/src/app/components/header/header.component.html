@@ -11,6 +11,6 @@
     (click)="authService.logoutUser()" routerLink="/">Logout</a>
 
   <a mat-raised-button color="accent" *ngIf="authService.isLoggedIn()"
-     routerLink="/account" routerLinkActive="active">My Account</a>
+     routerLink="/account" routerLinkActive="active"> <mat-icon>perm_identity</mat-icon> {{this.loggedUser?.name}}</a>
 
 </mat-toolbar>

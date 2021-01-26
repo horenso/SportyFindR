@@ -5,6 +5,8 @@ import {AuthService} from '../../services/auth.service';
 import {AuthRequest} from '../../dtos/auth-request';
 import {NotificationService} from 'src/app/services/notification.service';
 import {Subscription} from 'rxjs';
+import {Globals} from '../../global/globals';
+import {LocalStorageService} from 'ngx-webstorage';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +28,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    private localStorage: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -66,6 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       () => {
         this.notificationService.success('Successfully logged in user: ' + authRequest.email);
         this.router.navigate(['']);
+        this.localStorage.store('username', authRequest.email);
       },
       error => {
         console.log('Could not log in due to:');

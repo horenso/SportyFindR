@@ -32,6 +32,7 @@ import { UserManagerComponent } from './components/user-manager/user-manager.com
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { UserAccountComponent } from './components/user-account/user-account.component';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 
 
 const toastrSettings = {
@@ -76,6 +77,7 @@ const toastrSettings = {
         ToastrModule.forRoot(toastrSettings),
         MatCheckboxModule,
         MatPaginatorModule,
+      NgxWebstorageModule.forRoot()
     ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

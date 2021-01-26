@@ -126,7 +126,7 @@ public class UserEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/byEmail/{email}")
     @ApiOperation(value = "Get one user by email", authorizations = {@Authorization(value = "apiKey")})

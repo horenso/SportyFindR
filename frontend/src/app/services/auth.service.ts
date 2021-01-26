@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
+import { LocalStorageService } from 'ngx-webstorage';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class AuthService {
 
   constructor(
     private httpClient: HttpClient,
-    private globals: Globals) {
+    private globals: Globals,
+    private localStorage: LocalStorageService) {
   }
 
   /**
@@ -39,6 +41,7 @@ export class AuthService {
 
   logoutUser() {
     console.log('Logout');
+    this.localStorage.clear('username');
     localStorage.removeItem('authToken');
   }
 
