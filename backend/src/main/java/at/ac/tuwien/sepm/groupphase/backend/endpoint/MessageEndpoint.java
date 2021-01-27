@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -25,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,22 +34,6 @@ public class MessageEndpoint {
     private final MessageService messageService;
     private final MessageMapper messageMapper;
 
-    @GetMapping("old")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get list of messages without details", authorizations = {@Authorization(value = "apiKey")})
-    public List<MessageDto> findBySpotOld(
-        @RequestParam(name = "spot") Long spotId) {
-        log.info("GET /api/v1/messages?spot={}", spotId);
-        try {
-            List<Message> messages = this.messageService.findBySpot(spotId);
-            return messageMapper.messageListToMessageDtoList(messages);
-        } catch (NotFoundException2 e) {
-            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
-    // for sidebar with pagination
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get page of messages without details by spot", authorizations = {@Authorization(value = "apiKey")})
