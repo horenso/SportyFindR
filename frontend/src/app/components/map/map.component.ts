@@ -5,6 +5,7 @@ import {MapService} from 'src/app/services/map.service';
 import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
 import {MLocation} from '../../util/m-location';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-map',
@@ -58,7 +59,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private locationService: LocationService,
     private mapService: MapService,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService,
+    public authService: AuthService) {
   }
 
   ngOnInit(): void {

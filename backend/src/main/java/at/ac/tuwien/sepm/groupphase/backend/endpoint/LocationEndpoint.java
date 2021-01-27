@@ -27,6 +27,7 @@ public class LocationEndpoint {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
+    @CrossOrigin
     @ApiOperation(value = "Get one location by id", authorizations = {@Authorization(value = "apiKey")})
     public LocationDto getOneById(@PathVariable("id") Long id) {
         log.info("Get /api/v1/locations/{}", id);
@@ -40,6 +41,7 @@ public class LocationEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Filter locations by distance and categories of spots", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> find(@RequestParam(required = false) Long categoryLoc,
                                     @RequestParam(required = false) Double latitude,

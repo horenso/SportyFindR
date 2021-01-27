@@ -38,6 +38,7 @@ public class MessageEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Get list of messages without details", authorizations = {@Authorization(value = "apiKey")})
     public List<MessageDto> findBySpot(
         @RequestParam(name = "spot") Long spotId) {
@@ -54,6 +55,7 @@ public class MessageEndpoint {
     // for sidebar with pagination
     @GetMapping(value = "/all")
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Get page of messages by spot without details", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> findBySpotPaged(
         @PageableDefault(size = 20)
@@ -90,6 +92,7 @@ public class MessageEndpoint {
     }
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}")
+    @CrossOrigin
     @ApiOperation(value = "Get one message by id", authorizations = {@Authorization(value = "apiKey")})
     public MessageDto getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/messages/{}", id);
@@ -118,6 +121,7 @@ public class MessageEndpoint {
     }
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
         @PageableDefault(size = 20)
