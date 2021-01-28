@@ -52,7 +52,7 @@ public class UserEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
     @ApiOperation(value = "Update a user", authorizations = {@Authorization(value = "apiKey")})
