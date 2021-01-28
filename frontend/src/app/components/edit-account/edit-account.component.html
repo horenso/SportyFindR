@@ -1,0 +1,37 @@
+<form class="center" [formGroup]="accountForm">
+  <h2> Edit your account details </h2>
+
+  <!-- Name -->
+  <div>
+  <mat-form-field appearance="outline">
+    <mat-label>Username</mat-label>
+    <label for="username"></label>
+    <input matInput formControlName='username' id="username">
+  </mat-form-field>
+  </div>
+
+  <!-- Email -->
+  <div>
+  <mat-form-field appearance="outline">
+    <mat-label>E-Mail</mat-label>
+    <label for="email"></label>
+    <input matInput formControlName='email' id="email">
+  </mat-form-field>
+  </div>
+
+  <!-- Password -->
+  <div>
+  <mat-form-field appearance="outline">
+    <mat-label>New password</mat-label>
+    <label for="password"></label>
+    <input type="password" matInput formControlName='password' id="password">
+  </mat-form-field>
+  </div>
+
+  <div id="buttons">
+    <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
+    <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
+       [disabled]="accountForm.invalid">Update</a>
+  </div>
+
+</form>
