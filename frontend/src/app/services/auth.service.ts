@@ -5,7 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
-import { LocalStorageService } from 'ngx-webstorage';
+import {LocalStorageService} from 'ngx-webstorage';
 
 @Injectable({
   providedIn: 'root'

@@ -11,6 +11,7 @@ import {LocationViewComponent} from './components/location-view/location-view.co
 import {HashtagComponent} from './components/hashtag/hashtag.component';
 import {UserManagerComponent} from './components/user-manager/user-manager.component';
 import {UserAccountComponent} from './components/user-account/user-account.component';
+import {EditAccountComponent} from './components/edit-account/edit-account.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent, children: [
@@ -24,6 +25,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'user-admin', component: UserManagerComponent},
   {path: 'account', component: UserAccountComponent},
+  {path: 'account/edit', component: EditAccountComponent},
   {path: '**', component: PageNotFoundComponent},
 ];
 

@@ -10,7 +10,25 @@
   <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
     (click)="authService.logoutUser()" routerLink="/">Logout</a>
 
-  <a mat-raised-button color="accent" *ngIf="authService.isLoggedIn()"
-     routerLink="/account" routerLinkActive="active"> <mat-icon>perm_identity</mat-icon> {{this.loggedUser?.name}}</a>
+  <a mat-raised-button color="accent" [matMenuTriggerFor]="menu" *ngIf="authService.isLoggedIn()"
+    class="nav">
+    <mat-icon>perm_identity</mat-icon>
+    {{this.loggedUser?.name}}
+  </a>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/account">
+      <mat-icon>info</mat-icon>
+      <span>Account details</span>
+    </button>
+    <button mat-menu-item routerLink="/account/edit">
+      <mat-icon>edit</mat-icon>
+      <span>Edit account</span>
+    </button>
+    <button mat-menu-item routerLink="/account/delete">
+      <mat-icon>delete</mat-icon>
+      <span>Delete account</span>
+    </button>
+  </mat-menu>
+
 
 </mat-toolbar>

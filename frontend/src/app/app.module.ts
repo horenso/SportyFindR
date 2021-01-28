@@ -33,6 +33,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { UserAccountComponent } from './components/user-account/user-account.component';
 import {NgxWebstorageModule} from 'ngx-webstorage';
+import { EditAccountComponent } from './components/edit-account/edit-account.component';
 
 
 const toastrSettings = {
@@ -63,7 +64,8 @@ const toastrSettings = {
     UserManagerComponent,
     HashtagComponent,
     FilterMainComponent,
-    UserAccountComponent
+    UserAccountComponent,
+    EditAccountComponent
   ],
     imports: [
         BrowserModule,
