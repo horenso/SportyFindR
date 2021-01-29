@@ -8,7 +8,7 @@ import {MLocSpot} from '../../util/m-loc-spot';
 
 
 @Component({
-  selector: 'app-spot-form [title] [spot] [lastLayer]',
+  selector: 'app-spot-form [title] [lastLayer]',
   templateUrl: './spot-form.component.html',
   styleUrls: ['./spot-form.component.scss']
 })
