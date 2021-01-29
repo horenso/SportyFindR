@@ -1,7 +1,7 @@
 <div class="inSidebar">
   <div class="sidebarTopRow">
     <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='onCancel()'>
-      <mat-icon>arrow_back_ios_new</mat-icon>
+      <mat-icon> {{lastLayer? 'close':'arrow_back_ios_new'}}</mat-icon>
     </button>
     <div class="sidebarTitle">{{title}}</div>
   </div>
@@ -20,8 +20,8 @@
     <mat-form-field appearance="outline">
       <mat-label>Description</mat-label>
       <label for="spotCreateDescription"></label>
-      <textarea matInput 
-        formControlName='description' 
+      <textarea matInput
+        formControlName='description'
         id="spotCreateDescription"
         cdkTextareaAutosize
         cdkAutosizeMinRows="5"
@@ -37,7 +37,7 @@
           >{{category.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    
+
     <div id="buttons">
       <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
       <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"

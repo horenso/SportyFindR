@@ -9,6 +9,7 @@ import {FilterMessagesComponent} from '../components/filter-messages/filter-mess
 import {FilterMessage} from '../dtos/filter-message';
 import {Location} from '../dtos/location';
 import {FilterLocation} from '../dtos/filter-location';
+import {DatePipe} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class MessageService {
 
   constructor(
     private httpClient: HttpClient,
-    private globals: Globals) {
+    private globals: Globals,
+    private datePipe: DatePipe) {
   }
 
   /**
@@ -74,10 +76,15 @@ export class MessageService {
    * @param filterMessage containing the search parameters
    */
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
+    let time = filterMessage.time;
+    time = this.datePipe.transform(time, 'yyyy-MM-dd');
+    if (time == null) {
+      time = '1000-01-01';
+    }
     const params = new HttpParams()
       .set('categoryMes', filterMessage.categoryMes.toString())
       .set('hashtag', filterMessage.hashtag.toString())
-      .set('time', filterMessage.time.toString());
+      .set('time', time.toString());
     console.log(params.toString());
     return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }

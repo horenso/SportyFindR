@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
@@ -91,7 +91,7 @@ public class SimpleMessageService implements MessageService {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
-        }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+        }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
             throw new WrongUserException("You can only delete your own messages");
         }
         hashtagService.deleteMessageInHashtags(messageOptional.get());
@@ -100,7 +100,7 @@ public class SimpleMessageService implements MessageService {
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
     }
     @Override
-    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, WrongUserException {
+    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2 {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
@@ -119,10 +119,10 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException {
+    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
-        if (messageSearchObject.getCategoryId()== null) {
+        if (messageSearchObject.getCategoryId() == null) {
             messageSearchObject.setCategoryId(0L);
         }
 
@@ -131,21 +131,26 @@ public class SimpleMessageService implements MessageService {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
-        if (messageSearchObject.getHashtagId() != null){
-            Long hashtagId = messageSearchObject.getHashtagId();
-            Hashtag hashtag = hashtagService.getOneById(hashtagId);
-            List<Message> messageList = hashtag.getMessagesList();
-            log.info(messageList.toString());
-            List<Long> messageIds = new LinkedList<>();
 
-            for (Message m : messageList){
-                messageIds.add(m.getId());
+        if (messageSearchObject.getHashtagName() != null) {
+            String hashtagName = messageSearchObject.getHashtagName();
+            Hashtag hashtag = hashtagService.getByName(hashtagName);
+
+            if (hashtag != null){
+                List<Message> messageList = hashtag.getMessagesList();
+                List<Long> messageIds = new LinkedList<>();
+
+                for (Message m : messageList){
+                    messageIds.add(m.getId());
+                }
+
+                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
+            } else {
+                throw new ServiceException("Invalid hashtag name.");
             }
 
-            log.info(messageIds.toString());
-
-            return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
         }
+
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
 
     }

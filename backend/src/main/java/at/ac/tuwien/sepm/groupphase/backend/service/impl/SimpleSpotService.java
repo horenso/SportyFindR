@@ -1,13 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
-import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
-import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import at.ac.tuwien.sepm.groupphase.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +29,7 @@ public class SimpleSpotService implements SpotService {
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
 
     /**
@@ -73,7 +72,7 @@ public class SimpleSpotService implements SpotService {
         var optionalSpot = spotRepository.findById(spot.getId());
         if (optionalSpot.isEmpty()){
             throw new NotFoundException2("Spot does not Exist");
-        }else if (!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+        }else if (!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
             throw new WrongUserException("You can only edit your own spots");
         }else{
             spot.setOwner(optionalSpot.get().getOwner());
@@ -97,7 +96,7 @@ public class SimpleSpotService implements SpotService {
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
-        }else if (!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+        }else if (!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
             throw new WrongUserException("You can only delete your own spots");
         }
         try {

@@ -3,8 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -18,16 +17,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -41,6 +38,7 @@ public class MessageEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Get list of messages without details", authorizations = {@Authorization(value = "apiKey")})
     public List<MessageDto> findBySpot(
         @RequestParam(name = "spot") Long spotId) {
@@ -57,6 +55,7 @@ public class MessageEndpoint {
     // for sidebar with pagination
     @GetMapping(value = "/all")
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Get page of messages by spot without details", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> findBySpotPaged(
         @PageableDefault(size = 20)
@@ -75,7 +74,7 @@ public class MessageEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create one new message", authorizations = {@Authorization(value = "apiKey")})
@@ -93,6 +92,7 @@ public class MessageEndpoint {
     }
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}")
+    @CrossOrigin
     @ApiOperation(value = "Get one message by id", authorizations = {@Authorization(value = "apiKey")})
     public MessageDto getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/messages/{}", id);
@@ -103,7 +103,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete one message by id", authorizations = {@Authorization(value = "apiKey")})
@@ -121,6 +121,7 @@ public class MessageEndpoint {
     }
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
         @PageableDefault(size = 20)
@@ -128,19 +129,18 @@ public class MessageEndpoint {
             @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
         Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
-        @RequestParam(required = false) Long hashtag,
-        @RequestParam(required = false) LocalDateTime time) {
+        @RequestParam(required = false, defaultValue = "%%") String hashtag,
+        @RequestParam(required = false, defaultValue = "1000-01-01") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("IM HERE!");
-        log.info("GET /api/v1/messages/?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
+        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time.atStartOfDay());
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {
-            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

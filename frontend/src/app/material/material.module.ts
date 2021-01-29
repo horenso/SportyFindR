@@ -18,6 +18,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 const MaterialComponents = [
   MatButtonModule,
@@ -40,7 +42,9 @@ const MaterialComponents = [
   MatNativeDateModule,
   MatCheckboxModule,
   MatTableModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatPaginatorModule,
+  MatAutocompleteModule
 ];
 
 @NgModule({
