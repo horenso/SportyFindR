@@ -75,6 +75,30 @@ public class UserEndpointTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void createUserWithRoleIdsNull() {
+        NewUserDto userDto = NewUserDto.builder()
+            .name("TestUser")
+            .password("1234567")
+            .email("hallo@welt.net")
+            .roleId(null)
+            .enabled(true)
+            .build();
+        UserDto createdUser =  userEndpoint.create(userDto);
+        ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
+        assertAll(
+            () -> assertEquals(userDto.getName(), createdUser.getName()),
+            () -> assertEquals(userDto.getEmail(), createdUser.getEmail()),
+            () -> assertEquals(userDto.getEnabled(), createdUser.getEnabled()),
+            () -> assertEquals(userDto.getName(), foundUser.getName()),
+            () -> assertEquals(userDto.getEmail(), foundUser.getEmail()),
+            () -> assertEquals(userDto.getEnabled(), foundUser.getEnabled()),
+            () -> assertEquals(createdUser.getId(), foundUser.getId()),
+            () -> assertEquals(createdUser.getRoleIds(), this.userMapper.rolesToRoleIds(foundUser.getRoles()))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
     public void createUserWithRoles() {
         Role newRole = Role.builder()
             .name("TESTROLE")
@@ -120,6 +144,7 @@ public class UserEndpointTest implements TestData {
             () -> assertFalse(deletedUser.isPresent())
         );
     }
+
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
     public void deleteUserWithRole() {

@@ -2,7 +2,9 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.RoleEndpoint;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.NewUserDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.RoleDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.UserDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.RoleMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
@@ -17,11 +19,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -62,6 +64,23 @@ public class RoleEndpointTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void createRoleWithUserIdsNull() {
+        RoleDto roleDto = RoleDto.builder()
+            .name("TestRole")
+            .userIds(null)
+            .build();
+        RoleDto createdRole =  roleEndpoint.create(roleDto);
+        Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
+        assertAll(
+            () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), createdRole.getName()),
+            () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), foundRole.getName()),
+            () -> assertEquals(createdRole.getId(), foundRole.getId()),
+            () -> assertEquals(roleDto.getUserIds(), this.roleMapper.applicationUsersToUserIds(foundRole.getApplicationUsers()))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
     public void createRoleWithUsers() {
         ApplicationUser newUser = ApplicationUser.builder()
             .name("name")
@@ -86,6 +105,44 @@ public class RoleEndpointTest implements TestData {
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), foundRole.getName()),
             () -> assertEquals(createdRole.getId(), foundRole.getId()),
             () -> assertEquals(roleDto.getUserIds(), this.roleMapper.applicationUsersToUserIds(foundRole.getApplicationUsers()))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void deleteRole() {
+        RoleDto roleDto = RoleDto.builder()
+            .name("TestRole")
+            .build();
+        RoleDto createdRole =  roleEndpoint.create(roleDto);
+        Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
+
+        roleEndpoint.deleteRoleById(createdRole.getId());
+        Optional<Role> deletedRole = roleRepository.findRoleById(createdRole.getId());
+        assertAll(
+            () -> assertFalse(deletedRole.isPresent())
+        );
+    }
+
+    // negative tests
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void createRoleWithTooShortName() {
+        RoleDto roleDto = RoleDto.builder()
+            .name("Rl") // na too short
+            .build();
+
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.create(roleDto))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void deleteInexistingRole() {
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.deleteRoleById(1L))
         );
     }
 }
