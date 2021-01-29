@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -15,11 +16,10 @@ import java.util.List;
 @Builder
 public class RoleDto {
 
-    @NotNull
     private Long id;
     @NotNull
     @Length(min = 3, max = 15)
     private String name;
-    @Singular
-    private List<Long> userIds;
+    @Singular(ignoreNullCollections = true)
+    private List<Long> userIds = new ArrayList<>();
 }
