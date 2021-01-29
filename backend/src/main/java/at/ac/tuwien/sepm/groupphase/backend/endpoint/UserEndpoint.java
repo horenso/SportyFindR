@@ -75,7 +75,7 @@ public class UserEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete user", authorizations = {@Authorization(value = "apiKey")})

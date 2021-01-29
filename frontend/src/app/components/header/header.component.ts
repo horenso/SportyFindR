@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
-import {NotificationService} from '../../services/notification.service';
 import {LocalStorageService} from 'ngx-webstorage';
 import {UserService} from '../../services/user.service';
 import {User} from '../../dtos/user';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -16,7 +16,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(public authService: AuthService,
               private localStorage: LocalStorageService,
-              private userService: UserService) {
+              private userService: UserService,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -28,5 +29,11 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-
+  deleteUser() {
+    console.log(this.loggedUser);
+    this.userService.deleteUserById(this.loggedUser.id).subscribe(result => {
+      this.authService.logoutUser();
+    });
+    this.router.navigate(['']);
+  }
 }
