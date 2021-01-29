@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 @Builder
 @Entity
-@Table(name = "applicationusers")
+@Table(name = "applicationuser")
 public class ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,13 +37,22 @@ public class ApplicationUser {
     private Boolean enabled = false;
 
     @Singular
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
+    @ManyToMany(
+        targetEntity = Role.class,
+        cascade = {
+            CascadeType.DETACH,
+            CascadeType.REFRESH,
+//            CascadeType.PERSIST,
+//            CascadeType.MERGE,
+        },
+        fetch = FetchType.EAGER
+    )
     @JoinTable(
         name = "applicationusers_roles",
-        joinColumns = { @JoinColumn(name = "applicationuser_id") },
-        inverseJoinColumns = { @JoinColumn(name = "role_id") }
+        joinColumns = { @JoinColumn(name = "applicationuser_id", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
     )
+//    @Fetch(value = FetchMode.JOIN)
     private Set<Role> roles = new HashSet<>();
 
 /*

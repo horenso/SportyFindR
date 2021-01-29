@@ -48,7 +48,12 @@ security:
       - /swagger-ui.html
       # H2
       - /h2-console/**
-      - /api/v1/spots/subscribe
+      # Unregistered User
+      - /api/v1/categories
+      - /api/v1/hashtags/**
+      - /api/v1/locations/**
+      - /api/v1/messages/**
+      - /api/v1/spots/**
   jwt:
     # Use http://www.allkeysgenerator.com/ to generate secrets
     secret: ?E(H+MbQeThWmZq4t7w!z%C*F-J@NcRfUjXn2r5u8x/A?D(G+KbPdSgVkYp3s6v9
