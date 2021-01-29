@@ -70,10 +70,5 @@ public class Message {
     @JoinColumn(name = "owner_id", nullable = false)
     private ApplicationUser owner;
 
-  /*  @ManyToMany( mappedBy = "messagesList")
-    private List<Hashtag> hashtagsList = new ArrayList<>();
-
-    public void addHashtag(Hashtag hashtag){
-        this.hashtagsList.add(hashtag);
-    }*/
+    private LocalDateTime expirationDate;
 }

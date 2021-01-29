@@ -1,19 +1,26 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
-import at.ac.tuwien.sepm.groupphase.backend.exception.*;
-import at.ac.tuwien.sepm.groupphase.backend.repository.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
+import at.ac.tuwien.sepm.groupphase.backend.service.validator.MessageValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -51,6 +58,7 @@ public class SimpleMessageService implements MessageService {
             throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
+
         List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
         // TODO: THIS IS VERY INEFFICIENT!
         messageList.forEach(this::setReactions);
@@ -61,9 +69,12 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message create(Message message) throws NotFoundException2 {
+    public Message create(Message message) throws NotFoundException2, ValidationException {
         log.debug("create message in spot with id {}", message.getSpot().getId());
-        if(spotRepository.findById(message.getSpot().getId()).isEmpty()){
+
+        MessageValidation.validateNewMessage(message);
+
+        if (spotRepository.findById(message.getSpot().getId()).isEmpty()) {
             throw new NotFoundException2("Spot does not Exist");
         }
         message.setPublishedAt(LocalDateTime.now());
@@ -152,8 +163,13 @@ public class SimpleMessageService implements MessageService {
         }
 
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
-
     }
 
+    private void deleteExpiredMessages() {
+        int deletedExpiredMessages = messageRepository.deleteAllByExpirationDateBefore(LocalDateTime.now());
+        if (deletedExpiredMessages > 0) {
+            log.info("Deleted {} expired messages.");
+        }
+    }
 
 }

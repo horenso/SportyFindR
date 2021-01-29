@@ -1,12 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface MessageService {
      * @param message to be saved
      * @return created message entry
      */
-    Message create(Message message) throws NotFoundException2;
+    Message create(Message message) throws NotFoundException2, ValidationException;
 
     Message getById(Long id) throws NotFoundException2;
 
