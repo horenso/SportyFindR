@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,12 +80,13 @@ public class RoleEndpointTest implements TestData {
             .userIds(userList)
             .build();
         RoleDto createdRole =  roleEndpoint.create(roleDto);
-        Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
+        List<Role> foundRole = roleRepository.findAll();
+        List<ApplicationUser> a = userRepository.findAll();
         assertAll(
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), createdRole.getName()),
-            () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), foundRole.getName()),
-            () -> assertEquals(createdRole.getId(), foundRole.getId()),
-            () -> assertEquals(roleDto.getUserIds(), this.roleMapper.applicationUsersToUserIds(foundRole.getApplicationUsers()))
+            () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), foundRole.get(0).getName()),
+            () -> assertEquals(createdRole.getId(), foundRole.get(0).getId()),
+            () -> assertEquals(roleDto.getUserIds(), this.roleMapper.applicationUsersToUserIds(foundRole.get(0).getApplicationUsers()))
         );
     }
 }

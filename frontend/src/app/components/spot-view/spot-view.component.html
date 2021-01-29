@@ -1,7 +1,7 @@
 <div *ngIf='spot != null' class="inSidebar">
 
   <div class="sidebarTopRow">
-    <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='onGoBack()'>
+    <button mat-icon-button id="backButton" color="primary" class="icon" (click)='onGoBack()'>
       <mat-icon>arrow_back_ios_new</mat-icon>
     </button>
     <div class="sidebarTitle">{{spot.name}}</div>
@@ -11,7 +11,7 @@
   </div>
 
   <div id="infoSection">
-    <h3> <span id=categorySpan>Category:</span> {{spot.category.name}}</h3>
+    <h3><span id=categorySpan>Category:</span> {{spot.category.name}}</h3>
     <app-text-with-hashtags [text]='spot.description'></app-text-with-hashtags>
   </div>
 
@@ -27,20 +27,19 @@
     <mat-form-field appearance="outline">
       <mat-label>New message</mat-label>
       <textarea matInput #messageInput
-        id="messageInput"
-        (keydown.enter)="submitDialog()"
-        [(ngModel)]='newMessage'
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="1"
-        cdkAutosizeMaxRows="10"
-        autocomplete="off"></textarea>
-    </mat-form-field>  
+                id="messageInput"
+                (keydown.enter)="submitDialog()"
+                [(ngModel)]='newMessage'
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="10"
+                autocomplete="off"></textarea>
+    </mat-form-field>
     <button mat-icon-button id="sendButton" color="primary" (click)="submitDialog()">
       <mat-icon>send</mat-icon>
     </button>
   </div>
 </div>
-
 <mat-menu #menu="matMenu" xPosition="before" yPosition="below">
   <button mat-menu-item (click)="editSpot(spot.id)">
     <mat-icon>edit</mat-icon>

@@ -26,9 +26,9 @@ public class Role {
     @Length(min = 3, max = 15)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
-    @Fetch(value = FetchMode.SUBSELECT)
     @Singular
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
 
 /*
