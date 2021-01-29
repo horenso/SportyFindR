@@ -76,6 +76,9 @@ public class RoleEndpoint {
         } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (ValidationException e) {
+            log.error(HttpStatus.INTERNAL_SERVER_ERROR + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
