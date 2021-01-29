@@ -71,4 +71,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     Page<Message> findByIdIn(List<Long> ids, Pageable pageable);
 
+    int deleteAllByExpirationDateBefore(LocalDateTime time);
 }
