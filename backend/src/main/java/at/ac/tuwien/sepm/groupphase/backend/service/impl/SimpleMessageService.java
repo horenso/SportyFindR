@@ -46,6 +46,9 @@ public class SimpleMessageService implements MessageService {
             throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
+
+        deleteExpiredMessages();
+
         List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
         // TODO: THIS IS VERY INEFFICIENT!
         messageList.forEach(this::setReactions);
@@ -53,11 +56,13 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2{
+    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2 {
         if (spotRepository.findById(spotId).isEmpty()) {
             throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
+
+        deleteExpiredMessages();
 
         List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
         // TODO: THIS IS VERY INEFFICIENT!
@@ -88,6 +93,7 @@ public class SimpleMessageService implements MessageService {
     @Override
     public Message getById(Long id) throws NotFoundException2 {
         log.debug("get message with id {}", id);
+        deleteExpiredMessages();
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2("No messages found");
@@ -133,6 +139,8 @@ public class SimpleMessageService implements MessageService {
     public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
+
+        deleteExpiredMessages();
         if (messageSearchObject.getCategoryId() == null) {
             messageSearchObject.setCategoryId(0L);
         }
