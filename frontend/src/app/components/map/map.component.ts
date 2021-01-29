@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {control, Layer, LayerGroup, Map, tileLayer, Point} from 'leaflet';
+import {control, Layer, LayerGroup, Map, tileLayer, Point, latLng, LatLng, LatLngBounds, Circle} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
@@ -86,8 +86,53 @@ export class MapComponent implements OnInit, OnDestroy {
       this.changeVisibilityAndFocus(change);
     }));
 
+    this.subs.add(this.mapService.updateLocationFilterObservable.subscribe(change => {
+      this.locationService.filterLocation({
+        categoryLoc: change.categoryLoc,
+        latitude: this.map.getCenter().lat,
+        longitude: this.map.getCenter().lng,
+        radius: change.radius
+      }).subscribe(
+        (result: MLocation[]) => {
+          this.locMarkerGroup.clearLayers();
+          this.locationList = result;
+          this.addMarkers();
+          const circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
+        }
+      );
+    }));
+
+    this.map.on('moveend', () => { this.changeLocationView(); });
+    this.map.on('zoomend', () => { this.changeLocationView(); });
+
     setTimeout(() => this.map.invalidateSize({pan: false}));
   }
+
+  private changeLocationView() {
+    console.log('first', this.layers);
+    const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
+    const radius = (width / 2) * 111;
+    this.subs.add(this.locationService.filterLocation({
+      categoryLoc: 0,
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      radius: radius
+    }).subscribe(
+      (result: MLocation[]) => {
+        this.locMarkerGroup.clearLayers();
+        this.locationList = result;
+        this.addMarkers();
+    }));
+}
+/*
+  public viewLocations(radius: number) {
+    radius = radius / 111;
+    const corner1 = new LatLng(this.map.getCenter().lat + radius, this.map.getCenter().lng + radius);
+    const corner2 = new LatLng(this.map.getCenter().lat - radius, this.map.getCenter().lng - radius);
+    const bounds = new LatLngBounds(corner1, corner2);
+    this.map.fitBounds(bounds);
+  }
+ */
 
   private getLocationsAndConvertToLayerGroup() {
     this.subs.add(this.locationService.getAll().subscribe(

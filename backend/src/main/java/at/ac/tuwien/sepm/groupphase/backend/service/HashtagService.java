@@ -1,10 +1,22 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+
+import java.util.List;
 
 public interface HashtagService {
+
+    /**
+     * Gets a Hashtag by its ID
+     *
+     * @param id of hashtag to find
+     * @return the hashtag corresponding to the id
+     */
+    Hashtag getOneById(Long id);
 
     /**
      * Gets a Hashtag by its name
@@ -49,4 +61,12 @@ public interface HashtagService {
      * @param spot to be removed
      */
     void deleteSpotInHashtags(Spot spot);
+
+    /**
+     * Get all existing hashtags from database.
+     *
+     * @throws RuntimeException  if something goes wrong during data processing.
+     * @throws NotFoundException if no hashtags could be found in the system.
+     */
+    List<Hashtag> findAll();
 }
