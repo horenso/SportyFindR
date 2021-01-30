@@ -71,12 +71,12 @@ public class ApplicationUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ApplicationUser user = (ApplicationUser) o;
-        return getId().equals(user.getId()) && getName().equals(user.getName()) && getEmail().equals(user.getEmail()) && getEnabled().equals(user.getEnabled()) && Objects.equals(getRoles(), user.getRoles());
+        return getId().equals(user.getId()) && getName().equals(user.getName()) && getEmail().equals(user.getEmail()) && Objects.equals(getPassword(), user.getPassword()) && getEnabled().equals(user.getEnabled());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getEnabled(), getRoles());
+        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getEnabled());
     }
 
     @Override

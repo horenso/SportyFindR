@@ -52,4 +52,6 @@ public interface MessageService {
      * @return Page with messages containing spots that match the filter criteria
      */
     Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException;
+
+    List<Message> findByOwner(Long userId) throws NotFoundException2;
 }

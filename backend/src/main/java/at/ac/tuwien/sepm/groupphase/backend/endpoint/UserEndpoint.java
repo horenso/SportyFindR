@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;

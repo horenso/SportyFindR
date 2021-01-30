@@ -29,4 +29,12 @@ public interface ReactionService {
     void deleteById(Long reactionId) throws NotFoundException2, WrongUserException;
 
     Reaction change(Reaction reaction) throws NotFoundException2, WrongUserException;
+
+    /**
+     * Returns all Reactions that belong to a user
+     * @param userId id of the owning user
+     * @return a list of Reactions belonging to the user
+     * @throws NotFoundException2 if the user cannot be found
+     */
+    List<Reaction> findReactionsByOwner(Long userId) throws NotFoundException2;
 }

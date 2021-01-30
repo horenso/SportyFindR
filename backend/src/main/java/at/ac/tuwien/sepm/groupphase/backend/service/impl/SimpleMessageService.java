@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
@@ -153,6 +154,16 @@ public class SimpleMessageService implements MessageService {
 
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
 
+    }
+
+    @Override
+    public List<Message> findByOwner(Long userId) throws NotFoundException2 {
+        Optional<ApplicationUser> owner = this.userRepository.findById(userId);
+        if (owner.isPresent()) {
+            return this.messageRepository.findByOwner(owner.get());
+        } else {
+            throw new NotFoundException2("User with ID " + userId + " not found.");
+        }
     }
 
 
