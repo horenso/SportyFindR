@@ -304,7 +304,7 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(message.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message.getDownVotes(), messageDto.getDownVotes()),
             () -> assertEquals(message.getUpVotes(), messageDto.getUpVotes()),
-            () -> assertEquals(message.getOwner(),simpleUserMapper.simpleUserDtoToUser(messageDto.getOwner()))
+            () -> assertEquals(simpleUserMapper.userToSimpleUserDto(message.getOwner()),messageDto.getOwner())
 
         );
     }
