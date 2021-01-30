@@ -6,16 +6,12 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,20 +19,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -329,41 +321,7 @@ public class MessageEndpointTest implements TestData {
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(messageDto)))
-            .andExpect(status().isOk());
-
-        Category category = Category.builder()
-            .name(CAT_NAME)
-            .build();
-        Location location = Location.builder()
-            .latitude(LAT)
-            .longitude(LONG)
-            .build();
-        ApplicationUser user = ApplicationUser.builder()
-            .email(EMAIL)
-            .enabled(ENABLED)
-            .name(USERNAME)
-            .password(PASSWORD)
-            .build();
-        userRepository.save(user);
-        Spot spot = Spot.builder()
-            .owner(user)
-            .name(NAME)
-            .location(location)
-            .category(category)
-            .build();
-        categoryRepository.save(category);
-        locationRepository.save(location);
-        spotRepository.save(spot);
-        MessageDto messageDto = MessageDto.builder()
-            .owner(simpleUserMapper.userToSimpleUserDto(user))
-            .spotId(spot.getId() + 1)
-            .content(MESSAGE_CONTENT)
-            .build();
-        Throwable e = assertThrows(ResponseStatusException.class, () -> messageEndpoint.create(messageDto));
-        assertAll(
-            () -> assertEquals(0, messageRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not Exist\"")
-        );
+            .andExpect(status().isNotFound());
     }
 
     @Test

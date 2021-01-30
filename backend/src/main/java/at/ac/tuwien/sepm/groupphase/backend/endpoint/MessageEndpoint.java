@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -13,6 +13,7 @@ import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -117,7 +119,7 @@ public class MessageEndpoint {
 
         log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, LocalDateTime.from(time));
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));

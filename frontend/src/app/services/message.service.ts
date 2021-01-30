@@ -1,15 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Globals} from '../global/globals';
-import {catchError, tap} from 'rxjs/operators';
 import {Page} from '../models/page.model';
-import {FilterMessagesComponent} from '../components/filter-messages/filter-messages.component';
 import {FilterMessage} from '../dtos/filter-message';
-import {Location} from '../dtos/location';
-import {FilterLocation} from '../dtos/filter-location';
-import {DatePipe} from '@angular/common';
+import {MessagePage} from '../dtos/message-page';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +19,7 @@ export class MessageService {
 
   constructor(
     private httpClient: HttpClient,
-    private globals: Globals,
-    private datePipe: DatePipe) {
+    private globals: Globals) {
   }
 
   /**
