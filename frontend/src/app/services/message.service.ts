@@ -77,7 +77,7 @@ export class MessageService {
     let time = filterMessage.time;
     /**time = this.datePipe.transform(time, 'yyyy-MM-dd');
     */
-     if (time == null) {
+    if (time == null) {
       time = '1000-01-01';
     }
     const params = new HttpParams()

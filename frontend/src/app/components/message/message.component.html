@@ -1,5 +1,5 @@
 <div id="messageRow">
-  <div id="messageBody" class="youMessage">
+  <div id="messageBody" class = "{{authService.currentUserEmail==message.owner.email? 'youMessage' : 'themMessage'}}">
     <div id="titleRow">
       <div id="author"><b>{{message.owner.name}}</b></div>
       <div id="date">{{message.publishedAt | messageDate}}</div>
@@ -12,14 +12,14 @@
     </div>
     <div id="bottomRow">
       <div id="ratingButtons">
-        <button mat-icon-button class="iconButton" (click)='onUpVote()' 
+        <button mat-icon-button class="iconButton" (click)='onUpVote()'
           [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
-        <button mat-icon-button class="iconButton" (click)='onDownVote()' 
+        <button mat-icon-button class="iconButton" (click)='onDownVote()'
           [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
         {{getDownVoteCountString()}}
       </div>
-      <button mat-icon-button class="iconButton" (click)='onDelete()' id="deleteButton">
+      <button mat-icon-button class="iconButton" (click)='onDelete()' id="deleteButton" *ngIf="authService.currentUserEmail==message.owner.email||authService.isUserAdmin">
         <mat-icon>delete</mat-icon>
       </button>
     </div>

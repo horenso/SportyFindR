@@ -3,6 +3,7 @@ import {Message} from 'src/app/dtos/message';
 import {Reaction, ReactionType} from 'src/app/dtos/reaction';
 import {ReactionService} from 'src/app/services/reaction.service';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-message',
@@ -24,7 +25,8 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   private subs = new SubSink();
 
-  constructor(private reactionService: ReactionService) {
+  constructor(private reactionService: ReactionService,
+              public authService: AuthService) {
   }
 
   ngOnInit(): void {

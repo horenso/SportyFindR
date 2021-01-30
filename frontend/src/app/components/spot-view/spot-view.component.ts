@@ -154,7 +154,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onScroll(): void {
-    console.log(this.messageArea.nativeElement.scrollTop)
+    console.log(this.messageArea.nativeElement.scrollTop);
     console.log('hi');
     if (this.lastPage) {
       return;
