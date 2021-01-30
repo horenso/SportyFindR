@@ -87,10 +87,10 @@ public class MessageEndpoint {
                 messageService.create(messageMapper.messageDtoToMessage(messageDto)));
             return newMessage;
         } catch (NotFoundException2 e) {
-            log.error(HttpStatus.NOT_FOUND + "{}", e);
+            log.error(HttpStatus.NOT_FOUND + " {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (ValidationException e) {
-            log.error("Validation error: {}", e);
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
