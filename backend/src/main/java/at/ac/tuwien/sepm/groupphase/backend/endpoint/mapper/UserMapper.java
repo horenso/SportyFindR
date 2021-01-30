@@ -25,7 +25,7 @@ public interface UserMapper {
     List<UserDto> applicationUserListToUserDtoList(Set<ApplicationUser> users);
 
     default List<Long> rolesToRoleIds(Set<Role> roles) {
-        if (!roles.isEmpty()) {
+        if (roles != null) {
             List<Long> roleIds = new ArrayList<>();
             for (Role role : roles) {
                 if (role != null) {
@@ -39,7 +39,7 @@ public interface UserMapper {
     }
 
     default Set<Role> roleIdsToRoles(List<Long> roleIds) {
-        if (!roleIds.isEmpty()) {
+        if (roleIds != null) {
             Set<Role> roles = new HashSet<>();
             for (Long id : roleIds) {
                 if (id != null) {
