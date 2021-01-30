@@ -34,4 +34,6 @@ public class MessageDto {
     private Integer downVotes;
 
     private SimpleUserDto owner;
+
+    private LocalDateTime expirationDate;
 }

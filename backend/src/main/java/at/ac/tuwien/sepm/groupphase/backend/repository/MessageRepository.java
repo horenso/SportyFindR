@@ -80,4 +80,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @throws NotFoundException2 if the User cannot be
      */
     List<Message> findByOwner(ApplicationUser user) throws NotFoundException2;
+
+    @Transactional
+    List<Message> deleteAllByExpirationDateBefore(LocalDateTime time);
 }
