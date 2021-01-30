@@ -1,3 +1,5 @@
+$light-text: #BEC3E1;
+
 #titleRow {
   display: flex;
   justify-content: space-between;
@@ -33,7 +35,7 @@
 
 #date {
   margin-left: 1em;
-  color: #BEC3E1;
+  color: $light-text;
 }
 
 #bottomRow {
@@ -42,19 +44,19 @@
   align-items: center;
 }
 
-.button {
-  border: none;
-  outline: none;
-}
-
 #ratingButtons {
   background-color: rgba($color: #000000, $alpha: 0.1);
   border-radius: 1000px;
+  padding-left: 1em;
   padding-right: 1em;
 }
 
 #deleteButton {
   color: rgb(218, 68, 98);
+}
+
+#expirationDate {
+  color: $light-text;
 }
 
 .buttonEnabled {
@@ -64,42 +66,3 @@
 .buttonDisabled {
   color: lightgray;
 }
-
-
-
-
-// .count {
-//   font-size: 13px;
-//   margin-top: 14px;
-//   margin-right: 1px;
-
-// }
-
-// .count2 {
-//   font-size: 13px;
-//   margin-top: 14px;
-//   margin-right: -6px;
-// }
-
-// .upVoteButton {
-//   margin-right: 0.6em;
-// }
-
-// .downVoteButton {
-//   margin-left: 0.6em;
-// }
-
-// .button-enabled {
-//   background: #FAFAFA;
-//   color: lightskyblue;
-//   border: none;
-//   outline: none;
-// }
-
-// .button-disabled {
-//   background: #FAFAFA;
-//   color: lightgray;
-//   border: none;
-//   outline: none;
-// }
-

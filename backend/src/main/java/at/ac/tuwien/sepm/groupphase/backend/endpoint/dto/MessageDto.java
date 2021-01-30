@@ -33,7 +33,6 @@ public class MessageDto {
     @Null(message = "Down Votes must be null")
     private Integer downVotes;
 
-    @NotNull(message = "Message must have an owner")
     private SimpleUserDto owner;
 
     private LocalDateTime expirationDate;
