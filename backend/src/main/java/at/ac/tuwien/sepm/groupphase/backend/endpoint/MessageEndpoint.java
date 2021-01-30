@@ -101,8 +101,8 @@ public class MessageEndpoint {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch (WrongUserException e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
     @GetMapping("/filter")
