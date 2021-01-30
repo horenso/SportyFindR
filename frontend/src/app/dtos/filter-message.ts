@@ -1,5 +1,5 @@
 export interface FilterMessage {
   categoryMes: number;
-  hashtag: number;
+  hashtag: string;
   time: string;
 }

@@ -54,7 +54,9 @@ public class DefaultLoginGenerator {
     private Role generateRole(String roleName) throws ValidationException, NotFoundException2 {
         if (!roleService.roleExistsByName(roleName)) {
             try {
-                Role role = new Role(null, roleName, null);
+                Role role = Role.builder()
+                    .name(roleName)
+                    .build();
                 return roleService.create(role);
             } catch (ValidationException e) {
                 throw new ValidationException("Couldn't create Admin Role", e);
@@ -72,7 +74,13 @@ public class DefaultLoginGenerator {
     private void generateAdminUser(HashSet<Role> roles) throws ValidationException, NotFoundException2 {
         if (!userService.userExistsByEmail(ADMIN_EMAIL)) {
             try {
-                ApplicationUser user = new ApplicationUser(null, ADMIN_USER_NAME, ADMIN_EMAIL, ADMIN_PASSWORD, true, roles);
+                ApplicationUser user = ApplicationUser.builder()
+                    .name(ADMIN_USER_NAME)
+                    .email(ADMIN_EMAIL)
+                    .password(ADMIN_PASSWORD)
+                    .enabled(true)
+                    .roles(roles)
+                    .build();
                 userService.createApplicationUser(user);
             } catch (ValidationException e) {
                 throw new ValidationException("Couldn't create Admin User", e);

@@ -5,6 +5,7 @@ import {MapService} from 'src/app/services/map.service';
 import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
 import {MLocation} from '../../util/m-location';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-map',
@@ -16,6 +17,8 @@ export class MapComponent implements OnInit, OnDestroy {
   @Output() mLocClicked = new EventEmitter();
 
   private subs = new SubSink();
+
+  private circle;
 
   map: Map;
   leafletOptions = {
@@ -29,7 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
     maxZoom: 20,
   };
   private locationList: MLocation[];
-  private locMarkerGroup: LayerGroup<MLocation>;
+  private locMarkerGroup: LayerGroup<MLocation> = new LayerGroup<MLocation>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
@@ -56,7 +59,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private locationService: LocationService,
     private mapService: MapService,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService,
+    public authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -87,7 +91,6 @@ export class MapComponent implements OnInit, OnDestroy {
     }));
 
     this.subs.add(this.mapService.updateLocationFilterObservable.subscribe(change => {
-      // this.viewLocations(change.radius);
       this.locationService.filterLocation({
         categoryLoc: change.categoryLoc,
         latitude: this.map.getCenter().lat,
@@ -95,20 +98,43 @@ export class MapComponent implements OnInit, OnDestroy {
         radius: change.radius
       }).subscribe(
         (result: MLocation[]) => {
-          this.locMarkerGroup.clearLayers();
           this.locationList = result;
           this.addMarkers();
-          // this.circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
+          if (this.circle != null) {
+            this.map.removeLayer(this.circle);
+          }
+          this.circle = new Circle(this.map.getCenter(), change.radius * 1000).addTo(this.map);
         }
       );
     }));
 
-    // this.map.on('moveend', () => { this.changeLocationView();});
-    // this.map.on('zoomend', () => { this.changeLocationView();});
+    this.map.on('moveend', () => { this.changeLocationView(); });
 
     setTimeout(() => this.map.invalidateSize({pan: false}));
   }
 
+  private changeLocationView() {
+    if (this.circle != null) {
+      this.map.removeLayer(this.circle);
+    }
+    console.log('first', this.layers);
+    const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
+    // add max south north
+    const radius = (width / 2) * 111;
+    this.subs.add(this.locationService.filterLocation({
+      categoryLoc: 0,
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      radius: radius
+    }).subscribe(
+      (result: MLocation[]) => {
+        this.locationList = result;
+        console.log('LOCATION LIST 1: ', this.locationList);
+        // this.circle = new Circle(this.map.getCenter(), radius * 1000).addTo(this.map);
+        this.addMarkers();
+    }));
+}
+/*
   public viewLocations(radius: number) {
     radius = radius / 111;
     const corner1 = new LatLng(this.map.getCenter().lat + radius, this.map.getCenter().lng + radius);
@@ -116,22 +142,18 @@ export class MapComponent implements OnInit, OnDestroy {
     const bounds = new LatLngBounds(corner1, corner2);
     this.map.fitBounds(bounds);
   }
+ */
 
-  private changeLocationView() {
+  private getLocationsAndConvertToLayerGroup() {
     const width = this.map.getBounds().getEast() - this.map.getBounds().getWest();
+    // add max south north
     const radius = (width / 2) * 111;
-    this.locationService.filterLocation({
-      categoryLoc: null,
+    this.subs.add(this.locationService.filterLocation({
+      categoryLoc: 0,
       latitude: this.map.getCenter().lat,
       longitude: this.map.getCenter().lng,
       radius: radius
-    }).subscribe(result => {
-      console.log('wohoo locatino');
-    });
-}
-
-  private getLocationsAndConvertToLayerGroup() {
-    this.subs.add(this.locationService.getAll().subscribe(
+    }).subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();
@@ -143,10 +165,10 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addMarkers(): void {
-    if (this.locMarkerGroup != null) {
-      this.map.removeLayer(this.locMarkerGroup);
+    if (this.locMarkerGroup.getLayers().length > 0) {
+      this.locMarkerGroup.clearLayers();
     }
-    this.locMarkerGroup = new LayerGroup<MLocation>();
+    console.log(this.locMarkerGroup);
     this.locationList.forEach(
       (mLoc: MLocation) => {
         this.mapService.setClickFunction(mLoc);
@@ -155,6 +177,7 @@ export class MapComponent implements OnInit, OnDestroy {
     );
     this.layers.push(this.locMarkerGroup);
   }
+
 
   public removeMLocation(id: number) {
     const found = this.locationList.find(ele => ele.id === id);

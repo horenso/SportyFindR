@@ -7,16 +7,19 @@
     <div id="contentRow">
       <app-text-with-hashtags [text]='message.content'></app-text-with-hashtags>
     </div>
+    <div *ngIf="message.expirationDate != null" id="expirationWarning">
+      <span id="expirationDate">here until {{message.expirationDate | messageDate}}</span>
+    </div>
     <div id="bottomRow">
       <div id="ratingButtons">
-        <button mat-icon-button (click)='onUpVote()' 
+        <button mat-icon-button class="iconButton" (click)='onUpVote()' 
           [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
-        <button mat-icon-button (click)='onDownVote()' 
+        <button mat-icon-button class="iconButton" (click)='onDownVote()' 
           [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
         {{getDownVoteCountString()}}
       </div>
-      <button mat-icon-button (click)='onDelete()' id="deleteButton" class="button">
+      <button mat-icon-button class="iconButton" (click)='onDelete()' id="deleteButton">
         <mat-icon>delete</mat-icon>
       </button>
     </div>

@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
 import io.swagger.annotations.ApiOperation;
@@ -12,18 +13,18 @@ import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class MessageEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create one new message", authorizations = {@Authorization(value = "apiKey")})
@@ -66,8 +67,11 @@ public class MessageEndpoint {
                 messageService.create(messageMapper.messageDtoToMessage(messageDto)));
             return newMessage;
         } catch (NotFoundException2 e) {
-            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            log.error(HttpStatus.NOT_FOUND + " {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (ValidationException e) {
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 
@@ -83,8 +87,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete one message by id", authorizations = {@Authorization(value = "apiKey")})
@@ -100,7 +103,6 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
@@ -110,19 +112,19 @@ public class MessageEndpoint {
             @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
         Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
-        @RequestParam(required = false) Long hashtag,
-        @RequestParam(required = false) LocalDateTime time) {
+        @RequestParam(required = false) String hashtag,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("IM HERE!");
-        log.info("GET /api/v1/messages/?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
+        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
 
         MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, time);
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {
-            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
+
 }

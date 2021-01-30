@@ -21,7 +21,10 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
 
   roles: Role[];
 
+  roleTableColumns: string[] = ['ID', 'Name', 'Delete'];
+
   userForm: FormGroup;
+  roleForm: FormGroup;
 
   userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled', 'Edit', 'Delete'];
 
@@ -29,6 +32,8 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('userTable') userTable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  @ViewChild('roleTable') roleTable;
 
   getAllUsers(): void {
     this.userService.getAllUsers().subscribe(
@@ -75,6 +80,51 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
       }
     );
   }
+
+  createRole(role: Role) {
+    this.roleService.createRole(role).subscribe(
+      (role: Role) => {
+        this.roles.push(role);
+        this.notificationService.success('Created role (ID: ' + role.id + ', Name: ' + role.name + ')');
+
+        this.roleTable.renderRows();
+
+        const enabledIndex: number = this.userTableColumns.indexOf('Enabled');
+        const newRoleIndex: number = enabledIndex + 1 + this.roles.indexOf(role);
+        this.userTableColumns.splice(newRoleIndex, 0, role.name);
+      },
+      error => {
+        console.log('Couldn\'t save role to the backend. ', error);
+        this.notificationService.error(`Couldn\'t save role to the backend.
+        ` + error.message);
+      }
+    );
+  }
+
+  deleteRole(r) {
+    this.roleService.deleteRoleById(r.id).subscribe(
+      next => {
+        const index: number = this.roles.indexOf(r);
+
+        if (index !== -1) {
+          const enabledIndex: number = this.userTableColumns.indexOf('Enabled');
+          const delRoleIndex: number = enabledIndex + 1 + index;
+          this.userTableColumns.splice(delRoleIndex, 1);
+
+          this.roles.splice(index, 1);
+          this.notificationService.success('Deleted role (ID: ' + r.id + ', Name: ' + r.name + ')');
+
+          this.roleTable.renderRows();
+        }
+      },
+      error => {
+        console.log('Couldn\'t remove role from the backend. ', error);
+        this.notificationService.error(`Couldn\'t remove role from the backend.
+        ` + error.message);
+      }
+    );
+  }
+
 
   deleteUser(user: User) {
     this.userService.deleteUserById(user.id).subscribe(
@@ -126,6 +176,12 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
     this.toggleUserPasswordValidator();
   }
 
+  private initRoleForm(): void {
+    this.roleForm = this.formBuilder.group({
+      roleName: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+    });
+  }
+
   onConfirm(): void {
     const val = this.userForm.value;
 
@@ -139,8 +195,20 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
     this.initUserForm();
   }
 
+  onConfirmRole(): void {
+    const val = this.roleForm.value;
+
+    const newRole = new Role(null, val.roleName, null);
+    this.createRole(newRole);
+    this.initRoleForm();
+  }
+
   onCancel(): void {
     this.initUserForm();
+  }
+
+  onCancelRole(): void {
+    this.initRoleForm();
   }
 
   constructor(
@@ -156,6 +224,7 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
     this.getAllUsers();
     this.getAllRoles();
     this.initUserForm();
+    this.initRoleForm();
   }
 
   ngAfterViewInit(): void {

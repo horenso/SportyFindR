@@ -2,8 +2,8 @@
 <h2>User Form</h2>
 <mat-card id="create-user" class="user-manager-margin">
   <mat-card-title *ngIf="user == null; then thenBlock else elseBlock"></mat-card-title>
-    <ng-template #thenBlock>Create User</ng-template>
-    <ng-template #elseBlock>Edit User</ng-template>
+  <ng-template #thenBlock><h3>Create User</h3></ng-template>
+  <ng-template #elseBlock><h3>Edit User</h3></ng-template>
   <mat-card-content>
     <form [formGroup]="userForm">
       <!-- Name -->
@@ -94,4 +94,42 @@
     <tr mat-row *matRowDef="let row; columns: userTableColumns;"></tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 30, 50, 100]" showFirstLastButtons></mat-paginator>
+</div>
+
+<h2>Roles</h2>
+<div id="role-content">
+  <mat-card id="role-form" class="user-manager-margin">
+    <form [formGroup]="roleForm">
+      <!-- Name -->
+      <mat-form-field appearance="fill" class="form-field-full-width">
+        <mat-label>New Role Name</mat-label>
+        <label for="role-name"></label>
+        <input matInput type="text" formControlName='roleName' id="role-name" />
+      </mat-form-field>
+
+      <div id="role-buttons">
+        <a mat-raised-button id="role-buttonCancel" class="button cancel-btn" (click)="onCancelRole()">Cancel</a>
+        <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirmRole()"
+           [disabled]="roleForm.invalid || !roleForm.dirty">Create</a>
+      </div>
+    </form>
+  </mat-card>
+  <mat-card id="role-table" class="user-manager-margin">
+    <table #roleTable mat-table [dataSource]="roles" class="mat-elevation-z8">
+      <ng-container matColumnDef="ID">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let r">{{r.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="Name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let r">{{r.name}}</td>
+      </ng-container>
+      <ng-container matColumnDef="Delete">
+        <th mat-header-cell *matHeaderCellDef>Delete</th>
+        <td mat-cell *matCellDef="let r"><button (click)="deleteRole(r)" mat-flat-button color="warn">Delete</button></td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="roleTableColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: roleTableColumns;"></tr>
+    </table>
+  </mat-card>
 </div>

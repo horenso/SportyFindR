@@ -29,7 +29,7 @@ public class ReactionEndpoint {
     private final ReactionService reactionService;
     private final ReactionMapper reactionMapper;
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new Reaction", authorizations = {@Authorization(value = "apiKey")})
@@ -58,7 +58,7 @@ public class ReactionEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
@@ -74,7 +74,7 @@ public class ReactionEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete one reaction by id", authorizations = {@Authorization(value = "apiKey")})

@@ -1,16 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.MessageSearchObject;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
-import org.springframework.security.core.Authentication;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MessageService {
@@ -39,7 +37,7 @@ public interface MessageService {
      * @param message to be saved
      * @return created message entry
      */
-    Message create(Message message) throws NotFoundException2;
+    Message create(Message message) throws NotFoundException2, ValidationException;
 
     Message getById(Long id) throws NotFoundException2;
 
@@ -54,5 +52,5 @@ public interface MessageService {
      * @param pageable containing page information
      * @return Page with messages containing spots that match the filter criteria
      */
-    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws NotFoundException, ServiceException;
+    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException;
 }

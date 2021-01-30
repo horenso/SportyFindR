@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.entity;
+package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
 import lombok.*;
 
@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class MessageSearchObject {
 
     Long categoryId;
-    Long hashtagId;
+    String hashtagName;
     LocalDateTime time;
 }

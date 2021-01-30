@@ -55,7 +55,7 @@ public class RoleEndpoint {
             Role newRole = roleMapper.roleDtoToRole(roleDto);
             newRole.setApplicationUsers(this.enrichUserSet(newRole.getApplicationUsers()));
             return roleMapper.roleToRoleDto(
-                roleService.create(roleMapper.roleDtoToRole(roleDto)));
+                roleService.create(newRole));
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
