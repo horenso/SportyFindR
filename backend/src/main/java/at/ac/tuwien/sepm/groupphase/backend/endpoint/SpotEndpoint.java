@@ -33,6 +33,7 @@ public class SpotEndpoint {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
+    @CrossOrigin
     @ApiOperation(value = "Get one spot by id", authorizations = {@Authorization(value = "apiKey")})
     public SpotDto getOneById(@PathVariable("id") Long id) {
         log.info("Get /api/v1/spots/{}", id);
@@ -43,7 +44,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new spot", authorizations = {@Authorization(value = "apiKey")})
@@ -57,7 +58,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
@@ -73,15 +74,15 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
-    @ApiOperation(value = "Update an spot", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Update a spot", authorizations = {@Authorization(value = "apiKey")})
     public SpotDto update(@Valid @RequestBody SpotDto spotDto) {
         log.info("PUT /api/v1/spots body: {}", spotDto);
         try {
             SpotDto updated = spotMapper.spotToSpotDto(
-                spotService.update(spotMapper.spotDtoToSpot(spotDto)));
+            spotService.update(spotMapper.spotDtoToSpot(spotDto)));
             log.info("{}", updated);
             return updated;
         } catch (WrongUserException | ValidationException e) {
@@ -95,6 +96,7 @@ public class SpotEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Get list of spots for a specific location", authorizations = {@Authorization(value = "apiKey")})
     public List<SpotDto> getSpotsByLocation(@RequestParam(name = "location") Long locationId) {
         log.info("GET /api/v1/spots?location={}", locationId);
@@ -108,6 +110,7 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
     @ApiOperation(value = "Subscribe to the Server Sent Emitter", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping(value = "/subscribe")
     @CrossOrigin

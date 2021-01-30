@@ -2,9 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.RoleEndpoint;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.NewUserDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.RoleDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.UserDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.RoleMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
@@ -23,6 +21,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -144,5 +146,60 @@ public class RoleEndpointTest implements TestData {
         assertAll(
             () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.deleteRoleById(1L))
         );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void deleteRoleWithUsers() {
+        ApplicationUser newUser = ApplicationUser.builder()
+            .name("name")
+            .password("1234567")
+            .email("hello@world.net")
+            .enabled(true)
+            .build();
+        ApplicationUser savedUser = userRepository.save(newUser);
+        List<Long> userList = new ArrayList<>();
+        userList.add(savedUser.getId());
+
+        RoleDto roleDto1 = RoleDto.builder()
+            .name("TestRole1")
+            .userIds(userList)
+            .build();
+        RoleDto createdRole1 =  roleEndpoint.create(roleDto1);
+        Role foundRole1 = roleRepository.findRoleById(createdRole1.getId()).get();
+
+        RoleDto roleDto2 = RoleDto.builder()
+            .name("TestRole2")
+            .userIds(userList)
+            .build();
+        RoleDto createdRole2 =  roleEndpoint.create(roleDto2);
+        Role foundRole2 = roleRepository.findRoleById(createdRole2.getId()).get();
+
+        ApplicationUser user1 = userRepository.findApplicationUserById(savedUser.getId()).get();
+
+        assertAll(
+            () -> assertThat(user1.getRoles(), hasItems(foundRole1)),
+            () -> assertThat(user1.getRoles(), hasItems(foundRole2)),
+            () -> assertThat(user1.getRoles(), hasSize(2))
+        );
+
+        roleEndpoint.deleteRoleById(createdRole1.getId());
+        ApplicationUser user2 = userRepository.findApplicationUserById(savedUser.getId()).get();
+
+        assertAll(
+            () -> assertThat(user2.getRoles(), not(hasItems(foundRole1))),
+            () -> assertThat(user2.getRoles(), hasItems(foundRole2)),
+            () -> assertThat(user2.getRoles(), hasSize(1))
+        );
+
+        roleEndpoint.deleteRoleById(createdRole2.getId());
+        ApplicationUser user3 = userRepository.findApplicationUserById(savedUser.getId()).get();
+
+        assertAll(
+            () -> assertThat(user3.getRoles(), not(hasItems(foundRole1))),
+            () -> assertThat(user3.getRoles(), not(hasItems(foundRole2))),
+            () -> assertThat(user3.getRoles(), hasSize(0))
+        );
+
     }
 }

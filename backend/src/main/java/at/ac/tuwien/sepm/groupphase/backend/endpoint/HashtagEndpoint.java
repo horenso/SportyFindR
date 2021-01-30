@@ -25,6 +25,7 @@ public class HashtagEndpoint {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{name}")
+    @CrossOrigin
     @ApiOperation(value = "Get a hashtag by name", authorizations = {@Authorization(value = "apiKey")})
     public HashtagDto getById(@PathVariable("name") String name) {
         log.info("GET /api/v1/hashtags/{}", name);
@@ -33,6 +34,7 @@ public class HashtagEndpoint {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
+    @CrossOrigin
     @ApiOperation(value = "Get all hashtags", authorizations = {@Authorization(value = "apiKey")})
     public List<HashtagDto> getAll() {
         log.info("GET /api/v1/hashtags");

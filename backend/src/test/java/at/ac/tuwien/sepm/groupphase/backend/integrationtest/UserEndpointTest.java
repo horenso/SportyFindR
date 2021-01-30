@@ -1,14 +1,16 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.ReactionEndpoint;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.SpotEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.UserEndpoint;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.NewUserDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.UserDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.*;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.CategoryMapper;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
-import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +22,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,9 +44,30 @@ public class UserEndpointTest implements TestData {
     private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private SimpleUserMapper simpleUserMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private SpotEndpoint spotEndpoint;
+    @Autowired
+    private MessageEndpoint messageEndpoint;
+    @Autowired
+    private ReactionEndpoint reactionEndpoint;
+    @Autowired
+    private SpotRepository spotRepository;
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private ReactionRepository reactionRepository;
 
     @AfterEach
     public void afterEach() {
+        reactionRepository.deleteAll();
+        messageRepository.deleteAll();
+        spotRepository.deleteAll();
         userRepository.deleteAll();
         roleRepository.deleteAll();
     }
@@ -376,6 +399,116 @@ public class UserEndpointTest implements TestData {
     public void findByInexistingEmail() {
         assertAll(
             () -> assertThrows(ResponseStatusException.class, () -> userEndpoint.getOneByEmail("not@existing.com"))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void cascadingDeleteUser() {
+        NewUserDto userDto = NewUserDto.builder()
+            .name(USERNAME)
+            .password(PASSWORD)
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .build();
+        UserDto createdUser =  userEndpoint.create(userDto);
+
+        NewUserDto pUserDto = NewUserDto.builder()
+            .name("PersistentUser")
+            .password("1234567")
+            .email("persistent@welt.net")
+            .enabled(true)
+            .build();
+        UserDto pCreatedUser =  userEndpoint.create(pUserDto);
+
+        ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
+        ApplicationUser pFoundUser = userRepository.findApplicationUserById(pCreatedUser.getId()).get();
+
+        Set<ApplicationUser> userSet = new HashSet<>();
+        userSet.add(foundUser);
+        Role newRole = Role.builder()
+            .name("TESTROLE")
+            .applicationUsers(userSet)
+            .build();
+        Role savedRole = roleRepository.save(newRole);
+
+        CategoryDto categoryDto = CategoryDto.builder()
+            .name(CAT_NAME)
+            .build();
+        LocationDto locationDto = LocationDto.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        SpotDto initSpotDto = SpotDto.builder()
+            .owner(this.simpleUserMapper.userToSimpleUserDto(foundUser))
+            .name(NAME)
+            .location(locationDto)
+            .build();
+        initSpotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
+        SpotDto spotDto = spotEndpoint.create(initSpotDto);
+        Spot spot = spotRepository.getOneById(spotDto.getId()).get();
+
+        Message message = Message.builder()
+            .owner(foundUser)
+            .spot(spot)
+            .content(MESSAGE_CONTENT)
+            .publishedAt(LocalDateTime.now())
+            .build();
+        Message message1 = messageRepository.save(message);
+
+        Message pMessage = Message.builder()
+            .owner(pFoundUser)
+            .spot(spot)
+            .content(MESSAGE_CONTENT)
+            .publishedAt(LocalDateTime.now())
+            .build();
+        Message pMessage1 = messageRepository.save(pMessage);
+
+        ReactionDto reactionDto = ReactionDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(foundUser))
+            .messageId(message.getId())
+            .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
+            .build();
+        reactionDto.setId(reactionEndpoint.create(reactionDto).getId());
+
+        ReactionDto reactionDto2 = ReactionDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(foundUser))
+            .messageId(pMessage.getId())
+            .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
+            .build();
+        reactionDto2.setId(reactionEndpoint.create(reactionDto).getId());
+
+
+        ApplicationUser assertFoundUser = userRepository.findApplicationUserByName(createdUser.getName()).get();
+        Role assertFoundRole = roleRepository.findRoleById(savedRole.getId()).get();
+        Spot assertFoundSpot = spotRepository.getOneById(spotDto.getId()).get();
+        Message assertFoundMessage = messageRepository.findById(message1.getId()).get();
+        Message assertFoundPMessage = messageRepository.findById(pMessage1.getId()).get();
+        Reaction assertFoundReaction = reactionRepository.findById(reactionDto.getId()).get();
+        Reaction assertFoundPReaction = reactionRepository.findById(reactionDto2.getId()).get();
+
+        assertAll(
+            () -> assertEquals(createdUser.getId(), assertFoundUser.getId()),
+            () -> assertThat(assertFoundUser.getRoles(), hasItems(savedRole)),
+            () -> assertThat(assertFoundRole.getApplicationUsers(), hasItems(foundUser)),
+            () -> assertEquals(assertFoundSpot.getOwner(), foundUser),
+            () -> assertEquals(assertFoundMessage.getOwner(), foundUser),
+            () -> assertEquals(assertFoundPMessage.getOwner(), pFoundUser),
+            () -> assertEquals(assertFoundReaction.getOwner(), foundUser),
+            () -> assertEquals(assertFoundPReaction.getOwner(), foundUser)
+        );
+
+        userEndpoint.deleteUserById(createdUser.getId());
+
+        assertAll(
+            () -> assertFalse(userRepository.findApplicationUserByName(createdUser.getName()).isPresent()),
+            () -> assertThat(roleRepository.findRoleById(savedRole.getId()).get().getApplicationUsers(), not(hasItems(foundUser))),
+            () -> assertTrue(spotRepository.getOneById(spotDto.getId()).isPresent()),
+            () -> assertNull(spotRepository.getOneById(spotDto.getId()).get().getOwner()),
+            () -> assertFalse(messageRepository.findById(message1.getId()).isPresent()),
+            () -> assertEquals(messageRepository.findById(pMessage1.getId()).get().getOwner(), pFoundUser),
+            () -> assertFalse(reactionRepository.findById(reactionDto.getId()).isPresent()),
+            () -> assertFalse(reactionRepository.findById(reactionDto2.getId()).isPresent())
         );
     }
 }

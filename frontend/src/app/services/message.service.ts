@@ -1,14 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Globals} from '../global/globals';
-import {catchError, tap} from 'rxjs/operators';
 import {Page} from '../models/page.model';
-import {FilterMessagesComponent} from '../components/filter-messages/filter-messages.component';
 import {FilterMessage} from '../dtos/filter-message';
-import {Location} from '../dtos/location';
-import {FilterLocation} from '../dtos/filter-location';
+import {MessagePage} from '../dtos/message-page';
 
 @Injectable({
   providedIn: 'root'
@@ -30,10 +27,13 @@ export class MessageService {
    * @param spotId spot to get messages from
    * @returns list of messages
    */
-  getBySpotId(spotId: number): Observable<Message[]> {
-    console.log('Get all messages from spot: ' + spotId);
-    const params = new HttpParams().set('spot', spotId.toString());
-    return this.httpClient.get<Message[]>(this.messageBaseUri, {params: params});
+  getBySpotId(spotId: number, page: number, size: number): Observable<MessagePage> {
+    console.log(`Get one page of messages from spot ${spotId}, page: ${page}, size: ${size}`);
+    const params = new HttpParams()
+      .set('spotId', spotId.toString())
+      .set('page', page.toString())
+      .set('size', size.toString())
+    return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 
   /**
@@ -74,10 +74,15 @@ export class MessageService {
    * @param filterMessage containing the search parameters
    */
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
+    let time = filterMessage.time;
+    time = this.datePipe.transform(time, 'yyyy-MM-dd');
+    if (time == null) {
+      time = '1000-01-01';
+    }
     const params = new HttpParams()
       .set('categoryMes', filterMessage.categoryMes.toString())
       .set('hashtag', filterMessage.hashtag.toString())
-      .set('time', filterMessage.time.toString());
+      .set('time', time.toString());
     console.log(params.toString());
     return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }
