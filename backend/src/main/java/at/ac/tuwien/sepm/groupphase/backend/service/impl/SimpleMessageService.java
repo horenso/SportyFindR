@@ -174,9 +174,11 @@ public class SimpleMessageService implements MessageService {
     }
 
     private void deleteExpiredMessages() {
-        int deletedExpiredMessages = messageRepository.deleteAllByExpirationDateBefore(LocalDateTime.now());
-        if (deletedExpiredMessages > 0) {
-            log.info("Deleted {} expired messages.");
+        List<Message> deletedExpiredMessages = messageRepository.deleteAllByExpirationDateBefore(LocalDateTime.now());
+        if (deletedExpiredMessages.size() > 0) {
+            deletedExpiredMessages.forEach(message -> {
+                log.info("Deleted expired message with Id {}", message.getId());
+            });
         }
     }
 

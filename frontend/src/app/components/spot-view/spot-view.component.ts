@@ -32,6 +32,10 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subs = new SubSink();
 
+  public includeExpirationDate = false;
+  public minExpirationDate = new Date(Date.now());
+  public expirationDate = null;
+
   constructor(
     private messageService: MessageService,
     private spotService: SpotService,
@@ -88,17 +92,22 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitDialog() {
-    if (this.newMessage?.length < 1) {
+    if (this.newMessage?.length < 1 || /^\s*$/.test(this.newMessage)) {
       return;
     }
-    const newMessage = new Message(null, this.newMessage, null, this.spot.id);
+    if (this.expirationDate) {
+      this.expirationDate.setHours(this.expirationDate.getHours() + 1);
+    }
+    const newMessage = new Message(null, this.newMessage, null, this.spot.id, null, null, this.expirationDate);
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);
         this.newMessage = '';
+        this.expirationDate = null;
+        this.includeExpirationDate = false;
         setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {
-        this.notificationService.error('Error sending message!');
+        this.notificationService.error(error.error.message);
         console.error(error);
       }
     ));
@@ -129,6 +138,19 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   editSpot(): void {
     this.sidebarService.spot = this.spot;
     this.router.navigate(['locations', this.locationId, 'spots', this.spotId, 'edit']);
+  }
+
+  enableExpirationDate(): void {
+    this.expirationDate = new Date();
+    this.expirationDate.setHours(this.expirationDate.getHours() + 1);
+    this.expirationDate.setMinutes(0, 0, 0);
+    // add a day
+    this.includeExpirationDate = true;
+  }
+
+  disableExpirationDate(): void {
+    this.expirationDate = null;
+    this.includeExpirationDate = false;
   }
 
   private getMessagesAndStartEventHandling(): void {

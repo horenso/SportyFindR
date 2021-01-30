@@ -5,6 +5,7 @@ export class Message {
     public publishedAt: Date,
     public spotId: number,
     public upVotes?: number,
-    public downVotes?: number) {
+    public downVotes?: number,
+    public expirationDate?: Date) {
   }
 }
