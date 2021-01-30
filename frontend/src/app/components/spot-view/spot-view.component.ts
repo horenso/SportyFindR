@@ -10,6 +10,7 @@ import {MLocSpot} from '../../util/m-loc-spot';
 import {MapService} from 'src/app/services/map.service';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-spot-view',
@@ -48,7 +49,8 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private mapService: MapService,
     private router: Router,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    public authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -109,7 +111,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.expirationDate) {
       this.expirationDate.setHours(this.expirationDate.getHours() + 1);
     }
-    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id);
+    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null);
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);

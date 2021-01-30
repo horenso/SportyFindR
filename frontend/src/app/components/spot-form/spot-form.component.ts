@@ -78,7 +78,7 @@ export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   onConfirm(): void {
     const val = this.spotForm.value;
-    const newSpot = new MLocSpot(null, val.name, val.description, val.category, null);
+    const newSpot = new MLocSpot(null, val.name, val.description, val.category, null, null);
 
     if (this.spot != null) {
       newSpot.id = this.spot.id;

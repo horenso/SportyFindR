@@ -14,9 +14,9 @@ export class MessageComponent implements OnInit, OnDestroy {
   @Input() message: Message;
   @Input() canReact: boolean = true; // whether the component shows reaction buttons
   @Input() canDelete: boolean = true; // wether the component shows a delete button
-  
+
   @Output() deleteMessage = new EventEmitter();
-  
+
   author: string = ''; // in Version 3 the user name will be displayed
   reaction: Reaction;
 
@@ -28,7 +28,7 @@ export class MessageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL);
+    this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL, null);
   }
 
   ngOnDestroy(): void {
