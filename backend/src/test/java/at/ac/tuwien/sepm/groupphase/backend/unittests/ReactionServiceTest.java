@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
@@ -102,7 +103,7 @@ public class ReactionServiceTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void reactionCreateReturnsReaction() throws NotFoundException2 {
+    public void reactionCreateReturnsReaction() throws NotFoundException2, ValidationException {
 
         Reaction rct = Reaction.builder()
             .owner(user)
@@ -123,7 +124,7 @@ public class ReactionServiceTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void reactionFindReactionByMessageId() throws NotFoundException2 {
+    public void reactionFindReactionByMessageId() throws NotFoundException2, ValidationException {
 
         Reaction rct = Reaction.builder()
             .owner(user)
@@ -145,7 +146,7 @@ public class ReactionServiceTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2 {
+    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2, ValidationException {
 
         Reaction rct = Reaction.builder()
             .owner(user)

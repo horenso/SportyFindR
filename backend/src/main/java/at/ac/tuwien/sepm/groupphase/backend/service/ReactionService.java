@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface ReactionService {
      * @param reaction to be stored
      * @return created Reaction Entity
      */
-    Reaction create(Reaction reaction) throws NotFoundException2;
+    Reaction create(Reaction reaction) throws NotFoundException2, ValidationException;
 
     /**
      * Searches all Reactions belonging to a corresponding message

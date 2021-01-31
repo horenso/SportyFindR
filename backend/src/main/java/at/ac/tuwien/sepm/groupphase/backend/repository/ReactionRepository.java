@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +49,13 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
                         @Param("type") Reaction.ReactionType type);
 
     void deleteAllByMessage(Long messageId);
+
+    @Transactional
+    @Query(value = "SELECT DISTINCT r FROM Reaction r JOIN Message m ON m.id = r.message.id WHERE r.owner.id = :owner_id AND m.id = :message_id")
+    List<Reaction> getReactionByOwner(@Param("owner_id") Long ownerId,
+                                      @Param("message_id") Long messageId);
+    @Transactional
+    @Query(value = "SELECT DISTINCT r FROM Reaction r JOIN Message m ON m.id = r.message.id JOIN ApplicationUser u ON u.id = r.owner.id WHERE m.id = :message_id AND u.email= :owner_Email")
+    Reaction getReactionByOwnerEmail(@Param("owner_Email") String ownerEmail,
+                                      @Param("message_id") Long messageId);
 }

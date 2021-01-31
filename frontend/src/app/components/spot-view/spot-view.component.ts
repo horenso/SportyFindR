@@ -111,7 +111,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.expirationDate) {
       this.expirationDate.setHours(this.expirationDate.getHours() + 1);
     }
-    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null);
+    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);

@@ -71,4 +71,10 @@ public class Message {
     private ApplicationUser owner;
 
     private LocalDateTime expirationDate;
+
+    @Transient
+    private Reaction.ReactionType ownerReaction;
+
+    @Transient
+    private Long ownerReactionId;
 }

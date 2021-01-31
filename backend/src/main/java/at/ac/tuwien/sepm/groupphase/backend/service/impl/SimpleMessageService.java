@@ -70,7 +70,9 @@ public class SimpleMessageService implements MessageService {
 
         List<Long> messageIdList = messageRepository.findBySpotIdOrderByPublishedAtAscLong(spotId);
 
-        return messageRepository.findByIdIn(messageIdList, pageable);
+        Page<Message> result = messageRepository.findByIdIn(messageIdList, pageable);
+        result.forEach(this::setReactions);
+        return result;
     }
 
     @Override
@@ -133,6 +135,17 @@ public class SimpleMessageService implements MessageService {
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_UP));
         message.setDownVotes(
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_DOWN));
+        Reaction reaction= reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(),message.getId());
+        if(reaction==null){
+            message.setOwnerReaction(null);
+            message.setOwnerReactionId(null);
+        } else if(reaction.getType().equals(Reaction.ReactionType.THUMBS_DOWN)){
+            message.setOwnerReaction(Reaction.ReactionType.THUMBS_DOWN);
+            message.setOwnerReactionId(reaction.getId());
+        }else{
+            message.setOwnerReaction(Reaction.ReactionType.THUMBS_UP);
+            message.setOwnerReactionId(reaction.getId());
+        }
     }
 
     @Override

@@ -30,7 +30,10 @@ export class MessageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL, null);
+    if (this.message.ownerReaction == null) {
+      this.message.ownerReaction = ReactionType.NEUTRAL;
+    }
+    this.reaction = new Reaction(this.message.ownerReactionId, this.message.id, this.message.ownerReaction, null);
   }
 
   ngOnDestroy(): void {

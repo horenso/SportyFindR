@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.ReactionMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +42,9 @@ public class ReactionEndpoint {
         }catch (NotFoundException2 e){
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (ValidationException e){
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
     @GetMapping

@@ -31,7 +31,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @param spotId id of the spot
      * @return ordered list of all message entries
      */
-    @Query(value = "SELECT DISTINCT m.id FROM Message m LEFT JOIN Spot s ON :spotId = m.spot.id")
+    @Query(value = "SELECT DISTINCT m.id FROM Message m JOIN Spot s ON s.id = m.spot.id WHERE s.id = :spotId")
     List<Long> findBySpotIdOrderByPublishedAtAscLong(@Param("spotId") Long spotId);
 
     Optional<Message> findById(Long id);

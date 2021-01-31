@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,10 @@ public class MessageDto {
 
     @NotNull(message = "SpotId must not be null")
     private Long spotId;
+
+    private ReactionDto.ReactionDtoType ownerReaction;
+
+    private Long ownerReactionId;
 
     @Null(message = "UpVotes must be null")
     private Integer upVotes;

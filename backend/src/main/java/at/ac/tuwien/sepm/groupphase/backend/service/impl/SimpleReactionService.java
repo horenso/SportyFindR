@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
@@ -30,13 +31,16 @@ public class SimpleReactionService implements ReactionService {
     private final UserRepository userRepository;
 
     @Override
-    public Reaction create(Reaction reaction) throws NotFoundException2{
+    public Reaction create(Reaction reaction) throws NotFoundException2, ValidationException{
         log.debug("Create new Reaction {}", reaction);
         if(messageRepository.findById(reaction.getMessage().getId()).isEmpty()){
             throw new NotFoundException2("Message does not Exist");
         }
         reaction.setPublishedAt(LocalDateTime.now());
         reaction.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
+        if(!reactionRepository.getReactionByOwner(reaction.getOwner().getId(),reaction.getMessage().getId()).isEmpty()){
+            throw new ValidationException("Already reacted to Message");
+        }
         Reaction newReaction = reactionRepository.save(reaction);
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(newReaction.getMessage().getId());
         return newReaction;
