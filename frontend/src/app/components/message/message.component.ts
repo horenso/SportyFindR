@@ -7,6 +7,7 @@ import {AuthService} from '../../services/auth.service';
 import {SpotService} from '../../services/spot.service';
 import {Spot} from '../../dtos/spot';
 import {Observable} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-message',
@@ -18,20 +19,21 @@ export class MessageComponent implements OnInit, OnDestroy {
   @Input() message: Message;
   @Input() canReact: boolean = true; // whether the component shows reaction buttons
   @Input() canDelete: boolean = true; // whether the component shows a delete button
+  @Input() filteredMessage: boolean = false;
 
   @Output() deleteMessage = new EventEmitter();
 
   author: string = ''; // in Version 3 the user name will be displayed
   reaction: Reaction;
 
-  spotLink: string = '';
   spot: Spot;
 
   private subs = new SubSink();
 
   constructor(private reactionService: ReactionService,
               public authService: AuthService,
-              private spotService: SpotService) {
+              private spotService: SpotService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -39,6 +41,7 @@ export class MessageComponent implements OnInit, OnDestroy {
       this.message.ownerReaction = ReactionType.NEUTRAL;
     }
     this.reaction = new Reaction(this.message.ownerReactionId, this.message.id, this.message.ownerReaction, null);
+    this.subs.add(this.spotService.getSpotById(this.message.spotId).subscribe(spot => this.spot = spot));
   }
 
   ngOnDestroy(): void {
@@ -47,7 +50,7 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   public onSpot() {
     this.subs.add(this.spotService.getSpotById(this.message.spotId).subscribe(spot => this.spot = spot));
-    this.spotLink = 'locations/' + this.spot.location.id + '/spots/' + this.spot.id;
+    this.router.navigate(['locations', this.spot.location.id, 'spots', this.spot.id]);
   }
 
   public onUpVote(): void {
