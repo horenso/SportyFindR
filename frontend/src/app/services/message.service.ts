@@ -6,6 +6,7 @@ import {Globals} from '../global/globals';
 import {Page} from '../models/page.model';
 import {FilterMessage} from '../dtos/filter-message';
 import {MessagePage} from '../dtos/message-page';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -75,10 +76,9 @@ export class MessageService {
    */
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
     let time = filterMessage.time;
-    time = this.datePipe.transform(time, 'yyyy-MM-dd');
-    if (time == null) {
-      time = '1000-01-01';
-    }
+    const datePipe = new DatePipe('en-US');
+    time = datePipe.transform(time, 'yyyy-MM-dd');
+    
     const params = new HttpParams()
       .set('categoryMes', filterMessage.categoryMes.toString())
       .set('hashtag', filterMessage.hashtag.toString())

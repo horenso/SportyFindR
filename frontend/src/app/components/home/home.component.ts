@@ -22,8 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     public authService: AuthService,
     private sidebarService: SidebarService,
-    private router: Router,
-    private hashtagService: HashtagService) {
+    private router: Router) {
   }
 
   ngOnInit() {

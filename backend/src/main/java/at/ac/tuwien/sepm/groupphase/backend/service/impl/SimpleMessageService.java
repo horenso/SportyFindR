@@ -70,6 +70,8 @@ public class SimpleMessageService implements MessageService {
 
         List<Long> messageIdList = messageRepository.findBySpotIdOrderByPublishedAtAscLong(spotId);
 
+        var result = messageRepository.findByIdIn(null, pageable);
+
         return messageRepository.findByIdIn(messageIdList, pageable);
     }
 

@@ -1,6 +1,8 @@
+import { LatLng } from "leaflet";
+
 export interface FilterLocation {
-  categoryLoc: number;
-  latitude: number;
-  longitude: number;
-  radius: number;
+  coordinates?: LatLng;
+  radiusEnabled: boolean;
+  radius?: number;
+  categoryId?: number;
 }
