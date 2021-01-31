@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public class LocationValidator {
 
-    public List<Location> validateLocationDistance(Double latitude, Double longitude, Double radius, List<Location> locations) throws ValidationException {
+    public List<Location> validateLocationDistance(Double latitude, Double longitude, Double radius, List<Location> locations) {
 
         List<Location> result = new LinkedList<>();
 

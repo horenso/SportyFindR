@@ -45,7 +45,7 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public List<Location> find(LocationSearchObject locationSearchObject) throws ServiceException {
+    public List<Location> find(LocationSearchObject locationSearchObject) {
         log.debug("Searching for locations within a distance of at most " + locationSearchObject.getRadius() + " km, containing spots with category: " + locationSearchObject.getCategoryId());
         List<Location> locations;
         if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {    // if search parameters contain category data
@@ -53,15 +53,10 @@ public class SimpleLocationService implements LocationService {
         } else {
             locations = locationRepository.findAll();   // find all locations
         }
-        try {
-            if (locationSearchObject.getRadius() != null && locationSearchObject.getRadius() != 0) {      // if search parameters contain radius data
-                return validator.validateLocationDistance(locationSearchObject.getLatitude(), locationSearchObject.getLongitude(), locationSearchObject.getRadius(), locations);
-            } else {
-                return locations;       // search by category only or no filter at all
-            }
-        } catch (ValidationException e) {
-            throw new ServiceException(e.getMessage());
+        if (locationSearchObject.getRadius() != null && locationSearchObject.getRadius() != 0) {      // if search parameters contain radius data
+            return validator.validateLocationDistance(locationSearchObject.getLatitude(), locationSearchObject.getLongitude(), locationSearchObject.getRadius(), locations);
+        } else {
+            return locations; // search by category only or no filter at all
         }
     }
-
 }

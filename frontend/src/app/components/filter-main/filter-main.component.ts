@@ -122,7 +122,9 @@ export class FilterMainComponent implements OnInit, OnDestroy {
       categoryMes: this.messageForm.get('categoryMes').value,
       hashtag: this.hashtagSelection,
       user: this.userSelection,
-      time: this.messageForm.get('time').value
+      time: this.messageForm.get('time').value,
+      page: 0,
+      size: 10
     });
     this.sidebarService.changeVisibilityAndFocus({isVisible: true});
     this.sidebarActive = true;

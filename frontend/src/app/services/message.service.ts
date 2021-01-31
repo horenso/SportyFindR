@@ -7,6 +7,7 @@ import {Page} from '../models/page.model';
 import {FilterMessage} from '../dtos/filter-message';
 import {MessagePage} from '../dtos/message-page';
 import {DatePipe} from '@angular/common';
+import {filter} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -79,6 +80,8 @@ export class MessageService {
     let time = filterMessage.time;
     let hashtag = filterMessage.hashtag;
     let user = filterMessage.user;
+    const page = filterMessage.page;
+    const size = filterMessage.size;
 
     time = this.datePipe.transform(time, 'yyyy-MM-dd');
     if (time == null) {
@@ -95,7 +98,9 @@ export class MessageService {
       .set('categoryMes', filterMessage.categoryMes.toString())
       .set('hashtag', hashtag.toString())
       .set('user', user.toString())
-      .set('time', time.toString());
+      .set('time', time.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
     console.log(params.toString());
     return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }
