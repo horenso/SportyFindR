@@ -4,6 +4,8 @@ import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
@@ -24,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,8 +35,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,6 +73,8 @@ public class MessageEndpointTest implements TestData {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private SimpleUserMapper simpleUserMapper;
 
     private ApplicationUser user1;
     private ApplicationUser user2;
@@ -452,5 +457,32 @@ public class MessageEndpointTest implements TestData {
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertTrue(response.getContentAsString().contains("\"totalElements\":1"));
+    }
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
+    public void messageMustNotBeSpaces() {
+        MessageDto message = MessageDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(user1))
+            .content("       ")
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> messageEndpoint.create(message));
+        assertAll(
+            () -> assertEquals(0, messageRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Message content must not only consist of white space characters!\"")
+        );
+    }
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
+    public void messageMustNotExpireInThePast() {
+        MessageDto message = MessageDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(user1))
+            .content(MESSAGE_CONTENT)
+            .expirationDate(DATE_IN_THE_PAST)
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> messageEndpoint.create(message));
+        assertAll(
+            () -> assertEquals(0, messageRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Message expiration date must be in the future!\"")
+        );
     }
 }
