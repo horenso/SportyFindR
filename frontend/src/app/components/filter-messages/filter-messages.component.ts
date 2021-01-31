@@ -18,7 +18,7 @@ export class FilterMessagesComponent implements OnInit {
 
   private subs = new SubSink();
 
-  public messagePage: Message[];
+  public messageList: Message[] = [];
 
   constructor(private messageService: MessageService,
               private route: Router,

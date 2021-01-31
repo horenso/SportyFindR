@@ -17,4 +17,6 @@ public class CategoryDto {
 
     @Size(min = 1, max = 32, message = "Category name should be between 1 and 32 characters long")
     private String name;
+
+    private String icon;
 }
