@@ -53,12 +53,7 @@ public class LocationEndpoint {
 
         LocationSearchObject locationSearchObject = new LocationSearchObject(categoryLoc, latitude, longitude, radius);
 
-        try {
-            return locationMapper.entityToListDto(locationService.find(locationSearchObject));
-        } catch (ServiceException e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return locationMapper.entityToListDto(locationService.find(locationSearchObject));
 
     }
 
