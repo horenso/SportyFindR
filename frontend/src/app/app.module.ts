@@ -34,6 +34,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { FilterMessagesComponent } from './components/filter-messages/filter-messages.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import {DatePipe} from '@angular/common';
 
 
 const toastrSettings = {
@@ -81,7 +82,7 @@ const toastrSettings = {
     MatCheckboxModule,
     MatPaginatorModule,
   ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {

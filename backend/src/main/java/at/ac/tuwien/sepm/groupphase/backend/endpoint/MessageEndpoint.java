@@ -107,20 +107,21 @@ public class MessageEndpoint {
     }
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Filter messages by hashtag, time and category", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
         @PageableDefault(size = 20)
         @SortDefault.SortDefaults({
             @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
-        Pageable pageable,
+            Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
         @RequestParam(required = false) String hashtag,
-        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
+        @RequestParam(required = false, defaultValue = "0") String user,
+        @RequestParam(required = false, defaultValue = "1000-01-01") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&time=" + time);
+        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&user=" + user + "&time=" + time);
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, LocalDateTime.from(time));
-
+        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, user, time.atStartOfDay());
+        
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {

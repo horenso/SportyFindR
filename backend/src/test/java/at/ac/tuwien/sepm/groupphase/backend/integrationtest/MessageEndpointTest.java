@@ -15,7 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,6 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -45,6 +49,7 @@ public class MessageEndpointTest implements TestData {
     @Autowired private MessageRepository messageRepository;
     @Autowired private MessageEndpoint messageEndpoint;
     @Autowired private SpotRepository spotRepository;
+    @Autowired private HashtagRepository hashtagRepository;
     @Autowired private LocationRepository locationRepository;
     @Autowired private CategoryRepository categoryRepository;
     @Autowired private UserRepository userRepository;
@@ -110,6 +115,7 @@ public class MessageEndpointTest implements TestData {
 
     @AfterEach
     public void afterEach() {
+        hashtagRepository.deleteAll();
         messageRepository.deleteAll();
         spotRepository.deleteAll();
         locationRepository.deleteAll();
@@ -384,7 +390,72 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    public void filter() throws Exception {
+    @WithMockUser(roles = "ADMIN")
+    public void filterAllMessagesWithCategoryHashtagUserTime() throws Exception {
+        Category category = Category.builder()
+            .id(1L)
+            .name(CAT_NAME)
+            .build();
+        Location location = Location.builder()
+            .id(1L)
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        ApplicationUser user = ApplicationUser.builder()
+            .id(1L)
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name("owner")
+            .password(PASSWORD)
+            .build();
+        Spot spot = Spot.builder()
+            .id(1L)
+            .owner(user)
+            .name(NAME)
+            .location(location)
+            .category(category)
+            .build();
+        Message message = Message.builder()
+            .id(1L)
+            .owner(user)
+            .spot(spot)
+            .downVotes(ZERO)
+            .upVotes(ZERO)
+            .content(MESSAGE_CONTENT)
+            .publishedAt(DATE)
+            .build();
+        Message message2 = Message.builder()
+            .id(2L)
+            .owner(user)
+            .spot(spot)
+            .downVotes(ZERO)
+            .upVotes(ZERO)
+            .content(MESSAGE_CONTENT)
+            .publishedAt(DATE)
+            .build();
+        Hashtag hashtag = Hashtag.builder()
+            .id(1L)
+            .name("test")
+            .messagesList(Arrays.asList(message))
+            .spotsList(Arrays.asList(spot))
+            .build();
+        userRepository.save(user);
+        categoryRepository.save(category);
+        locationRepository.save(location);
+        spotRepository.save(spot);
+        messageRepository.save(message);
+        messageRepository.save(message2);
+        hashtagRepository.save(hashtag);
 
+        MvcResult mvcResult = this.mockMvc.perform(
+            get("/api/v1/messages/filter?categoryMes=1&hashtag=test&user=owner&time=1000-01-01")
+                .header(securityProperties.getAuthHeader(),
+                    jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
+            .andDo(print()).andReturn();
+
+        MockHttpServletResponse response = mvcResult.getResponse();
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertTrue(response.getContentAsString().contains("\"totalElements\":1"));
     }
 }

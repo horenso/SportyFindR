@@ -84,4 +84,13 @@ public interface UserService extends UserDetailsService {
      * @return true if user exists
      */
     boolean userExistsByEmail(String email);
+
+    /**
+     * Gets a user list by its name
+     *
+     * @param name of users to find
+     * @return the user list corresponding to that name
+     */
+    List<ApplicationUser> searchByName(String name);
+
 }

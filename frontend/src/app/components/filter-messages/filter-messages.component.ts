@@ -29,6 +29,7 @@ export class FilterMessagesComponent implements OnInit {
     this.subs.add(this.messageService.updateMessageFilterObservable.subscribe(change => {
       this.messageService.filterMessage({
         categoryMes: change.categoryMes,
+        user: change.user,
         hashtag: change.hashtag,
         time: change.time
       }).subscribe(

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
+import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.ReactionEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.SpotEndpoint;
@@ -11,16 +12,22 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
+import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.test.web.servlet.MockMvc;
+
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,6 +37,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -62,6 +71,13 @@ public class UserEndpointTest implements TestData {
     private MessageRepository messageRepository;
     @Autowired
     private ReactionRepository reactionRepository;
+    @Autowired
+    private JwtTokenizer jwtTokenizer;
+    @Autowired
+    private SecurityProperties securityProperties;
+    @Autowired
+    private MockMvc mockMvc;
+
 
     @AfterEach
     public void afterEach() {
@@ -511,4 +527,36 @@ public class UserEndpointTest implements TestData {
             () -> assertFalse(reactionRepository.findById(reactionDto2.getId()).isPresent())
         );
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void filterUsersByName() throws Exception {
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name("owner")
+            .password(PASSWORD)
+            .build();
+        ApplicationUser user2 = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name("loner")
+            .password(PASSWORD)
+            .build();
+
+        userRepository.save(user);
+
+        MvcResult mvcResult = this.mockMvc.perform(
+            get("/api/v1/users/filter?name=owner")
+                .header(securityProperties.getAuthHeader(),
+                    jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
+            .andDo(print()).andReturn();
+
+        MockHttpServletResponse response = mvcResult.getResponse();
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertTrue(response.getContentAsString().contains("\"id\":1,\"name\":\"owner\""));
+    }
+
+
 }

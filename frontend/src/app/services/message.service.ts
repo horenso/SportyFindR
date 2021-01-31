@@ -6,6 +6,7 @@ import {Globals} from '../global/globals';
 import {Page} from '../models/page.model';
 import {FilterMessage} from '../dtos/filter-message';
 import {MessagePage} from '../dtos/message-page';
+import {DatePipe} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class MessageService {
 
   constructor(
     private httpClient: HttpClient,
-    private globals: Globals) {
+    private globals: Globals,
+    private datePipe: DatePipe) {
   }
 
   /**
@@ -75,15 +77,21 @@ export class MessageService {
    */
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
     let time = filterMessage.time;
+    let hashtag = filterMessage.hashtag;
+    let user = filterMessage.user;
+
     time = this.datePipe.transform(time, 'yyyy-MM-dd');
-    if (time == null) {
-      time = '1000-01-01';
-    }
+    if (time == null) { time = '1000-01-01'; }
+    if (hashtag == null) { hashtag = ''; }
+    if (user == null) { user = ''; }
+
     const params = new HttpParams()
       .set('categoryMes', filterMessage.categoryMes.toString())
-      .set('hashtag', filterMessage.hashtag.toString())
+      .set('hashtag', hashtag.toString())
+      .set('user', user.toString())
       .set('time', time.toString());
     console.log(params.toString());
     return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }
+
 }

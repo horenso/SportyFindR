@@ -140,19 +140,15 @@ public class SimpleMessageService implements MessageService {
     public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
-
-        deleteExpiredMessages();
         if (messageSearchObject.getCategoryId() == null) {
             messageSearchObject.setCategoryId(0L);
         }
-
 
         if (messageSearchObject.getTime() == null) {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
-
-        if (messageSearchObject.getHashtagName() != null) {
+        if (messageSearchObject.getHashtagName() != null && !messageSearchObject.getHashtagName().equals("")) {
             String hashtagName = messageSearchObject.getHashtagName();
             Hashtag hashtag = hashtagService.getByName(hashtagName);
 
@@ -163,16 +159,14 @@ public class SimpleMessageService implements MessageService {
                 for (Message m : messageList){
                     messageIds.add(m.getId());
                 }
-
-                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
+                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageIds, pageable);
             } else {
                 throw new ServiceException("Invalid hashtag name.");
             }
-
         }
-
-        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
+        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), pageable);
     }
+
 
     private void deleteExpiredMessages() {
         List<Message> deletedExpiredMessages = messageRepository.deleteAllByExpirationDateBefore(LocalDateTime.now());
