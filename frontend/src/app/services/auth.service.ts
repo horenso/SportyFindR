@@ -24,6 +24,7 @@ export class AuthService {
     this.setUser();
     this.currentUser = this.currentUserSubject.asObservable();
   }
+
   /**
    * Login in the user. If it was successful, a valid JWT token will be stored
    * @param authRequest User data
@@ -38,6 +39,7 @@ export class AuthService {
         )
       );
   }
+
   private setUser(): void {
     if (this.getToken() != null) {
       this.currentUserSubject.next(jwt_decode(this.getToken()));
@@ -47,6 +49,7 @@ export class AuthService {
   public get currentUserEmail(): String {
     return this.currentUserSubject.value['sub'];
   }
+
   public get isUserAdmin(): Boolean {
     if (this.currentUserSubject.value['rol'].some(x => x === 'ROLE_ADMIN')) {
       return true;
