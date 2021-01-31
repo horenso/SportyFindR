@@ -61,6 +61,11 @@ public class HashtagEndpointTest implements TestData {
     @AfterEach
     public void afterEach(){
         hashtagRepository.deleteAll();
+        messageRepository.deleteAll();
+        spotRepository.deleteAll();
+        locationRepository.deleteAll();
+        categoryRepository.deleteAll();
+        userRepository.deleteAll();
     }
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -76,30 +81,29 @@ public class HashtagEndpointTest implements TestData {
     @WithMockUser(roles = "ADMIN")
     public void filterHashtagsByName() throws Exception {
         Category category = Category.builder()
-            .id(1L)
             .name(CAT_NAME)
             .build();
+        categoryRepository.save(category);
         Location location = Location.builder()
-            .id(1L)
             .latitude(LAT)
             .longitude(LONG)
             .build();
+        locationRepository.save(location);
         ApplicationUser user = ApplicationUser.builder()
-            .id(1L)
             .email(EMAIL)
             .enabled(ENABLED)
             .name("owner")
             .password(PASSWORD)
             .build();
+        userRepository.save(user);
         Spot spot = Spot.builder()
-            .id(1L)
             .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
             .build();
+        spotRepository.save(spot);
         Message message = Message.builder()
-            .id(1L)
             .owner(user)
             .spot(spot)
             .downVotes(ZERO)
@@ -107,25 +111,18 @@ public class HashtagEndpointTest implements TestData {
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
+        messageRepository.save(message);
         Hashtag hashtag = Hashtag.builder()
-            .id(1L)
             .name("test")
             .messagesList(Arrays.asList(message))
             .spotsList(Arrays.asList(spot))
             .build();
+        hashtagRepository.save(hashtag);
         Hashtag hashtag2 = Hashtag.builder()
-            .id(2L)
             .name("testomato")
             .messagesList(Arrays.asList(message))
             .spotsList(Arrays.asList(spot))
             .build();
-
-        userRepository.save(user);
-        categoryRepository.save(category);
-        locationRepository.save(location);
-        spotRepository.save(spot);
-        messageRepository.save(message);
-        hashtagRepository.save(hashtag);
         hashtagRepository.save(hashtag2);
 
 
@@ -138,7 +135,7 @@ public class HashtagEndpointTest implements TestData {
         MockHttpServletResponse response = mvcResult.getResponse();
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertTrue(response.getContentAsString().contains("\"id\":2,\"name\":\"testomato\""));
+        assertTrue(response.getContentAsString().contains("\"id\":"+hashtag2.getId()+",\"name\":\"testomato\""));
     }
 
 

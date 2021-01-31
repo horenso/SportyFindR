@@ -46,16 +46,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class MessageEndpointTest implements TestData {
 
-    @Autowired private MessageRepository messageRepository;
-    @Autowired private MessageEndpoint messageEndpoint;
-    @Autowired private SpotRepository spotRepository;
-    @Autowired private HashtagRepository hashtagRepository;
-    @Autowired private LocationRepository locationRepository;
-    @Autowired private CategoryRepository categoryRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private RoleRepository roleRepository;
-    @Autowired private SecurityProperties securityProperties;
-    @Autowired private JwtTokenizer jwtTokenizer;
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private MessageEndpoint messageEndpoint;
+    @Autowired
+    private SpotRepository spotRepository;
+    @Autowired
+    private HashtagRepository hashtagRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private SecurityProperties securityProperties;
+    @Autowired
+    private JwtTokenizer jwtTokenizer;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -393,62 +403,47 @@ public class MessageEndpointTest implements TestData {
     @WithMockUser(roles = "ADMIN")
     public void filterAllMessagesWithCategoryHashtagUserTime() throws Exception {
         Category category = Category.builder()
-            .id(1L)
             .name(CAT_NAME)
             .build();
+        categoryRepository.save(category);
         Location location = Location.builder()
-            .id(1L)
             .latitude(LAT)
             .longitude(LONG)
             .build();
-        ApplicationUser user = ApplicationUser.builder()
-            .id(1L)
-            .email(EMAIL)
-            .enabled(ENABLED)
-            .name("owner")
-            .password(PASSWORD)
-            .build();
+        locationRepository.save(location);
         Spot spot = Spot.builder()
-            .id(1L)
-            .owner(user)
+            .owner(user1)
             .name(NAME)
             .location(location)
             .category(category)
             .build();
+        spotRepository.save(spot);
         Message message = Message.builder()
-            .id(1L)
-            .owner(user)
+            .owner(user1)
             .spot(spot)
             .downVotes(ZERO)
             .upVotes(ZERO)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
+        messageRepository.save(message);
         Message message2 = Message.builder()
-            .id(2L)
-            .owner(user)
+            .owner(user1)
             .spot(spot)
             .downVotes(ZERO)
             .upVotes(ZERO)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
+        messageRepository.save(message2);
         Hashtag hashtag = Hashtag.builder()
-            .id(1L)
             .name("test")
             .messagesList(Arrays.asList(message))
             .spotsList(Arrays.asList(spot))
             .build();
-        userRepository.save(user);
-        categoryRepository.save(category);
-        locationRepository.save(location);
-        spotRepository.save(spot);
-        messageRepository.save(message);
-        messageRepository.save(message2);
         hashtagRepository.save(hashtag);
-
         MvcResult mvcResult = this.mockMvc.perform(
-            get("/api/v1/messages/filter?categoryMes=1&hashtag=test&user=owner&time=1000-01-01")
+            get("/api/v1/messages/filter?categoryMes="+category.getId()+"&hashtag="+hashtag.getName()+"&user="+user1.getName()+"&time=1000-01-01")
                 .header(securityProperties.getAuthHeader(),
                     jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
             .andDo(print()).andReturn();
