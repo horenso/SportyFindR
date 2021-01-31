@@ -46,11 +46,11 @@ export class AuthService {
     }
   }
 
-  public get currentUserEmail(): String {
+  public currentUserEmail(): String {
     return this.currentUserSubject.value['sub'];
   }
 
-  public get isUserAdmin(): Boolean {
+  public isUserAdmin(): Boolean {
     if (this.currentUserSubject.value['rol'].some(x => x === 'ROLE_ADMIN')) {
       return true;
     }

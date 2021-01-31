@@ -4,7 +4,13 @@
 
   <span class="spacer"></span>
 
-  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()" 
+  <a mat-raised-button color="accent" *ngIf="authService.isUserAdmin()&&this.router.url!='/user-admin'"
+     routerLink="/user-admin" routerLinkActive="active" style="margin-right:20px">User Management</a>
+
+  <a mat-raised-button color="accent" *ngIf="this.router.url=='/user-admin'"
+     routerLink="/" routerLinkActive="active" style="margin-right:20px">Back to Map</a>
+
+  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()"
     routerLink="/login" routerLinkActive="active">Login</a>
 
   <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
