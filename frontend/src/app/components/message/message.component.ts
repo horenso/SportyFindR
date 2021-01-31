@@ -21,8 +21,6 @@ export class MessageComponent implements OnInit, OnDestroy {
   author: string = ''; // in Version 3 the user name will be displayed
   reaction: Reaction;
 
-  alreadyReacted = false;
-
   private subs = new SubSink();
 
   constructor(private reactionService: ReactionService,

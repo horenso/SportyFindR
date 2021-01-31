@@ -6,6 +6,7 @@ import {Globals} from '../global/globals';
 import {Page} from '../models/page.model';
 import {FilterMessage} from '../dtos/filter-message';
 import {MessagePage} from '../dtos/message-page';
+import {DatePipe} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class MessageService {
 
   constructor(
     private httpClient: HttpClient,
-    private globals: Globals) {
+    private globals: Globals,
+    private datePipe: DatePipe) {
   }
 
   /**

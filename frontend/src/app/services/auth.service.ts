@@ -39,7 +39,9 @@ export class AuthService {
       );
   }
   private setUser(): void {
-    this.currentUserSubject.next(jwt_decode(this.getToken()));
+    if (this.getToken() != null) {
+      this.currentUserSubject.next(jwt_decode(this.getToken()));
+    }
   }
 
   public get currentUserEmail(): String {

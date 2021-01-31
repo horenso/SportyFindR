@@ -73,4 +73,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Transactional
     List<Message> deleteAllByExpirationDateBefore(LocalDateTime time);
+
+    Page<Message> findAllBySpotId(Long id, Pageable pageable);
 }

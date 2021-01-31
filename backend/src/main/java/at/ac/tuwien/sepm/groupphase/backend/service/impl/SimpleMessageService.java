@@ -50,7 +50,6 @@ public class SimpleMessageService implements MessageService {
         deleteExpiredMessages();
 
         List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
-        // TODO: THIS IS VERY INEFFICIENT!
         messageList.forEach(this::setReactions);
         return messageList;
     }
@@ -64,13 +63,7 @@ public class SimpleMessageService implements MessageService {
 
         deleteExpiredMessages();
 
-        List<Message> messageList = messageRepository.findBySpotIdOrderByPublishedAtAsc(spotId);
-        // TODO: THIS IS VERY INEFFICIENT!
-        messageList.forEach(this::setReactions);
-
-        List<Long> messageIdList = messageRepository.findBySpotIdOrderByPublishedAtAscLong(spotId);
-
-        Page<Message> result = messageRepository.findByIdIn(messageIdList, pageable);
+        Page<Message> result = messageRepository.findAllBySpotId(spotId, pageable);
         result.forEach(this::setReactions);
         return result;
     }
