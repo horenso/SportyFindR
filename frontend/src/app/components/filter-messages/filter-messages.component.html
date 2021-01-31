@@ -6,7 +6,7 @@
 </div>
 
 <div #messageArea class="sidebarScrollableSection messageArea">
-  <div *ngFor="let message of messages" class="message">
+  <div *ngFor="let message of messageList" class="message">
     <app-message
       [message]='message'></app-message>
   </div>

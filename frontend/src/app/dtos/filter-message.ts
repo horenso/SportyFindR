@@ -3,5 +3,6 @@ export interface FilterMessage {
   hashtag: string;
   user: string;
   time: string;
-
+  page: number;
+  size: number;
 }
