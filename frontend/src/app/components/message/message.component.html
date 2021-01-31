@@ -11,7 +11,7 @@
       <span id="expirationDate">here until {{message.expirationDate | messageDate}}</span>
     </div>
     <div id="bottomRow">
-      <div id="ratingButtons">
+      <div id="ratingButtons" *ngIf="canReact">
         <button mat-icon-button class="iconButton" (click)='onUpVote()'
           [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
@@ -19,9 +19,16 @@
           [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
         {{getDownVoteCountString()}}
       </div>
-      <button mat-icon-button class="iconButton" (click)='onDelete()' id="deleteButton" *ngIf="authService.currentUserEmail()==message.owner.email||authService.isUserAdmin()">
+      <div id="deleteButton" *ngIf="canDelete">
+      <button mat-icon-button class="iconButton" (click)='onDelete()' *ngIf="authService.currentUserEmail()==message.owner.email||authService.isUserAdmin()">
         <mat-icon>delete</mat-icon>
       </button>
+      </div>
+      <div id="spotButton" *ngIf="!canDelete">
+        <button mat-icon-button class="iconButton" routerLink="/locations/{{spot.location.id}}/spots/{{spot.id}}">
+          <mat-icon>location_on</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -1,13 +1,18 @@
-<div class="sidebarTopRow">
-  <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='onClose()'>
-    <mat-icon>close</mat-icon>
-  </button>
-  <div class="sidebarTitle">Message Filter</div>
-</div>
+<div class="inSidebar">
+  <div class="sidebarTopRow">
+    <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='onClose()'>
+      <mat-icon>close</mat-icon>
+    </button>
+    <div class="sidebarTitle">Message Filter</div>
+  </div>
 
-<div #messageArea class="sidebarScrollableSection messageArea">
-  <div *ngFor="let message of messageList" class="message">
-    <app-message
-      [message]='message'></app-message>
+  <div #messageArea class="sidebarScrollableSection messageArea">
+    <div *ngFor="let message of messageList" class="message">
+      <app-message
+        [message]='message'
+        [canReact]='false'
+        [canDelete]='false'
+      ></app-message>
+    </div>
   </div>
 </div>
