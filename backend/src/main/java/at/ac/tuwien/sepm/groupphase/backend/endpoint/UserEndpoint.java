@@ -1,12 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.NewUserDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SimpleUserDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.UserDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +34,7 @@ import java.util.Set;
 public class UserEndpoint {
     private final UserService userService;
     private final UserMapper userMapper;
+    private final SimpleUserMapper simpleUserMapper;
     private final RoleService roleService;
 
     @Secured("ROLE_ADMIN")
@@ -139,6 +143,15 @@ public class UserEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/filter")
+    @ApiOperation(value = "Get user list by name", authorizations = {@Authorization(value = "apiKey")})
+    public List<SimpleUserDto> searchByName(@RequestParam(required = false) String name) {
+        log.info("GET /api/v1/users/filter/{}", name);
+        return simpleUserMapper.entityToListDto(userService.searchByName(name));
+    }
+
 
     private Set<Role> enrichRoleSet(Set<Role> roles) throws NotFoundException2 {
         Set<Role> returnRoles = new HashSet<>();

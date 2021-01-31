@@ -27,6 +27,15 @@ public interface HashtagService {
     Hashtag getByName(String name);
 
     /**
+     * Gets a Hashtag list by its name
+     *
+     * @param name of hashtag to find
+     * @return the hashtag corresponding to that name
+     */
+    List<Hashtag> searchByName(String name);
+
+
+    /**
      * Create a Hashtag entry
      *
      * @param hashtag to create

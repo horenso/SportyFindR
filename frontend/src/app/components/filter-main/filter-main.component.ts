@@ -1,18 +1,19 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Category} from '../../dtos/category';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import { Observable, Subscription} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
 import {Router, UrlSerializer} from '@angular/router';
 import {MessageService} from '../../services/message.service';
 import {LocationService} from '../../services/location.service';
-import {Hashtag} from '../../dtos/hashtag';
 import {HashtagService} from '../../services/hashtag.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {MapService} from '../../services/map.service';
-import {map, startWith} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {SimpleHashtag} from '../../dtos/simpleHashtag';
+import {SimpleUser} from '../../dtos/simpleUser';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-filter-main',
@@ -23,6 +24,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
   hashtags: SimpleHashtag[];
+  users: SimpleUser[];
   radius: number = 0;
   strLoc: string;
   strMes: string;
@@ -34,9 +36,13 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   disabled = true;
 
-  filteredOptions: Observable<SimpleHashtag[]>;
-  myControl = new FormControl();
-  selection: string;
+  filteredHashtagOptions: Observable<SimpleHashtag[]>;
+  hashtagControl = new FormControl();
+  hashtagSelection: string;
+
+  filteredUserOptions: Observable<SimpleUser[]>;
+  userControl = new FormControl();
+  userSelection: string;
 
   sidebarActive: boolean = false;
   private subscription: Subscription;
@@ -48,6 +54,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
               private locationService: LocationService,
               private sidebarService: SidebarService,
               private mapService: MapService,
+              private userService: UserService,
               private notificationService: NotificationService,
               private serializer: UrlSerializer,
               private router: Router) {
@@ -61,6 +68,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
     this.messageForm = this.formBuilder.group({
       categoryMes: [''],
+      user: [''],
       hashtag: [''],
       time: ['']
     });
@@ -68,23 +76,32 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllCategories();
-    this.getAllHashtags();
     this.buildMessageForm();
     this.buildLocationForm();
 
     this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
       this.sidebarActive = change.isVisible;
     });
+
+    // Hashtag Filter
+    this.filteredHashtagOptions = this.hashtagControl.valueChanges
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap((str: string) => this.hashtagService.search(str))
+      );
+
+    // User Filter
+    this.filteredUserOptions = this.userControl.valueChanges
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap((str: string) => this.userService.search(str))
+      );
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  private _filter(name: string): SimpleHashtag[] {
-    const filterValue = name.toLowerCase();
-
-    return this.hashtags.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
   updateSetting(event) {
@@ -100,19 +117,26 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectedOption(event) {
-    this.selection = event.option.value;
-  }
-
   filterMes(): void {
     this.messageService.updateMessageFilter({
       categoryMes: this.messageForm.get('categoryMes').value,
-      hashtag: this.selection,
+      hashtag: this.hashtagSelection,
+      user: this.userSelection,
       time: this.messageForm.get('time').value
     });
     this.sidebarService.changeVisibilityAndFocus({isVisible: true});
     this.sidebarActive = true;
     this.router.navigate(['filter/messages']);
+  }
+
+  // Autocomplete Methods
+
+  selectedHashtagOption(event) {
+    this.hashtagSelection = event.option.value;
+  }
+
+  selectedUserOption(event) {
+    this.userSelection = event.option.value;
   }
 
   buildLocationForm(): void {
@@ -128,6 +152,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.messageForm = this.formBuilder.group({
       categoryMes: new FormControl(''),
       hashtag: new FormControl(''),
+      user: new FormControl(''),
       time: new FormControl('')
     });
   }
@@ -138,23 +163,6 @@ export class FilterMainComponent implements OnInit, OnDestroy {
         this.categories = result;
       }, error => {
         this.notificationService.error('Error loading categories!');
-        console.log(error);
-      }
-    );
-  }
-
-  getAllHashtags(): void {
-    this.hashtagService.getAll().subscribe(
-      result => {
-        this.hashtags = result;
-        this.filteredOptions = this.myControl.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => typeof value === 'string' ? value : value.name),
-            map(name => name ? this._filter(name) : this.hashtags.slice())
-          );
-      }, error => {
-        this.notificationService.error('Error loading hashtags!');
         console.log(error);
       }
     );

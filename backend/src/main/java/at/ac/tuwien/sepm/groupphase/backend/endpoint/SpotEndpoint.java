@@ -82,7 +82,7 @@ public class SpotEndpoint {
         log.info("PUT /api/v1/spots body: {}", spotDto);
         try {
             SpotDto updated = spotMapper.spotToSpotDto(
-                spotService.update(spotMapper.spotDtoToSpot(spotDto)));
+            spotService.update(spotMapper.spotDtoToSpot(spotDto)));
             log.info("{}", updated);
             return updated;
         } catch (WrongUserException | ValidationException e) {

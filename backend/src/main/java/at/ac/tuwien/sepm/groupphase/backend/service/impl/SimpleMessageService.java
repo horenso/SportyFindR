@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
@@ -145,19 +146,15 @@ public class SimpleMessageService implements MessageService {
     public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
-
-        deleteExpiredMessages();
         if (messageSearchObject.getCategoryId() == null) {
             messageSearchObject.setCategoryId(0L);
         }
-
 
         if (messageSearchObject.getTime() == null) {
             messageSearchObject.setTime(LocalDateTime.MIN);
         }
 
-
-        if (messageSearchObject.getHashtagName() != null) {
+        if (messageSearchObject.getHashtagName() != null && !messageSearchObject.getHashtagName().equals("")) {
             String hashtagName = messageSearchObject.getHashtagName();
             Hashtag hashtag = hashtagService.getByName(hashtagName);
 
@@ -168,16 +165,14 @@ public class SimpleMessageService implements MessageService {
                 for (Message m : messageList){
                     messageIds.add(m.getId());
                 }
-
-                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), messageIds, pageable);
+                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageIds, pageable);
             } else {
                 throw new ServiceException("Invalid hashtag name.");
             }
-
         }
-
-        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getTime(), pageable);
+        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), pageable);
     }
+
 
     private void deleteExpiredMessages() {
         List<Message> deletedExpiredMessages = messageRepository.deleteAllByExpirationDateBefore(LocalDateTime.now());
@@ -187,5 +182,16 @@ public class SimpleMessageService implements MessageService {
             });
         }
     }
+
+    @Override
+    public List<Message> findByOwner(Long userId) throws NotFoundException2 {
+        Optional<ApplicationUser> owner = this.userRepository.findById(userId);
+        if (owner.isPresent()) {
+            return this.messageRepository.findByOwner(owner.get());
+        } else {
+            throw new NotFoundException2("User with ID " + userId + " not found.");
+        }
+    }
+
 
 }

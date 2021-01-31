@@ -58,4 +58,6 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
     @Query(value = "SELECT DISTINCT r FROM Reaction r JOIN Message m ON m.id = r.message.id JOIN ApplicationUser u ON u.id = r.owner.id WHERE m.id = :message_id AND u.email= :owner_Email")
     Reaction getReactionByOwnerEmail(@Param("owner_Email") String ownerEmail,
                                       @Param("message_id") Long messageId);
+
+    List<Reaction> findByOwner(ApplicationUser owner);
 }

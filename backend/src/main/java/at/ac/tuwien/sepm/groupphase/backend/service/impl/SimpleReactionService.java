@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -81,5 +82,15 @@ public class SimpleReactionService implements ReactionService {
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(reaction.getMessage().getId());
         return reaction;
+    }
+
+    @Override
+    public List<Reaction> findReactionsByOwner(Long userId) throws NotFoundException2 {
+        Optional<ApplicationUser> owner = this.userRepository.findById(userId);
+        if (owner.isPresent()) {
+            return this.reactionRepository.findByOwner(owner.get());
+        } else {
+            throw new NotFoundException2("User with ID " + userId + " cannot be found.");
+        }
     }
 }

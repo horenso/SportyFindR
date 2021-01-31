@@ -34,7 +34,7 @@ export class MessageService {
     const params = new HttpParams()
       .set('spotId', spotId.toString())
       .set('page', page.toString())
-      .set('size', size.toString());
+      .set('size', size.toString())
     return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 
@@ -77,14 +77,24 @@ export class MessageService {
    */
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
     let time = filterMessage.time;
-    /**time = this.datePipe.transform(time, 'yyyy-MM-dd');
-    */
+    let hashtag = filterMessage.hashtag;
+    let user = filterMessage.user;
+
+    time = this.datePipe.transform(time, 'yyyy-MM-dd');
     if (time == null) {
       time = '1000-01-01';
     }
+    if (hashtag == null) {
+      hashtag = '';
+    }
+    if (user == null) {
+      user = '';
+    }
+
     const params = new HttpParams()
       .set('categoryMes', filterMessage.categoryMes.toString())
-      .set('hashtag', filterMessage.hashtag.toString())
+      .set('hashtag', hashtag.toString())
+      .set('user', user.toString())
       .set('time', time.toString());
     console.log(params.toString());
     return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});

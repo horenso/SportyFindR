@@ -1,8 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.*;
@@ -12,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,10 +59,15 @@ public class SimpleSpotService implements SpotService {
         if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
             throw new ValidationException("Location does not Exist");
         }
-        spot.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
-        Spot savedSpot = spotRepository.save(spot);
-        hashtagService.getHashtags(spot);
-        return savedSpot;
+        Optional<ApplicationUser> owner = userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (owner.isEmpty()) {
+            throw new ValidationException("User not present!");
+        } else {
+            spot.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
+            Spot savedSpot = spotRepository.save(spot);
+            hashtagService.getHashtags(spot);
+            return savedSpot;
+        }
     }
 
     @Override
@@ -135,5 +138,15 @@ public class SimpleSpotService implements SpotService {
             throw new NotFoundException2("Spot with ID " + spotId + " cannot be found!");
         }
         return spotOptional.get();
+    }
+
+    @Override
+    public List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2 {
+        Optional<ApplicationUser> owner = this.userRepository.findApplicationUserById(userId);
+        if (owner.isPresent()) {
+            return this.spotRepository.findByOwner(owner.get());
+        } else {
+            throw new NotFoundException2("User with ID " + userId + " cannot be found!");
+        }
     }
 }

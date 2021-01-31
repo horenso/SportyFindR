@@ -72,16 +72,6 @@
             </mat-form-field>
           </mat-list-item>
 
-          <!-- Username
-          <mat-list-item id="user-item">
-            <mat-form-field appearance="outline">
-              <mat-label>Username</mat-label>
-              <label for="user"></label>
-              <input id="user" formControlName="user" matInput>
-            </mat-form-field>
-          </mat-list-item>
-          -->
-
           <!-- Hashtag -->
           <mat-list-item id="hashtag-item">
             <mat-form-field appearance="outline">
@@ -91,15 +81,35 @@
                      type="text"
                      matInput
                      formControlName="hashtag"
-                     [formControl]="myControl"
-                     [matAutocomplete]="auto">
-              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectedOption($event)">
-                <mat-option *ngFor="let hashtag of filteredOptions | async" [value]="hashtag.name">
+                     [formControl]="hashtagControl"
+                     [matAutocomplete]="autoHashtag">
+              <mat-autocomplete autoActiveFirstOption #autoHashtag="matAutocomplete" (optionSelected)="selectedHashtagOption($event)">
+                <mat-option *ngFor="let hashtag of filteredHashtagOptions | async" [value]="hashtag.name">
                   {{hashtag.name}}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
           </mat-list-item>
+
+          <!-- Username -->
+          <mat-list-item id="user-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <label for="User"></label>
+              <input id="User"
+                     type="text"
+                     matInput
+                     formControlName="user"
+                     [formControl]="userControl"
+                     [matAutocomplete]="autoUser">
+              <mat-autocomplete autoActiveFirstOption #autoUser="matAutocomplete" (optionSelected)="selectedUserOption($event)">
+                <mat-option *ngFor="let user of filteredUserOptions | async" [value]="user.name">
+                  {{user.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </mat-list-item>
+
 
           <!-- Date -->
           <mat-list-item id="date-item">

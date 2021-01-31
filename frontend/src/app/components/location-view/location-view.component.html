@@ -12,7 +12,7 @@
       class="spotButton"
       mat-flat-button
       color="primary"
-      (click)='onSelectedSpot(spot)'><mat-icon class="spot-icon">sports_basketball</mat-icon>{{spot.name}}</button>
+      (click)='onSelectedSpot(spot)'><mat-icon class="spot-icon">{{spot.category.icon ? spot.category.icon : "wc"}}</mat-icon>{{spot.name}}</button>
   </div>
 </div>
 

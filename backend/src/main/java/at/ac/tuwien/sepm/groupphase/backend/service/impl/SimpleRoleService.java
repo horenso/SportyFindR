@@ -73,8 +73,19 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException2 {
+    public void deleteById(Long id) throws NotFoundException2, ValidationException {
         if (roleExistsById(id)) {
+            Role role = this.getById(id);
+            List<ApplicationUser> userList = this.userService.getApplicationUserByRoleId(id);
+            for (ApplicationUser user : userList) {
+                user.getRoles().remove(role);
+                try {
+                    this.userService.update(user);
+                } catch (ValidationException e) {
+                    throw new ValidationException("Error deleting role from user " + user.getId() + ". " + e.getMessage(),e.getCause());
+                }
+            }
+
             this.roleRepository.deleteById(id);
         } else {
             throw new NotFoundException2("Role cannot be found.");
@@ -82,13 +93,15 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
-    public void deleteByName(String name) throws NotFoundException2 {
+    public void deleteByName(String name) throws NotFoundException2, ValidationException {
         if (roleExistsByName(name)) {
             try {
                 Role role = this.findRoleByName(name);
                 this.deleteById(role.getId());
             } catch (NotFoundException2 exc) {
                 throw new NotFoundException2("Role cannot be found.", exc);
+            } catch (ValidationException e) {
+                throw e;
             }
         } else {
             throw new NotFoundException2("Role cannot be found.");

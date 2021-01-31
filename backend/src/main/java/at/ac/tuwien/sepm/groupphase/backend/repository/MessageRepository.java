@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -47,8 +49,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @return List of messages that match the filter criteria
      */
     @EntityGraph("message-with-spots-and-owner")
-    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt >= :time")
+    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND (m.owner.name LIKE :user OR :user LIKE '0') AND m.publishedAt >= :time")
     Page<Message> filter(@Param("cat") Long categoryId,
+                         @Param("user") String user,
                          @Param("time") LocalDateTime time,
                          Pageable pageable);
 
@@ -61,15 +64,25 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @return Page of messages that match the filter criteria
      */
     @EntityGraph("message-with-spots-and-owner")
-    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND m.publishedAt >= :time AND m.id IN :list")
+    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND (m.owner.name LIKE :user OR :user = '0') AND m.publishedAt >= :time AND m.id IN :list")
     Page<Message> filterHash(@Param("cat") Long categoryId,
+                             @Param("user") String user,
                              @Param("time") LocalDateTime time,
                              @Param("list") List<Long> messageIds,
                              Pageable pageable);
 
+
     List<Message> findAllBySpot_Id(Long spotId);
 
     Page<Message> findByIdIn(List<Long> ids, Pageable pageable);
+
+    /**
+     * finds all Messages owned by the user
+     * @param user that owns the messages
+     * @return List of messages owned by that user
+     * @throws NotFoundException2 if the User cannot be
+     */
+    List<Message> findByOwner(ApplicationUser user) throws NotFoundException2;
 
     @Transactional
     List<Message> deleteAllByExpirationDateBefore(LocalDateTime time);

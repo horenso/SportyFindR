@@ -43,6 +43,11 @@ public class  CategoryEndpoint {
     @ApiOperation(value = "Create a new category", authorizations = {@Authorization(value = "apiKey")})
     public CategoryDto create(@Valid @RequestBody CategoryDto categoryDto) {
         log.info("POST /api/v1/categories body: {}", categoryDto);
+
+        if (categoryDto.getIcon() == null || categoryDto.getIcon().equals("")) {
+            categoryDto.setIcon("wc");
+        }
+
         try {
             return categoryMapper.categoryToCategoryDto(
                 categoryService.create(categoryMapper.categoryDtoToCategory(categoryDto)));

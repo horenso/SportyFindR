@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -118,4 +119,15 @@ public class SimpleHashtagService implements HashtagService {
        log.debug("Get all hashtags.");
         return hashtagRepository.findAll();
     }
+
+    @Override
+    public List<Hashtag> searchByName(String name) {
+
+        if (name == null || name.equals("")) {
+            return Collections.emptyList();
+        }
+
+        return hashtagRepository.searchByName(name);
+    }
+
 }
