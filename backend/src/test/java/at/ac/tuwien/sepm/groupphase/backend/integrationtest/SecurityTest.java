@@ -135,7 +135,7 @@ public class SecurityTest implements TestData {
 
     @Test
     public void givenUserLoggedIn_whenFindAll_then200() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_BASE_URI + "?spot=" + id)
+        MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_BASE_URI + "?spotId=" + id)
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andReturn();

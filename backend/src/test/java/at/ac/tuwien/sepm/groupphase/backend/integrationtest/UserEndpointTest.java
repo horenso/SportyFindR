@@ -98,7 +98,7 @@ public class UserEndpointTest implements TestData {
             .email("hallo@welt.net")
             .enabled(true)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         assertAll(
             () -> assertEquals(userDto.getName(), createdUser.getName()),
@@ -122,7 +122,7 @@ public class UserEndpointTest implements TestData {
             .roleId(null)
             .enabled(true)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         assertAll(
             () -> assertEquals(userDto.getName(), createdUser.getName()),
@@ -152,7 +152,7 @@ public class UserEndpointTest implements TestData {
             .enabled(true)
             .roleIds(roleList)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         assertAll(
             () -> assertEquals(userDto.getName(), createdUser.getName()),
@@ -175,7 +175,7 @@ public class UserEndpointTest implements TestData {
             .email("hallo@welt.net")
             .enabled(true)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         userEndpoint.deleteUserById(createdUser.getId());
         Optional<ApplicationUser> deletedUser = userRepository.findApplicationUserById(createdUser.getId());
@@ -200,7 +200,7 @@ public class UserEndpointTest implements TestData {
             .enabled(true)
             .roleIds(roleList)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         userEndpoint.deleteUserById(createdUser.getId());
         Optional<ApplicationUser> deletedUser = userRepository.findApplicationUserById(createdUser.getId());
@@ -220,7 +220,7 @@ public class UserEndpointTest implements TestData {
             .email("hallo@welt.net")
             .enabled(true)
             .build();
-        ApplicationUser createdUser =  userRepository.save(user);
+        ApplicationUser createdUser = userRepository.save(user);
         UserDto foundUser = userEndpoint.getOneById(createdUser.getId());
         assertAll(
             () -> assertEquals(user.getName(), foundUser.getName()),
@@ -240,7 +240,7 @@ public class UserEndpointTest implements TestData {
             .email("hallo@welt.net")
             .enabled(true)
             .build();
-        ApplicationUser createdUser =  userRepository.save(user);
+        ApplicationUser createdUser = userRepository.save(user);
         UserDto foundUser = userEndpoint.getOneByEmail(createdUser.getEmail());
         assertAll(
             () -> assertEquals(user.getName(), foundUser.getName()),
@@ -260,7 +260,7 @@ public class UserEndpointTest implements TestData {
             .email("hallo@welt.net")
             .enabled(true)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         assertAll(
             () -> assertEquals(userDto.getName(), createdUser.getName()),
@@ -274,7 +274,7 @@ public class UserEndpointTest implements TestData {
         );
         createdUser.setEmail("hallo@neuewelt.net");
         createdUser.setName("Neuer TestUser");
-        UserDto changedUser =  userEndpoint.update(createdUser);
+        UserDto changedUser = userEndpoint.update(createdUser);
         ApplicationUser changedFoundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         assertAll(
             () -> assertEquals(createdUser.getName(), changedUser.getName()),
@@ -297,14 +297,14 @@ public class UserEndpointTest implements TestData {
             .email("hallo@welt1.net")
             .enabled(true)
             .build();
-        UserDto createdUser1 =  userEndpoint.create(userDto1);
+        UserDto createdUser1 = userEndpoint.create(userDto1);
         NewUserDto userDto2 = NewUserDto.builder()
             .name("TestUser2")
             .password("1234567")
             .email("hallo@welt2.net")
             .enabled(true)
             .build();
-        UserDto createdUser2 =  userEndpoint.create(userDto2);
+        UserDto createdUser2 = userEndpoint.create(userDto2);
         List<UserDto> foundUsers = userEndpoint.getAll();
         assertAll(
             () -> assertThat(foundUsers, hasItems(createdUser1)),
@@ -329,7 +329,7 @@ public class UserEndpointTest implements TestData {
             .enabled(true)
             .roleIds(roleList)
             .build();
-        UserDto createdUser1 =  userEndpoint.create(userDto1);
+        UserDto createdUser1 = userEndpoint.create(userDto1);
         NewUserDto userDto2 = NewUserDto.builder()
             .name("TestUser2")
             .password("1234567")
@@ -337,7 +337,7 @@ public class UserEndpointTest implements TestData {
             .enabled(true)
             .roleIds(roleList)
             .build();
-        UserDto createdUser2 =  userEndpoint.create(userDto2);
+        UserDto createdUser2 = userEndpoint.create(userDto2);
         List<UserDto> foundUsers = userEndpoint.getUsersByRole(savedRole.getId());
         assertAll(
             () -> assertThat(foundUsers, hasItems(createdUser1)),
@@ -427,15 +427,15 @@ public class UserEndpointTest implements TestData {
             .email(EMAIL)
             .enabled(ENABLED)
             .build();
-        UserDto createdUser =  userEndpoint.create(userDto);
+        UserDto createdUser = userEndpoint.create(userDto);
 
         NewUserDto pUserDto = NewUserDto.builder()
             .name("PersistentUser")
             .password("1234567")
             .email("persistent@welt.net")
-            .enabled(true)
+            .enabled(ENABLED)
             .build();
-        UserDto pCreatedUser =  userEndpoint.create(pUserDto);
+        UserDto pCreatedUser = userEndpoint.create(pUserDto);
 
         ApplicationUser foundUser = userRepository.findApplicationUserById(createdUser.getId()).get();
         ApplicationUser pFoundUser = userRepository.findApplicationUserById(pCreatedUser.getId()).get();
@@ -488,11 +488,11 @@ public class UserEndpointTest implements TestData {
         reactionDto.setId(reactionEndpoint.create(reactionDto).getId());
 
         ReactionDto reactionDto2 = ReactionDto.builder()
-            .owner(simpleUserMapper.userToSimpleUserDto(foundUser))
+            .owner(simpleUserMapper.userToSimpleUserDto(pFoundUser))
             .messageId(pMessage.getId())
             .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
             .build();
-        reactionDto2.setId(reactionEndpoint.create(reactionDto).getId());
+        reactionDto2.setId(reactionEndpoint.create(reactionDto2).getId());
 
 
         ApplicationUser assertFoundUser = userRepository.findApplicationUserByName(createdUser.getName()).get();
@@ -553,9 +553,10 @@ public class UserEndpointTest implements TestData {
             .andDo(print()).andReturn();
 
         MockHttpServletResponse response = mvcResult.getResponse();
-
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertTrue(response.getContentAsString().contains("\"id\":1,\"name\":\"owner\""));
+        assertAll(
+            () -> assertEquals(HttpStatus.OK.value(), response.getStatus()),
+            () -> assertTrue(response.getContentAsString().contains("\"id\":"+user.getId()+",\"name\":\"owner\""))
+        );
     }
 
 
