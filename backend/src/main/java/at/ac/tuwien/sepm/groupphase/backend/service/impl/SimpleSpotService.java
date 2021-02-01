@@ -75,9 +75,14 @@ public class SimpleSpotService implements SpotService {
         var optionalSpot = spotRepository.findById(spot.getId());
         if (optionalSpot.isEmpty()){
             throw new NotFoundException2("Spot does not Exist");
-        }else if (!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-            throw new WrongUserException("You can only edit your own spots");
         }else{
+            if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
+                if(optionalSpot.get().getOwner()==null){
+                    throw new WrongUserException("You can only edit your own spots");
+                }else if(!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+                    throw new WrongUserException("You can only edit your own spots");
+                }
+            }
             spot.setOwner(optionalSpot.get().getOwner());
         }
         if (spot.getCategory().getId() == null) {
@@ -99,8 +104,12 @@ public class SimpleSpotService implements SpotService {
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
-        }else if (!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-            throw new WrongUserException("You can only delete your own spots");
+        }else if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
+            if(spot.get().getOwner()==null){
+                throw new WrongUserException("You can only edit your own spots");
+            }else if(!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+                throw new WrongUserException("You can only edit your own spots");
+            }
         }
         try {
             List<Message> messages = messageService.findBySpot(id);
