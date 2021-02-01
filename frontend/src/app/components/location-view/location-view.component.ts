@@ -25,7 +25,7 @@ export class LocationViewComponent implements OnInit, OnDestroy {
   constructor(
     private spotService: SpotService,
     private sidebarService: SidebarService,
-    private route: Router,
+    private router: Router,
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService) {
   }
@@ -55,16 +55,16 @@ export class LocationViewComponent implements OnInit, OnDestroy {
   }
 
   onClose(): void {
-    this.route.navigate(['..']);
+    this.router.navigate(['..']);
     this.sidebarService.markerLocation?.changeIcon(IconType.Default);
     this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 
   onSelectedSpot(spot: Spot) {
-    this.route.navigate(['locations', this.locationId, 'spots', spot.id]);
+    this.router.navigate(['locations', this.locationId, 'spots', spot.id]);
   }
 
   onCreateSpot() {
-    this.route.navigate(['locations', this.locationId, 'spots', 'new']);
+    this.router.navigate(['locations', this.locationId, 'spots', 'new']);
   }
 }

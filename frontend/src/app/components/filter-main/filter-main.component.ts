@@ -82,8 +82,8 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.mapService.updateFilterLocation({
       categoryId: this.locationForm.value.categoryId,
       radius: radius,
-      radiusEnabled: this.locationForm.value.radiusEnabled
-    });
+      radiusEnabled: this.locationForm.value.radiusEnabled,
+      radiusBuffered: false});
   }
 
   filterMes(): void {
@@ -146,7 +146,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.locationForm.controls['radius'].disable();
     this.locationForm.controls['radius'].setValue(this.minDistance);
     this.mapService.updateFilterLocation({
-      categoryId: null, radiusEnabled: false, radius: null, coordinates: null
+      categoryId: null, radiusEnabled: false, radius: null, coordinates: null, radiusBuffered: false
     });
   }
 

@@ -6,9 +6,7 @@ import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.se
 import {MLocation} from '../../util/m-location';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
-import { FilterLocation } from 'src/app/dtos/filter-location';
-import { TileStyler } from '@angular/material/grid-list/tile-styler';
-import { filter } from 'lodash';
+import {FilterLocation} from 'src/app/dtos/filter-location';
 
 @Component({
   selector: 'app-map',
@@ -23,7 +21,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private circle: Circle;
 
-  private filter: FilterLocation = {radiusEnabled: false};
+  private filter: FilterLocation = {radiusEnabled: false, radiusBuffered: false};
+  private isFilterBuffered: boolean = false;
 
   map: Map;
   leafletOptions = {
@@ -82,9 +81,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapService.map = map;
 
     this.filter = this.filterLocationFromMapView();
-
-    console.log('INIT FILTER');
-    console.log(this.filter);
+    this.filter.radiusBuffered = true;
 
     this.getLocationsAndConvertToLayerGroup();
     this.subs.add(this.mapService.addMarkerObservable.subscribe(markerLocation => {
@@ -117,37 +114,35 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     const newFilter = this.filterLocationFromMapView();
 
-    const isNewFilterWithinCurrentFilter: boolean =
-      (this.filter.coordinates.distanceTo(newFilter.coordinates) + newFilter.radius) < this.filter.radius;
-
-    if (!isNewFilterWithinCurrentFilter) {
+    if (!this.isNewFilterWithinCurrentFilter(newFilter)) {
       console.log('New filter:');
       console.log(this.filter);
       const oldCategoryId = this.filter.categoryId;
       this.filter = newFilter;
       newFilter.categoryId = oldCategoryId;
+      this.isFilterBuffered = false;
       this.getLocationsAndConvertToLayerGroup();
     }
   }
 
-  private onFilterChanged(newFilter: FilterLocation): void {
+  private onFilterChanged(change: FilterLocation): void {
     console.log('New filter received:');
-    console.log(newFilter);
+    console.log(change);
 
     let drawCircles = false;
     let reloadRequired = false;
 
-    if (this.filter.categoryId !== newFilter.categoryId) {
-      this.filter.categoryId = newFilter.categoryId;
-      reloadRequired = this.filter.categoryId != null;
+    if (this.filter.categoryId !== change.categoryId) {
+      this.filter.categoryId = change.categoryId;
+      reloadRequired = true;
       console.log('BLABLA: ' + reloadRequired);
-      console.log('newFilter.radiusEnabled:' + newFilter.radiusEnabled);
+      console.log('newFilter.radiusEnabled:' + change.radiusEnabled);
     }
-    if (newFilter.radiusEnabled) {
+    if (change.radiusEnabled) {
       drawCircles = true;
       if (this.filter.radiusEnabled 
         && !reloadRequired
-        && this.filter.radius === newFilter.radius
+        && this.filter.radius === change.radius
         && this.filter.coordinates.distanceTo(this.map.getCenter()) < 20) {
 
         console.log('filter is the same as the previous filter.');
@@ -156,12 +151,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
       reloadRequired = true;
       this.filter.radiusEnabled = true;
-      this.filter.radius = newFilter.radius;
+      this.filter.radius = change.radius;
       this.filter.coordinates = this.map.getCenter();
     } else if (this.filter.radiusEnabled) {
       reloadRequired = true;
       this.filter.radiusEnabled = true;
       this.filter.radius = this.filterLocationFromMapView().radius;
+    } else { // radiusEnabled was disabled and is still disabled
+      const filterFromMapV = this.filterLocationFromMapView(); 
+      reloadRequired = reloadRequired || !this.isNewFilterWithinCurrentFilter(filterFromMapV);
     }
 
     if (reloadRequired) {
@@ -186,7 +184,8 @@ export class MapComponent implements OnInit, OnDestroy {
     return {
       coordinates: center,
       radius: radius,
-      radiusEnabled: false
+      radiusEnabled: false,
+      radiusBuffered: false,
     }
   }
 
@@ -194,13 +193,11 @@ export class MapComponent implements OnInit, OnDestroy {
     if (!this.filter.radiusEnabled) {
       this.addBufferToFilterRadius();
     }
-    console.log('get new locations');
     this.subs.add(this.locationService.filterLocation(this.filter).subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();
         console.log(result);
-        console.log('received new locations');
       },
       error => {
         console.log('Error retrieving locations from backend: ', error);
@@ -236,7 +233,21 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addBufferToFilterRadius(): void {
-    this.filter.radius += 5000;
+    console.log('add buffer');
+    if (!this.isFilterBuffered) {
+      const center: LatLng = this.map.getCenter();
+      const northEast: LatLng = this.map.getBounds().getNorthEast();
+      const buffer = center.distanceTo(northEast) / 2;
+      this.filter.radius += buffer;
+      this.isFilterBuffered = true;
+    }
+  }
+
+  private isNewFilterWithinCurrentFilter(newFilter: FilterLocation): boolean {
+    let distance = this.filter.coordinates.distanceTo(newFilter.coordinates) + newFilter.radius;
+    let result = distance < this.filter.radius;
+    console.log("isNewFilterWithinCurrentFilter:" + result);
+    return result;
   }
 
   private changeVisibilityAndFocus(change: VisibilityFocusChange): void {
