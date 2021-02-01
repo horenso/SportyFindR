@@ -67,12 +67,19 @@ export class LocationService {
    * @param filterLocation containing the search parameters
    */
   filterLocation(filterLocation: FilterLocation): Observable<MLocation[]> {
-    const params = new HttpParams()
-      .set('categoryLoc', filterLocation.categoryLoc.toString())
-      .set('latitude', filterLocation.latitude.toString())
-      .set('longitude', filterLocation.longitude.toString())
-      .set('radius', filterLocation.radius.toString());
-    console.log(params.toString());
+    let params = new HttpParams();
+
+    if (filterLocation.categoryId != null) {
+      params = params.set('categoryId', filterLocation.categoryId.toString());
+    }
+    if (filterLocation.coordinates != null) {
+      params = params.set('latitude', filterLocation.coordinates.lat.toString());
+      params = params.set('longitude', filterLocation.coordinates.lng.toString());
+    }
+    if (filterLocation.radius != null) {
+      params = params.set('radius', filterLocation.radius.toString());
+    }
+    console.log('Loading locations with params: ' + params.toString());
     return this.httpClient.get<Location[]>(`${this.locationBaseUri}`, {params: params}).pipe(
       map(
         value => this.translateToMarkerLocations(value)

@@ -25,16 +25,16 @@ import {PageNotFoundComponent} from './components/page-not-found/page-not-found.
 import {EditSpotComponent} from './components/edit-spot/edit-spot.component';
 import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-with-hashtags.component';
 import {MaterialModule} from './material/material.module';
-import { HashtagComponent } from './components/hashtag/hashtag.component';
+import {HashtagComponent} from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
-import { FilterMainComponent } from './components/filter-main/filter-main.component';
-import { UserManagerComponent } from './components/user-manager/user-manager.component';
+import {FilterMainComponent} from './components/filter-main/filter-main.component';
+import {UserManagerComponent} from './components/user-manager/user-manager.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
-import { FilterMessagesComponent } from './components/filter-messages/filter-messages.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import {DatePipe} from '@angular/common';
+import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {DistancePipe} from './pipes/distance.pipe';
 
 
 const toastrSettings = {
@@ -65,7 +65,8 @@ const toastrSettings = {
     UserManagerComponent,
     HashtagComponent,
     FilterMainComponent,
-    FilterMessagesComponent
+    FilterMessagesComponent,
+    DistancePipe
   ],
   imports: [
     BrowserModule,

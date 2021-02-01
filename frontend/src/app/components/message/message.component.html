@@ -1,7 +1,7 @@
 <div id="messageRow">
   <div id="messageBody" class = "{{authService.currentUserEmail()==message.owner.email? 'youMessage' : 'themMessage'}}">
     <div id="titleRow">
-      <div id="author"><b>{{message.owner.name}}</b></div>
+      <div id="author">{{message.owner.name}}</div>
       <div id="date">{{message.publishedAt | messageDate}}</div>
     </div>
     <div id="contentRow">

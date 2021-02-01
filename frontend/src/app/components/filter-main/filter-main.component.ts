@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Category} from '../../dtos/category';
-import { Observable, Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
-import {Router, UrlSerializer} from '@angular/router';
+import {Router} from '@angular/router';
 import {MessageService} from '../../services/message.service';
 import {LocationService} from '../../services/location.service';
 import {HashtagService} from '../../services/hashtag.service';
@@ -47,31 +47,18 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   sidebarActive: boolean = false;
   private subscription: Subscription;
 
-  constructor(private formBuilder: FormBuilder,
-              private categoryService: CategoryService,
-              private messageService: MessageService,
-              private hashtagService: HashtagService,
-              private locationService: LocationService,
-              private sidebarService: SidebarService,
-              private mapService: MapService,
-              private userService: UserService,
-              private notificationService: NotificationService,
-              private serializer: UrlSerializer,
-              private router: Router) {
+  public minDistance: number = 800;
+  public maxDistance: number = 10000;
 
-    this.locationForm = this.formBuilder.group({
-      categoryLoc: [''],
-      latitude: [''],
-      longitude: [''],
-      radius: [''],
-    });
-
-    this.messageForm = this.formBuilder.group({
-      categoryMes: [''],
-      user: [''],
-      hashtag: [''],
-      time: ['']
-    });
+  constructor(
+    private formBuilder: FormBuilder,
+    private categoryService: CategoryService,
+    private messageService: MessageService,
+    private hashtagService: HashtagService,
+    private sidebarService: SidebarService,
+    private mapService: MapService,
+    private notificationService: NotificationService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -104,17 +91,22 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  updateSetting(event) {
-    this.radius = event.value;
+  private _filter(name: string): SimpleHashtag[] {
+    const filterValue = name.toLowerCase();
+
+    return this.hashtags.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
   filterLoc(): void {
-    this.mapService.updateFilter({
-      categoryLoc: this.locationForm.get('categoryLoc').value,
-      latitude: null,
-      longitude: null,
-      radius: this.radius
-    });
+    let radius = this.locationForm.value.radius;
+    if (isNaN(radius)) {
+      radius = null;
+    }
+    this.mapService.updateFilterLocation({
+      categoryId: this.locationForm.value.categoryId,
+      radius: radius,
+      radiusEnabled: this.locationForm.value.radiusEnabled,
+      radiusBuffered: false});
   }
 
   filterMes(): void {
@@ -143,19 +135,17 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   buildLocationForm(): void {
     this.locationForm = this.formBuilder.group({
-      categoryLoc: new FormControl(''),
-      latitude: new FormControl(''),
-      longitude: new FormControl(''),
-      radius: new FormControl('')
+      categoryId: [null],
+      radius: [{value: this.minDistance, disabled: true}],
+      radiusEnabled: [false]
     });
   }
 
   buildMessageForm(): void {
     this.messageForm = this.formBuilder.group({
-      categoryMes: new FormControl(''),
-      hashtag: new FormControl(''),
-      user: new FormControl(''),
-      time: new FormControl('')
+      categoryMes: [''],
+      hashtag: [''],
+      time: [''],
     });
   }
 
@@ -170,12 +160,24 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     );
   }
 
+  resetLocationFilter(): void {
+    this.locationForm.reset();
+    this.locationForm.controls['radius'].disable();
+    this.locationForm.controls['radius'].setValue(this.minDistance);
+    this.mapService.updateFilterLocation({
+      categoryId: null, radiusEnabled: false, radius: null, coordinates: null, radiusBuffered: false
+    });
+  }
+
   onSidebarActive(sidebarActive: boolean) {
     this.sidebarActive = sidebarActive;
   }
 
-  changeState() {
-    this.disabled = !this.disabled;
-    this.radius = 0;
+  toggleIncludeRadius() {
+    if (this.locationForm.controls.radius.enabled) {
+      this.locationForm.controls.radius.disable();
+    } else {
+      this.locationForm.controls.radius.enable();
+    }
   }
 }

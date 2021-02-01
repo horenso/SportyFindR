@@ -10,10 +10,8 @@ import lombok.*;
 @EqualsAndHashCode
 @Builder
 public class LocationSearchObject {
-
     Long categoryId;
     Double latitude;
     Double longitude;
     Double radius;
-
 }

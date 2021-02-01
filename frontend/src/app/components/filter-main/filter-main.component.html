@@ -17,8 +17,8 @@
             <mat-form-field appearance="outline">
               <mat-label>Category</mat-label>
               <label for="CategoryLoc"></label>
-              <mat-select id="CategoryLoc" formControlName="categoryLoc">
-                <mat-option *ngFor="let category of categories" [value]="category.id"
+              <mat-select id="CategoryLoc" formControlName="categoryId">
+                <mat-option *ngFor="let category of categories" [value]="category?.id"
                 >{{category.name}}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -27,28 +27,25 @@
           <!-- Radius -->
           <mat-list-item id="radius-header">
             <h4><b>Distance</b></h4>
-            <mat-slide-toggle (change)="changeState()" id="distance-toggle"></mat-slide-toggle>
+            <mat-slide-toggle (change)="toggleIncludeRadius()" formControlName="radiusEnabled" id="distance-toggle"></mat-slide-toggle>
           </mat-list-item>
           <div>
             <mat-list-item id="radius-item">
               <mat-slider
-                [disabled]="disabled"
                 id="radius"
-                (change)="updateSetting($event)"
-                step="1"
-                min="1"
-                max="10"
+                step="100"
+                [min]="minDistance"
+                [max]="maxDistance"
                 formControlName="radius"
-                [value]="radius"
               ></mat-slider>
             </mat-list-item>
-            <mat-list-item>
-              <h4>{{radius}} km</h4>
+            <mat-list-item *ngIf="locationForm.controls.radius.enabled">
+              <h4>{{locationForm.value.radius | distance}}</h4>
             </mat-list-item>
           </div>
 
           <mat-list-item id="buttonsLoc">
-            <a mat-raised-button class="buttonCancel" (click)="cancel()">Cancel</a>
+            <a mat-raised-button class="buttonCancel" (click)="resetLocationFilter()">Reset</a>
             <a mat-raised-button class="buttonConfirm" color="accent" (click)="filterLoc()">Go!</a>
           </mat-list-item>
 
