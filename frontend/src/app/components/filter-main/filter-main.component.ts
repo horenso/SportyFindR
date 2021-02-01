@@ -6,7 +6,6 @@ import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
 import {Router} from '@angular/router';
 import {MessageService} from '../../services/message.service';
-import {LocationService} from '../../services/location.service';
 import {HashtagService} from '../../services/hashtag.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {MapService} from '../../services/map.service';
@@ -58,7 +57,8 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     private sidebarService: SidebarService,
     private mapService: MapService,
     private notificationService: NotificationService,
-    private router: Router) {
+    private router: Router,
+    private userService: UserService) {
   }
 
   ngOnInit(): void {
@@ -144,8 +144,9 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   buildMessageForm(): void {
     this.messageForm = this.formBuilder.group({
       categoryMes: [''],
+      user: [''],
       hashtag: [''],
-      time: [''],
+      time: ['']
     });
   }
 

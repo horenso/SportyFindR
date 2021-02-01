@@ -35,6 +35,7 @@ import {FilterMessagesComponent} from './components/filter-messages/filter-messa
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {DistancePipe} from './pipes/distance.pipe';
+import {DatePipe} from '@angular/common';
 
 
 const toastrSettings = {
