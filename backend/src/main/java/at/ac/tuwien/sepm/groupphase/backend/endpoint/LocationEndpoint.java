@@ -48,7 +48,9 @@ public class LocationEndpoint {
                                   @RequestParam(required = false) Double latitude,
                                   @RequestParam(required = false) Double longitude,
                                   @RequestParam(required = false, defaultValue = "0") Double radius) {
-
+        if (radius == null) {
+            radius = 0.0;
+        }
         radius /= 1000; // Radius is in meter, was in km before
 
         log.info("GET /api/v1/locations/?" +
