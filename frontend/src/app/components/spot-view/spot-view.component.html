@@ -5,7 +5,8 @@
       <mat-icon>arrow_back_ios_new</mat-icon>
     </button>
     <div class="sidebarTitle">{{spot.name}}</div>
-    <button mat-icon-button color="primary" class="icon" [matMenuTriggerFor]="menu" *ngIf="authService.isUserAdmin()||(spot.owner!=null&&authService.currentUserEmail()==spot.owner.email)">
+    <button mat-icon-button color="primary" class="icon" [matMenuTriggerFor]="menu"
+            *ngIf="authService.isUserAdmin()||(spot.owner!=null&&authService.currentUserEmail()==spot.owner.email)">
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>
@@ -25,7 +26,7 @@
   </div>
 
   <div class="sidebarBottomRow">
-    <div id="inputRow">
+    <div class="inputRow">
       <div *ngIf="includeExpirationDate" id="expirationDatePicker">
         <mat-form-field>
           <input matInput placeholder="Expiration date"
@@ -44,7 +45,7 @@
       </div>
     </div>
 
-    <div id="inputRow">
+    <div class=inputRow">
       <mat-form-field appearance="outline">
         <mat-label>New message</mat-label>
         <textarea matInput #messageInput

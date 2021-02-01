@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
@@ -50,7 +50,8 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapService: MapService,
     private router: Router,
     private notificationService: NotificationService,
-    public authService: AuthService) {
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -84,6 +85,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }));
   }
 
+
   ngOnDestroy(): void {
     this.spotService.closeConnection();
     this.subs.unsubscribe();
@@ -95,6 +97,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       console.log(this.messageInput);
     }
+    this.cdr.detectChanges();
   }
 
   keydown(event: KeyboardEvent): void {
