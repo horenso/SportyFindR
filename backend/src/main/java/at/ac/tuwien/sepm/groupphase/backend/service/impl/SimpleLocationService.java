@@ -49,7 +49,12 @@ public class SimpleLocationService implements LocationService {
         log.debug("Searching for locations within a distance of at most " + locationSearchObject.getRadius() + " km, containing spots with category: " + locationSearchObject.getCategoryId());
         List<Location> locations;
         if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {    // if search parameters contain category data
-            locations = locationRepository.filter(locationSearchObject.getCategoryId());
+            if (locationSearchObject.getHashtag() != null) {
+                locations = locationRepository.filter(locationSearchObject.getCategoryId());
+            } else {
+                locations = locationRepository.filter(locationSearchObject.getCategoryId());
+            }
+
         } else {
             locations = locationRepository.findAll();   // find all locations
         }

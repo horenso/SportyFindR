@@ -14,4 +14,5 @@ public class LocationSearchObject {
     Double latitude;
     Double longitude;
     Double radius;
+    String hashtag;
 }
