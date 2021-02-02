@@ -2,14 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.CategoryEndpoint;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.SpotEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.CategoryDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -108,7 +102,7 @@ public class CategoryEndpointTest implements TestData{
     public void createCategoryWithId() {
         CategoryDto categoryDto = CategoryDto.builder()
             .name(CAT_NAME)
-            .id(ID)
+            .id(1L)
             .build();
         Throwable e = assertThrows(ResponseStatusException.class, () -> categoryEndpoint.create(categoryDto));
         assertAll(

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
+import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.SpotEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.CategoryDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
@@ -8,33 +9,36 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.CategoryMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -57,6 +61,14 @@ public class SpotEndpointTest implements TestData {
     private UserRepository userRepository;
     @Autowired
     private SimpleUserMapper simpleUserMapper;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private SecurityProperties securityProperties;
+    @Autowired
+    private JwtTokenizer jwtTokenizer;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @AfterEach
     public void afterEach() {
@@ -338,7 +350,7 @@ public class SpotEndpointTest implements TestData {
             .name(CAT_NAME)
             .build();
         LocationDto locationDto = LocationDto.builder()
-            .id(ID)
+            .id(1L)
             .latitude(LAT)
             .longitude(LONG)
             .build();
@@ -351,7 +363,7 @@ public class SpotEndpointTest implements TestData {
         Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
         assertAll(
             () -> assertEquals(0, spotRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Location does not Exist\"")
+            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Location does not Exist\"")
         );
     }
 
@@ -380,7 +392,7 @@ public class SpotEndpointTest implements TestData {
         Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
         assertAll(
             () -> assertEquals(0, spotRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Latitude must not be Null\"")
+            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Latitude must not be Null\"")
         );
     }
 
@@ -403,7 +415,7 @@ public class SpotEndpointTest implements TestData {
             .build();
         SpotDto spotDto = SpotDto.builder()
             .owner(simpleUserMapper.userToSimpleUserDto(user))
-            .id(ID)
+            .id(1L)
             .name(NAME)
             .location(locationDto)
             .build();
@@ -411,7 +423,7 @@ public class SpotEndpointTest implements TestData {
         Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
         assertAll(
             () -> assertEquals(0, spotRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Id must be null\"")
+            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Id must be null\"")
         );
     }
 
@@ -441,7 +453,7 @@ public class SpotEndpointTest implements TestData {
         Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.create(spotDto));
         assertAll(
             () -> assertEquals(0, spotRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Spot must have a Category\"")
+            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Spot must have a Category\"")
         );
     }
 
@@ -481,6 +493,57 @@ public class SpotEndpointTest implements TestData {
             () -> assertFalse(spots2.isEmpty()),
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Spot does not exist\"")
         );
+    }
+
+    @Test
+    public void deleteSpotWrongUser() throws Exception {
+        ApplicationUser user1 = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(true)
+            .name("user1")
+            .password(PASSWORD)
+            .build();
+        user1 = userRepository.save(user1);
+
+        ApplicationUser user2 = ApplicationUser.builder()
+            .email(EMAIL2)
+            .enabled(true)
+            .name("user2")
+            .password(PASSWORD2)
+            .build();
+        userRepository.save(user2);
+
+        System.out.println("USER1: " + user1.getEmail());
+        System.out.println("USER2: " + user2.getEmail());
+
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        category = categoryRepository.save(category);
+
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        location = locationRepository.save(location);
+
+        SpotDto spotDto = SpotDto.builder()
+            .name("Spot")
+            .location(locationMapper.locationToLocationDto(location))
+            .category(categoryMapper.categoryToCategoryDto(category)).build();
+
+        var result = mockMvc.perform(post(SPOT_BASE_URI)
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(spotDto)))
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        spotDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpotDto.class);
+
+        mockMvc.perform(delete(SPOT_BASE_URI + "/" + spotDto.getId())
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user2.getEmail(), USER_ROLES)))
+            .andExpect(status().isForbidden());
     }
 
     @Test
