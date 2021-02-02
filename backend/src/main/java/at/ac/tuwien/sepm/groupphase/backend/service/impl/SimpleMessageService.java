@@ -19,6 +19,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.validator.MessageValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;

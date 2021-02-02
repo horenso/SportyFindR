@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SimpleHashtagService implements HashtagService {
 
     private final HashtagRepository hashtagRepository;
-    private final String hashtagPattern = "(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)";
+    private final String hashtagPattern = "(#[A-Za-z0-9]+)";
 
     @Override
     public Hashtag getByName(String name) {

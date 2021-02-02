@@ -44,14 +44,14 @@ public interface HashtagService {
     Hashtag create(Hashtag hashtag);
 
     /**
-     * Get all hashtags from a message
+     * Acquires all hashtags from a message
      *
      * @param message to get the hashtags from
      */
     void acquireHashtags(Message message);
 
     /**
-     * Get all hashtags from a spot description
+     * Acquires all hashtags from a spot description
      *
      * @param spot to get the hashtags from
      */
