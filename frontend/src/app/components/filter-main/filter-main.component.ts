@@ -72,7 +72,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.buildLocationForm();
 
     // Hashtag Location Filter
-    this.filteredHashtagLocOptions = this.hashtagMesControl.valueChanges
+    this.filteredHashtagLocOptions = this.hashtagLocControl.valueChanges
       .pipe(
         debounceTime(200),
         distinctUntilChanged(),
@@ -145,6 +145,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   buildLocationForm(): void {
     this.locationForm = this.formBuilder.group({
       categoryId: [null],
+      hashtag: [''],
       radius: [{value: this.minDistance, disabled: true}],
       radiusEnabled: [false]
     });
