@@ -72,6 +72,9 @@ export class LocationService {
     if (filterLocation.categoryId != null) {
       params = params.set('categoryId', filterLocation.categoryId.toString());
     }
+    if (filterLocation.hashtag != null) {
+      params = params.set('hashtag', filterLocation.hashtag.toString());
+    }
     if (filterLocation.coordinates != null) {
       params = params.set('latitude', filterLocation.coordinates.lat.toString());
       params = params.set('longitude', filterLocation.coordinates.lng.toString());

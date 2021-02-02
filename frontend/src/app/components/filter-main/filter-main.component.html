@@ -13,7 +13,7 @@
         <form [formGroup]="locationForm" class="locationForm">
 
           <!-- Category -->
-          <mat-list-item id="category-item-loc">
+          <mat-list-item class="form-item">
             <mat-form-field appearance="outline">
               <mat-label>Category</mat-label>
               <label for="CategoryLoc"></label>
@@ -21,6 +21,25 @@
                 <mat-option *ngFor="let category of categories" [value]="category?.id"
                 >{{category.name}}</mat-option>
               </mat-select>
+            </mat-form-field>
+          </mat-list-item>
+
+          <!-- Hashtag -->
+          <mat-list-item class="form-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Hashtag</mat-label>
+              <label for="HashtagLoc"></label>
+              <input id="HashtagLoc"
+                     type="text"
+                     matInput
+                     formControlName="hashtagLoc"
+                     [formControl]="hashtagLocControl"
+                     [matAutocomplete]="autoLocHashtag">
+              <mat-autocomplete autoActiveFirstOption #autoLocHashtag="matAutocomplete" (optionSelected)="selectedHashtagLocOption($event)">
+                <mat-option *ngFor="let hashtag of filteredHashtagLocOptions | async" [value]="hashtag.name">
+                  {{hashtag.name}}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
           </mat-list-item>
 
@@ -58,7 +77,7 @@
         <form [formGroup]="messageForm" class="messageForm">
 
           <!-- Category -->
-          <mat-list-item id="category-item-mes">
+          <mat-list-item class="form-item">
             <mat-form-field appearance="outline">
               <mat-label>Category</mat-label>
               <label for="CategoryMes"></label>
@@ -70,18 +89,18 @@
           </mat-list-item>
 
           <!-- Hashtag -->
-          <mat-list-item id="hashtag-item">
+          <mat-list-item class="form-item">
             <mat-form-field appearance="outline">
               <mat-label>Hashtag</mat-label>
-              <label for="Hashtag"></label>
-              <input id="Hashtag"
+              <label for="HashtagMes"></label>
+              <input id="HashtagMes"
                      type="text"
                      matInput
                      formControlName="hashtag"
-                     [formControl]="hashtagControl"
-                     [matAutocomplete]="autoHashtag">
-              <mat-autocomplete autoActiveFirstOption #autoHashtag="matAutocomplete" (optionSelected)="selectedHashtagOption($event)">
-                <mat-option *ngFor="let hashtag of filteredHashtagOptions | async" [value]="hashtag.name">
+                     [formControl]="hashtagMesControl"
+                     [matAutocomplete]="autoMesHashtag">
+              <mat-autocomplete autoActiveFirstOption #autoMesHashtag="matAutocomplete" (optionSelected)="selectedHashtagMesOption($event)">
+                <mat-option *ngFor="let hashtag of filteredHashtagMesOptions | async" [value]="hashtag.name">
                   {{hashtag.name}}
                 </mat-option>
               </mat-autocomplete>
@@ -89,7 +108,7 @@
           </mat-list-item>
 
           <!-- Username -->
-          <mat-list-item id="user-item">
+          <mat-list-item class="form-item">
             <mat-form-field appearance="outline">
               <mat-label>Username</mat-label>
               <label for="User"></label>
@@ -120,7 +139,7 @@
           </mat-list-item>
 
           <mat-list-item id="buttonsMes">
-            <a mat-raised-button class="buttonCancel" (click)="onCancel()">Cancel</a>
+            <a mat-raised-button class="buttonCancel" (click)="resetMessageFilter()">Reset</a>
             <a mat-raised-button class="buttonConfirm" color="accent" (click)="filterMes()">Go!</a>
           </mat-list-item>
 
