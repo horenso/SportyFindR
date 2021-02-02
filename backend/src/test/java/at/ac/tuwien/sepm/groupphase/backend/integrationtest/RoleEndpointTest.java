@@ -8,6 +8,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoleEndpointTest implements TestData {
     @Autowired
     private RoleEndpoint roleEndpoint;
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -199,6 +202,22 @@ public class RoleEndpointTest implements TestData {
             () -> assertThat(user3.getRoles(), not(hasItems(foundRole1))),
             () -> assertThat(user3.getRoles(), not(hasItems(foundRole2))),
             () -> assertThat(user3.getRoles(), hasSize(0))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void findRoleByName() {
+        RoleDto roleDto1 = RoleDto.builder()
+            .name("TestRole")
+            .build();
+        RoleDto createdRole1 =  roleEndpoint.create(roleDto1);
+
+        assertAll(
+            () -> assertTrue(this.roleService.roleExistsByName("TESTROLE")),
+            () -> assertTrue(this.roleService.roleExistsByName("TestRole")),
+            () -> assertFalse(this.roleService.roleExistsByName("noTestRole")),
+            () -> assertEquals(this.roleService.findRoleByName("testRole").getId(), createdRole1.getId())
         );
 
     }

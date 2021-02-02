@@ -61,12 +61,6 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
-    public boolean roleExistsByName(String name) {
-        Optional<Role> role = roleRepository.findRoleByName(name);
-        return role.isPresent();
-    }
-
-    @Override
     public boolean roleExistsById(Long id) {
         Optional<Role> role = roleRepository.findRoleById(id);
         return role.isPresent();
@@ -93,6 +87,34 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
+    public List<Role> findAll() {
+        log.debug("Find all roles");
+        return roleRepository.findAll();
+    }
+
+    @Override
+    public Role getById(Long id) throws NotFoundException2 {
+        Optional<Role> role = roleRepository.findRoleById(id);
+        if (role.isPresent()) {
+            return role.get();
+        } else {
+            throw new NotFoundException2("Role with ID " + id + "does not exist.");
+        }
+    }
+
+    @Override
+    public boolean roleExistsByName(String name) {
+        Optional<Role> role = roleRepository.findRoleByName(name);
+        return role.isPresent();
+    }
+
+    /*
+     @Override
+     public List<Role> findRolesByUser(ApplicationUser applicationUser) {
+     return roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
+     }
+
+     @Override
     public void deleteByName(String name) throws NotFoundException2, ValidationException {
         if (roleExistsByName(name)) {
             try {
@@ -107,25 +129,6 @@ public class SimpleRoleService implements RoleService {
             throw new NotFoundException2("Role cannot be found.");
         }
     }
+    */
 
-    @Override
-    public List<Role> findAll() {
-        log.debug("Find all roles");
-        return roleRepository.findAll();
-    }
-
-    @Override
-    public List<Role> findRolesByUser(ApplicationUser applicationUser) {
-        return roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
-    }
-
-    @Override
-    public Role getById(Long id) throws NotFoundException2 {
-        Optional<Role> role = roleRepository.findRoleById(id);
-        if (role.isPresent()) {
-            return role.get();
-        } else {
-            throw new NotFoundException2("Role with ID " + id + "does not exist.");
-        }
-    }
 }
