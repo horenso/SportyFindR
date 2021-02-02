@@ -34,6 +34,9 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { UserAccountComponent } from './components/user-account/user-account.component';
 import {NgxWebstorageModule} from 'ngx-webstorage';
 import { EditAccountComponent } from './components/edit-account/edit-account.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button';
 
 
 const toastrSettings = {
@@ -65,7 +68,8 @@ const toastrSettings = {
     HashtagComponent,
     FilterMainComponent,
     UserAccountComponent,
-    EditAccountComponent
+    EditAccountComponent,
+    ConfirmDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -79,7 +83,9 @@ const toastrSettings = {
         ToastrModule.forRoot(toastrSettings),
         MatCheckboxModule,
         MatPaginatorModule,
-      NgxWebstorageModule.forRoot()
+      NgxWebstorageModule.forRoot(),
+      MatButtonModule,
+      MatDialogModule
     ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
