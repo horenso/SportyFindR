@@ -11,10 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -22,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MessageMappingTest implements TestData {
 
     private final Message message = Message.builder()
-        .id(ID)
+        .id(1L)
         .content(TEST_NEWS_TEXT)
         .publishedAt(TEST_NEWS_PUBLISHED_AT)
         .build();
@@ -33,7 +31,7 @@ public class MessageMappingTest implements TestData {
     public void givenNothing_whenMapDetailedMessageDtoToEntity_thenEntityHasAllProperties() {
         MessageDto messageDto = messageMapper.messageToMessageDto(message);
         assertAll(
-            () -> assertEquals(ID, messageDto.getId()),
+            () -> assertEquals(1L, messageDto.getId()),
             () -> assertEquals(TEST_NEWS_PUBLISHED_AT, messageDto.getPublishedAt())
         );
     }

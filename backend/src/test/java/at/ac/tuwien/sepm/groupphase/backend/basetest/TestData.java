@@ -1,15 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.basetest;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface TestData {
 
-    Long ID = 1L;
     String TEST_NEWS_TITLE = "Title";
     String TEST_NEWS_SUMMARY = "Summary";
     String TEST_NEWS_TEXT = "TestMessageText";
@@ -18,6 +14,11 @@ public interface TestData {
 
     String BASE_URI = "/api/v1";
     String MESSAGE_BASE_URI = BASE_URI + "/messages";
+    String SPOT_BASE_URI = BASE_URI + "/spots";
+    String SUBSCRIPTION_URI = SPOT_BASE_URI + "/subscribe";
+    String MESSAGE_FILTER_URI = MESSAGE_BASE_URI + "/filter";
+    String REACTIONS_BASE_URI = BASE_URI + "/reactions";
+    String HASHTAG_BASE_URI = BASE_URI + "/hashtags";
 
     String ADMIN_USER = "admin@email.com";
     List<String> ADMIN_ROLES = new ArrayList<>() {
@@ -47,7 +48,6 @@ public interface TestData {
     Double LONG4 = 10.0000001;
     String EMPTY_NAME = "";
     LocalDateTime DATE = LocalDateTime.of(2021,1,4,18,19,20,100);
-    int ZERO =0;
     LocalDateTime DATE2 = LocalDateTime.of(2021,5,24,1,15,3,140);
     LocalDateTime DATE_IN_THE_PAST = LocalDateTime.of(2020,5,24,1,15,3,140);
     Double LAT3= 91.57;

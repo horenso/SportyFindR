@@ -1,32 +1,17 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
-import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
-import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,8 +20,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,97 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureMockMvc
-public class MessageEndpointTest implements TestData {
-
-    @Autowired
-    private MessageRepository messageRepository;
-    @Autowired
-    private MessageEndpoint messageEndpoint;
-    @Autowired
-    private SpotRepository spotRepository;
-    @Autowired
-    private HashtagRepository hashtagRepository;
-    @Autowired
-    private LocationRepository locationRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private SecurityProperties securityProperties;
-    @Autowired
-    private JwtTokenizer jwtTokenizer;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private SimpleUserMapper simpleUserMapper;
-
-    private ApplicationUser user1;
-    private ApplicationUser user2;
-    private ApplicationUser admin;
-    private Spot spot;
-
-    @BeforeEach
-    public void beforeEach() {
-        user1 = ApplicationUser.builder()
-            .email(EMAIL)
-            .enabled(true)
-            .name("user1")
-            .password(PASSWORD)
-            .build();
-        userRepository.save(user1);
-
-        user2 = ApplicationUser.builder()
-            .email(EMAIL2)
-            .enabled(true)
-            .name("user2")
-            .password(PASSWORD2)
-            .build();
-        userRepository.save(user2);
-
-        admin = ApplicationUser.builder()
-            .email(ADMIN_USER)
-            .enabled(true)
-            .name("admin")
-            .password(PASSWORD3)
-            .build();
-        userRepository.save(admin);
-
-        Category category = Category.builder()
-            .name(CAT_NAME)
-            .build();
-        category = categoryRepository.save(category);
-
-        Location location = Location.builder()
-            .latitude(LAT)
-            .longitude(LONG)
-            .build();
-        location = locationRepository.save(location);
-
-        spot = Spot.builder()
-            .name(NAME)
-            .description(DESCRIPTION)
-            .location(location)
-            .category(category)
-            .owner(user1)
-            .build();
-        spotRepository.save(spot);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        hashtagRepository.deleteAll();
-        messageRepository.deleteAll();
-        spotRepository.deleteAll();
-        locationRepository.deleteAll();
-        categoryRepository.deleteAll();
-        userRepository.deleteAll();
-        roleRepository.deleteAll();
-    }
+public class MessageEndpointTest extends BaseIntegrationTest {
 
     @Test
     public void findBySpot_nonexistentSpotId() throws Exception {
@@ -166,7 +61,7 @@ public class MessageEndpointTest implements TestData {
             Message message = Message.builder()
                 .owner(user1)
                 .content(String.valueOf((char) letter))
-                .spot(spot)
+                .spot(spot1)
                 .publishedAt(LocalDateTime.now()).build();
             messageList.add(messageRepository.save(message));
         });
@@ -174,7 +69,7 @@ public class MessageEndpointTest implements TestData {
         // Get all Messages
         mockMvc
             .perform(get(MESSAGE_BASE_URI)
-                .param("spotId", spot.getId().toString())
+                .param("spotId", spot1.getId().toString())
                 .queryParam("size", "26")
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
             .andDo(print())
@@ -186,7 +81,7 @@ public class MessageEndpointTest implements TestData {
         // Get the first 5 Messages
         mockMvc
             .perform(get(MESSAGE_BASE_URI)
-                .param("spotId", spot.getId().toString())
+                .param("spotId", spot1.getId().toString())
                 .queryParam("size", "5")
                 .queryParam("page", "0")
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
@@ -201,7 +96,7 @@ public class MessageEndpointTest implements TestData {
 
         mockMvc
             .perform(get(MESSAGE_BASE_URI)
-                .param("spotId", spot.getId().toString())
+                .param("spotId", spot1.getId().toString())
                 .queryParam("size", "5")
                 .queryParam("page", "1")
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
@@ -215,7 +110,7 @@ public class MessageEndpointTest implements TestData {
 
         mockMvc
             .perform(get(MESSAGE_BASE_URI)
-                .param("spotId", spot.getId().toString())
+                .param("spotId", spot1.getId().toString())
                 .queryParam("size", "5")
                 .queryParam("page", "5")
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
@@ -243,14 +138,14 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    public void create_BasicPositiveTests() throws Exception {
+    public void create_basicPositiveTests() throws Exception {
         int messageCount = 100;
         List<MessageDto> messageDtoList = new ArrayList<>();
 
         for (int i = 0; i < messageCount; i++) {
             messageDtoList.add(MessageDto.builder()
                 .content("Message 1")
-                .spotId(spot.getId()).build());
+                .spotId(spot1.getId()).build());
         }
 
         for (var messageDto : messageDtoList) {
@@ -264,10 +159,46 @@ public class MessageEndpointTest implements TestData {
 
         mockMvc
             .perform(get(MESSAGE_BASE_URI + "/")
-                .param("spotId", spot.getId().toString())
+                .param("spotId", spot1.getId().toString())
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.totalElements").value(messageCount));
+    }
+
+    @Test
+    public void create_messageMustNotBeOnlyWhitespaces() throws Exception {
+        List<MessageDto> onlyWhitespace = List.of(
+            MessageDto.builder().content("       ").build(),
+            MessageDto.builder().content(" ").build(),
+            MessageDto.builder().content("\t\t").build(),
+            MessageDto.builder().content("\n").build(),
+            MessageDto.builder().content("\r").build());
+
+        for (MessageDto messageDto : onlyWhitespace) {
+            mockMvc.perform(post(MESSAGE_BASE_URI + "/")
+                .param("spotId", spot1.getId().toString())
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(messageDto)))
+                .andExpect(status().isUnprocessableEntity());
+        }
+    }
+
+    @Test
+    public void create_messageMustNotExpireInThePast() throws Exception {
+        MessageDto messageDto = MessageDto.builder()
+            .content(MESSAGE_CONTENT)
+            .expirationDate(LocalDateTime.now().minusMinutes(1L))
+            .build();
+
+        mockMvc.perform(post(MESSAGE_BASE_URI + "/")
+            .param("spotId", spot1.getId().toString())
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(messageDto)))
+            .andExpect(status().isUnprocessableEntity());
+
+        assertTrue(this.messageRepository.findAll().size() == 0);
     }
 
     @Test
@@ -283,7 +214,7 @@ public class MessageEndpointTest implements TestData {
         Message message = Message.builder()
             .owner(user1)
             .content(MESSAGE_CONTENT)
-            .spot(spot)
+            .spot(spot1)
             .publishedAt(LocalDateTime.now()).build();
         message = messageRepository.save(message);
 
@@ -306,7 +237,7 @@ public class MessageEndpointTest implements TestData {
 
         MessageDto messageDto = MessageDto.builder()
             .content("Hi")
-            .spotId(spot.getId()).build();
+            .spotId(spot1.getId()).build();
 
         MvcResult result = mockMvc
             .perform(post(MESSAGE_BASE_URI + "/")
@@ -346,7 +277,7 @@ public class MessageEndpointTest implements TestData {
         Message message = messageRepository.save(Message.builder()
             .owner(user1)
             .content(MESSAGE_CONTENT)
-            .spot(spot)
+            .spot(spot1)
             .publishedAt(LocalDateTime.now()).build());
 
         mockMvc
@@ -360,7 +291,7 @@ public class MessageEndpointTest implements TestData {
         Message message = Message.builder()
             .owner(user1)
             .content(MESSAGE_CONTENT)
-            .spot(spot)
+            .spot(spot1)
             .publishedAt(LocalDateTime.now()).build();
         message = messageRepository.save(message);
 
@@ -392,7 +323,7 @@ public class MessageEndpointTest implements TestData {
         Message message = Message.builder()
             .owner(user1)
             .content(MESSAGE_CONTENT)
-            .spot(spot)
+            .spot(spot1)
             .publishedAt(LocalDateTime.now()).build();
         message = messageRepository.save(message);
 
@@ -405,38 +336,21 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     public void filterAllMessagesWithCategoryHashtagUserTime() throws Exception {
-        Category category = Category.builder()
-            .name(CAT_NAME)
-            .build();
-        categoryRepository.save(category);
-        Location location = Location.builder()
-            .latitude(LAT)
-            .longitude(LONG)
-            .build();
-        locationRepository.save(location);
-        Spot spot = Spot.builder()
-            .owner(user1)
-            .name(NAME)
-            .location(location)
-            .category(category)
-            .build();
-        spotRepository.save(spot);
         Message message = Message.builder()
             .owner(user1)
-            .spot(spot)
-            .downVotes(ZERO)
-            .upVotes(ZERO)
+            .spot(spot1)
+            .downVotes(0)
+            .upVotes(0)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
         messageRepository.save(message);
         Message message2 = Message.builder()
             .owner(user1)
-            .spot(spot)
-            .downVotes(ZERO)
-            .upVotes(ZERO)
+            .spot(spot1)
+            .downVotes(0)
+            .upVotes(0)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
@@ -444,45 +358,19 @@ public class MessageEndpointTest implements TestData {
         Hashtag hashtag = Hashtag.builder()
             .name("test")
             .messagesList(Arrays.asList(message))
-            .spotsList(Arrays.asList(spot))
+            .spotsList(Arrays.asList(spot1))
             .build();
         hashtagRepository.save(hashtag);
-        MvcResult mvcResult = this.mockMvc.perform(
-            get("/api/v1/messages/filter?categoryMes="+category.getId()+"&hashtag="+hashtag.getName()+"&user="+user1.getName()+"&time=1000-01-01")
-                .header(securityProperties.getAuthHeader(),
-                    jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
-            .andDo(print()).andReturn();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertTrue(response.getContentAsString().contains("\"totalElements\":1"));
-    }
-    @Test
-    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void messageMustNotBeSpaces() {
-        MessageDto message = MessageDto.builder()
-            .owner(simpleUserMapper.userToSimpleUserDto(user1))
-            .content("       ")
-            .build();
-        Throwable e = assertThrows(ResponseStatusException.class, () -> messageEndpoint.create(message));
-        assertAll(
-            () -> assertEquals(0, messageRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Message content must not only consist of white space characters!\"")
-        );
-    }
-    @Test
-    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void messageMustNotExpireInThePast() {
-        MessageDto message = MessageDto.builder()
-            .owner(simpleUserMapper.userToSimpleUserDto(user1))
-            .content(MESSAGE_CONTENT)
-            .expirationDate(DATE_IN_THE_PAST)
-            .build();
-        Throwable e = assertThrows(ResponseStatusException.class, () -> messageEndpoint.create(message));
-        assertAll(
-            () -> assertEquals(0, messageRepository.findAll().size()),
-            () -> assertEquals(e.getMessage(), "422 UNPROCESSABLE_ENTITY \"Message expiration date must be in the future!\"")
-        );
+        MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_FILTER_URI)
+            .queryParam("categoryMes", category.getId().toString())
+            .queryParam("hashtag", hashtag.getName())
+            .queryParam("user", user1.getName())
+            .queryParam("time", "1000-01-01")
+            .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id.totalElements").value(1))
+            .andReturn();
     }
 }

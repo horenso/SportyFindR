@@ -11,6 +11,7 @@ import {MapService} from 'src/app/services/map.service';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
+import { lowerFirst } from 'lodash';
 
 @Component({
   selector: 'app-spot-view',
@@ -108,14 +109,16 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitDialog(): void {
+    console.log(this.expirationDate);
     if (this.newMessage?.length < 1 || /^\s*$/.test(this.newMessage)) {
       this.notificationService.error('Message must not be Empty!');
       return;
     }
-    if (this.expirationDate) {
+    if (this.expirationDate != null) {
       this.expirationDate.setHours(this.expirationDate.getHours() + 1);
     }
-    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
+    let newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
+    newMessage.expirationDate = this.expirationDate;
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);

@@ -4,7 +4,10 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.DeletedSpotResponseDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +39,7 @@ public class SpotEndpoint {
     @CrossOrigin
     @ApiOperation(value = "Get one spot by id", authorizations = {@Authorization(value = "apiKey")})
     public SpotDto getOneById(@PathVariable("id") Long id) {
-        log.info("Get /api/v1/spots/{}", id);
+        log.info("GET /api/v1/spots/{}", id);
         try {
             return spotMapper.spotToSpotDto(spotService.getOneById(id));
         } catch (NotFoundException2 e) {
@@ -54,8 +57,8 @@ public class SpotEndpoint {
             return spotMapper.spotToSpotDto(
                 spotService.create(spotMapper.spotDtoToSpot(spotDto)));
         } catch (ValidationException | ServiceException e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -69,9 +72,9 @@ public class SpotEndpoint {
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (WrongUserException e) {
+            log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
@@ -82,13 +85,16 @@ public class SpotEndpoint {
         log.info("PUT /api/v1/spots body: {}", spotDto);
         try {
             SpotDto updated = spotMapper.spotToSpotDto(
-            spotService.update(spotMapper.spotDtoToSpot(spotDto)));
+                spotService.update(spotMapper.spotDtoToSpot(spotDto)));
             log.info("{}", updated);
             return updated;
-        } catch (WrongUserException | ValidationException e) {
-            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }catch (NotFoundException2 e){
+        } catch (ValidationException e) {
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        } catch (WrongUserException e) {
+            log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
