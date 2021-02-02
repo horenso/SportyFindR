@@ -99,6 +99,7 @@ const toastrSettings = {
     MatButtonModule,
     MatDialogModule
   ],
+  entryComponents : [ConfirmDialogComponent],
   providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent]
 })

@@ -81,7 +81,7 @@ public class SimpleMessageService implements MessageService {
         message.setPublishedAt(LocalDateTime.now());
         message.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
         Message savedMessage = messageRepository.save(message);
-        hashtagService.getHashtags(message);
+        hashtagService.acquireHashtags(message);
         spotSubscriptionService.dispatchNewMessage(savedMessage);
         return savedMessage;
     }
