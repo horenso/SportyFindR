@@ -13,7 +13,10 @@
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
       <label for="spotCreateName"></label>
-      <input minlength="3" maxlength="64" matInput formControlName='name' id="spotCreateName">
+      <input minlength="3" maxlength="20" matInput formControlName='name' id="spotCreateName">
+      <div *ngIf="spotForm.controls.name.touched && spotForm.controls.name.errors" class="error">
+        <mat-error>Must be between 3 and 20 characters!</mat-error>
+      </div>
     </mat-form-field>
 
     <!-- Description -->
@@ -27,6 +30,9 @@
                 cdkAutosizeMinRows="5"
                 cdkAutosizeMaxRows="30"
                 maxlength="500"></textarea>
+      <div *ngIf="spotForm.controls.description.touched && spotForm.controls.description.errors" class="error">
+        <mat-error>Must be between 1 and 500 characters!</mat-error>
+      </div>
     </mat-form-field>
 
     <!-- Category -->
@@ -37,6 +43,9 @@
         <mat-option *ngFor="let category of categories" [value]="category"
         >{{category.name}}</mat-option>
       </mat-select>
+      <div *ngIf="spotForm.controls.category.touched && spotForm.controls.category.errors" class="error">
+        <mat-error>Must not be empty!</mat-error>
+      </div>
     </mat-form-field>
 
     <div id="buttons">
