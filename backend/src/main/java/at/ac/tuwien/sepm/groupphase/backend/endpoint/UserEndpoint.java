@@ -26,6 +26,7 @@ import java.util.Set;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/api/v1/users")
 @RequiredArgsConstructor
 public class UserEndpoint {
@@ -33,7 +34,7 @@ public class UserEndpoint {
     private final UserMapper userMapper;
     private final RoleService roleService;
 
-    @Secured("ROLE_ADMIN")
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new user", authorizations = {@Authorization(value = "apiKey")})
