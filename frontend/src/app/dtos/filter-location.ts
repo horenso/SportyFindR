@@ -1,4 +1,4 @@
-import { LatLng } from "leaflet";
+import { LatLng } from 'leaflet';
 
 export interface FilterLocation {
   coordinates?: LatLng;
@@ -6,4 +6,5 @@ export interface FilterLocation {
   radius?: number;
   radiusBuffered: boolean;
   categoryId?: number;
+  hashtag?: string;
 }

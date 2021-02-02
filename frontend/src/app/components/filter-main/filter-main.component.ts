@@ -22,7 +22,10 @@ import {UserService} from '../../services/user.service';
 export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
-  hashtags: SimpleHashtag[];
+  hashtagsMes: SimpleHashtag[];
+  hashtagsLoc: SimpleHashtag[];
+
+
   users: SimpleUser[];
   radius: number = 0;
   strLoc: string;
@@ -35,9 +38,13 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   disabled = true;
 
-  filteredHashtagOptions: Observable<SimpleHashtag[]>;
-  hashtagControl = new FormControl();
-  hashtagSelection: string;
+  filteredHashtagMesOptions: Observable<SimpleHashtag[]>;
+  hashtagMesControl = new FormControl();
+  hashtagMesSelection: string;
+
+  filteredHashtagLocOptions: Observable<SimpleHashtag[]>;
+  hashtagLocControl = new FormControl();
+  hashtagLocSelection: string;
 
   filteredUserOptions: Observable<SimpleUser[]>;
   userControl = new FormControl();
@@ -70,8 +77,16 @@ export class FilterMainComponent implements OnInit, OnDestroy {
       this.sidebarActive = change.isVisible;
     });
 
-    // Hashtag Filter
-    this.filteredHashtagOptions = this.hashtagControl.valueChanges
+    // Hashtag Location Filter
+    this.filteredHashtagLocOptions = this.hashtagMesControl.valueChanges
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap((str: string) => this.hashtagService.search(str))
+      );
+
+    // Hashtag Message Filter
+    this.filteredHashtagMesOptions = this.hashtagMesControl.valueChanges
       .pipe(
         debounceTime(200),
         distinctUntilChanged(),
@@ -91,12 +106,6 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  private _filter(name: string): SimpleHashtag[] {
-    const filterValue = name.toLowerCase();
-
-    return this.hashtags.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
-  }
-
   filterLoc(): void {
     let radius = this.locationForm.value.radius;
     if (isNaN(radius)) {
@@ -104,6 +113,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     }
     this.mapService.updateFilterLocation({
       categoryId: this.locationForm.value.categoryId,
+      hashtag: this.hashtagLocSelection,
       radius: radius,
       radiusEnabled: this.locationForm.value.radiusEnabled,
       radiusBuffered: false});
@@ -112,7 +122,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   filterMes(): void {
     this.messageService.updateMessageFilter({
       categoryMes: this.messageForm.get('categoryMes').value,
-      hashtag: this.hashtagSelection,
+      hashtag: this.hashtagMesSelection,
       user: this.userSelection,
       time: this.messageForm.get('time').value,
       page: 0,
@@ -125,8 +135,14 @@ export class FilterMainComponent implements OnInit, OnDestroy {
 
   // Autocomplete Methods
 
-  selectedHashtagOption(event) {
-    this.hashtagSelection = event.option.value;
+  selectedHashtagMesOption(event) {
+    this.hashtagMesSelection = event.option.value;
+  }
+
+  // Autocomplete Methods
+
+  selectedHashtagLocOption(event) {
+    this.hashtagLocSelection = event.option.value;
   }
 
   selectedUserOption(event) {
@@ -166,7 +182,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.locationForm.controls['radius'].disable();
     this.locationForm.controls['radius'].setValue(this.minDistance);
     this.mapService.updateFilterLocation({
-      categoryId: null, radiusEnabled: false, radius: null, coordinates: null, radiusBuffered: false
+      categoryId: null, hashtag: null, radiusEnabled: false, radius: null, coordinates: null, radiusBuffered: false
     });
   }
 
