@@ -25,7 +25,6 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   hashtagsMes: SimpleHashtag[];
   hashtagsLoc: SimpleHashtag[];
 
-
   users: SimpleUser[];
   radius: number = 0;
   strLoc: string;
@@ -50,7 +49,6 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   userControl = new FormControl();
   userSelection: string;
 
-  sidebarActive: boolean = false;
   private subscription: Subscription;
 
   public minDistance: number = 800;
@@ -72,10 +70,6 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     this.getAllCategories();
     this.buildMessageForm();
     this.buildLocationForm();
-
-    this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
-      this.sidebarActive = change.isVisible;
-    });
 
     // Hashtag Location Filter
     this.filteredHashtagLocOptions = this.hashtagMesControl.valueChanges
@@ -129,7 +123,6 @@ export class FilterMainComponent implements OnInit, OnDestroy {
       size: 10
     });
     this.sidebarService.changeVisibilityAndFocus({isVisible: true});
-    this.sidebarActive = true;
     this.router.navigate(['filter/messages']);
   }
 
@@ -186,8 +179,9 @@ export class FilterMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSidebarActive(sidebarActive: boolean) {
-    this.sidebarActive = sidebarActive;
+  resetMessageFilter(): void {
+    this.messageForm.reset();
+    this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 
   toggleIncludeRadius() {
