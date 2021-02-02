@@ -145,7 +145,7 @@ export class FilterMainComponent implements OnInit, OnDestroy {
   buildLocationForm(): void {
     this.locationForm = this.formBuilder.group({
       categoryId: [null],
-      hashtag: [''],
+      hashtagLoc: [''],
       radius: [{value: this.minDistance, disabled: true}],
       radiusEnabled: [false]
     });

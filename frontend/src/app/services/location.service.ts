@@ -72,6 +72,7 @@ export class LocationService {
     if (filterLocation.categoryId != null) {
       params = params.set('categoryId', filterLocation.categoryId.toString());
     }
+    console.log(filterLocation.hashtag);
     if (filterLocation.hashtag != null) {
       params = params.set('hashtag', filterLocation.hashtag.toString());
     }
