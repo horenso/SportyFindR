@@ -1,5 +1,3 @@
-import {Role} from "./role";
-
 export class User {
   constructor(
     public id: number,
@@ -7,7 +5,7 @@ export class User {
     public email: string,
     public password: string,
     public enabled: boolean,
-    public roles: Role[]
+    public roleIds: number[]
   ) {
   }
 }

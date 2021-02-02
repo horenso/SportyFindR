@@ -5,16 +5,16 @@ import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
+import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,22 +25,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(SpringExtension.class)
@@ -60,6 +62,19 @@ public class MessageEndpointTest implements TestData {
     private LocationRepository locationRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private SimpleUserMapper simpleUserMapper;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private MessageService messageService;
+
 
     @AfterEach
     public void afterEach() {
@@ -67,11 +82,20 @@ public class MessageEndpointTest implements TestData {
         spotRepository.deleteAll();
         locationRepository.deleteAll();
         categoryRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles= "USER")
     public void createMessageTest() {
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -80,6 +104,7 @@ public class MessageEndpointTest implements TestData {
             .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
@@ -88,6 +113,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         MessageDto messageDto = MessageDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
             .spotId(spot.getId())
             .content(MESSAGE_CONTENT)
             .build();
@@ -101,13 +127,33 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(messageDto.getSpotId(), message.get(0).getSpot().getId()),
             () -> assertEquals(messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), message.get(0).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(messageDto.getDownVotes(), message.get(0).getDownVotes()),
-            () -> assertEquals(messageDto.getUpVotes(), message.get(0).getUpVotes())
+            () -> assertEquals(messageDto.getUpVotes(), message.get(0).getUpVotes()),
+            () -> assertEquals(messageDto.getOwner(), simpleUserMapper.userToSimpleUserDto(message.get(0).getOwner()))
         );
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    public void deleteMessageTest() {
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles= "USER")
+    public void deleteMessageTest() throws Exception {
+        Role role = Role.builder()
+            .name("ADMIN")
+            .build();
+        role = roleService.create(role);
+        Role role2 = Role.builder()
+            .name("USER")
+            .build();
+        role2 = roleService.create(role2);
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(role);
+        roles.add(role2);
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .roles(roles)
+            .build();
+        user= userService.createApplicationUser(user);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -116,6 +162,7 @@ public class MessageEndpointTest implements TestData {
             .longitude(LONG)
             .build();
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
@@ -124,6 +171,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         Message message = Message.builder()
+            .owner(user)
             .spot(spot)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
@@ -141,8 +189,19 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    public void findMessagesBySpotTest() {
+    @WithMockUser(username = EMAIL, password = PASSWORD)
+    public void findMessagesBySpotTest() throws NotFoundException2, ValidationException {
+        Role role = Role.builder()
+            .name("ADMIN")
+            .build();
+        role = roleService.create(role);
+        Role role2 = Role.builder()
+            .name("USER")
+            .build();
+        role2 = roleService.create(role2);
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(role);
+        roles.add(role2);
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();
@@ -150,7 +209,16 @@ public class MessageEndpointTest implements TestData {
             .latitude(LAT)
             .longitude(LONG)
             .build();
+        ApplicationUser user = ApplicationUser.builder()
+            .roles(roles)
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
@@ -165,7 +233,7 @@ public class MessageEndpointTest implements TestData {
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();
-        messageRepository.save(message);
+        messageService.create(message);
         Message message2 = Message.builder()
             .spot(spot)
             .downVotes(ZERO)
@@ -173,7 +241,7 @@ public class MessageEndpointTest implements TestData {
             .content(CAT_NAME)
             .publishedAt(DATE2)
             .build();
-        messageRepository.save(message2);
+        messageService.create(message2);
         List<MessageDto> messages = messageEndpoint.findBySpot(spot.getId());
         assertAll(
             () -> assertEquals(message.getId(), messages.get(0).getId()),
@@ -182,12 +250,14 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(message.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messages.get(0).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message.getDownVotes(), messages.get(0).getDownVotes()),
             () -> assertEquals(message.getUpVotes(), messages.get(0).getUpVotes()),
+            () -> assertEquals(simpleUserMapper.userToSimpleUserDto(message.getOwner()),(messages.get(0).getOwner())),
             () -> assertEquals(message2.getId(), messages.get(1).getId()),
             () -> assertEquals(message2.getContent(), messages.get(1).getContent()),
             () -> assertEquals(message2.getSpot().getId(), messages.get(1).getSpotId()),
             () -> assertEquals(message2.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messages.get(1).getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message2.getDownVotes(), messages.get(1).getDownVotes()),
-            () -> assertEquals(message2.getUpVotes(), messages.get(1).getUpVotes())
+            () -> assertEquals(message2.getUpVotes(), messages.get(1).getUpVotes()),
+            () -> assertEquals(simpleUserMapper.userToSimpleUserDto(message2.getOwner()),(messages.get(1).getOwner()))
         );
     }
 
@@ -201,7 +271,15 @@ public class MessageEndpointTest implements TestData {
             .latitude(LAT)
             .longitude(LONG)
             .build();
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
@@ -210,6 +288,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         Message message = Message.builder()
+            .owner(user)
             .spot(spot)
             .upVotes(ZERO)
             .downVotes(ZERO)
@@ -224,13 +303,15 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(message.getSpot().getId(), message.getSpot().getId()),
             () -> assertEquals(message.getPublishedAt().truncatedTo(ChronoUnit.MILLIS), messageDto.getPublishedAt().truncatedTo(ChronoUnit.MILLIS)),
             () -> assertEquals(message.getDownVotes(), messageDto.getDownVotes()),
-            () -> assertEquals(message.getUpVotes(), messageDto.getUpVotes())
+            () -> assertEquals(message.getUpVotes(), messageDto.getUpVotes()),
+            () -> assertEquals(message.getOwner(),simpleUserMapper.simpleUserDtoToUser(messageDto.getOwner()))
+
         );
     }
 
     //negative tests
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "USER")
     public void createMessageWithWrongSpotIdTest() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -239,7 +320,15 @@ public class MessageEndpointTest implements TestData {
             .latitude(LAT)
             .longitude(LONG)
             .build();
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
@@ -248,6 +337,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         MessageDto messageDto = MessageDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
             .spotId(spot.getId() + 1)
             .content(MESSAGE_CONTENT)
             .build();
@@ -259,7 +349,7 @@ public class MessageEndpointTest implements TestData {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "USER")
     public void deleteMessageWithWrongIdTest() {
         Category category = Category.builder()
             .name(CAT_NAME)
@@ -268,7 +358,15 @@ public class MessageEndpointTest implements TestData {
             .latitude(LAT)
             .longitude(LONG)
             .build();
+        ApplicationUser user = ApplicationUser.builder()
+            .email(EMAIL)
+            .enabled(ENABLED)
+            .name(USERNAME)
+            .password(PASSWORD)
+            .build();
+        userRepository.save(user);
         Spot spot = Spot.builder()
+            .owner(user)
             .name(NAME)
             .location(location)
             .category(category)
@@ -277,6 +375,7 @@ public class MessageEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         Message message = Message.builder()
+            .owner(user)
             .spot(spot)
             .content(MESSAGE_CONTENT)
             .downVotes(ZERO)

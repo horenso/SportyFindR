@@ -7,20 +7,18 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class SimpleRoleService implements RoleService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final RoleRepository roleRepository;
     private final UserService userService;
 
@@ -99,12 +97,22 @@ public class SimpleRoleService implements RoleService {
 
     @Override
     public List<Role> findAll() {
-        LOGGER.debug("Find all roles");
+        log.debug("Find all roles");
         return roleRepository.findAll();
     }
 
     @Override
     public List<Role> findRolesByUser(ApplicationUser applicationUser) {
         return roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
+    }
+
+    @Override
+    public Role getById(Long id) throws NotFoundException2 {
+        Optional<Role> role = roleRepository.findRoleById(id);
+        if (role.isPresent()) {
+            return role.get();
+        } else {
+            throw new NotFoundException2("Role with ID " + id + "does not exist.");
+        }
     }
 }

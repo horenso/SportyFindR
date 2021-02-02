@@ -53,4 +53,14 @@ public interface TestData {
     Double LONG3 = -20.3;
     Double RADIUS = 0.001;
     String HASHTAG_NAME= "best";
+    String EMAIL = "user@email.com";
+    Boolean ENABLED = true;
+    String USERNAME = "user";
+    String PASSWORD = "password";
+    String EMAIL2 = "user2@email.com";
+    String USERNAME2 = "user2";
+    String PASSWORD2 = "password2";
+    String EMAIL3 = "user3@email.com";
+    String USERNAME3 = "user3";
+    String PASSWORD3 = "password3";
 }

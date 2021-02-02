@@ -4,12 +4,15 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +27,7 @@ public class SimpleReactionService implements ReactionService {
     private final ReactionRepository reactionRepository;
     private final MessageRepository messageRepository;
     private final SpotSubscriptionService spotSubscriptionService;
+    private final UserRepository userRepository;
 
     @Override
     public Reaction create(Reaction reaction) throws NotFoundException2{
@@ -32,6 +36,7 @@ public class SimpleReactionService implements ReactionService {
             throw new NotFoundException2("Message does not Exist");
         }
         reaction.setPublishedAt(LocalDateTime.now());
+        reaction.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
         Reaction newReaction = reactionRepository.save(reaction);
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(newReaction.getMessage().getId());
         return newReaction;
@@ -49,10 +54,12 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public void deleteById(Long reactionId) throws NotFoundException2 {
+    public void deleteById(Long reactionId) throws NotFoundException2, WrongUserException {
         Optional<Reaction> reactionOptional = reactionRepository.findById(reactionId);
         if (reactionOptional.isEmpty()) {
             throw new NotFoundException2(String.format("Reaction with id %d not found.", reactionId));
+        }else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new WrongUserException("You can only delete your own messages");
         }
         Reaction reaction = reactionOptional.get();
         reactionRepository.deleteById(reactionId);
@@ -60,13 +67,15 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public Reaction change(Reaction reaction) throws NotFoundException2{
-        if (reactionRepository.findById(reaction.getId()).isEmpty()) {
+    public Reaction change(Reaction reaction) throws NotFoundException2, WrongUserException{
+        Optional<Reaction> reactionOptional = reactionRepository.findById(reaction.getId());
+        if (reactionOptional.isEmpty()) {
             throw new NotFoundException2(String.format("Reaction with id %d not found.", reaction.getId()));
+        }else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new WrongUserException("You can only delete your own messages");
         }
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
-        Reaction newReaction = reactionRepository.getOne(reaction.getId());
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(reaction.getMessage().getId());
-        return newReaction;
+        return reaction;
     }
 }

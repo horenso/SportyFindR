@@ -43,6 +43,6 @@ export class ReactionService {
    */
   deleteById(id: number): Observable<{}> {
     console.log('Delete reaction with id ' + id);
-    return this.httpClient.delete<Reaction>(`${this.reactionBaseUri}/id`);
+    return this.httpClient.delete<Reaction>(`${this.reactionBaseUri}/${id}`);
   }
 }

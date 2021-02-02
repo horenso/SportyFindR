@@ -2,6 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -23,7 +25,8 @@ public class Role {
     @Length(min = 3, max = 15)
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
+    @Fetch(value = FetchMode.SUBSELECT)
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
 
     public Role(Long id, @Length(min = 3, max = 15) String name, Set<ApplicationUser> applicationUsers) {
@@ -37,12 +40,12 @@ public class Role {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return getName().equals(role.getName());
+        return getId().equals(role.getId()) && getName().equals(role.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName());
+        return Objects.hash(getId(), getName());
     }
 
     @Override

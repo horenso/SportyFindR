@@ -31,7 +31,7 @@ public interface UserService extends UserDetailsService {
      * @return an application user
      * @throws NotFoundException2 if the user does not exist
      */
-    ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException2;
+    ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException2;
 
     /**
      * Find an Application user based on the id
@@ -39,7 +39,7 @@ public interface UserService extends UserDetailsService {
      * @return the application user that has been found
      * @throws NotFoundException2 if application user does not exist
      */
-    ApplicationUser findApplicationUserById(Long id) throws NotFoundException2;
+    ApplicationUser getApplicationUserById(Long id) throws NotFoundException2;
 
     /**
      * Creates a new Application UserEndpoint
@@ -75,7 +75,7 @@ public interface UserService extends UserDetailsService {
      * @return List of Application Users having the role
      * @throws NotFoundException2 if the role was not found
      */
-    List<ApplicationUser> findApplicationUserByRoleId(Long roleId) throws NotFoundException2;
+    List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2;
 
     /**
      * check if user with email exists

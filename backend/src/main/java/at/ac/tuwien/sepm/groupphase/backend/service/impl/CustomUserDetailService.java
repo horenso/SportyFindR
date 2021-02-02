@@ -7,8 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -19,14 +18,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CustomUserDetailService implements UserService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -73,7 +71,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public List<ApplicationUser> findAll() {
-        LOGGER.debug("Find all Users");
+        log.debug("Find all Users");
         return this.userRepository.findAll();
     }
 
@@ -90,17 +88,20 @@ public class CustomUserDetailService implements UserService {
 
         if (rUser.isPresent()) {
 
-            if (!rUser.get().getEmail().equals(user.getEmail())) {
-                if (userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
-                    throw new ValidationException("Email address is invalid: it is already in use by another user.");
-                }
-                if (userRepository.findApplicationUserByName(user.getName()).isPresent()) {
-                    throw new ValidationException("User name is invalid: it is already in use by another user.");
-                }
+            if (!rUser.get().getEmail().equals(user.getEmail()) && userRepository.findApplicationUserByEmail(user.getEmail()).isPresent()) {
+                throw new ValidationException("Email address is invalid: it is already in use by another user.");
+            }
+            if (!rUser.get().getName().equals(user.getName()) && userRepository.findApplicationUserByName(user.getName()).isPresent()) {
+                throw new ValidationException("User name is invalid: it is already in use by another user.");
             }
 
+            if (user.getPassword() == null || user.getPassword().equals("")) {
+                user.setPassword(rUser.get().getPassword());
+            } else {
+                user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+            }
             this.userRepository.save(user);
-            return findApplicationUserById(user.getId());
+            return getApplicationUserById(user.getId());
         } else {
             throw new NotFoundException2("User cannot be updated as user does not exist.");
         }
@@ -108,9 +109,9 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        LOGGER.debug("Load all user by email");
+        log.debug("Load all user by email");
         try {
-            ApplicationUser applicationUser = findApplicationUserByEmail(email);
+            ApplicationUser applicationUser = getApplicationUserByEmail(email);
 
             List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList();
             List<Role> roles = roleRepository.findRolesByApplicationUsersId(applicationUser.getId());
@@ -124,8 +125,8 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException2 {
-        LOGGER.debug("Find application user by email");
+    public ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException2 {
+        log.debug("Find application user by email");
         Optional<ApplicationUser> oApplicationUser = userRepository.findApplicationUserByEmail(email);
         if (oApplicationUser.isPresent()) {
             return oApplicationUser.get();
@@ -135,8 +136,8 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserById(Long id) throws NotFoundException2 {
-        LOGGER.debug("Find application user by id");
+    public ApplicationUser getApplicationUserById(Long id) throws NotFoundException2 {
+        log.debug("Find application user by id");
         Optional<ApplicationUser> optionalApplicationUser = userRepository.findApplicationUserById(id);
         if (optionalApplicationUser.isPresent()) {
             return optionalApplicationUser.get();
@@ -146,8 +147,8 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public List<ApplicationUser> findApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
-        LOGGER.debug("Find application users by role id");
+    public List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
+        log.debug("Find application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
             return userRepository.findApplicationUsersByRolesId(roleId);
         } else {
@@ -157,7 +158,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public boolean userExistsByEmail(String email) {
-        LOGGER.debug("Check if user exists by email");
+        log.debug("Check if user exists by email");
         return userRepository.findApplicationUserByEmail(email).isPresent();
     }
 
@@ -168,8 +169,18 @@ public class CustomUserDetailService implements UserService {
         if (user.getName().length() < 3 || user.getName().length() > 30) {
             return new ValidationException("User name must be at least 3 and at most 30 characters.");
         }
-        if (user.getPassword().length() < 7) {
-            return new ValidationException("Password must be at least 7 characters long.");
+        if (user.getPassword() != null) {
+            if (user.getPassword().length() < 7) {
+                return new ValidationException("Password must be at least 7 characters long.");
+            }
+        } else {
+            if (user.getId() == null || userRepository.findApplicationUserById(user.getId()).isEmpty()) {
+                return new ValidationException("Password must be at least 7 characters long.");
+            } else {
+                if (userRepository.findApplicationUserById(user.getId()).get().getPassword().length() < 7) {
+                    return new ValidationException("Password must be at least 7 characters long.");
+                }
+            }
         }
         if (user.getEnabled() == null) {
             return new ValidationException("User must either be enabled or disabled.");

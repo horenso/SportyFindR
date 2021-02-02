@@ -1,10 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 
 import java.util.List;
 
@@ -25,7 +22,7 @@ public interface SpotService {
      * @return spot as it is saved in the system
      * @throws ServiceException if the spot entity is not valid
      */
-    Spot update(Spot spot) throws NotFoundException2, ValidationException;
+    Spot update(Spot spot) throws NotFoundException2, ValidationException, WrongUserException;
 
 
     /**
@@ -36,7 +33,7 @@ public interface SpotService {
      * @return true if the host location was deleted, otherwise false
      * @throws ValidationException if no spot with this id is known
      */
-    boolean deleteById(Long id) throws ValidationException, ServiceException;
+    boolean deleteById(Long id) throws ValidationException, ServiceException, WrongUserException;
 
     /**
      * Get all spots within one Location. This list cannot be empty since since a location

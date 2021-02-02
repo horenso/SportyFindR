@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.LocationSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -33,7 +34,7 @@ public class LocationEndpoint {
     private final LocationService locationService;
     private final LocationMapper locationMapper;
 
-    @Secured("ROLE_ADMIN")
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     @ApiOperation(value = "Get one location by id", authorizations = {@Authorization(value = "apiKey")})
@@ -47,16 +48,15 @@ public class LocationEndpoint {
         }
     }
 
-    @Secured("ROLE_ADMIN")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of locations", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDto> findAll() {
-        LOGGER.info("GET /api/v1/locations");
+        log.info("GET /api/v1/locations");
         return locationMapper.entityToListDto((locationService.findAll()));
     }
 
-    @Secured("ROLE_ADMIN")
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/filter")
     @ApiOperation(value = "Filter locations by distance and categories of spots",
@@ -66,16 +66,19 @@ public class LocationEndpoint {
                                     @RequestParam(required = false, defaultValue = "0") Double longitude,
                                     @RequestParam(required = false, defaultValue = "0") Double radius) {
 
-        LOGGER.info("GET /api/v1/locations/filter?" +
+        log.info("GET /api/v1/locations/filter?" +
             "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
 
+        LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius);
+
         try {
-            return locationMapper.entityToListDto(locationService.filter(categoryId, latitude, longitude, radius));
+            return locationMapper.entityToListDto(locationService.filter(locationSearchObject));
         } catch (ServiceException | NotFoundException2 e) {
             LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
     }
+
 
 }

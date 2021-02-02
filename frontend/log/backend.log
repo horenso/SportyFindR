@@ -1,173 +1,139 @@
-2020-12-29 20:08:31.328  INFO 28442 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on Legion-Y540 with PID 28442 (/home/jannis/Desktop/20ws_sepm-pr_qse_05/backend/target/classes started by jannis in /home/jannis/Desktop/20ws_sepm-pr_qse_05/frontend)
-2020-12-29 20:08:31.331  INFO 28442 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
-2020-12-29 20:08:32.051  INFO 28442 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
-2020-12-29 20:08:32.114  INFO 28442 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 59ms. Found 5 JPA repository interfaces.
-2020-12-29 20:08:32.291  INFO 28442 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@3d9f5016' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2020-12-29 20:08:32.295  INFO 28442 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2020-12-29 20:08:32.426  INFO 28442 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2020-12-29 20:08:32.431  INFO 28442 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2020-12-29 20:08:32.431  INFO 28442 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
-2020-12-29 20:08:32.485  INFO 28442 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2020-12-29 20:08:32.486  INFO 28442 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1104 ms
-2020-12-29 20:08:32.517  INFO 28442 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2020-12-29 20:08:32.580  INFO 28442 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2020-12-29 20:08:32.583  INFO 28442 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
-2020-12-29 20:08:32.642  INFO 28442 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2020-12-29 20:08:32.662  INFO 28442 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2020-12-29 20:08:32.705  INFO 28442 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
-2020-12-29 20:08:32.754  INFO 28442 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
-2020-12-29 20:08:32.797  INFO 28442 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2020-12-29 20:08:33.217  INFO 28442 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2020-12-29 20:08:33.221  INFO 28442 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2020-12-29 20:08:33.251  INFO 28442 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
-2020-12-29 20:08:33.267  INFO 28442 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@269c7104, org.springframework.security.web.context.SecurityContextPersistenceFilter@72a3462f, org.springframework.security.web.header.HeaderWriterFilter@5d37aa0f, org.springframework.web.filter.CorsFilter@6de84336, org.springframework.security.web.authentication.logout.LogoutFilter@47f0f414, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@627bcd7e, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@70543cae, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@632c3f55, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@48277712, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@350567f1, org.springframework.security.web.session.SessionManagementFilter@485c84d7, org.springframework.security.web.access.ExceptionTranslationFilter@2f99d8c, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@4f7bb8df]
-2020-12-29 20:08:33.437  INFO 28442 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-12-29 20:08:33.636  INFO 28442 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
-2020-12-29 20:08:33.874  INFO 28442 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
-2020-12-29 20:08:33.880  INFO 28442 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 2.826 seconds (JVM running for 3.36)
-2020-12-29 20:08:38.617  INFO 28442 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2020-12-29 20:08:38.617  INFO 28442 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2020-12-29 20:08:38.621  INFO 28442 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
-2020-12-29 20:08:38.848  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
-2020-12-29 20:08:39.103  INFO 28442 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:09:05.788  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
-2020-12-29 20:09:05.826  INFO 28442 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:09:08.278  INFO 28442 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:09:47.364  INFO 28442 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:09:51.440  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:10:05.841  INFO 28442 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 20:10:13.600  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
-2020-12-29 20:10:13.624  INFO 28442 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:10:33.235  INFO 28442 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:10:33.833  INFO 28442 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:10:36.138  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:10:37.940  INFO 28442 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:10:39.676  INFO 28442 --- [http-nio-8080-exec-5] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:11:55.921  INFO 28442 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:11:56.330  INFO 28442 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:12:01.141  INFO 28442 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:12:38.707  INFO 28442 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:12:39.345  INFO 28442 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:13:14.042  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:13:15.240  INFO 28442 --- [http-nio-8080-exec-7] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:13:49.453  INFO 28442 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:13:50.640  INFO 28442 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:13:55.462  INFO 28442 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:15:05.542  INFO 28442 --- [http-nio-8080-exec-5] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:15:05.959  INFO 28442 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:15:09.971  INFO 28442 --- [http-nio-8080-exec-7] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:15:58.651  INFO 28442 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:15:59.375  INFO 28442 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:26:02.704  INFO 28442 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:27:52.794  INFO 28442 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2020-12-29 20:27:52.795  INFO 28442 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2020-12-29 20:27:52.795  INFO 28442 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2020-12-29 20:27:52.797  INFO 28442 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2020-12-29 20:29:31.564  INFO 29967 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on Legion-Y540 with PID 29967 (/home/jannis/Desktop/20ws_sepm-pr_qse_05/backend/target/classes started by jannis in /home/jannis/Desktop/20ws_sepm-pr_qse_05/frontend)
-2020-12-29 20:29:31.567  INFO 29967 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
-2020-12-29 20:29:32.161  INFO 29967 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
-2020-12-29 20:29:32.225  INFO 29967 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 60ms. Found 5 JPA repository interfaces.
-2020-12-29 20:29:32.393  INFO 29967 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@318c68d5' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2020-12-29 20:29:32.396  INFO 29967 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2020-12-29 20:29:32.522  INFO 29967 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2020-12-29 20:29:32.526  INFO 29967 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2020-12-29 20:29:32.527  INFO 29967 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
-2020-12-29 20:29:32.577  INFO 29967 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2020-12-29 20:29:32.577  INFO 29967 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 981 ms
-2020-12-29 20:29:32.605  INFO 29967 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2020-12-29 20:29:32.674  INFO 29967 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2020-12-29 20:29:32.677  INFO 29967 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
-2020-12-29 20:29:32.735  INFO 29967 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2020-12-29 20:29:32.753  INFO 29967 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2020-12-29 20:29:32.779  INFO 29967 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
-2020-12-29 20:29:32.825  INFO 29967 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
-2020-12-29 20:29:32.872  INFO 29967 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2020-12-29 20:29:33.230  INFO 29967 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2020-12-29 20:29:33.233  INFO 29967 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2020-12-29 20:29:33.269  INFO 29967 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
-2020-12-29 20:29:33.284  INFO 29967 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@95cecc5, org.springframework.security.web.context.SecurityContextPersistenceFilter@34e990cc, org.springframework.security.web.header.HeaderWriterFilter@7ee12d58, org.springframework.web.filter.CorsFilter@48b3b1b8, org.springframework.security.web.authentication.logout.LogoutFilter@79d49790, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@b86cb18, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@29c244e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@21f91efa, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@70543cae, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6cc8da1c, org.springframework.security.web.session.SessionManagementFilter@1533338c, org.springframework.security.web.access.ExceptionTranslationFilter@3e04abc5, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@603d25db]
-2020-12-29 20:29:33.455  INFO 29967 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-12-29 20:29:33.660  INFO 29967 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
-2020-12-29 20:29:33.896  INFO 29967 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
-2020-12-29 20:29:33.902  INFO 29967 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 2.631 seconds (JVM running for 2.971)
-2020-12-29 20:31:18.404  INFO 29967 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2020-12-29 20:31:18.406  INFO 29967 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2020-12-29 20:31:18.412  INFO 29967 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
-2020-12-29 20:31:18.486  INFO 29967 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:31:29.544  INFO 29967 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 20:31:38.829  INFO 29967 --- [http-nio-8080-exec-6] a.a.t.s.g.b.s.JwtAuthenticationFilter    : Successfully authenticated applicationUser admin@email.com
-2020-12-29 20:31:38.871  INFO 29967 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:32:10.100  INFO 29967 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 20:38:40.598  INFO 29967 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2020-12-29 20:38:40.599  INFO 29967 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2020-12-29 20:38:40.599  INFO 29967 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2020-12-29 20:38:40.603  INFO 29967 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2020-12-29 20:38:43.765  INFO 31251 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on Legion-Y540 with PID 31251 (/home/jannis/Desktop/20ws_sepm-pr_qse_05/backend/target/classes started by jannis in /home/jannis/Desktop/20ws_sepm-pr_qse_05/frontend)
-2020-12-29 20:38:43.767  INFO 31251 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
-2020-12-29 20:38:44.424  INFO 31251 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
-2020-12-29 20:38:44.481  INFO 31251 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 53ms. Found 5 JPA repository interfaces.
-2020-12-29 20:38:44.662  INFO 31251 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@321ca237' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2020-12-29 20:38:44.666  INFO 31251 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2020-12-29 20:38:44.794  INFO 31251 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2020-12-29 20:38:44.799  INFO 31251 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2020-12-29 20:38:44.799  INFO 31251 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
-2020-12-29 20:38:44.852  INFO 31251 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2020-12-29 20:38:44.852  INFO 31251 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1054 ms
-2020-12-29 20:38:44.881  INFO 31251 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2020-12-29 20:38:44.946  INFO 31251 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2020-12-29 20:38:44.949  INFO 31251 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
-2020-12-29 20:38:45.006  INFO 31251 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2020-12-29 20:38:45.025  INFO 31251 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2020-12-29 20:38:45.053  INFO 31251 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
-2020-12-29 20:38:45.105  INFO 31251 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
-2020-12-29 20:38:45.148  INFO 31251 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2020-12-29 20:38:45.519  INFO 31251 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2020-12-29 20:38:45.523  INFO 31251 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2020-12-29 20:38:45.554  INFO 31251 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
-2020-12-29 20:38:45.569  INFO 31251 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@460f1cdb, org.springframework.security.web.context.SecurityContextPersistenceFilter@213012a0, org.springframework.security.web.header.HeaderWriterFilter@3c544c9, org.springframework.web.filter.CorsFilter@31e7afde, org.springframework.security.web.authentication.logout.LogoutFilter@1bbb42b4, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@349f3ff7, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@2487e20, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6c2883b1, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@fd4459b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3c9f4376, org.springframework.security.web.session.SessionManagementFilter@433d93e7, org.springframework.security.web.access.ExceptionTranslationFilter@59371066, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7d626f2]
-2020-12-29 20:38:45.742  INFO 31251 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-12-29 20:38:45.948  INFO 31251 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
-2020-12-29 20:38:46.183  INFO 31251 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
-2020-12-29 20:38:46.189  INFO 31251 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 2.647 seconds (JVM running for 3.027)
-2020-12-29 20:38:49.396  INFO 31251 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2020-12-29 20:38:49.397  INFO 31251 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2020-12-29 20:38:49.401  INFO 31251 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
-2020-12-29 20:38:49.482  INFO 31251 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:40:03.818  INFO 31251 --- [http-nio-8080-exec-5] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 20:55:49.639  INFO 31251 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:55:52.035  INFO 31251 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:55:56.102  INFO 31251 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:56:35.722  INFO 31251 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:56:37.077  INFO 31251 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 20:56:43.231  INFO 31251 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:00:22.718  INFO 31251 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:00:23.251  INFO 31251 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:00:28.781  INFO 31251 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:02:32.460  INFO 31251 --- [http-nio-8080-exec-5] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:02:32.785  INFO 31251 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:02:34.087  INFO 31251 --- [http-nio-8080-exec-7] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:03:15.894  INFO 31251 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:03:16.319  INFO 31251 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:03:16.795  INFO 31251 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:08:32.309  INFO 31251 --- [http-nio-8080-exec-4] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:08:32.359  INFO 31251 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:08:33.009  INFO 31251 --- [http-nio-8080-exec-7] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:09:49.766  INFO 31251 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:09:50.078  INFO 31251 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:09:51.204  INFO 31251 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:11:04.486  INFO 31251 --- [http-nio-8080-exec-5] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:11:05.150  INFO 31251 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:11:05.836  INFO 31251 --- [http-nio-8080-exec-7] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:12:01.865  INFO 31251 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:12:02.759  INFO 31251 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:12:03.470  INFO 31251 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:20:03.150  INFO 31251 --- [http-nio-8080-exec-5] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 21:20:08.906  INFO 31251 --- [http-nio-8080-exec-7] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 21:20:11.461  INFO 31251 --- [http-nio-8080-exec-8] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 21:21:24.694  INFO 31251 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:21:26.003  INFO 31251 --- [http-nio-8080-exec-2] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:21:26.144  INFO 31251 --- [http-nio-8080-exec-3] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:34:43.227  INFO 31251 --- [http-nio-8080-exec-6] a.a.t.s.g.b.endpoint.CategoryEndpoint    : GET /api/v1/categories/all
-2020-12-29 21:36:32.122  INFO 31251 --- [http-nio-8080-exec-9] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:36:33.740  INFO 31251 --- [http-nio-8080-exec-10] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
-2020-12-29 21:36:33.935  INFO 31251 --- [http-nio-8080-exec-1] a.a.t.s.g.b.endpoint.LocationEndpoint    : GET /api/v1/locations
+2021-01-22 00:31:58.985  INFO 17186 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on SEPM with PID 17186 (/home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/backend/target/classes started by marcel in /home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/frontend)
+2021-01-22 00:31:58.990  INFO 17186 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
+2021-01-22 00:31:59.717  INFO 17186 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2021-01-22 00:31:59.793  INFO 17186 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69ms. Found 8 JPA repository interfaces.
+2021-01-22 00:31:59.995  INFO 17186 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@41ef1ea2' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 00:31:59.999  INFO 17186 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 00:32:00.145  INFO 17186 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-01-22 00:32:00.150  INFO 17186 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-01-22 00:32:00.151  INFO 17186 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
+2021-01-22 00:32:00.209  INFO 17186 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-01-22 00:32:00.210  INFO 17186 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1176 ms
+2021-01-22 00:32:00.237  INFO 17186 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-01-22 00:32:00.323  INFO 17186 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-01-22 00:32:00.327  INFO 17186 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
+2021-01-22 00:32:00.386  INFO 17186 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-01-22 00:32:00.469  INFO 17186 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-01-22 00:32:00.527  INFO 17186 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
+2021-01-22 00:32:00.632  INFO 17186 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2021-01-22 00:32:00.709  INFO 17186 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-01-22 00:32:00.992  INFO 17186 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
+2021-01-22 00:32:01.011  INFO 17186 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2e1ba142, org.springframework.security.web.context.SecurityContextPersistenceFilter@ff2266c, org.springframework.security.web.header.HeaderWriterFilter@376498da, org.springframework.web.filter.CorsFilter@abc7005, org.springframework.security.web.authentication.logout.LogoutFilter@448086ab, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@595ec862, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@63c84d31, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@83ebdc5, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@284c4f02, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@102af1bb, org.springframework.security.web.session.SessionManagementFilter@2f9addd4, org.springframework.security.web.access.ExceptionTranslationFilter@17003497, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@69ba72da]
+2021-01-22 00:32:01.240  INFO 17186 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-01-22 00:32:01.452  INFO 17186 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-01-22 00:32:01.458  INFO 17186 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 00:32:01.589  INFO 17186 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2021-01-22 00:32:01.960  INFO 17186 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2021-01-22 00:32:01.969  INFO 17186 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 3.27 seconds (JVM running for 3.783)
+2021-01-22 00:32:29.318  INFO 17186 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 00:32:29.321  INFO 17186 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-01-22 00:32:29.322  INFO 17186 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-01-22 00:32:29.326  INFO 17186 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2021-01-22 00:32:31.384  INFO 17311 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on SEPM with PID 17311 (/home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/backend/target/classes started by marcel in /home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/frontend)
+2021-01-22 00:32:31.386  INFO 17311 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
+2021-01-22 00:32:32.050  INFO 17311 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2021-01-22 00:32:32.105  INFO 17311 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 52ms. Found 8 JPA repository interfaces.
+2021-01-22 00:32:32.345  INFO 17311 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@2bbb44da' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 00:32:32.349  INFO 17311 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 00:32:32.464  INFO 17311 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-01-22 00:32:32.469  INFO 17311 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-01-22 00:32:32.469  INFO 17311 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
+2021-01-22 00:32:32.519  INFO 17311 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-01-22 00:32:32.520  INFO 17311 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1102 ms
+2021-01-22 00:32:32.545  INFO 17311 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-01-22 00:32:32.621  INFO 17311 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-01-22 00:32:32.624  INFO 17311 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
+2021-01-22 00:32:32.683  INFO 17311 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-01-22 00:32:32.753  INFO 17311 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-01-22 00:32:32.795  INFO 17311 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
+2021-01-22 00:32:32.862  INFO 17311 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2021-01-22 00:32:32.915  INFO 17311 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-01-22 00:32:33.232  INFO 17311 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
+2021-01-22 00:32:33.249  INFO 17311 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@fd87c22, org.springframework.security.web.context.SecurityContextPersistenceFilter@69069866, org.springframework.security.web.header.HeaderWriterFilter@333e5fb6, org.springframework.web.filter.CorsFilter@fee881, org.springframework.security.web.authentication.logout.LogoutFilter@2c08c787, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@1ff463bb, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@3b9c9b8b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@64c95480, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@246de37e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7769d9b6, org.springframework.security.web.session.SessionManagementFilter@21a9f95b, org.springframework.security.web.access.ExceptionTranslationFilter@ca2cd5e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@3b33fff9]
+2021-01-22 00:32:33.461  INFO 17311 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-01-22 00:32:33.503  INFO 17311 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-01-22 00:32:33.508  INFO 17311 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 00:32:33.852  INFO 17311 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2021-01-22 00:32:34.140  INFO 17311 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2021-01-22 00:32:34.147  INFO 17311 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 3.055 seconds (JVM running for 3.508)
+2021-01-22 00:34:14.045  INFO 17311 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-01-22 00:34:14.046  INFO 17311 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-01-22 00:34:14.051  INFO 17311 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+2021-01-22 00:34:14.185  INFO 17311 --- [http-nio-8080-exec-3] a.a.t.s.g.backend.endpoint.UserEndpoint  : GET /api/v1/users
+2021-01-22 00:34:14.189  INFO 17311 --- [http-nio-8080-exec-4] a.a.t.s.g.backend.endpoint.RoleEndpoint  : GET /api/v1/roles
+2021-01-22 00:34:24.096  INFO 17311 --- [http-nio-8080-exec-6] a.a.t.s.g.backend.endpoint.UserEndpoint  : GET /api/v1/users
+2021-01-22 00:34:24.119  INFO 17311 --- [http-nio-8080-exec-8] a.a.t.s.g.backend.endpoint.RoleEndpoint  : GET /api/v1/roles
+2021-01-22 00:34:48.613  INFO 17311 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 00:34:48.617  INFO 17311 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-01-22 00:34:48.618  INFO 17311 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-01-22 00:34:48.625  INFO 17311 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2021-01-22 01:01:15.345  INFO 17933 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on SEPM with PID 17933 (/home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/backend/target/classes started by marcel in /home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/frontend)
+2021-01-22 01:01:15.347  INFO 17933 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
+2021-01-22 01:01:15.989  INFO 17933 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2021-01-22 01:01:16.050  INFO 17933 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 56ms. Found 8 JPA repository interfaces.
+2021-01-22 01:01:16.231  INFO 17933 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@2bbb44da' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 01:01:16.234  INFO 17933 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 01:01:16.358  INFO 17933 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-01-22 01:01:16.363  INFO 17933 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-01-22 01:01:16.363  INFO 17933 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
+2021-01-22 01:01:16.422  INFO 17933 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-01-22 01:01:16.422  INFO 17933 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1051 ms
+2021-01-22 01:01:16.452  INFO 17933 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-01-22 01:01:16.532  INFO 17933 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-01-22 01:01:16.535  INFO 17933 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
+2021-01-22 01:01:16.605  INFO 17933 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-01-22 01:01:16.672  INFO 17933 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-01-22 01:01:16.698  INFO 17933 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
+2021-01-22 01:01:16.761  INFO 17933 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2021-01-22 01:01:16.837  INFO 17933 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-01-22 01:01:17.113  INFO 17933 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
+2021-01-22 01:01:17.130  INFO 17933 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@fd87c22, org.springframework.security.web.context.SecurityContextPersistenceFilter@69069866, org.springframework.security.web.header.HeaderWriterFilter@333e5fb6, org.springframework.web.filter.CorsFilter@fee881, org.springframework.security.web.authentication.logout.LogoutFilter@2c08c787, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@1ff463bb, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@3b9c9b8b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@64c95480, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@246de37e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7769d9b6, org.springframework.security.web.session.SessionManagementFilter@21a9f95b, org.springframework.security.web.access.ExceptionTranslationFilter@ca2cd5e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@3b33fff9]
+2021-01-22 01:01:17.326  INFO 17933 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-01-22 01:01:17.457  INFO 17933 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-01-22 01:01:17.464  INFO 17933 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 01:01:17.706  INFO 17933 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2021-01-22 01:01:18.117  INFO 17933 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2021-01-22 01:01:18.124  INFO 17933 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 3.097 seconds (JVM running for 3.566)
+2021-01-22 01:01:26.507  INFO 17933 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-01-22 01:01:26.507  INFO 17933 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-01-22 01:01:26.515  INFO 17933 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+2021-01-22 01:01:26.633  INFO 17933 --- [http-nio-8080-exec-4] a.a.t.s.g.backend.endpoint.RoleEndpoint  : GET /api/v1/roles
+2021-01-22 01:01:26.633  INFO 17933 --- [http-nio-8080-exec-3] a.a.t.s.g.backend.endpoint.UserEndpoint  : GET /api/v1/users
+2021-01-22 01:02:12.414  INFO 17933 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 01:02:12.416  INFO 17933 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-01-22 01:02:12.418  INFO 17933 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-01-22 01:02:12.423  INFO 17933 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2021-01-22 01:03:26.070  INFO 18201 --- [main] a.a.t.s.g.backend.BackendApplication     : Starting BackendApplication on SEPM with PID 18201 (/home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/backend/target/classes started by marcel in /home/marcel/IdeaProjects/20ws_sepm-pr_qse_05/frontend)
+2021-01-22 01:03:26.072  INFO 18201 --- [main] a.a.t.s.g.backend.BackendApplication     : No active profile set, falling back to default profiles: default
+2021-01-22 01:03:26.825  INFO 18201 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2021-01-22 01:03:26.881  INFO 18201 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 52ms. Found 8 JPA repository interfaces.
+2021-01-22 01:03:27.056  INFO 18201 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@2bbb44da' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 01:03:27.059  INFO 18201 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-01-22 01:03:27.184  INFO 18201 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-01-22 01:03:27.189  INFO 18201 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-01-22 01:03:27.189  INFO 18201 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
+2021-01-22 01:03:27.243  INFO 18201 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-01-22 01:03:27.244  INFO 18201 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1142 ms
+2021-01-22 01:03:27.272  INFO 18201 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-01-22 01:03:27.348  INFO 18201 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-01-22 01:03:27.351  INFO 18201 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./database/db'
+2021-01-22 01:03:27.411  INFO 18201 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-01-22 01:03:27.475  INFO 18201 --- [task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-01-22 01:03:27.517  INFO 18201 --- [task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
+2021-01-22 01:03:27.566  INFO 18201 --- [task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2021-01-22 01:03:27.621  INFO 18201 --- [task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-01-22 01:03:27.918  INFO 18201 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: OrRequestMatcher [requestMatchers=[Ant [pattern='/'], Ant [pattern='/favicon.ico'], Ant [pattern='/csrf'], Ant [pattern='/v2/api-docs'], Ant [pattern='/swagger-resources/**'], Ant [pattern='/webjars/**'], Ant [pattern='/swagger-ui.html'], Ant [pattern='/h2-console/**'], Ant [pattern='/api/v1/spots/subscribe']]], []
+2021-01-22 01:03:27.935  INFO 18201 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@136fece2, org.springframework.security.web.context.SecurityContextPersistenceFilter@69a90b81, org.springframework.security.web.header.HeaderWriterFilter@7e38e254, org.springframework.web.filter.CorsFilter@56478522, org.springframework.security.web.authentication.logout.LogoutFilter@17003497, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthenticationFilter@3caf5c96, at.ac.tuwien.sepm.groupphase.backend.security.JwtAuthorizationFilter@5b3755f4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@35329a05, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@333e5fb6, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@37d3aa8c, org.springframework.security.web.session.SessionManagementFilter@2e4ecdf8, org.springframework.security.web.access.ExceptionTranslationFilter@1cc93da4, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@59f7c106]
+2021-01-22 01:03:28.157  INFO 18201 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-01-22 01:03:28.256  INFO 18201 --- [task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-01-22 01:03:28.263  INFO 18201 --- [task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 01:03:28.495  INFO 18201 --- [main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2021-01-22 01:03:28.806  INFO 18201 --- [main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2021-01-22 01:03:28.813  INFO 18201 --- [main] a.a.t.s.g.backend.BackendApplication     : Started BackendApplication in 3.011 seconds (JVM running for 3.453)
+2021-01-22 01:03:56.835  INFO 18201 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-01-22 01:03:56.836  INFO 18201 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-01-22 01:03:56.843  INFO 18201 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+2021-01-22 01:04:13.899  INFO 18201 --- [SpringContextShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-01-22 01:04:13.901  INFO 18201 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-01-22 01:04:13.902  INFO 18201 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-01-22 01:04:13.907  INFO 18201 --- [SpringContextShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

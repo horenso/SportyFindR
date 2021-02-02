@@ -35,5 +35,9 @@ export class UserService {
     return this.httpClient.delete<User>(this.userBaseUri + '/' + id);
   }
 
+  getUserByEmail(email: string) {
+    return this.httpClient.get<User>(this.userBaseUri + '/byEmail' + email);
+  }
+
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 }

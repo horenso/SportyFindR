@@ -22,6 +22,6 @@ export class CategoryService {
    */
   getAll(): Observable<Category[]> {
     console.log('Get all categories');
-    return this.httpClient.get<[]>(`${this.categoryBaseUri}/all`);
+    return this.httpClient.get<[]>(`${this.categoryBaseUri}`);
   }
 }

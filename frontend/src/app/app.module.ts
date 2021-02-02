@@ -27,8 +27,12 @@ import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-wi
 import {MaterialModule} from './material/material.module';
 import { HashtagComponent } from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
+import { FilterMainComponent } from './components/filter-main/filter-main.component';
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
 import {RegisterComponent} from './components/register/register.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatPaginatorModule} from '@angular/material/paginator';
+
 
 const toastrSettings = {
   timeOut: 3000,
@@ -56,19 +60,22 @@ const toastrSettings = {
     TextWithHashtagsComponent,
     HashtagComponent,
     UserManagerComponent,
-    RegisterComponent
+    RegisterComponent,
+    FilterMainComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    FormsModule,
-    LeafletModule,
-    MaterialModule,
-    ToastrModule.forRoot(toastrSettings),
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        FormsModule,
+        LeafletModule,
+        MaterialModule,
+        ToastrModule.forRoot(toastrSettings),
+        MatCheckboxModule,
+        MatPaginatorModule,
+    ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })
