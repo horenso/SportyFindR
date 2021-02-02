@@ -1,10 +1,12 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {control, Layer, LayerGroup, Map, tileLayer, Point} from 'leaflet';
+import {control, Layer, LayerGroup, Map, tileLayer, Point, latLng, LatLng, LatLngBounds, Circle, layerGroup} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
 import {MLocation} from '../../util/m-location';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
+import {FilterLocation} from 'src/app/dtos/filter-location';
 
 @Component({
   selector: 'app-map',
@@ -17,9 +19,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private subs = new SubSink();
 
+  private circle: Circle;
+
+  private filter: FilterLocation = {radiusEnabled: false, radiusBuffered: false};
+  private isFilterBuffered: boolean = false;
+
   map: Map;
   leafletOptions = {
-    center: [48.208174, 16.37819],
+    center: [MapService.startLatitude, MapService.startLongitude],
     zoom: 13,
     zoomDelta: 0.5,
     wheelPxPerZoomLevel: 90,
@@ -29,7 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
     maxZoom: 20,
   };
   private locationList: MLocation[];
-  private locMarkerGroup: LayerGroup<MLocation>;
+  private locMarkerGroup: LayerGroup<MLocation> = new LayerGroup<MLocation>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
 //  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
@@ -38,12 +45,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
   layers: Layer[] = [
-    tileLayer(this.worldMap, {
-      attribution: 'World Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      subdomains: 'abcd',
-      minZoom: 1,
-      maxZoom: 16,
-    }),
+    // tileLayer(this.worldMap, {
+    //   attribution: 'World Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    //   subdomains: 'abcd',
+    //   minZoom: 1,
+    //   maxZoom: 16,
+    // }),
     tileLayer(this.basemap, {
       minZoom: 1,
       maxZoom: 20,
@@ -56,7 +63,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private locationService: LocationService,
     private mapService: MapService,
-    private sidebarService: SidebarService) {
+    private sidebarService: SidebarService,
+    public authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -72,6 +80,9 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map = map;
     this.mapService.map = map;
 
+    this.filter = this.filterLocationFromMapView();
+    this.filter.radiusBuffered = true;
+
     this.getLocationsAndConvertToLayerGroup();
     this.subs.add(this.mapService.addMarkerObservable.subscribe(markerLocation => {
       this.locationList.push(markerLocation);
@@ -86,14 +97,107 @@ export class MapComponent implements OnInit, OnDestroy {
       this.changeVisibilityAndFocus(change);
     }));
 
+    this.subs.add(this.mapService.filterLocationObservable.subscribe(filterLocation => {
+      this.onFilterChanged(filterLocation);
+    }));
+
+    this.map.on('moveend', () => { this.onMapMoved(); });
+
     setTimeout(() => this.map.invalidateSize({pan: false}));
   }
 
+  private onMapMoved() {
+    console.log('map moved');
+
+    if (this.filter.radiusEnabled) {
+      return;
+    }
+    const newFilter = this.filterLocationFromMapView();
+
+    if (!this.isNewFilterWithinCurrentFilter(newFilter)) {
+      console.log('New filter:');
+      console.log(this.filter);
+      const oldCategoryId = this.filter.categoryId;
+      this.filter = newFilter;
+      newFilter.categoryId = oldCategoryId;
+      this.isFilterBuffered = false;
+      this.getLocationsAndConvertToLayerGroup();
+    }
+  }
+
+  private onFilterChanged(change: FilterLocation): void {
+    console.log('New filter received:');
+    console.log(change);
+
+    let drawCircles = false;
+    let reloadRequired = false;
+
+    if (this.filter.categoryId !== change.categoryId) {
+      this.filter.categoryId = change.categoryId;
+      reloadRequired = true;
+      console.log('BLABLA: ' + reloadRequired);
+      console.log('newFilter.radiusEnabled:' + change.radiusEnabled);
+    }
+    if (change.radiusEnabled) {
+      drawCircles = true;
+      if (this.filter.radiusEnabled 
+        && !reloadRequired
+        && this.filter.radius === change.radius
+        && this.filter.coordinates.distanceTo(this.map.getCenter()) < 20) {
+
+        console.log('filter is the same as the previous filter.');
+        return;
+      }
+
+      reloadRequired = true;
+      this.filter.radiusEnabled = true;
+      this.filter.radius = change.radius;
+      this.filter.coordinates = this.map.getCenter();
+    } else if (this.filter.radiusEnabled) {
+      reloadRequired = true;
+      this.filter.radiusEnabled = true;
+      this.filter.radius = this.filterLocationFromMapView().radius;
+    } else { // radiusEnabled was disabled and is still disabled
+      const filterFromMapV = this.filterLocationFromMapView(); 
+      reloadRequired = reloadRequired || !this.isNewFilterWithinCurrentFilter(filterFromMapV);
+    }
+
+    if (reloadRequired) {
+      console.log('reload required');
+      this.removeCircle();
+      if (drawCircles) {
+        this.circle = new Circle(this.map.getCenter(), this.filter.radius).addTo(this.map);
+      }
+      this.getLocationsAndConvertToLayerGroup();
+    }
+  }
+
+  /**
+   * Get a filter location cover the entire map
+   * @returns FilterLocation with the map center and the radius to cover the displayed map
+   */
+  private filterLocationFromMapView(): FilterLocation {
+    const center: LatLng = this.map.getCenter();
+    const northEast: LatLng = this.map.getBounds().getNorthEast();
+    const radius = center.distanceTo(northEast);
+
+    return {
+      coordinates: center,
+      radius: radius,
+      radiusEnabled: false,
+      radiusBuffered: false,
+    }
+  }
+
   private getLocationsAndConvertToLayerGroup() {
-    this.subs.add(this.locationService.getAll().subscribe(
+    if (!this.filter.radiusEnabled) {
+      this.addBufferToFilterRadius();
+    }
+    this.subs.add(this.locationService.filterLocation(this.filter).subscribe(
       (result: MLocation[]) => {
         this.locationList = result;
         this.addMarkers();
+        console.log(result);
       },
       error => {
         console.log('Error retrieving locations from backend: ', error);
@@ -102,7 +206,10 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addMarkers(): void {
-    this.locMarkerGroup = new LayerGroup<MLocation>();
+    if (this.locMarkerGroup.getLayers().length > 0) {
+      this.locMarkerGroup.clearLayers();
+    }
+    console.log(this.locMarkerGroup);
     this.locationList.forEach(
       (mLoc: MLocation) => {
         this.mapService.setClickFunction(mLoc);
@@ -112,11 +219,35 @@ export class MapComponent implements OnInit, OnDestroy {
     this.layers.push(this.locMarkerGroup);
   }
 
+  private removeCircle(): void {
+    if (this.circle != null) {
+      this.map.removeLayer(this.circle);
+    }
+  }
+
   public removeMLocation(id: number) {
     const found = this.locationList.find(ele => ele.id === id);
     if (found != null) {
       this.locMarkerGroup?.removeLayer(found);
     }
+  }
+
+  private addBufferToFilterRadius(): void {
+    console.log('add buffer');
+    if (!this.isFilterBuffered) {
+      const center: LatLng = this.map.getCenter();
+      const northEast: LatLng = this.map.getBounds().getNorthEast();
+      const buffer = center.distanceTo(northEast) / 2;
+      this.filter.radius += buffer;
+      this.isFilterBuffered = true;
+    }
+  }
+
+  private isNewFilterWithinCurrentFilter(newFilter: FilterLocation): boolean {
+    let distance = this.filter.coordinates.distanceTo(newFilter.coordinates) + newFilter.radius;
+    let result = distance < this.filter.radius;
+    console.log("isNewFilterWithinCurrentFilter:" + result);
+    return result;
   }
 
   private changeVisibilityAndFocus(change: VisibilityFocusChange): void {

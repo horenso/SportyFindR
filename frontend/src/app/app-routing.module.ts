@@ -9,7 +9,10 @@ import {PageNotFoundComponent} from './components/page-not-found/page-not-found.
 import {SpotViewComponent} from './components/spot-view/spot-view.component';
 import {LocationViewComponent} from './components/location-view/location-view.component';
 import {HashtagComponent} from './components/hashtag/hashtag.component';
+import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
 import {UserManagerComponent} from './components/user-manager/user-manager.component';
+import {RoleAdminGuardGuard} from "./services/role-admin-guard.guard";
+import {RegisterComponent} from './components/register/register.component';
 import {UserAccountComponent} from './components/user-account/user-account.component';
 import {EditAccountComponent} from './components/edit-account/edit-account.component';
 
@@ -21,11 +24,19 @@ const routes: Routes = [
     {path: 'locations/:locId/spots/:spotId/edit', component: EditSpotComponent},
     {path: 'locations/:locId/spots/:spotId', component: SpotViewComponent},
     {path: 'hashtags/:hashtagName', component: HashtagComponent},
+    {path: 'filter/messages', component: FilterMessagesComponent},
   ]},
   {path: 'login', component: LoginComponent},
-  {path: 'user-admin', component: UserManagerComponent},
   {path: 'account', component: UserAccountComponent},
   {path: 'account/edit', component: EditAccountComponent},
+  {path: 'register', component: RegisterComponent},
+  {
+    path: 'user-admin', component: UserManagerComponent,
+    canActivate: [RoleAdminGuardGuard],
+    data: {
+      role: 'ROLE_ADMIN' // not really needed, only to make code more readable.
+    }
+  },
   {path: '**', component: PageNotFoundComponent},
 ];
 

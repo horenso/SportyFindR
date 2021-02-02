@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.ReactionMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +30,7 @@ public class ReactionEndpoint {
     private final ReactionService reactionService;
     private final ReactionMapper reactionMapper;
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new Reaction", authorizations = {@Authorization(value = "apiKey")})
@@ -41,6 +42,9 @@ public class ReactionEndpoint {
         }catch (NotFoundException2 e){
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (ValidationException e){
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
     @GetMapping
@@ -58,7 +62,7 @@ public class ReactionEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get list of Reactions", authorizations = {@Authorization(value = "apiKey")})
@@ -74,7 +78,7 @@ public class ReactionEndpoint {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete one reaction by id", authorizations = {@Authorization(value = "apiKey")})

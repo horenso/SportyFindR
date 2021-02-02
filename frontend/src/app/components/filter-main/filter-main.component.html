@@ -1,84 +1,133 @@
-<mat-card id="filter-card">
+<mat-expansion-panel (opened)="panelOpenState = true"
+                     (closed)="panelOpenState = false"
+                      id="filter-expansion">
+  <mat-expansion-panel-header>
+    <mat-panel-title id="title">
+      <h2>Filter</h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-list id="list">
+    <mat-tab-group id="tabs">
+      <!-- Location Filter -->
+      <mat-tab label="Locations">
+        <form [formGroup]="locationForm" class="locationForm">
 
-<mat-list id="list">
+          <!-- Category -->
+          <mat-list-item id="category-item-loc">
+            <mat-form-field appearance="outline">
+              <mat-label>Category</mat-label>
+              <label for="CategoryLoc"></label>
+              <mat-select id="CategoryLoc" formControlName="categoryId">
+                <mat-option *ngFor="let category of categories" [value]="category?.id"
+                >{{category.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-list-item>
 
-  <mat-list-item>
-    <mat-card-title id="card-title">Filter</mat-card-title>
-  </mat-list-item>
+          <!-- Radius -->
+          <mat-list-item id="radius-header">
+            <h4><b>Distance</b></h4>
+            <mat-slide-toggle (change)="toggleIncludeRadius()" formControlName="radiusEnabled" id="distance-toggle"></mat-slide-toggle>
+          </mat-list-item>
+          <div>
+            <mat-list-item id="radius-item">
+              <mat-slider
+                id="radius"
+                step="100"
+                [min]="minDistance"
+                [max]="maxDistance"
+                formControlName="radius"
+              ></mat-slider>
+            </mat-list-item>
+            <mat-list-item *ngIf="locationForm.controls.radius.enabled">
+              <h4>{{locationForm.value.radius | distance}}</h4>
+            </mat-list-item>
+          </div>
 
-  <mat-tab-group id="tabs">
-    <!-- Location Filter -->
-    <mat-tab label="Locations">
-      <form [formGroup]="locationForm" class="locationForm">
+          <mat-list-item id="buttonsLoc">
+            <a mat-raised-button class="buttonCancel" (click)="resetLocationFilter()">Reset</a>
+            <a mat-raised-button class="buttonConfirm" color="accent" (click)="filterLoc()">Go!</a>
+          </mat-list-item>
 
-        <!-- Category -->
-        <mat-list-item id="category-item">
-          <mat-form-field appearance="outline">
-            <mat-label>Category</mat-label>
-            <label for="CategoryLoc"></label>
-            <mat-select id="CategoryLoc" formControlName="categoryLoc" [compareWith]='compareCategory'>
-              <mat-option *ngFor="let category of categories" [value]="category"
-              >{{category.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-list-item>
+        </form>
 
-        <!-- Radius -->
-        <mat-list-item id="radius-header">
-          <h4><b>Distance</b></h4>
-        </mat-list-item>
-        <mat-list-item id="radius-item">
-          <mat-slider
-            id="radius"
-            (change)="updateSetting($event)"
-            step="5"
-            min="1"
-            max="10000"
-            formControlName="radius"
-            [value]="radius"
-          ></mat-slider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4>{{radius}} km</h4>
-        </mat-list-item>
+      </mat-tab>
 
-      </form>
+      <!-- Message Filter -->
+      <mat-tab label="Messages">
+        <form [formGroup]="messageForm" class="messageForm">
 
-    </mat-tab>
+          <!-- Category -->
+          <mat-list-item id="category-item-mes">
+            <mat-form-field appearance="outline">
+              <mat-label>Category</mat-label>
+              <label for="CategoryMes"></label>
+              <mat-select id="CategoryMes" formControlName="categoryMes">
+                <mat-option *ngFor="let category of categories" [value]="category.id"
+                >{{category.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-list-item>
 
-    <!-- Message Filter -->
-    <mat-tab label="Messages">
-    <form [formGroup]="messageForm" class="messageForm">
+          <!-- Hashtag -->
+          <mat-list-item id="hashtag-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Hashtag</mat-label>
+              <label for="Hashtag"></label>
+              <input id="Hashtag"
+                     type="text"
+                     matInput
+                     formControlName="hashtag"
+                     [formControl]="hashtagControl"
+                     [matAutocomplete]="autoHashtag">
+              <mat-autocomplete autoActiveFirstOption #autoHashtag="matAutocomplete" (optionSelected)="selectedHashtagOption($event)">
+                <mat-option *ngFor="let hashtag of filteredHashtagOptions | async" [value]="hashtag.name">
+                  {{hashtag.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </mat-list-item>
 
-      <!-- Category -->
-      <mat-list-item id="category-item2">
-        <mat-form-field appearance="outline">
-          <mat-label>Category</mat-label>
-          <label for="CategoryMes"></label>
-          <mat-select id="CategoryMes" formControlName="categoryMes" [compareWith]='compareCategory'>
-            <mat-option *ngFor="let category of categories" [value]="category"
-            >{{category.name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-list-item>
+          <!-- Username -->
+          <mat-list-item id="user-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <label for="User"></label>
+              <input id="User"
+                     type="text"
+                     matInput
+                     formControlName="user"
+                     [formControl]="userControl"
+                     [matAutocomplete]="autoUser">
+              <mat-autocomplete autoActiveFirstOption #autoUser="matAutocomplete" (optionSelected)="selectedUserOption($event)">
+                <mat-option *ngFor="let user of filteredUserOptions | async" [value]="user.name">
+                  {{user.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </mat-list-item>
 
 
-      <!-- Date -->
-      <mat-list-item id="date-item">
-        <mat-form-field appearance="outline">
-          <mat-label>Choose a date</mat-label>
-          <label for="Date"></label>
-          <input id="Date" matInput [matDatepicker]="picker" formControlName="time">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </mat-list-item>
+          <!-- Date -->
+          <mat-list-item id="date-item">
+            <mat-form-field appearance="outline">
+              <mat-label>Choose a date</mat-label>
+              <label for="Date"></label>
+              <input id="Date" matInput [matDatepicker]="picker" formControlName="time">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </mat-list-item>
 
-    </form>
-    </mat-tab>
+          <mat-list-item id="buttonsMes">
+            <a mat-raised-button class="buttonCancel" (click)="onCancel()">Cancel</a>
+            <a mat-raised-button class="buttonConfirm" color="accent" (click)="filterMes()">Go!</a>
+          </mat-list-item>
 
-  </mat-tab-group>
+        </form>
+      </mat-tab>
 
-</mat-list>
+    </mat-tab-group>
 
-</mat-card>
+  </mat-list>
+</mat-expansion-panel>

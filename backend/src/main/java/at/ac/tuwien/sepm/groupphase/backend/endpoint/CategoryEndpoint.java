@@ -25,9 +25,8 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/categories")
-public class CategoryEndpoint {
+public class  CategoryEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
@@ -44,11 +43,16 @@ public class CategoryEndpoint {
     @ApiOperation(value = "Create a new category", authorizations = {@Authorization(value = "apiKey")})
     public CategoryDto create(@Valid @RequestBody CategoryDto categoryDto) {
         log.info("POST /api/v1/categories body: {}", categoryDto);
+
+        if (categoryDto.getIcon() == null || categoryDto.getIcon().equals("")) {
+            categoryDto.setIcon("wc");
+        }
+
         try {
             return categoryMapper.categoryToCategoryDto(
                 categoryService.create(categoryMapper.categoryDtoToCategory(categoryDto)));
         } catch (ServiceException | ValidationException e) {
-            LOGGER.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -63,13 +67,14 @@ public class CategoryEndpoint {
         try {
             categoryService.deleteById(id);
         } catch (NotFoundException2 e) {
-            LOGGER.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
+            log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
+    @CrossOrigin
     @ApiOperation(value = "Get all categories", authorizations = {@Authorization(value = "apiKey")})
     public List<CategoryDto> getAll() {
         log.info("GET /api/v1/categories");

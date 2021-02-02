@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {NotificationService} from 'src/app/services/notification.service';
@@ -8,7 +8,7 @@ import {MLocSpot} from '../../util/m-loc-spot';
 
 
 @Component({
-  selector: 'app-spot-form [title]',
+  selector: 'app-spot-form [title] [lastLayer]',
   templateUrl: './spot-form.component.html',
   styleUrls: ['./spot-form.component.scss']
 })
@@ -16,6 +16,7 @@ export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() spot: MLocSpot = null;
   @Input() title: string = '';
+  @Input() lastLayer: boolean = true;
 
   @Output() cancel = new EventEmitter();
   @Output() confirm = new EventEmitter<MLocSpot>();
@@ -77,7 +78,15 @@ export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   onConfirm(): void {
     const val = this.spotForm.value;
-    const newSpot = new MLocSpot(null, val.name, val.description, val.category, null);
+    if (val.name?.length < 1 || /^\s*$/.test(val.name)) {
+      this.notificationService.error('Name must not be Empty!');
+      return;
+    }
+    if (val.description?.length < 1 || /^\s*$/.test(val.description)) {
+      this.notificationService.error('Description must not be Empty!');
+      return;
+    }
+    const newSpot = new MLocSpot(null, val.name, val.description, val.category, null, null);
 
     if (this.spot != null) {
       newSpot.id = this.spot.id;

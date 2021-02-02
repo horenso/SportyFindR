@@ -1,19 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
-import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
-import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
+import at.ac.tuwien.sepm.groupphase.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +27,7 @@ public class SimpleSpotService implements SpotService {
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
 
     /**
@@ -62,10 +59,15 @@ public class SimpleSpotService implements SpotService {
         if (locationRepository.findById(spot.getLocation().getId()).isEmpty()) {
             throw new ValidationException("Location does not Exist");
         }
-        spot.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
-        Spot savedSpot = spotRepository.save(spot);
-        hashtagService.acquireHashtags(spot);
-        return savedSpot;
+        Optional<ApplicationUser> owner = userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (owner.isEmpty()) {
+            throw new ValidationException("User not present!");
+        } else {
+            spot.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
+            Spot savedSpot = spotRepository.save(spot);
+            hashtagService.getHashtags(spot);
+            return savedSpot;
+        }
     }
 
     @Override
@@ -73,9 +75,14 @@ public class SimpleSpotService implements SpotService {
         var optionalSpot = spotRepository.findById(spot.getId());
         if (optionalSpot.isEmpty()){
             throw new NotFoundException2("Spot does not Exist");
-        }else if (!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            throw new WrongUserException("You can only edit your own spots");
         }else{
+            if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
+                if(optionalSpot.get().getOwner()==null){
+                    throw new WrongUserException("You can only edit your own spots");
+                }else if(!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+                    throw new WrongUserException("You can only edit your own spots");
+                }
+            }
             spot.setOwner(optionalSpot.get().getOwner());
         }
         if (spot.getCategory().getId() == null) {
@@ -88,7 +95,7 @@ public class SimpleSpotService implements SpotService {
             throw new ValidationException("Location does not Exist");
         }
         hashtagService.deleteSpotInHashtags(spot);
-        hashtagService.acquireHashtags(spot);
+        hashtagService.getHashtags(spot);
         return spotRepository.save(spot);
     }
     @Override
@@ -97,8 +104,12 @@ public class SimpleSpotService implements SpotService {
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
-        }else if (!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            throw new WrongUserException("You can only delete your own spots");
+        }else if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
+            if(spot.get().getOwner()==null){
+                throw new WrongUserException("You can only edit your own spots");
+            }else if(!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+                throw new WrongUserException("You can only edit your own spots");
+            }
         }
         try {
             List<Message> messages = messageService.findBySpot(id);
@@ -136,5 +147,15 @@ public class SimpleSpotService implements SpotService {
             throw new NotFoundException2("Spot with ID " + spotId + " cannot be found!");
         }
         return spotOptional.get();
+    }
+
+    @Override
+    public List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2 {
+        Optional<ApplicationUser> owner = this.userRepository.findApplicationUserById(userId);
+        if (owner.isPresent()) {
+            return this.spotRepository.findByOwner(owner.get());
+        } else {
+            throw new NotFoundException2("User with ID " + userId + " cannot be found!");
+        }
     }
 }

@@ -1,21 +1,16 @@
-package at.ac.tuwien.sepm.groupphase.backend.validator;
+package at.ac.tuwien.sepm.groupphase.backend.service.validator;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
 
 @Component
 public class LocationValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    public List<Location> validateLocationDistance(Double latitude, Double longitude, Double radius, List<Location> locations) throws ValidationException {
+    public List<Location> validateLocationDistance(Double latitude, Double longitude, Double radius, List<Location> locations) {
 
         List<Location> result = new LinkedList<>();
 
@@ -25,9 +20,6 @@ public class LocationValidator {
             }
         }
 
-        if (result.isEmpty()) {
-            throw new ValidationException("No Location within " + radius + "km found.");
-        }
         return result;
     }
 

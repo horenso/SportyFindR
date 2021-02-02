@@ -1,12 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,23 +21,23 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailService implements UserService {
+
+    private final ReactionRepository reactionRepository;
+    private final MessageRepository messageRepository;
+    private final SpotRepository spotRepository;
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public CustomUserDetailService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
-    }
 
     @Override
     public ApplicationUser createApplicationUser(ApplicationUser user) throws ValidationException {
@@ -63,6 +66,28 @@ public class CustomUserDetailService implements UserService {
     public void deleteApplicationUserById(Long id) throws NotFoundException2 {
         Optional<ApplicationUser> user = userRepository.findApplicationUserById(id);
         if (user.isPresent()) {
+            List<Reaction> reactionList = this.reactionRepository.findByOwner(user.get());
+            for (Reaction reaction : reactionList) {
+                this.reactionRepository.deleteById(reaction.getId());
+            }
+
+            List<Message> messageList = this.messageRepository.findByOwner(user.get());
+            for (Message message : messageList) {
+                this.messageRepository.deleteById(message.getId());
+            }
+
+            List<Spot> spotList = this.spotRepository.findByOwner(user.get());
+            for (Spot spot : spotList) {
+                spot.setOwner(null);
+                this.spotRepository.save(spot);
+            }
+
+            Set<Role> roleList = user.get().getRoles();
+            for (Role role : roleList) {
+                role.getApplicationUsers().remove(user);
+                this.roleRepository.save(role);
+            }
+
             this.userRepository.delete(user.get());
         } else {
             throw new NotFoundException2("User not found.");
@@ -137,7 +162,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public ApplicationUser getApplicationUserById(Long id) throws NotFoundException2 {
-        log.debug("Find application user by id");
+        log.debug("Get application user by id");
         Optional<ApplicationUser> optionalApplicationUser = userRepository.findApplicationUserById(id);
         if (optionalApplicationUser.isPresent()) {
             return optionalApplicationUser.get();
@@ -148,7 +173,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
-        log.debug("Find application users by role id");
+        log.debug("Get application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
             return userRepository.findApplicationUsersByRolesId(roleId);
         } else {
@@ -192,5 +217,16 @@ public class CustomUserDetailService implements UserService {
         }
         return null;
     }
+
+    @Override
+    public List<ApplicationUser> searchByName(String name) {
+
+        if (name == null || name.equals("")) {
+            return Collections.emptyList();
+        }
+
+        return userRepository.searchByName(name);
+    }
+
 
 }

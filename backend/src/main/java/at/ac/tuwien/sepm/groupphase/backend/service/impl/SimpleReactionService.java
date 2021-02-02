@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
@@ -30,13 +32,16 @@ public class SimpleReactionService implements ReactionService {
     private final UserRepository userRepository;
 
     @Override
-    public Reaction create(Reaction reaction) throws NotFoundException2{
+    public Reaction create(Reaction reaction) throws NotFoundException2, ValidationException{
         log.debug("Create new Reaction {}", reaction);
         if(messageRepository.findById(reaction.getMessage().getId()).isEmpty()){
             throw new NotFoundException2("Message does not Exist");
         }
         reaction.setPublishedAt(LocalDateTime.now());
         reaction.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
+        if(!reactionRepository.getReactionByOwner(reaction.getOwner().getId(),reaction.getMessage().getId()).isEmpty()){
+            throw new ValidationException("Already reacted to Message");
+        }
         Reaction newReaction = reactionRepository.save(reaction);
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(newReaction.getMessage().getId());
         return newReaction;
@@ -77,5 +82,15 @@ public class SimpleReactionService implements ReactionService {
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
         spotSubscriptionService.dispatchMessageWithUpdatedReactions(reaction.getMessage().getId());
         return reaction;
+    }
+
+    @Override
+    public List<Reaction> findReactionsByOwner(Long userId) throws NotFoundException2 {
+        Optional<ApplicationUser> owner = this.userRepository.findById(userId);
+        if (owner.isPresent()) {
+            return this.reactionRepository.findByOwner(owner.get());
+        } else {
+            throw new NotFoundException2("User with ID " + userId + " cannot be found.");
+        }
     }
 }

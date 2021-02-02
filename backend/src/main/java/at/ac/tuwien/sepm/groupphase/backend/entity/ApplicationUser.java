@@ -11,11 +11,12 @@ import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Builder
 @Entity
-@Table(name = "applicationusers")
+@Table(name = "applicationuser")
 public class ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,15 +36,26 @@ public class ApplicationUser {
 
     private Boolean enabled = false;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
+    @Singular
+    @ManyToMany(
+        targetEntity = Role.class,
+        cascade = {
+            CascadeType.DETACH,
+            CascadeType.REFRESH,
+//            CascadeType.PERSIST,
+//            CascadeType.MERGE,
+        },
+        fetch = FetchType.EAGER
+    )
     @JoinTable(
         name = "applicationusers_roles",
-        joinColumns = { @JoinColumn(name = "applicationuser_id") },
-        inverseJoinColumns = { @JoinColumn(name = "role_id") }
+        joinColumns = { @JoinColumn(name = "applicationuser_id", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
     )
+//    @Fetch(value = FetchMode.JOIN)
     private Set<Role> roles = new HashSet<>();
 
+/*
     public ApplicationUser(Long id, @Length(min = 3, max = 30) String name, @Length(min = 6, max = 30) String email, @Length(min = 7) String password, Boolean enabled, Set<Role> roles) {
         this.id = id;
         this.name = name;
@@ -52,18 +64,19 @@ public class ApplicationUser {
         this.enabled = enabled;
         this.roles = Objects.requireNonNullElseGet(roles, HashSet::new);
     }
+*/
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ApplicationUser user = (ApplicationUser) o;
-        return getId().equals(user.getId()) && getName().equals(user.getName()) && getEmail().equals(user.getEmail()) && getEnabled().equals(user.getEnabled()) && Objects.equals(getRoles(), user.getRoles());
+        return getId().equals(user.getId()) && getName().equals(user.getName()) && getEmail().equals(user.getEmail()) && Objects.equals(getPassword(), user.getPassword()) && getEnabled().equals(user.getEnabled());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getEnabled(), getRoles());
+        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getEnabled());
     }
 
     @Override

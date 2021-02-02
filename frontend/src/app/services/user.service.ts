@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Globals} from '../global/globals';
 import {User} from "../dtos/user";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from "rxjs";
+import {SimpleUser} from '../dtos/simpleUser';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ export class UserService {
 
   private userBaseUri: string = this.globals.backendUri + '/users';
   private activeUser: string;
+
+  constructor(private httpClient: HttpClient, private globals: Globals) { }
 
   public getAllUsers(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.userBaseUri);
@@ -40,5 +43,11 @@ export class UserService {
     return this.httpClient.get<User>(this.userBaseUri + '/byEmail/' + email);
   }
 
-  constructor(private httpClient: HttpClient, private globals: Globals) { }
+  public search(str: string): Observable<SimpleUser[]> {
+    console.log('Search for user: ' + str);
+    const params = new HttpParams()
+      .set('name', str);
+    return this.httpClient.get<SimpleUser[]>(`${this.userBaseUri}/filter`, {params: params});
+  }
+
 }

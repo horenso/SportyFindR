@@ -18,9 +18,9 @@ export class HeaderComponent implements OnInit {
   result: string = '';
 
   constructor(public authService: AuthService,
+              public router: Router,
               private localStorage: LocalStorageService,
               private userService: UserService,
-              private router: Router,
               public dialog: MatDialog) {
   }
 

@@ -53,4 +53,12 @@ public interface SpotService {
      * @throws NotFoundException if the spot was not found
      */
     Spot getOneById(Long spotId) throws NotFoundException2;
+
+    /**
+     * Find all Spots by User ID of their owner
+     * @param userId of the owner
+     * @return list of spots
+     * @throws NotFoundException2 if the user id cannot be found
+     */
+    List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2;
 }

@@ -5,17 +5,13 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HashtagRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.ReactionRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
-import at.ac.tuwien.sepm.groupphase.backend.validator.MessageValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -30,6 +26,11 @@ public class SimpleHashtagService implements HashtagService {
     @Override
     public Hashtag getByName(String name) {
         return hashtagRepository.getHashtagByNameEquals(name);
+    }
+
+    @Override
+    public Hashtag getOneById(Long id) {
+        return hashtagRepository.getOneById(id);
     }
 
     @Override
@@ -110,4 +111,21 @@ public class SimpleHashtagService implements HashtagService {
             }
         }
     }
+
+    @Override
+    public List<Hashtag> findAll() {
+       log.debug("Get all hashtags.");
+        return hashtagRepository.findAll();
+    }
+
+    @Override
+    public List<Hashtag> searchByName(String name) {
+
+        if (name == null || name.equals("")) {
+            return Collections.emptyList();
+        }
+
+        return hashtagRepository.searchByName(name);
+    }
+
 }

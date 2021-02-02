@@ -1,14 +1,17 @@
 import {Injectable, NgZone} from '@angular/core';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {IconType, MLocation} from '../util/m-location';
 import {SidebarService} from './sidebar.service';
 import {Map, Marker, Point} from 'leaflet';
 import {Router} from '@angular/router';
+import {FilterLocation} from '../dtos/filter-location';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
+  static startLatitude: number = 48.208174;
+  static startLongitude: number = 16.37819;
 
   public map: Map;
   public draggableMarker: Marker = null;
@@ -18,6 +21,9 @@ export class MapService {
 
   private removeMarkerLocSubject = new Subject<number>();
   public removeMarkerLocObservable = this.removeMarkerLocSubject.asObservable();
+
+  private filterLocationSubject = new Subject<FilterLocation>();
+  public filterLocationObservable = this.filterLocationSubject.asObservable();
 
   constructor(
     private sidebarService: SidebarService,
@@ -94,5 +100,9 @@ export class MapService {
     this.sidebarService.markerLocation = markerLocation;
 
     this.ngZone.run(() => this.router.navigate(['locations', markerLocation.id]));
+  }
+
+  public updateFilterLocation(filterLocation: FilterLocation): void {
+    this.filterLocationSubject.next(filterLocation);
   }
 }

@@ -25,12 +25,18 @@ import {PageNotFoundComponent} from './components/page-not-found/page-not-found.
 import {EditSpotComponent} from './components/edit-spot/edit-spot.component';
 import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-with-hashtags.component';
 import {MaterialModule} from './material/material.module';
-import { HashtagComponent } from './components/hashtag/hashtag.component';
+import {HashtagComponent} from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
 import { FilterMainComponent } from './components/filter-main/filter-main.component';
 import { UserManagerComponent } from './components/user-manager/user-manager.component';
+import {RegisterComponent} from './components/register/register.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {DistancePipe} from './pipes/distance.pipe';
+import {DatePipe} from '@angular/common';
 import { UserAccountComponent } from './components/user-account/user-account.component';
 import {NgxWebstorageModule} from 'ngx-webstorage';
 import { EditAccountComponent } from './components/edit-account/edit-account.component';
@@ -69,25 +75,31 @@ const toastrSettings = {
     FilterMainComponent,
     UserAccountComponent,
     EditAccountComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    RegisterComponent,
+    FilterMainComponent,
+    FilterMessagesComponent,
+    DistancePipe
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        FormsModule,
-        LeafletModule,
-        MaterialModule,
-        ToastrModule.forRoot(toastrSettings),
-        MatCheckboxModule,
-        MatPaginatorModule,
-      NgxWebstorageModule.forRoot(),
-      MatButtonModule,
-      MatDialogModule
-    ],
-  providers: [httpInterceptorProviders],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    InfiniteScrollModule,
+    FormsModule,
+    LeafletModule,
+    MaterialModule,
+    ToastrModule.forRoot(toastrSettings),
+    ScrollingModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
+    NgxWebstorageModule.forRoot(),
+    MatButtonModule,
+    MatDialogModule
+  ],
+  providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {
