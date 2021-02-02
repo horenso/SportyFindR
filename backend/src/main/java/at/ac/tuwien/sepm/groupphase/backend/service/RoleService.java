@@ -40,18 +40,20 @@ public interface RoleService {
     boolean roleExistsById(Long id);
 
     /**
-     * deletes a Role by id
+     * deletes a Role by id and removes the role from all users having it
      * @param id of the role to delete
      * @throws NotFoundException2 if role does not exist
+     * @throws ValidationException if updating user does not work
      */
-    void deleteById(Long id) throws NotFoundException2;
+    void deleteById(Long id) throws NotFoundException2, ValidationException;
 
     /**
-     * deletes a Role by Name
+     * deletes a Role by name and removes the role from all users having it
      * @param name of the role to delete
      * @throws NotFoundException2 if role does not exist
+     * @throws ValidationException if updating user does not work
      */
-    void deleteByName(String name) throws NotFoundException2;
+    void deleteByName(String name) throws NotFoundException2, ValidationException;
 
     /**
      * find all roles

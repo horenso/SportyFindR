@@ -1,21 +1,21 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-
+import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Builder
 @Entity
-@Table(name = "roles")
+@Table(name = "role")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,15 +25,34 @@ public class Role {
     @Length(min = 3, max = 15)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
-    @Fetch(value = FetchMode.SUBSELECT)
+    @Singular
+    @ManyToMany(
+        targetEntity = ApplicationUser.class,
+//        mappedBy = "roles",
+        cascade = {
+            CascadeType.DETACH,
+            CascadeType.REFRESH,
+//            CascadeType.PERSIST,
+//            CascadeType.MERGE,
+        },
+        fetch = FetchType.EAGER
+        )
+    @JoinTable(
+        name = "applicationusers_roles",
+        joinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "applicationuser_id", referencedColumnName = "id") }
+    )
+//    @Fetch(value = FetchMode.JOIN)
     private Set<ApplicationUser> applicationUsers = new HashSet<>();
 
+/*
     public Role(Long id, @Length(min = 3, max = 15) String name, Set<ApplicationUser> applicationUsers) {
         this.id = id;
         this.name = name;
         this.applicationUsers = Objects.requireNonNullElseGet(applicationUsers, HashSet::new);
     }
+
+*/
 
     @Override
     public boolean equals(Object o) {

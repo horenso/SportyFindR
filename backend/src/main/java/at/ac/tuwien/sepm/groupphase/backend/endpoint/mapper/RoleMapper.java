@@ -24,18 +24,30 @@ public interface RoleMapper {
     List<RoleDto> roleListToRoleDtoList(Set<Role> roles);
 
     default List<Long> applicationUsersToUserIds(Set<ApplicationUser> users) {
-        List<Long> userIds = new ArrayList<>();
-        for (ApplicationUser user : users) {
-            userIds.add(user.getId());
+        if (users != null) {
+            List<Long> userIds = new ArrayList<>();
+            for (ApplicationUser user : users) {
+                if (user != null) {
+                    userIds.add(user.getId());
+                }
+            }
+            return userIds;
+        } else {
+            return new ArrayList<>();
         }
-        return userIds;
     }
 
     default Set<ApplicationUser> userIdsToApplicationUsers(List<Long> userIds) {
-        Set<ApplicationUser> users = new HashSet<>();
-        for (Long id : userIds) {
-            users.add(new ApplicationUser().builder().id(id).build());
+        if (userIds != null) {
+            Set<ApplicationUser> users = new HashSet<>();
+            for (Long id : userIds) {
+                if (id != null) {
+                    users.add(new ApplicationUser().builder().id(id).build());
+                }
+            }
+            return users;
+        } else {
+            return new HashSet<>();
         }
-        return users;
     }
 }

@@ -530,5 +530,131 @@ public class ReactionEndpointTest implements TestData {
 
         );
     }
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
+    public void userCanOnlyReactOnce() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .owner(user)
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .owner(user)
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        Reaction reaction = Reaction.builder()
+            .owner(user)
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction);
+        ReactionDto reaction2 = ReactionDto.builder()
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
+            .messageId(msg.getId())
+            .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> reactionEndpoint.create(reaction2));
+        assertAll(
+            () -> assertEquals(1, reactionRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"Already reacted to Message\"")
+        );
+    }
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
+    public void changeNotExistingReaction() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .owner(user)
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .owner(user)
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        ReactionDto reaction = ReactionDto.builder()
+            .id(1L)
+            .owner(simpleUserMapper.userToSimpleUserDto(user))
+            .messageId(msg.getId())
+            .type(ReactionDto.ReactionDtoType.THUMBS_DOWN)
+            .build();
+        Throwable e = assertThrows(ResponseStatusException.class, () -> reactionEndpoint.change(reaction));
+        assertAll(
+            () -> assertEquals(0, reactionRepository.findAll().size()),
+            () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Reaction with id "+reaction.getId()+" not found.\"")
+        );
+    }
+    @Test
+    @WithMockUser(username = EMAIL2, password = PASSWORD, roles = "USER")
+    public void changeNotReactionWithWrongOwner() {
+        Category category = Category.builder()
+            .name(CAT_NAME)
+            .build();
+        categoryRepository.save(category);
+        Location location = Location.builder()
+            .latitude(LAT)
+            .longitude(LONG)
+            .build();
+        locationRepository.save(location);
+        Spot spot = Spot.builder()
+            .owner(user)
+            .name(NAME)
+            .description(DESCRIPTION)
+            .location(location)
+            .category(category)
+            .build();
+        spotRepository.save(spot);
+        Message msg = Message.builder()
+            .owner(user)
+            .content(TEST_NEWS_TEXT)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .spot(spot)
+            .build();
+        messageRepository.save(msg);
+        Reaction reaction = Reaction.builder()
+            .owner(user)
+            .message(msg)
+            .type(Reaction.ReactionType.THUMBS_DOWN)
+            .publishedAt(TEST_NEWS_PUBLISHED_AT)
+            .build();
+        reactionRepository.save(reaction);
+        reaction.setType(Reaction.ReactionType.THUMBS_UP);
+        Throwable e = assertThrows(ResponseStatusException.class, () -> reactionEndpoint.change(reactionMapper.reactionToReactionDto(reaction)));
+        assertAll(
+            () -> assertEquals(1, reactionRepository.findAll().size()),
+            () -> assertEquals(Reaction.ReactionType.THUMBS_DOWN,reactionRepository.findAll().get(0).getType()),
+            () -> assertEquals(e.getMessage(), "400 BAD_REQUEST \"You can only delete your own messages\"")
+        );
+    }
 }
 

@@ -1,22 +1,17 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.LocationSearchObject;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
-import at.ac.tuwien.sepm.groupphase.backend.validator.LocationValidator;
+import at.ac.tuwien.sepm.groupphase.backend.service.validator.LocationValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +20,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SimpleLocationService implements LocationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final LocationRepository locationRepository;
     private final LocationValidator validator;
 
@@ -36,11 +30,6 @@ public class SimpleLocationService implements LocationService {
             throw new NotFoundException2("Location with ID " + locationId + " cannot be found!");
         }
         return locationOptional.get();
-    }
-
-    @Override
-    public List<Location> findAll() {
-        return locationRepository.findAll();
     }
 
     @Override
@@ -56,28 +45,18 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public List<Location> filter(LocationSearchObject locationSearchObject) throws ServiceException, NotFoundException2 {
+    public List<Location> find(LocationSearchObject locationSearchObject) {
         log.debug("Searching for locations within a distance of at most " + locationSearchObject.getRadius() + " km, containing spots with category: " + locationSearchObject.getCategoryId());
         List<Location> locations;
-        if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {
+        if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {    // if search parameters contain category data
             locations = locationRepository.filter(locationSearchObject.getCategoryId());
         } else {
-            locations = locationRepository.findAll();
+            locations = locationRepository.findAll();   // find all locations
         }
-        if (locations.isEmpty()) {
-            throw new NotFoundException2("No Location with these parameters found.");
+        if (locationSearchObject.getRadius() != null && locationSearchObject.getRadius() != 0) {      // if search parameters contain radius data
+            return validator.validateLocationDistance(locationSearchObject.getLatitude(), locationSearchObject.getLongitude(), locationSearchObject.getRadius(), locations);
         } else {
-            try {
-                if (locationSearchObject.getRadius() != null && locationSearchObject.getRadius() != 0) {      // if search parameters contain radius data
-                    return validator.validateLocationDistance(locationSearchObject.getLatitude(), locationSearchObject.getLongitude(), locationSearchObject.getRadius(), locations);
-                } else {
-                    return locations;       // search by category only
-                }
-            } catch (ValidationException e) {
-                throw new ServiceException(e.getMessage());
-            }
+            return locations; // search by category only or no filter at all
         }
-
     }
-
 }

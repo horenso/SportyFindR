@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -83,4 +84,13 @@ public interface UserService extends UserDetailsService {
      * @return true if user exists
      */
     boolean userExistsByEmail(String email);
+
+    /**
+     * Gets a user list by its name
+     *
+     * @param name of users to find
+     * @return the user list corresponding to that name
+     */
+    List<ApplicationUser> searchByName(String name);
+
 }
