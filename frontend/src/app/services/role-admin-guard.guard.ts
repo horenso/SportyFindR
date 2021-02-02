@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router} from '@angular/router';
 import { Observable } from 'rxjs';
-import {AuthService} from "./auth.service";
-import {NotificationService} from "./notification.service";
+import {AuthService} from './auth.service';
+import {NotificationService} from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,13 +23,13 @@ export class RoleAdminGuardGuard implements CanActivate {
       if (this.authService.isUserAdmin()) {
         return true;
       } else {
-        this.router.navigate(['']);
-        this.notificationService.error('Access not allowed!');
+        this.router.navigate(['']).then(() => {});
+        this.notificationService.error('Access denied!');
         return false;
       }
     } else {
-      this.router.navigate(['']);
-      this.notificationService.error('Access not allowed!');
+      this.router.navigate(['']).then(() => {});
+      this.notificationService.error('Access denied!');
       return false;
     }
   }
