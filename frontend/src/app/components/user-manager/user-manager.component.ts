@@ -21,12 +21,12 @@ export class UserManagerComponent implements OnInit, AfterViewInit {
 
   roles: Role[];
 
-  roleTableColumns: string[] = ['ID', 'Name', 'Delete'];
+  roleTableColumns: string[] = ['Name', 'Delete'];
 
   userForm: FormGroup;
   roleForm: FormGroup;
 
-  userTableColumns: string[] = ['ID', 'Name', 'Email', 'Enabled', 'Edit', 'Delete'];
+  userTableColumns: string[] = ['Name', 'Email', 'Enabled', 'Edit', 'Delete'];
 
   dataSource: MatTableDataSource<User>;
 

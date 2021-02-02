@@ -7,7 +7,6 @@ import {Page} from '../models/page.model';
 import {FilterMessage} from '../dtos/filter-message';
 import {MessagePage} from '../dtos/message-page';
 import {DatePipe} from '@angular/common';
-import {filter} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -83,7 +82,7 @@ export class MessageService {
     const page = filterMessage.page;
     const size = filterMessage.size;
 
-    time = this.datePipe.transform(time, 'yyyy-MM-dd');
+//    time = this.datePipe.transform(time, 'yyyy-MM-dd');
     if (time == null) {
       time = '1000-01-01';
     }

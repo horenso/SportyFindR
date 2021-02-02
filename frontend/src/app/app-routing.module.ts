@@ -11,6 +11,7 @@ import {LocationViewComponent} from './components/location-view/location-view.co
 import {HashtagComponent} from './components/hashtag/hashtag.component';
 import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
 import {UserManagerComponent} from './components/user-manager/user-manager.component';
+import {RoleAdminGuardGuard} from "./services/role-admin-guard.guard";
 
 const routes: Routes = [
   {path: '', component: HomeComponent, children: [
@@ -20,10 +21,16 @@ const routes: Routes = [
     {path: 'locations/:locId/spots/:spotId/edit', component: EditSpotComponent},
     {path: 'locations/:locId/spots/:spotId', component: SpotViewComponent},
     {path: 'hashtags/:hashtagName', component: HashtagComponent},
-      {path: 'filter/messages', component: FilterMessagesComponent},
+    {path: 'filter/messages', component: FilterMessagesComponent},
   ]},
   {path: 'login', component: LoginComponent},
-  {path: 'user-admin', component: UserManagerComponent},
+  {
+    path: 'user-admin', component: UserManagerComponent,
+    canActivate: [RoleAdminGuardGuard],
+    data: {
+      role: 'ROLE_ADMIN' // not really needed, only to make code more readable.
+    }
+  },
   {path: '**', component: PageNotFoundComponent},
 ];
 

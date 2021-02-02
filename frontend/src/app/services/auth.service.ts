@@ -2,11 +2,10 @@ import {Injectable, OnDestroy, OnInit} from '@angular/core';
 import {AuthRequest} from '../dtos/auth-request';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, tap} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 import jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
 import {User} from '../dtos/user';
-import {Reaction, ReactionType} from '../dtos/reaction';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +32,7 @@ export class AuthService {
     return this.httpClient.post(this.authBaseUri, authRequest, {responseType: 'text'})
       .pipe(
         tap((authResponse: string) => {
-            this.setToken(authResponse);
+            AuthService.setToken(authResponse);
             this.currentUserSubject.next(jwt_decode(authResponse));
           }
         )
@@ -51,17 +50,15 @@ export class AuthService {
   }
 
   public isUserAdmin(): Boolean {
-    if (this.currentUserSubject.value['rol'].some(x => x === 'ROLE_ADMIN')) {
-      return true;
-    }
-    return false;
+    return !!this.currentUserSubject.value['rol'].some(x => x === 'ROLE_ADMIN');
+
   }
 
   /**
    * Check if a valid JWT token is saved in the localStorage
    */
   isLoggedIn() {
-    return !!this.getToken() && (this.getTokenExpirationDate(this.getToken()).valueOf() > new Date().valueOf());
+    return !!this.getToken() && (AuthService.getTokenExpirationDate(this.getToken()).valueOf() > new Date().valueOf());
   }
 
   logoutUser() {
@@ -76,24 +73,20 @@ export class AuthService {
   /**
    * Returns the user role based on the current token
    */
-  getUserRole() {
+  getUserRoles() {
     if (this.getToken() != null) {
       const decoded: any = jwt_decode(this.getToken());
       const authInfo: string[] = decoded.rol;
-      if (authInfo.includes('ROLE_ADMIN')) {
-        return 'ADMIN';
-      } else if (authInfo.includes('ROLE_USER')) {
-        return 'USER';
-      }
+      return authInfo;
     }
     return 'UNDEFINED';
   }
 
-  private setToken(authResponse: string) {
+  private static setToken(authResponse: string) {
     localStorage.setItem('authToken', authResponse);
   }
 
-  private getTokenExpirationDate(token: string): Date {
+  private static getTokenExpirationDate(token: string): Date {
 
     const decoded: any = jwt_decode(token);
     if (decoded.exp === undefined) {
