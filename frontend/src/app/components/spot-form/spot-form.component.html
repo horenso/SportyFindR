@@ -1,7 +1,7 @@
 <div class="inSidebar">
   <div class="sidebarTopRow">
-    <button mat-icon-button  id="backButton" color="primary" class="icon" (click)='onCancel()'>
-      <mat-icon> {{lastLayer? 'close':'arrow_back_ios_new'}}</mat-icon>
+    <button mat-icon-button id="backButton" color="primary" class="icon" (click)='onCancel()'>
+      <mat-icon> {{lastLayer ? 'close' : 'arrow_back_ios_new'}}</mat-icon>
     </button>
     <div class="sidebarTitle">{{title}}</div>
   </div>
@@ -13,7 +13,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
       <label for="spotCreateName"></label>
-      <input matInput formControlName='name' id="spotCreateName">
+      <input minlength="3" maxlength="64" matInput formControlName='name' id="spotCreateName">
     </mat-form-field>
 
     <!-- Description -->
@@ -21,11 +21,12 @@
       <mat-label>Description</mat-label>
       <label for="spotCreateDescription"></label>
       <textarea matInput
-        formControlName='description'
-        id="spotCreateDescription"
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="5"
-        cdkAutosizeMaxRows="30"></textarea>
+                formControlName='description'
+                id="spotCreateDescription"
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="5"
+                cdkAutosizeMaxRows="30"
+                maxlength="500"></textarea>
     </mat-form-field>
 
     <!-- Category -->
@@ -34,19 +35,19 @@
       <label for="spotCreateCategory"></label>
       <mat-select id="spotCreateCategory" formControlName="category" [compareWith]='compareCategory'>
         <mat-option *ngFor="let category of categories" [value]="category"
-          >{{category.name}}</mat-option>
+        >{{category.name}}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <div id="buttons">
       <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
       <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
-        [disabled]="spotForm.invalid || !spotForm.dirty">{{spot == null ? 'Create' : 'Update'}}</a>
+         [disabled]="spotForm.invalid || !spotForm.dirty">{{spot == null ? 'Create' : 'Update'}}</a>
     </div>
   </form>
 
   <!-- <div class="sidebarBottomRow"> -->
-    <!-- Buttons -->
+  <!-- Buttons -->
 
   <!-- </div> -->
 </div>

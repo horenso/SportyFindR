@@ -109,6 +109,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitDialog(): void {
     if (this.newMessage?.length < 1 || /^\s*$/.test(this.newMessage)) {
+      this.notificationService.error('Message must not be Empty!');
       return;
     }
     if (this.expirationDate) {
@@ -172,7 +173,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
         });
         this.lastPage = result.last;
 
-        setTimeout( () => {
+        setTimeout(() => {
           messageArea.scrollTop = messageArea.scrollHeight - scrollOffset;
         });
 

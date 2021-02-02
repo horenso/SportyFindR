@@ -25,6 +25,8 @@ public class SpotDto {
     @Size(min = 3, max = 100, message = "The spot name must be between 3 and 64 characters long")
     private String name;
 
+    @NotBlank(message = "The spot's description can't be blank")
+    @NotNull(message = "The spot must have a description")
     @Size(max = 500, message = "description can't be longer than 500 chars.")
     private String description;
 

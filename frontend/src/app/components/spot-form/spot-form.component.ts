@@ -78,6 +78,14 @@ export class SpotFormComponent implements OnInit, OnChanges, OnDestroy {
 
   onConfirm(): void {
     const val = this.spotForm.value;
+    if (val.name?.length < 1 || /^\s*$/.test(val.name)) {
+      this.notificationService.error('Name must not be Empty!');
+      return;
+    }
+    if (val.description?.length < 1 || /^\s*$/.test(val.description)) {
+      this.notificationService.error('Description must not be Empty!');
+      return;
+    }
     const newSpot = new MLocSpot(null, val.name, val.description, val.category, null, null);
 
     if (this.spot != null) {
