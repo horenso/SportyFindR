@@ -34,5 +34,5 @@ public interface LocationService {
      * @param locationSearchObject containing search parameters
      * @return List of locations containing spots that match the filter criteria
      */
-    List<Location> find(LocationSearchObject locationSearchObject);
+    List<Location> find(LocationSearchObject locationSearchObject) throws ServiceException;
 }

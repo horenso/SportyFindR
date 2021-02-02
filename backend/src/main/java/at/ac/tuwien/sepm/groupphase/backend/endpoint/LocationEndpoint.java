@@ -47,17 +47,21 @@ public class LocationEndpoint {
     public List<LocationDto> find(@RequestParam(required = false) Long categoryId,
                                   @RequestParam(required = false) Double latitude,
                                   @RequestParam(required = false) Double longitude,
-                                  @RequestParam(required = false, defaultValue = "0") Double radius) {
+                                  @RequestParam(required = false, defaultValue = "0") Double radius,
+                                  @RequestParam(required = false) String hashtag) {
         if (radius != null) {
             radius /= 1000; // Radius is in meter, was in km before
         }
         log.info("GET /api/v1/locations/?" +
-            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius);
+            "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&hashtag=" + hashtag);
 
-        LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius);
-
-        return locationMapper.entityToListDto(locationService.find(locationSearchObject));
-
+        LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius, hashtag);
+        try {
+            return locationMapper.entityToListDto(locationService.find(locationSearchObject));
+        } catch (ServiceException e) {
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
     }
 
 
