@@ -1,5 +1,6 @@
-<app-spot-form 
+<app-spot-form
   [title]="'Edit Spot'"
   [spot]='spot'
+  [lastLayer] = false
   (cancel)='onCancel()'
   (confirm)='update($event)'></app-spot-form>

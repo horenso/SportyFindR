@@ -93,6 +93,16 @@ export class SpotService {
   }
 
   /**
+   * Get one spot by id
+   * @param spotId of the spot
+   * @returns a MLocSpot entity
+   */
+  getSpotById(spotId: number): Observable<Spot> {
+    return this.httpClient.get<Spot>(`${this.spotBaseUri}/${spotId}`).pipe(
+    );
+  }
+
+  /**
    * Open a new SSE connection to observe message events within a spot
    * Events include:
    * 'message/new' if a new message arrieves

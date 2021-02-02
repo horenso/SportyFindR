@@ -1,6 +1,7 @@
 import {Category} from '../dtos/category';
 import {MLocation} from './m-location';
 import {Spot} from '../dtos/spot';
+import {User} from '../dtos/user';
 
 export class MLocSpot {
   public id: number;
@@ -8,10 +9,11 @@ export class MLocSpot {
   public description: string;
   public category: Category;
   public markerLocation: MLocation;
+  public owner: {id: number, name: string, email: string};
 
-  constructor(id: number, name: string, description: string, category: Category, markerLocation: MLocation)
+  constructor(id: number, name: string, description: string, category: Category, markerLocation: MLocation, user: User)
   constructor(spot: Spot)
-  constructor(spotOrId?: Spot | number, name?: string, description?: string, category?: Category, markerLocation?: MLocation) {
+  constructor(spotOrId?: Spot | number, name?: string, description?: string, category?: Category, markerLocation?: MLocation, owner?: User) {
     // This is not very elegant but atm we only have two cases so let's use that to our advantage
     // Problem is, that type checking only works for primitive types but not for self defined classes
     // Also instanceof does only work if the constructor is used
@@ -28,11 +30,13 @@ export class MLocSpot {
         this.description = description;
         this.category = category;
         this.markerLocation = markerLocation;
+        this.owner = owner;
       } else {
         this.name = null;
         this.description = null;
         this.category = null;
         this.markerLocation = null;
+        this.owner = null;
       }
     } else {
       this.id = spotOrId.id;
@@ -40,10 +44,11 @@ export class MLocSpot {
       this.description = spotOrId.description;
       this.category = spotOrId.category;
       this.markerLocation = new MLocation(spotOrId.location);
+      this.owner = spotOrId.owner;
     }
   }
 
   public toSpot(): Spot {
-    return new Spot(this.id, this.name, this.description, this.category, this.markerLocation.toLocation());
+    return new Spot(this.id, this.name, this.description, this.category, this.markerLocation.toLocation(), this.owner);
   }
 }

@@ -1,8 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.LocationSearchObject;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -22,14 +21,6 @@ public interface LocationService {
     Location getOneById(Long locationId) throws NotFoundException2;
 
     /**
-     * Get all existing locations from database.
-     *
-     * @throws RuntimeException  if something goes wrong during data processing.
-     * @throws NotFoundException if no categories could be found in the system.
-     */
-    List<Location> findAll();
-
-    /**
      * Create a new location
      *
      * @param location to create
@@ -43,5 +34,5 @@ public interface LocationService {
      * @param locationSearchObject containing search parameters
      * @return List of locations containing spots that match the filter criteria
      */
-    List<Location> filter(LocationSearchObject locationSearchObject) throws NotFoundException2, ServiceException;
+    List<Location> find(LocationSearchObject locationSearchObject);
 }

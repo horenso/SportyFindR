@@ -3,6 +3,11 @@ import {Message} from 'src/app/dtos/message';
 import {Reaction, ReactionType} from 'src/app/dtos/reaction';
 import {ReactionService} from 'src/app/services/reaction.service';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
+import {SpotService} from '../../services/spot.service';
+import {Spot} from '../../dtos/spot';
+import {Observable} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-message',
@@ -13,26 +18,39 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   @Input() message: Message;
   @Input() canReact: boolean = true; // whether the component shows reaction buttons
-  @Input() canDelete: boolean = true; // wether the component shows a delete button
-  
+  @Input() canDelete: boolean = true; // whether the component shows a delete button
+  @Input() filteredMessage: boolean = false;
+
   @Output() deleteMessage = new EventEmitter();
-  
-  author: string = 'Anonymous'; // in Version 3 the user name will be displayed
+
+  author: string = ''; // in Version 3 the user name will be displayed
   reaction: Reaction;
 
-  alreadyReacted = false;
+  spot: Spot;
 
   private subs = new SubSink();
 
-  constructor(private reactionService: ReactionService) {
+  constructor(private reactionService: ReactionService,
+              public authService: AuthService,
+              private spotService: SpotService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
-    this.reaction = new Reaction(null, this.message.id, ReactionType.NEUTRAL);
+    if (this.message.ownerReaction == null) {
+      this.message.ownerReaction = ReactionType.NEUTRAL;
+    }
+    this.reaction = new Reaction(this.message.ownerReactionId, this.message.id, this.message.ownerReaction, null);
+    this.subs.add(this.spotService.getSpotById(this.message.spotId).subscribe(spot => this.spot = spot));
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  public onSpot() {
+    this.subs.add(this.spotService.getSpotById(this.message.spotId).subscribe(spot => this.spot = spot));
+    this.router.navigate(['locations', this.spot.location.id, 'spots', this.spot.id]);
   }
 
   public onUpVote(): void {

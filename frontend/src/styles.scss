@@ -16,3 +16,11 @@ body {
 .toast-container {
   margin: 20px;
 }
+
+.toast-message {
+  white-space: pre-line;
+}
+
+.cdk-overlay-container {
+  z-index: 10000;
+}

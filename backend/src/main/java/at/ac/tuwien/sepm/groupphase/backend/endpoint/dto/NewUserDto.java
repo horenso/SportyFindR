@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,7 +12,8 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 public class NewUserDto extends UserDto {
 
     @NotNull

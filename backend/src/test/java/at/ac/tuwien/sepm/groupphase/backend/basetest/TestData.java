@@ -49,9 +49,10 @@ public interface TestData {
     LocalDateTime DATE = LocalDateTime.of(2021,1,4,18,19,20,100);
     int ZERO =0;
     LocalDateTime DATE2 = LocalDateTime.of(2021,5,24,1,15,3,140);
+    LocalDateTime DATE_IN_THE_PAST = LocalDateTime.of(2020,5,24,1,15,3,140);
     Double LAT3= 91.57;
     Double LONG3 = -20.3;
-    Double RADIUS = 0.001;
+    Double RADIUS = 1.0;
     String HASHTAG_NAME= "best";
     String EMAIL = "user@email.com";
     Boolean ENABLED = true;

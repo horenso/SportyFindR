@@ -1,0 +1,11 @@
+.message {
+  margin: 0.5em;
+}
+
+.sidebarScrollableSection {
+  border-top: 1px solid lightgrey;
+}
+
+cdk-virtual-scroll-viewport {
+  flex: 1 1 auto;
+}

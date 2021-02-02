@@ -1,54 +1,64 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Category} from '../../dtos/category';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
-import {Router, UrlSerializer} from '@angular/router';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {Router} from '@angular/router';
 import {MessageService} from '../../services/message.service';
-import {LocationService} from '../../services/location.service';
-import {Location} from '../../dtos/location';
-import {Message} from '../../dtos/message';
+import {HashtagService} from '../../services/hashtag.service';
+import {SidebarService} from '../../services/sidebar.service';
+import {MapService} from '../../services/map.service';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {SimpleHashtag} from '../../dtos/simpleHashtag';
+import {SimpleUser} from '../../dtos/simpleUser';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-filter-main',
   templateUrl: './filter-main.component.html',
   styleUrls: ['./filter-main.component.scss']
 })
-export class FilterMainComponent implements OnInit {
-
-  messageSearch: Observable<Message[]>;
-  locationSearch: Observable<Location[]>;
+export class FilterMainComponent implements OnInit, OnDestroy {
 
   categories: Category[];
-  radius: number = 100000;
+  hashtags: SimpleHashtag[];
+  users: SimpleUser[];
+  radius: number = 0;
+  strLoc: string;
+  strMes: string;
 
   messageForm: FormGroup;
   locationForm: FormGroup;
 
-  paramMessage = new BehaviorSubject<string>('/messages/filter?category=&time=');
-  paramLocation = new BehaviorSubject<string>('/locations/filter?category=&latitude=&longitude=&radius=');
+  panelOpenState = false;
 
-  constructor(private formBuilder: FormBuilder,
-              private categoryService: CategoryService,
-              private messageService: MessageService,
-              private locationService: LocationService,
-              private notificationService: NotificationService,
-              private serializer: UrlSerializer,
-              private router: Router) {
+  disabled = true;
 
-    this.locationForm = this.formBuilder.group({
-      category: [''],
-      latitude: [''],
-      longitude: [''],
-      radius: [''],
-    });
+  filteredHashtagOptions: Observable<SimpleHashtag[]>;
+  hashtagControl = new FormControl();
+  hashtagSelection: string;
 
-    this.messageForm = this.formBuilder.group({
-      category: [''],
-      time: [''],
-    });
+  filteredUserOptions: Observable<SimpleUser[]>;
+  userControl = new FormControl();
+  userSelection: string;
+
+  sidebarActive: boolean = false;
+  private subscription: Subscription;
+
+  public minDistance: number = 800;
+  public maxDistance: number = 10000;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private categoryService: CategoryService,
+    private messageService: MessageService,
+    private hashtagService: HashtagService,
+    private sidebarService: SidebarService,
+    private mapService: MapService,
+    private notificationService: NotificationService,
+    private router: Router,
+    private userService: UserService) {
   }
 
   ngOnInit(): void {
@@ -56,69 +66,89 @@ export class FilterMainComponent implements OnInit {
     this.buildMessageForm();
     this.buildLocationForm();
 
-    this.messageSearch = this.paramMessage.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((str: string) => this.messageService.filterMessage(str))
-    );
+    this.subscription = this.sidebarService.changeVisibilityAndFocusObservable.subscribe(change => {
+      this.sidebarActive = change.isVisible;
+    });
 
-    this.locationSearch = this.paramLocation.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((str: string) => this.locationService.filterLocation(str))
-    );
+    // Hashtag Filter
+    this.filteredHashtagOptions = this.hashtagControl.valueChanges
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap((str: string) => this.hashtagService.search(str))
+      );
+
+    // User Filter
+    this.filteredUserOptions = this.userControl.valueChanges
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap((str: string) => this.userService.search(str))
+      );
   }
 
-  updateSetting(event) {
-    this.radius = event.value;
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
-  searchLocation(str: string): void {
-    const formData = {
-      category: this.locationForm.get('categoryLoc').value,
-      latitude: this.locationForm.get('latitude').value,
-      longitude: this.locationForm.get('longitude').value,
-      radius: this.radius,
-    };
-    console.log('MAH FIRST URL: ' + str);
-    str = this.serializer.serialize(this.router.createUrlTree([], { queryParams: formData }));
-    console.log('MAH URL: ' + str);
-    this.paramLocation.next(str);
-    console.log('MAH PARAM URL: ' + this.paramLocation.getValue());
+  private _filter(name: string): SimpleHashtag[] {
+    const filterValue = name.toLowerCase();
+
+    return this.hashtags.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
-  searchMessage(str: string): void {
-    const formData = {
-      category: this.messageForm.get('categoryMes').value,
+  filterLoc(): void {
+    let radius = this.locationForm.value.radius;
+    if (isNaN(radius)) {
+      radius = null;
+    }
+    this.mapService.updateFilterLocation({
+      categoryId: this.locationForm.value.categoryId,
+      radius: radius,
+      radiusEnabled: this.locationForm.value.radiusEnabled,
+      radiusBuffered: false});
+  }
+
+  filterMes(): void {
+    this.messageService.updateMessageFilter({
+      categoryMes: this.messageForm.get('categoryMes').value,
+      hashtag: this.hashtagSelection,
+      user: this.userSelection,
       time: this.messageForm.get('time').value,
-    };
-    console.log('MAH FIRST URL: ' + str);
-    str = this.serializer.serialize(this.router.createUrlTree([], { queryParams: formData }));
-    console.log('MAH URL: ' + str);
-    this.paramLocation.next(str);
-    console.log('MAH PARAM URL: ' + this.paramLocation.getValue());
+      page: 0,
+      size: 10
+    });
+    this.sidebarService.changeVisibilityAndFocus({isVisible: true});
+    this.sidebarActive = true;
+    this.router.navigate(['filter/messages']);
+  }
+
+  // Autocomplete Methods
+
+  selectedHashtagOption(event) {
+    this.hashtagSelection = event.option.value;
+  }
+
+  selectedUserOption(event) {
+    this.userSelection = event.option.value;
   }
 
   buildLocationForm(): void {
     this.locationForm = this.formBuilder.group({
-      category: new FormControl(''),
-      latitude: new FormControl(''),
-      longitude: new FormControl(''),
-      radius: new FormControl('')
+      categoryId: [null],
+      radius: [{value: this.minDistance, disabled: true}],
+      radiusEnabled: [false]
     });
   }
 
   buildMessageForm(): void {
     this.messageForm = this.formBuilder.group({
-      category: new FormControl(''),
-      time: new FormControl('')
+      categoryMes: [''],
+      user: [''],
+      hashtag: [''],
+      time: ['']
     });
   }
-
-  public compareCategory(a: Category, b: Category): boolean {
-    return a?.id === b?.id;
-  }
-
 
   getAllCategories(): void {
     this.categoryService.getAll().subscribe(
@@ -131,8 +161,24 @@ export class FilterMainComponent implements OnInit {
     );
   }
 
-  formatLabel(value: number) {
-      return Math.round(value) + 'km';
+  resetLocationFilter(): void {
+    this.locationForm.reset();
+    this.locationForm.controls['radius'].disable();
+    this.locationForm.controls['radius'].setValue(this.minDistance);
+    this.mapService.updateFilterLocation({
+      categoryId: null, radiusEnabled: false, radius: null, coordinates: null, radiusBuffered: false
+    });
   }
 
+  onSidebarActive(sidebarActive: boolean) {
+    this.sidebarActive = sidebarActive;
+  }
+
+  toggleIncludeRadius() {
+    if (this.locationForm.controls.radius.enabled) {
+      this.locationForm.controls.radius.disable();
+    } else {
+      this.locationForm.controls.radius.enable();
+    }
+  }
 }

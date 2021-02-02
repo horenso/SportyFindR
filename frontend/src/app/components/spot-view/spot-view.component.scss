@@ -10,13 +10,20 @@ mat-form-field {
 .sidebarBottomRow {
   border-top: 1px solid lightgrey;
   padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+.inputRow {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: stretch;
 }
 
 .sidebarScrollableSection {
   border-top: 1px solid lightgrey;
+}
+
+cdk-virtual-scroll-viewport {
+  flex: 1 1 auto;
 }
 
 #messageInput {
@@ -25,9 +32,14 @@ mat-form-field {
 
 #infoSection {
   max-height: 60%;
-  overflow-y: auto;
 }
 
 #categorySpan {
   font-weight: bold;
+  display: inline;
+}
+
+#ownerSpan {
+  font-weight: bold;
+  display: inline;
 }

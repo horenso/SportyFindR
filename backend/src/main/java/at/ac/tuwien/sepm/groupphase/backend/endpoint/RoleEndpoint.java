@@ -55,7 +55,7 @@ public class RoleEndpoint {
             Role newRole = roleMapper.roleDtoToRole(roleDto);
             newRole.setApplicationUsers(this.enrichUserSet(newRole.getApplicationUsers()));
             return roleMapper.roleToRoleDto(
-                roleService.create(roleMapper.roleDtoToRole(roleDto)));
+                roleService.create(newRole));
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -76,6 +76,9 @@ public class RoleEndpoint {
         } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (ValidationException e) {
+            log.error(HttpStatus.INTERNAL_SERVER_ERROR + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
