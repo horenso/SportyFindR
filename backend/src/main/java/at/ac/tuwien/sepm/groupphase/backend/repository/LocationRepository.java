@@ -32,8 +32,11 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      */
     @Query(value = "SELECT DISTINCT l FROM Location l LEFT JOIN Spot s ON s.location.id = l.id WHERE s.category.id = :cat")
     List<Location> filter(@Param("cat") Long categoryId);
-/**
-    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id JOIN Hashtag h WHERE s.category.id= :cat and h.name=:hashtag")
-    List<Location> filter(@Param("cat") Long categoryId, @Param("hashtag") String hashtag);
-*/
+
+
+    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id WHERE s.category.id= :cat AND s.id IN :hashtag")
+    List<Location> filter(@Param("cat") Long categoryId, @Param("hashtag") List<Long> hashtag);
+
+    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id WHERE s.id IN :hashtag")
+    List<Location> filter(@Param("hashtag") List<Long> hashtag);
 }
