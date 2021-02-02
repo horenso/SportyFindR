@@ -4,7 +4,7 @@
 
   <span class="spacer"></span>
 
-  <a mat-raised-button color="accent"
+  <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()"
      routerLink="/register" routerLinkActive="active">Register</a>
 
   <a mat-raised-button color="accent" *ngIf="!authService.isLoggedIn()"
