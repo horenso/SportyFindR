@@ -57,7 +57,7 @@ public class UserEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
     @ApiOperation(value = "Update a user", authorizations = {@Authorization(value = "apiKey")})
@@ -80,7 +80,7 @@ public class UserEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete user", authorizations = {@Authorization(value = "apiKey")})
@@ -131,7 +131,7 @@ public class UserEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/byEmail/{email}")
     @ApiOperation(value = "Get one user by email", authorizations = {@Authorization(value = "apiKey")})
