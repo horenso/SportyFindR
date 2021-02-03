@@ -75,10 +75,9 @@ public class RoleEndpointTest implements TestData {
             .name("TestRole")
             .build();
         RoleDto createdRole =  roleEndpoint.create(roleDto);
-        Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
-        List<Role> foundRoles = roleService.findAll();
+        List<RoleDto> foundRoleDtos = roleEndpoint.getAll();
         assertAll(
-            () -> assertThat(foundRoles, hasItems(foundRole))
+            () -> assertThat(foundRoleDtos, hasItems(createdRole))
         );
     }
 
