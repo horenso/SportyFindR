@@ -51,42 +51,19 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public List<Location> find(LocationSearchObject locationSearchObject) throws ServiceException{
+    public List<Location> find(LocationSearchObject locationSearchObject){
         log.debug("Searching for locations within a distance of at most " + locationSearchObject.getRadius() + " km, containing spots with category: " + locationSearchObject.getCategoryId());
         List<Location> locations;
         if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {    // if search parameters contain category data
             if (locationSearchObject.getHashtag() != null) {
-                Hashtag hashtag = hashtagService.getByName(locationSearchObject.getHashtag());
-                if(hashtag!=null) {
-                    List<Spot> spotList = hashtag.getSpotsList();
-                    List<Long> spotIds = new LinkedList<>();
-
-                    for (Spot s : spotList) {
-                        spotIds.add(s.getId());
-                    }
-                    locations = locationRepository.filter(locationSearchObject.getCategoryId(),spotIds);
-                }else{
-                    throw new ServiceException("Invalid hashtag name.");
-                }
+                locations = locationRepository.filter(locationSearchObject.getCategoryId(), locationSearchObject.getHashtag());
             } else {
                 locations = locationRepository.filter(locationSearchObject.getCategoryId());
             }
-
         } else {
             if (locationSearchObject.getHashtag() != null) {
-                Hashtag hashtag = hashtagService.getByName(locationSearchObject.getHashtag());
-                if (hashtag != null) {
-                    List<Spot> spotList = hashtag.getSpotsList();
-                    List<Long> spotIds = new LinkedList<>();
-
-                    for (Spot s : spotList) {
-                        spotIds.add(s.getId());
-                    }
-                    locations = locationRepository.filter(spotIds);
-                } else {
-                    throw new ServiceException("Invalid hashtag name.");
-                }
-            }else {
+                locations = locationRepository.filter(locationSearchObject.getHashtag());
+            } else {
                 locations = locationRepository.findAll();   // find all locations
             }
         }

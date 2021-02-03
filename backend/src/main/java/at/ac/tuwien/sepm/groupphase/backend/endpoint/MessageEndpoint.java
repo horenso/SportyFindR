@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +39,7 @@ public class MessageEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get page of messages without details by spot",
-        authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Get page of messages without details by spot", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> findBySpot(
         @RequestParam Long spotId,
         @RequestParam(defaultValue = "0", required = false) int page,
@@ -89,6 +89,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
@@ -100,7 +101,7 @@ public class MessageEndpoint {
         } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
+        } catch (WrongUserException e) {
             log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
@@ -108,8 +109,7 @@ public class MessageEndpoint {
 
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Filter messages by hashtag, username, time and category",
-        authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
         @PageableDefault(size = 20)
         @SortDefault.SortDefaults({
@@ -118,20 +118,14 @@ public class MessageEndpoint {
         @RequestParam(required = false) Long categoryMes,
         @RequestParam(required = false) String hashtag,
         @RequestParam(required = false, defaultValue = "0") String user,
-        @RequestParam(required = false, defaultValue = "1000-01-01")
-        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
+        @RequestParam(required = false, defaultValue = "1000-01-01") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("GET /api/v1/messages/filter?categoryMes={}&hashtag={}&user={}&time={}",
-            categoryMes, hashtag, user, time);
+        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&user=" + user + "&time=" + time);
 
         MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, user, time.atStartOfDay());
 
-        try {
-            return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
-        } catch (ServiceException e) {
-            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
-        }
+        return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
+
     }
 
 }

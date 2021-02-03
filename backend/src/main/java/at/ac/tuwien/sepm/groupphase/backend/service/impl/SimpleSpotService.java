@@ -130,13 +130,17 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public List<Spot> getSpotsByLocation(Long locationId) throws ValidationException {
+    public List<Spot> getSpotsByLocation(Long locationId, String hashtagName) throws ValidationException {
         //Message message;
         Optional<Location> optionalLocation = locationRepository.getOneById(locationId);
         if (optionalLocation.isEmpty()) {
             throw new ValidationException("Location with ID " + locationId + " cannot be found!");
         } else {
-            return spotRepository.getSpotsByLocationId(locationId);
+            if (hashtagName != null && hashtagName != "") {
+                return spotRepository.getSpotsByLocationId(locationId,hashtagName);
+            } else {
+                return spotRepository.getSpotsByLocationId(locationId);
+            }
         }
     }
 

@@ -52,7 +52,7 @@ public interface MessageService {
      * @param pageable containing page information
      * @return Page with messages containing spots that match the filter criteria
      */
-    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException;
+    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable);
 
     List<Message> findByOwner(Long userId) throws NotFoundException2;
 }

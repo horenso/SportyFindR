@@ -28,4 +28,9 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
     void deleteById(Long id);
 
     List<Spot> findByOwner(ApplicationUser owner);
+
+    @Query (value = "SELECT DISTINCT s FROM Location l JOIN Spot s ON l.id = s.location.id " +
+        "JOIN s.hashtagList h WHERE l.id = :locationId and h.name=:hashtag")
+    List<Spot> getSpotsByLocationId(@Param("locationId") Long locationId,
+                                    @Param("hashtag")String hashtag);
 }

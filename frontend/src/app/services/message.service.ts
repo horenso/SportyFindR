@@ -34,7 +34,7 @@ export class MessageService {
     const params = new HttpParams()
       .set('spotId', spotId.toString())
       .set('page', page.toString())
-      .set('size', size.toString())
+      .set('size', size.toString());
     return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 

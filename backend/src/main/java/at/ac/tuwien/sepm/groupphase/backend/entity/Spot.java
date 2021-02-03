@@ -1,8 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -38,4 +42,13 @@ public class Spot {
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "owner_id", nullable = true, updatable = true)
     private ApplicationUser owner;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JoinTable(
+        name = "hashtags_spots",
+        joinColumns = @JoinColumn(name = "spot_id"),
+        inverseJoinColumns = @JoinColumn(name = "hashtag_id")
+    )
+    private List<Hashtag> hashtagList = new ArrayList<>();
 }

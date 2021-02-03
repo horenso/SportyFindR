@@ -56,12 +56,7 @@ public class LocationEndpoint {
             "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&hashtag=" + hashtag);
 
         LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius, hashtag);
-        try {
-            return locationMapper.entityToListDto(locationService.find(locationSearchObject));
-        } catch (ServiceException e) {
-            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
-        }
+        return locationMapper.entityToListDto(locationService.find(locationSearchObject));
     }
 
 

@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface LocationRepository extends JpaRepository<Location, Long> {
     /**
      * Gets one location by id.
+     *
      * @return an optional, empty if the id was not found
      */
     Optional<Location> getOneById(Long ids);
@@ -33,10 +34,9 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query(value = "SELECT DISTINCT l FROM Location l LEFT JOIN Spot s ON s.location.id = l.id WHERE s.category.id = :cat")
     List<Location> filter(@Param("cat") Long categoryId);
 
+    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id JOIN s.hashtagList h WHERE s.category.id= :cat and h.name=:hashtag")
+    List<Location> filter(@Param("cat") Long categoryId, @Param("hashtag") String hashtag);
 
-    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id WHERE s.category.id= :cat AND s.id IN :hashtag")
-    List<Location> filter(@Param("cat") Long categoryId, @Param("hashtag") List<Long> hashtag);
-
-    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id WHERE s.id IN :hashtag")
-    List<Location> filter(@Param("hashtag") List<Long> hashtag);
+    @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON s.location.id = l.id JOIN s.hashtagList h WHERE h.name=:hashtag")
+    List<Location> filter(@Param("hashtag") String hashtag);
 }

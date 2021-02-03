@@ -144,7 +144,7 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
+    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) {
         log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
 
         if (messageSearchObject.getCategoryId() == null) {
@@ -156,20 +156,7 @@ public class SimpleMessageService implements MessageService {
         }
 
         if (messageSearchObject.getHashtagName() != null && !messageSearchObject.getHashtagName().equals("")) {
-            String hashtagName = messageSearchObject.getHashtagName();
-            Hashtag hashtag = hashtagService.getByName(hashtagName);
-
-            if (hashtag != null){
-                List<Message> messageList = hashtag.getMessagesList();
-                List<Long> messageIds = new LinkedList<>();
-
-                for (Message m : messageList){
-                    messageIds.add(m.getId());
-                }
-                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageIds, pageable);
-            } else {
-                throw new ServiceException("Invalid hashtag name.");
-            }
+            return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageSearchObject.getHashtagName(), pageable);
         }
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), pageable);
     }

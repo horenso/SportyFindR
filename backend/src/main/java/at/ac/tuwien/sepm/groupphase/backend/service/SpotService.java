@@ -43,7 +43,7 @@ public interface SpotService {
      * @return list of spots
      * @throws ValidationException
      */
-    List<Spot> getSpotsByLocation(Long locationId) throws ValidationException;
+    List<Spot> getSpotsByLocation(Long locationId, String hashtagName) throws ValidationException;
 
     /**
      * Get one spot by spotId
