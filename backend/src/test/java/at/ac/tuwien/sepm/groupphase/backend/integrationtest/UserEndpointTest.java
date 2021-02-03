@@ -456,6 +456,7 @@ public class UserEndpointTest implements TestData {
         SpotDto initSpotDto = SpotDto.builder()
             .owner(this.simpleUserMapper.userToSimpleUserDto(foundUser))
             .name(NAME)
+            .description(DESCRIPTION)
             .location(locationDto)
             .build();
         initSpotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));

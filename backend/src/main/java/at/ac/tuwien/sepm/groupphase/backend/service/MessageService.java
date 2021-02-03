@@ -56,15 +56,17 @@ public interface MessageService {
      * @param id the id of the message that is being deleted
      * @throws NotFoundException2 if the message does not exist
      * @throws WrongUserException if you are not a correct user/do not have the right to delete the message
+     * @throws ServiceException if the message can not be deleted from the HashtagService
      */
-    void deleteById(Long id) throws NotFoundException2, WrongUserException;
+    void deleteById(Long id) throws NotFoundException2, WrongUserException, ServiceException;
 
     /**
      * delete a message without being the owner of the message
      * @param id the id of the message that is being deleted
      * @throws NotFoundException2 if the message does not exist
+     * @throws ServiceException if the message can not be deleted from the HashtagService
      */
-    void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2;
+    void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, ServiceException;
 
 
     /**

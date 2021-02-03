@@ -4,6 +4,8 @@ import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.HashtagEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
 import org.junit.jupiter.api.AfterEach;
@@ -74,7 +76,7 @@ public class HashtagEndpointTest implements TestData {
             .name(HASHTAG_NAME)
             .build();
         hashtagRepository.save(hashtag);
-        hashtagEndpoint.getById(hashtag.getName());
+        hashtagEndpoint.getByName(hashtag.getName());
     }
 
     @Test

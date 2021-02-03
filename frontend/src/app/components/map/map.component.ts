@@ -140,7 +140,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     if (change.radiusEnabled) {
       drawCircles = true;
-      if (this.filter.radiusEnabled 
+      if (this.filter.radiusEnabled
         && !reloadRequired
         && this.filter.radius === change.radius
         && this.filter.coordinates.distanceTo(this.map.getCenter()) < 20) {
@@ -158,7 +158,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.filter.radiusEnabled = true;
       this.filter.radius = this.filterLocationFromMapView().radius;
     } else { // radiusEnabled was disabled and is still disabled
-      const filterFromMapV = this.filterLocationFromMapView(); 
+      const filterFromMapV = this.filterLocationFromMapView();
       reloadRequired = reloadRequired || !this.isNewFilterWithinCurrentFilter(filterFromMapV);
     }
 

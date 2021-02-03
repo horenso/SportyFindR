@@ -43,7 +43,7 @@ public class SimpleMessageService implements MessageService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Message> findBySpot(Long spotId) throws NotFoundException2{
+    public List<Message> findBySpot(Long spotId) throws NotFoundException2 {
         if (spotRepository.findById(spotId).isEmpty()) {
             throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
         }
@@ -101,25 +101,34 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException2, WrongUserException {
+    public void deleteById(Long id) throws NotFoundException2, WrongUserException, ServiceException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
-        }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
+        } else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName()) && !SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new WrongUserException("You can only delete your own messages");
         }
-        hashtagService.deleteMessageInHashtags(messageOptional.get());
+        try {
+            hashtagService.deleteMessageInHashtags(messageOptional.get());
+        }catch (ValidationException e){
+            throw new ServiceException(e);
+        }
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
     }
+
     @Override
-    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2 {
+    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, ServiceException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
             throw new NotFoundException2(String.format("No message with id %d found!", id));
         }
-        hashtagService.deleteMessageInHashtags(messageOptional.get());
+        try {
+            hashtagService.deleteMessageInHashtags(messageOptional.get());
+        }catch (ValidationException e){
+            throw new ServiceException(e);
+        }
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
@@ -130,14 +139,14 @@ public class SimpleMessageService implements MessageService {
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_UP));
         message.setDownVotes(
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_DOWN));
-        List<Reaction> reaction= reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(),message.getId());
-        if(reaction==null||reaction.size()==0){
+        List<Reaction> reaction = reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(), message.getId());
+        if (reaction == null || reaction.size() == 0) {
             message.setOwnerReaction(null);
             message.setOwnerReactionId(null);
-        } else if(reaction.get(0).getType().equals(Reaction.ReactionType.THUMBS_DOWN)){
+        } else if (reaction.get(0).getType().equals(Reaction.ReactionType.THUMBS_DOWN)) {
             message.setOwnerReaction(Reaction.ReactionType.THUMBS_DOWN);
             message.setOwnerReactionId(reaction.get(0).getId());
-        }else{
+        } else {
             message.setOwnerReaction(Reaction.ReactionType.THUMBS_UP);
             message.setOwnerReactionId(reaction.get(0).getId());
         }
@@ -157,18 +166,22 @@ public class SimpleMessageService implements MessageService {
 
         if (messageSearchObject.getHashtagName() != null && !messageSearchObject.getHashtagName().equals("")) {
             String hashtagName = messageSearchObject.getHashtagName();
-            Hashtag hashtag = hashtagService.getByName(hashtagName);
+            try {
+                Hashtag hashtag = hashtagService.getByName(hashtagName);
 
-            if (hashtag != null){
-                List<Message> messageList = hashtag.getMessagesList();
-                List<Long> messageIds = new LinkedList<>();
+                if (hashtag != null) {
+                    List<Message> messageList = hashtag.getMessagesList();
+                    List<Long> messageIds = new LinkedList<>();
 
-                for (Message m : messageList){
-                    messageIds.add(m.getId());
+                    for (Message m : messageList) {
+                        messageIds.add(m.getId());
+                    }
+                    return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageIds, pageable);
+                } else {
+                    throw new ServiceException("Invalid hashtag name.");
                 }
-                return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageIds, pageable);
-            } else {
-                throw new ServiceException("Invalid hashtag name.");
+            } catch (ValidationException e) {
+                throw new ServiceException(e);
             }
         }
         return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), pageable);
