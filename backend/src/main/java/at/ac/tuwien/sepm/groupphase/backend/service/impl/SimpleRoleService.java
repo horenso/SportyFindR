@@ -52,7 +52,8 @@ public class SimpleRoleService implements RoleService {
 
     @Override
     public Role findRoleByName(String name) throws NotFoundException2 {
-        Optional<Role> role = this.roleRepository.findRoleByName(name);
+        String uCaseName = name.toUpperCase(Locale.ROOT);
+        Optional<Role> role = this.roleRepository.findRoleByName(uCaseName);
         if (role.isPresent()) {
             return role.get();
         } else {
@@ -104,7 +105,8 @@ public class SimpleRoleService implements RoleService {
 
     @Override
     public boolean roleExistsByName(String name) {
-        Optional<Role> role = roleRepository.findRoleByName(name);
+        String uCaseName = name.toUpperCase(Locale.ROOT);
+        Optional<Role> role = roleRepository.findRoleByName(uCaseName);
         return role.isPresent();
     }
 
