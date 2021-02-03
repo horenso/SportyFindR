@@ -62,8 +62,6 @@ public class UserEndpointTest implements TestData {
     @Autowired
     private SpotEndpoint spotEndpoint;
     @Autowired
-    private MessageEndpoint messageEndpoint;
-    @Autowired
     private ReactionEndpoint reactionEndpoint;
     @Autowired
     private SpotRepository spotRepository;

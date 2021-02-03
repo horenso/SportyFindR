@@ -51,6 +51,7 @@ public class RoleEndpointTest implements TestData {
     }
 
     // positive tests
+
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
     public void createRole() {
@@ -64,6 +65,20 @@ public class RoleEndpointTest implements TestData {
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), foundRole.getName()),
             () -> assertEquals(createdRole.getId(), foundRole.getId()),
             () -> assertEquals(roleDto.getUserIds(), this.roleMapper.applicationUsersToUserIds(foundRole.getApplicationUsers()))
+        );
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void findAllRoles() {
+        RoleDto roleDto = RoleDto.builder()
+            .name("TestRole")
+            .build();
+        RoleDto createdRole =  roleEndpoint.create(roleDto);
+        Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
+        List<Role> foundRoles = roleService.findAll();
+        assertAll(
+            () -> assertThat(foundRoles, hasItems(foundRole))
         );
     }
 
@@ -129,25 +144,19 @@ public class RoleEndpointTest implements TestData {
         );
     }
 
-    // negative tests
-
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
-    public void createRoleWithTooShortName() {
-        RoleDto roleDto = RoleDto.builder()
-            .name("Rl") // na too short
+    public void findRoleByName() {
+        RoleDto roleDto1 = RoleDto.builder()
+            .name("TestRole")
             .build();
+        RoleDto createdRole1 = roleEndpoint.create(roleDto1);
 
         assertAll(
-            () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.create(roleDto))
-        );
-    }
-
-    @Test
-    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
-    public void deleteInexistingRole() {
-        assertAll(
-            () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.deleteRoleById(1L))
+            () -> assertTrue(this.roleService.roleExistsByName("TESTROLE")),
+            () -> assertTrue(this.roleService.roleExistsByName("TestRole")),
+            () -> assertFalse(this.roleService.roleExistsByName("noTestRole")),
+            () -> assertEquals(this.roleService.findRoleByName("testRole").getId(), createdRole1.getId())
         );
     }
 
@@ -205,20 +214,26 @@ public class RoleEndpointTest implements TestData {
         );
     }
 
+
+    // negative tests
+
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
-    public void findRoleByName() {
-        RoleDto roleDto1 = RoleDto.builder()
-            .name("TestRole")
+    public void createRoleWithTooShortName() {
+        RoleDto roleDto = RoleDto.builder()
+            .name("Rl") // na too short
             .build();
-        RoleDto createdRole1 =  roleEndpoint.create(roleDto1);
 
         assertAll(
-            () -> assertTrue(this.roleService.roleExistsByName("TESTROLE")),
-            () -> assertTrue(this.roleService.roleExistsByName("TestRole")),
-            () -> assertFalse(this.roleService.roleExistsByName("noTestRole")),
-            () -> assertEquals(this.roleService.findRoleByName("testRole").getId(), createdRole1.getId())
+            () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.create(roleDto))
         );
+    }
 
+    @Test
+    @WithMockUser(username = EMAIL, password = PASSWORD, roles = "ADMIN")
+    public void deleteInexistingRole() {
+        assertAll(
+            () -> assertThrows(ResponseStatusException.class, () -> roleEndpoint.deleteRoleById(1L))
+        );
     }
 }
