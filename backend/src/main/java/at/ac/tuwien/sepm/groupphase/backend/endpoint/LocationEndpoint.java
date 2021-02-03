@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping(value = "/api/v1/locations")
 public class LocationEndpoint {
 

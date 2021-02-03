@@ -23,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping(value = "/api/v1/spots")
 @Slf4j
 public class SpotEndpoint {

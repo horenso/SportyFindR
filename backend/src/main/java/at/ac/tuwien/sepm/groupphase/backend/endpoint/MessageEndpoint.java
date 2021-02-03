@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/messages")
+@CrossOrigin
 @Slf4j
 public class MessageEndpoint {
 
@@ -39,6 +40,7 @@ public class MessageEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @ApiOperation(value = "Get page of messages without details by spot", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> findBySpot(
         @RequestParam Long spotId,
@@ -121,7 +123,7 @@ public class MessageEndpoint {
         log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&user=" + user + "&time=" + time);
 
         MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, user, time.atStartOfDay());
-        
+
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
         } catch (ServiceException e) {
