@@ -32,11 +32,10 @@
               <input id="HashtagLoc"
                      type="text"
                      matInput
-                     formControlName="hashtagLoc"
-                     [formControl]="hashtagLocControl"
+                     formControlName="hashtag"
                      [matAutocomplete]="autoLocHashtag">
-              <mat-autocomplete autoActiveFirstOption #autoLocHashtag="matAutocomplete" (optionSelected)="selectedHashtagLocOption($event)">
-                <mat-option *ngFor="let hashtag of filteredHashtagLocOptions | async" [value]="hashtag.name">
+              <mat-autocomplete autoActiveFirstOption #autoLocHashtag="matAutocomplete">
+                <mat-option *ngFor="let hashtag of filteredHashtagsLocations | async" [value]="hashtag.name">
                   {{hashtag.name}}
                 </mat-option>
               </mat-autocomplete>
@@ -81,8 +80,8 @@
             <mat-form-field appearance="outline">
               <mat-label>Category</mat-label>
               <label for="CategoryMes"></label>
-              <mat-select id="CategoryMes" formControlName="categoryMes">
-                <mat-option *ngFor="let category of categories" [value]="category.id"
+              <mat-select id="CategoryMes" formControlName="categoryId">
+                <mat-option *ngFor="let category of categories"
                 >{{category.name}}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -97,10 +96,9 @@
                      type="text"
                      matInput
                      formControlName="hashtag"
-                     [formControl]="hashtagMesControl"
                      [matAutocomplete]="autoMesHashtag">
-              <mat-autocomplete autoActiveFirstOption #autoMesHashtag="matAutocomplete" (optionSelected)="selectedHashtagMesOption($event)">
-                <mat-option *ngFor="let hashtag of filteredHashtagMesOptions | async" [value]="hashtag.name">
+              <mat-autocomplete autoActiveFirstOption #autoMesHashtag="matAutocomplete">
+                <mat-option *ngFor="let hashtag of filteredHashtagsMessages | async">
                   {{hashtag.name}}
                 </mat-option>
               </mat-autocomplete>
@@ -116,10 +114,9 @@
                      type="text"
                      matInput
                      formControlName="user"
-                     [formControl]="userControl"
                      [matAutocomplete]="autoUser">
-              <mat-autocomplete autoActiveFirstOption #autoUser="matAutocomplete" (optionSelected)="selectedUserOption($event)">
-                <mat-option *ngFor="let user of filteredUserOptions | async" [value]="user.name">
+              <mat-autocomplete autoActiveFirstOption #autoUser="matAutocomplete">
+                <mat-option *ngFor="let user of filteredUsers | async" [value]="user.name">
                   {{user.name}}
                 </mat-option>
               </mat-autocomplete>
