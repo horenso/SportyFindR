@@ -16,21 +16,21 @@ public interface CategoryService {
      *
      * @param category to create
      * @return created category entry
+     * @throws ValidationException is thrown when the category is not valid
      */
-    Category create(Category category) throws ServiceException, ValidationException;
+    Category create(Category category) throws ValidationException;
 
     /**
      * Delete a Category entry
      *
      * @param id of category to delete
+     * @throws NotFoundException2 is throw when the category that should be deleted does not exist
      */
     void deleteById(Long id) throws NotFoundException2;
 
     /**
      * Get all existing categories from database.
-     *
-     * @throws RuntimeException  if something goes wrong during data processing.
-     * @throws NotFoundException if no categories could be found in the system.
+     * @return all categories
      */
     List<Category> findAll();
 }

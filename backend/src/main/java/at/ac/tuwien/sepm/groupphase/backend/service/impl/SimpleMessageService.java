@@ -130,16 +130,16 @@ public class SimpleMessageService implements MessageService {
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_UP));
         message.setDownVotes(
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_DOWN));
-        Reaction reaction= reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(),message.getId());
-        if(reaction==null){
+        List<Reaction> reaction= reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(),message.getId());
+        if(reaction==null||reaction.size()==0){
             message.setOwnerReaction(null);
             message.setOwnerReactionId(null);
-        } else if(reaction.getType().equals(Reaction.ReactionType.THUMBS_DOWN)){
+        } else if(reaction.get(0).getType().equals(Reaction.ReactionType.THUMBS_DOWN)){
             message.setOwnerReaction(Reaction.ReactionType.THUMBS_DOWN);
-            message.setOwnerReactionId(reaction.getId());
+            message.setOwnerReactionId(reaction.get(0).getId());
         }else{
             message.setOwnerReaction(Reaction.ReactionType.THUMBS_UP);
-            message.setOwnerReactionId(reaction.getId());
+            message.setOwnerReactionId(reaction.get(0).getId());
         }
     }
 

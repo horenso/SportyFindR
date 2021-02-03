@@ -28,10 +28,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findBySpotIdOrderByPublishedAtAsc(Long spotId);
 
     /**
-     * Find all message entries form one spot ordered by publication date in ascending order.
+     * Find all message ids form one spot ordered by publication date in ascending order.
      *
      * @param spotId id of the spot
-     * @return ordered list of all message entries
+     * @return ordered list of all message ids
      */
     @Query(value = "SELECT DISTINCT m.id FROM Message m JOIN Spot s ON s.id = m.spot.id WHERE s.id = :spotId")
     List<Long> findBySpotIdOrderByPublishedAtAscLong(@Param("spotId") Long spotId);
@@ -46,6 +46,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      *
      * @param categoryId of spots contained in location
      * @param time ... messages not older than stated time
+     * @param user ... with the owner of the message equaling the stated user
      * @return List of messages that match the filter criteria
      */
     @EntityGraph("message-with-spots-and-owner")
@@ -59,6 +60,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * Find messages that match the filter criteria
      *
      * @param categoryId of spots contained in location
+     * @param user ... with the owner of the message equaling the stated user
      * @param time ... messages not older than stated time
      * @param messageIds ... list of messages after hashtag check
      * @return Page of messages that match the filter criteria

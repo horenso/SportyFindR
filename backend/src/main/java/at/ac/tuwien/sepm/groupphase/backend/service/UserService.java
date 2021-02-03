@@ -67,6 +67,7 @@ public interface UserService extends UserDetailsService {
      * @param user application user to update
      * @return updated ApplicationUser
      * @throws NotFoundException2 if the user was not found
+     * @throws ValidationException if the user id is null
      */
     ApplicationUser update(ApplicationUser user) throws NotFoundException2, ValidationException;
 

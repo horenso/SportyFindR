@@ -16,7 +16,7 @@ public interface LocationService {
      *
      * @param locationId of the location
      * @return the location entity
-     * @throws NotFoundException if the location was not found
+     * @throws NotFoundException2 if the location was not found
      */
     Location getOneById(Long locationId) throws NotFoundException2;
 
@@ -25,6 +25,7 @@ public interface LocationService {
      *
      * @param location to create
      * @return created location entry
+     * @throws ValidationException if the location is not valid
      */
     Location create(Location location) throws  ValidationException;
 

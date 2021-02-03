@@ -25,7 +25,7 @@ public class SimpleCategoryService implements CategoryService {
     }
 
     @Override
-    public Category create(Category category) throws ServiceException, ValidationException {
+    public Category create(Category category) throws ValidationException {
         LOGGER.debug("Create new Category {}", category);
 
         if (category.getId() != null) {

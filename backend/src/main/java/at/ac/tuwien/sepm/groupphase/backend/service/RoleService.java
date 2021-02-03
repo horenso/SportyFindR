@@ -22,6 +22,7 @@ public interface RoleService {
      * find role by (unique) role name
      * @param name Role Name to find
      * @return found role
+     * @throws NotFoundException2 if the role can not be found
      */
     Role findRoleByName(String name) throws NotFoundException2;
 

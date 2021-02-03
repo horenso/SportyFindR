@@ -44,15 +44,16 @@ public interface HashtagService {
     Hashtag create(Hashtag hashtag);
 
     /**
-     * Acquires all hashtags from a message
+     * Acquires all hashtags from a message and saves them if they dont already exist.
+     * * It also saves the connection between the message and the hashtag
      *
      * @param message to get the hashtags from
      */
     void acquireHashtags(Message message);
 
     /**
-     * Acquires all hashtags from a spot description
-     *
+     * Takes all hashtags from a spot description and saves them if they dont already exist.
+     * It also saves the connection between the spot and the hashtag
      * @param spot to get the hashtags from
      */
     void acquireHashtags(Spot spot);
@@ -74,8 +75,7 @@ public interface HashtagService {
     /**
      * Get all existing hashtags from database.
      *
-     * @throws RuntimeException  if something goes wrong during data processing.
-     * @throws NotFoundException if no hashtags could be found in the system.
+     * @return all Hashtags
      */
     List<Hashtag> findAll();
 }

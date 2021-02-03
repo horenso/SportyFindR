@@ -51,7 +51,7 @@ public class  CategoryEndpoint {
         try {
             return categoryMapper.categoryToCategoryDto(
                 categoryService.create(categoryMapper.categoryDtoToCategory(categoryDto)));
-        } catch (ServiceException | ValidationException e) {
+        } catch (ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
