@@ -3,8 +3,29 @@ mat-form-field {
   flex-grow: 1;
 }
 
+#owner {
+  margin-top: 10px;
+  margin-bottom: 13px;
+}
+
+#category {
+  margin-top: 10px;
+  margin-bottom: 13px;
+}
+
+.chips {
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
 .message {
   margin: 0.5em;
+}
+
+.description {
+  text-align: center;
+  color: darkgray;
 }
 
 .sidebarBottomRow {

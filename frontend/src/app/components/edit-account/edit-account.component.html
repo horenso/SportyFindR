@@ -1,37 +1,47 @@
-<form class="center" [formGroup]="accountForm">
-  <h2> Edit your account details </h2>
+<div class="edit-form-flex">
+  <mat-card id="edit">
+    <mat-card-title class="title">
+      Account Details
+    </mat-card-title>
+    <mat-card-content>
+        <form class="form" [formGroup]="accountForm">
+          <h2> Edit your account details </h2>
 
-  <!-- Name -->
-  <div>
-  <mat-form-field appearance="outline">
-    <mat-label>Username</mat-label>
-    <label for="username"></label>
-    <input matInput formControlName='username' id="username">
-  </mat-form-field>
-  </div>
+          <!-- Name -->
+          <div>
+            <mat-form-field appearance="outline" class="form-element">
+              <mat-label>Username</mat-label>
+              <label for="username"></label>
+              <input matInput formControlName='username' id="username">
+            </mat-form-field>
+          </div>
 
-  <!-- Email -->
-  <div>
-  <mat-form-field appearance="outline">
-    <mat-label>E-Mail</mat-label>
-    <label for="email"></label>
-    <input matInput formControlName='email' id="email">
-  </mat-form-field>
-  </div>
+          <!-- Email -->
+          <div>
+            <mat-form-field appearance="outline" class="form-element">
+              <mat-label>E-Mail</mat-label>
+              <label for="email"></label>
+              <input matInput formControlName='email' id="email">
+            </mat-form-field>
+          </div>
 
-  <!-- Password -->
-  <div>
-  <mat-form-field appearance="outline">
-    <mat-label>New password</mat-label>
-    <label for="password"></label>
-    <input type="password" matInput formControlName='password' id="password">
-  </mat-form-field>
-  </div>
+          <!-- Password -->
+          <div>
+            <mat-form-field appearance="outline" class="form-element">
+              <mat-label>New password</mat-label>
+              <label for="password"></label>
+              <input type="password" matInput formControlName='password' id="password">
+            </mat-form-field>
+          </div>
 
-  <div id="buttons">
-    <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
-    <a mat-raised-button class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
-       [disabled]="accountForm.invalid">Update</a>
-  </div>
+          <div id="buttons">
+            <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
+            <a mat-raised-button id="buttonLogin" class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
+               [disabled]="accountForm.invalid">Update</a>
+          </div>
 
-</form>
+        </form>
+
+    </mat-card-content>
+  </mat-card>
+</div>

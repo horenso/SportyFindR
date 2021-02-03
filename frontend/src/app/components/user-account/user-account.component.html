@@ -1,9 +1,21 @@
 <div class="center">
-  <h2>Account Details</h2>
-<div>
-  <mat-icon>person</mat-icon> Username: {{this.loggedUser?.name}}
-</div>
-<div>
-  <mat-icon>email</mat-icon> E-Mail: {{this.loggedUser?.email}}
-</div>
+  <mat-card id="details">
+    <mat-card-title class="title">
+      Account Details
+    </mat-card-title>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon>person</mat-icon>
+          <b>&nbsp; &nbsp; Username: &nbsp;</b>
+          {{this.loggedUser?.name}}
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon>email</mat-icon>
+          <b>&nbsp; &nbsp; Email: &nbsp;</b>
+          {{this.loggedUser?.email}}
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
 </div>

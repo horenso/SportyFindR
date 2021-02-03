@@ -1,4 +1,24 @@
 .center {
-  margin:auto;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: 50px;
+}
+
+#details {
+  padding-top: 25px;
+  height: 140px;
+  width: 340px;
+  text-align: center
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.backgroundImage {
+  background-repeat: no-repeat;
+  width: 100%;
+  position: fixed;
 }
