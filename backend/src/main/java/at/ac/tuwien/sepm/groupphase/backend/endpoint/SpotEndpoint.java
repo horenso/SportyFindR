@@ -98,10 +98,11 @@ public class SpotEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     @ApiOperation(value = "Get list of spots for a specific location", authorizations = {@Authorization(value = "apiKey")})
-    public List<SpotDto> getSpotsByLocation(@RequestParam(name = "location") Long locationId) {
-        log.info("GET /api/v1/spots?location={}", locationId);
+    public List<SpotDto> getSpotsByLocation(@RequestParam(name = "location") Long locationId,
+                                            @RequestParam(required = false, name = "hashtag") String hashtagName) {
+        log.info("GET /api/v1/spots?location={}&hashtag={}", locationId,hashtagName);
         try {
-            List<Spot> spots = spotService.getSpotsByLocation(locationId);
+            List<Spot> spots = spotService.getSpotsByLocation(locationId,hashtagName);
             List<SpotDto> spotDtos = new ArrayList<>();
             spots.forEach(spot -> spotDtos.add(spotMapper.spotToSpotDto(spot)));
             return spotDtos;

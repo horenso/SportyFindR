@@ -89,6 +89,7 @@ public class MessageEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
@@ -100,18 +101,19 @@ public class MessageEndpoint {
         } catch (NotFoundException2 e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
+        } catch (WrongUserException e) {
             log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
+
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(
         @PageableDefault(size = 20)
         @SortDefault.SortDefaults({
-            @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
+            @SortDefault(sort = "id", direction = Sort.Direction.ASC)})
             Pageable pageable,
         @RequestParam(required = false) Long categoryMes,
         @RequestParam(required = false) String hashtag,
@@ -121,13 +123,9 @@ public class MessageEndpoint {
         log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&user=" + user + "&time=" + time);
 
         MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, user, time.atStartOfDay());
-        
-        try {
-            return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
-        } catch (ServiceException e) {
-            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
-        }
+
+        return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
+
     }
 
 }
