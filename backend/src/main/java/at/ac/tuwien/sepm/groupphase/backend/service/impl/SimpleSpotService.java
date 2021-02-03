@@ -1,19 +1,33 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.exception.*;
-import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.*;
+
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
+import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +41,6 @@ public class SimpleSpotService implements SpotService {
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
 
 
     /**
@@ -98,6 +111,7 @@ public class SimpleSpotService implements SpotService {
         hashtagService.acquireHashtags(spot);
         return spotRepository.save(spot);
     }
+
     @Override
     public boolean deleteById(Long id) throws ValidationException, ServiceException, WrongUserException {
         log.debug("Delete Spot with id {}", id);
@@ -130,18 +144,23 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public List<Spot> getSpotsByLocation(Long locationId, String hashtagName) throws ValidationException {
+    public List<Spot> getSpotsByLocation(SpotFilter spotFilter) throws ValidationException {
         //Message message;
-        Optional<Location> optionalLocation = locationRepository.getOneById(locationId);
+        Optional<Location> optionalLocation = locationRepository.getOneById(spotFilter.getLocationId());
         if (optionalLocation.isEmpty()) {
-            throw new ValidationException("Location with ID " + locationId + " cannot be found!");
-        } else {
-            if (hashtagName != null && hashtagName != "") {
-                return spotRepository.getSpotsByLocationId(locationId,hashtagName);
-            } else {
-                return spotRepository.getSpotsByLocationId(locationId);
-            }
+            throw new ValidationException("Location with ID " + spotFilter.getLocationId() + " cannot be found!");
         }
+        List<Spot> spotList;
+        if (spotFilter.getHashtagName() != null && spotFilter.getHashtagName() != "") {
+            spotList = spotRepository.getSpotsByLocationId(spotFilter.getLocationId(), spotFilter.getHashtagName());
+        } else {
+            spotList = spotRepository.getSpotsByLocationId(spotFilter.getLocationId());
+        }
+        if (spotFilter.getCategoryId() != null) {
+            spotList = spotList.stream().filter(spot -> spot.getCategory().getId() == spotFilter.getCategoryId())
+                .collect(Collectors.toList());
+        }
+        return spotList;
     }
 
     @Override

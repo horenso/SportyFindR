@@ -1,12 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationSearchObject;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.LocationFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
@@ -16,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,24 +46,24 @@ public class SimpleLocationService implements LocationService {
     }
 
     @Override
-    public List<Location> find(LocationSearchObject locationSearchObject){
-        log.debug("Searching for locations within a distance of at most " + locationSearchObject.getRadius() + " km, containing spots with category: " + locationSearchObject.getCategoryId());
+    public List<Location> find(LocationFilter locationFilter) {
+        log.debug("Searching for locations within a distance of at most " + locationFilter.getRadius() + " km, containing spots with category: " + locationFilter.getCategoryId());
         List<Location> locations;
-        if (locationSearchObject.getCategoryId() != null && locationSearchObject.getCategoryId() != 0) {    // if search parameters contain category data
-            if (locationSearchObject.getHashtag() != null) {
-                locations = locationRepository.filter(locationSearchObject.getCategoryId(), locationSearchObject.getHashtag());
+        if (locationFilter.getCategoryId() != null && locationFilter.getCategoryId() != 0) {    // if search parameters contain category data
+            if (locationFilter.getHashtag() != null) {
+                locations = locationRepository.filter(locationFilter.getCategoryId(), locationFilter.getHashtag());
             } else {
-                locations = locationRepository.filter(locationSearchObject.getCategoryId());
+                locations = locationRepository.filter(locationFilter.getCategoryId());
             }
         } else {
-            if (locationSearchObject.getHashtag() != null) {
-                locations = locationRepository.filter(locationSearchObject.getHashtag());
+            if (locationFilter.getHashtag() != null) {
+                locations = locationRepository.filter(locationFilter.getHashtag());
             } else {
                 locations = locationRepository.findAll();   // find all locations
             }
         }
-        if (locationSearchObject.getRadius() != null && locationSearchObject.getRadius() != 0) {      // if search parameters contain radius data
-            return validator.validateLocationDistance(locationSearchObject.getLatitude(), locationSearchObject.getLongitude(), locationSearchObject.getRadius(), locations);
+        if (locationFilter.getRadius() != null && locationFilter.getRadius() != 0) {      // if search parameters contain radius data
+            return validator.validateLocationDistance(locationFilter.getLatitude(), locationFilter.getLongitude(), locationFilter.getRadius(), locations);
         } else {
             return locations; // search by category only or no filter at all
         }

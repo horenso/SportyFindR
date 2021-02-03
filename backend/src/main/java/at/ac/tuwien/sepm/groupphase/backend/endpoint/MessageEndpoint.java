@@ -1,10 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
@@ -26,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -115,16 +113,15 @@ public class MessageEndpoint {
         @SortDefault.SortDefaults({
             @SortDefault(sort = "id", direction = Sort.Direction.ASC)})
             Pageable pageable,
-        @RequestParam(required = false) Long categoryMes,
+        @RequestParam(required = false) Long categoryId,
         @RequestParam(required = false) String hashtag,
         @RequestParam(required = false, defaultValue = "0") String user,
         @RequestParam(required = false, defaultValue = "1000-01-01") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&user=" + user + "&time=" + time);
+        log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user=&time={}", categoryId, hashtag, user, time);
+        MessageFilter messageFilter = new MessageFilter(categoryId, hashtag, user, time.atStartOfDay());
 
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, user, time.atStartOfDay());
-
-        return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
+        return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageFilter, pageable));
 
     }
 

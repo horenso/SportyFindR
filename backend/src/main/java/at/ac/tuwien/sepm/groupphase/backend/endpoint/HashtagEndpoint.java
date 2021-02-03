@@ -8,7 +8,6 @@ import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class HashtagEndpoint {
     @GetMapping(value = "/{name}")
     @CrossOrigin
     @ApiOperation(value = "Get a hashtag by name", authorizations = {@Authorization(value = "apiKey")})
-    public HashtagDto getById(@PathVariable("name") String name) {
+    public HashtagDto getByName(@PathVariable("name") String name) {
         log.info("GET /api/v1/hashtags/{}", name);
         return hashtagMapper.hashtagToHashtagDto(hashtagService.getByName(name));
     }
@@ -35,8 +34,8 @@ public class HashtagEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/filter")
     @ApiOperation(value = "Get hashtag list by name", authorizations = {@Authorization(value = "apiKey")})
-    public List<HashtagDto> searchByName(@RequestParam(required = false) String name) {
-        log.info("GET /api/v1/hashtags/filter/{}", name);
+    public List<HashtagDto> searchByPartialName(@RequestParam(required = false) String name) {
+        log.info("GET /api/v1/hashtags/filter?name={}", name);
         return hashtagMapper.entityToListDto(hashtagService.searchByName(name));
     }
 

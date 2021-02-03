@@ -53,7 +53,7 @@ export class EditSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.unsubscribe();
+    this.subs?.unsubscribe();
   }
 
   onCancel(): void {

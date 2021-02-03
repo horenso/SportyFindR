@@ -12,6 +12,7 @@ import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
 import { lowerFirst } from 'lodash';
+import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-spot-view',
@@ -89,7 +90,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.spotService.closeConnection();
-    this.subs.unsubscribe();
+    this.subs?.unsubscribe();
   }
 
   ngAfterViewInit(): void {

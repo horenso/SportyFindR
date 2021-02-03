@@ -9,7 +9,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -133,10 +132,9 @@ public class UserEndpoint {
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/byEmail/{email}")
     @ApiOperation(value = "Get one user by email", authorizations = {@Authorization(value = "apiKey")})
-    public UserDto getOneByEmail(@PathVariable("email") String email) {
-        log.info("GET /api/v1/users/byEmail/{}", email);
+    public UserDto getOneByEmail(@RequestParam String email) {
+        log.info("GET /api/v1/users?email={}", email);
         try {
             return userMapper.applicationUserToUserDto(userService.getApplicationUserByEmail(email));
         } catch (NotFoundException2 e) {
@@ -149,7 +147,7 @@ public class UserEndpoint {
     @GetMapping(value = "/filter")
     @ApiOperation(value = "Get user list by name", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleUserDto> searchByName(@RequestParam(required = false) String name) {
-        log.info("GET /api/v1/users/filter/{}", name);
+        log.info("GET /api/v1/users/filter?name={}", name);
         return simpleUserMapper.entityToListDto(userService.searchByName(name));
     }
 

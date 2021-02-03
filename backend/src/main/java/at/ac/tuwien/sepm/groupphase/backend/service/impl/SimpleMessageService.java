@@ -1,12 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
@@ -19,14 +17,12 @@ import at.ac.tuwien.sepm.groupphase.backend.service.SpotSubscriptionService;
 import at.ac.tuwien.sepm.groupphase.backend.service.validator.MessageValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,21 +140,21 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) {
-        log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
+    public Page<Message> filter(MessageFilter messageFilter, Pageable pageable) {
+        log.debug("Searching for messages of spots belonging to the category " + messageFilter.getCategoryId() + ", not older than: " + messageFilter.getTime());
 
-        if (messageSearchObject.getCategoryId() == null) {
-            messageSearchObject.setCategoryId(0L);
+        if (messageFilter.getCategoryId() == null) {
+            messageFilter.setCategoryId(0L);
         }
 
-        if (messageSearchObject.getTime() == null) {
-            messageSearchObject.setTime(LocalDateTime.MIN);
+        if (messageFilter.getTime() == null) {
+            messageFilter.setTime(LocalDateTime.MIN);
         }
 
-        if (messageSearchObject.getHashtagName() != null && !messageSearchObject.getHashtagName().equals("")) {
-            return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageSearchObject.getHashtagName(), pageable);
+        if (messageFilter.getHashtagName() != null && !messageFilter.getHashtagName().equals("")) {
+            return messageRepository.filterHash(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), messageFilter.getHashtagName(), pageable);
         }
-        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), pageable);
+        return messageRepository.filter(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), pageable);
     }
 
 
@@ -180,6 +176,4 @@ public class SimpleMessageService implements MessageService {
             throw new NotFoundException2("User with ID " + userId + " not found.");
         }
     }
-
-
 }

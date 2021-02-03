@@ -1,15 +1,14 @@
-package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
+package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter;
 
 import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @ToString
 @EqualsAndHashCode
 @Builder
-public class LocationSearchObject {
+public class LocationFilter {
     Long categoryId;
     Double latitude;
     Double longitude;

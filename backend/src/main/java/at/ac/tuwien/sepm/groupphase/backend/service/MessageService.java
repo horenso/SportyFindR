@@ -1,9 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import org.springframework.data.domain.Page;
@@ -48,11 +47,11 @@ public interface MessageService {
     /**
      * Finds locations containing spots that match the filter criteria
      *
-     * @param messageSearchObject containing search parameters for message filter
-     * @param pageable containing page information
+     * @param messageFilter containing search parameters for message filter
+     * @param pageable      containing page information
      * @return Page with messages containing spots that match the filter criteria
      */
-    Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable);
+    Page<Message> filter(MessageFilter messageFilter, Pageable pageable);
 
     List<Message> findByOwner(Long userId) throws NotFoundException2;
 }

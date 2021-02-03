@@ -1,8 +1,8 @@
 export interface FilterMessage {
-  categoryMes?: number;
+  categoryId?: number;
   hashtag?: string;
   user?: string;
   time?: string;
-  page: number;
-  size: number;
+  page?: number;
+  size?: number;
 }

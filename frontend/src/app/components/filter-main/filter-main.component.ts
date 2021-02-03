@@ -10,9 +10,11 @@ import {HashtagService} from '../../services/hashtag.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {MapService} from '../../services/map.service';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
-import {SimpleHashtag} from '../../dtos/simpleHashtag';
-import {SimpleUser} from '../../dtos/simpleUser';
+import {SimpleHashtag} from '../../dtos/simple-hashtag';
+import {SimpleUser} from '../../dtos/simple-user';
 import {UserService} from '../../services/user.service';
+import { FilterService } from 'src/app/services/filter.service';
+import { now } from 'lodash';
 
 @Component({
   selector: 'app-filter-main',
@@ -34,14 +36,14 @@ export class FilterMainComponent implements OnInit {
 
   public minDistance: number = 800;
   public maxDistance: number = 10000;
+  public maxDate: Date = new Date(Date.now());
 
   constructor(
     private formBuilder: FormBuilder,
     private categoryService: CategoryService,
-    private messageService: MessageService,
     private hashtagService: HashtagService,
     private sidebarService: SidebarService,
-    private mapService: MapService,
+    private filterService: FilterService,
     private notificationService: NotificationService,
     private router: Router,
     private userService: UserService) {
@@ -52,7 +54,7 @@ export class FilterMainComponent implements OnInit {
     this.buildMessageForm();
     this.buildLocationForm();
 
-    this.filteredHashtagsMessages = this.locationForm.controls.hashtag.valueChanges.pipe(
+    this.filteredHashtagsLocations = this.locationForm.controls.hashtag.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((str: string) => this.hashtagService.search(str))
@@ -94,7 +96,7 @@ export class FilterMainComponent implements OnInit {
     if (isNaN(radius)) {
       radius = null;
     }
-    this.mapService.updateFilterLocation({
+    this.filterService.updateFilterLocation({
       categoryId: this.locationForm.value.categoryId,
       hashtag: this.locationForm.value.hashtag,
       radius: radius,
@@ -103,8 +105,8 @@ export class FilterMainComponent implements OnInit {
   }
 
   filterMes(): void {
-    this.messageService.updateMessageFilter({
-      categoryMes: this.messageForm.value.categoryId,
+    this.filterService.updateMessageFilter({
+      categoryId: this.messageForm.value.categoryId,
       hashtag: this.messageForm.value.hashtag,
       user: this.messageForm.value.user,
       time: this.messageForm.value.time,
@@ -130,14 +132,10 @@ export class FilterMainComponent implements OnInit {
     this.locationForm.reset();
     this.locationForm.controls['radius'].disable();
     this.locationForm.controls['radius'].setValue(this.minDistance);
-    this.mapService.updateFilterLocation({
-      categoryId: null, hashtag: null, radiusEnabled: false, radius: null, coordinates: null, radiusBuffered: false
-    });
   }
 
   resetMessageFilter(): void {
     this.messageForm.reset();
-    this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 
   toggleIncludeRadius() {

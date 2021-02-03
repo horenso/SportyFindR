@@ -1,10 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.LocationFilter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.LocationSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -55,8 +54,8 @@ public class LocationEndpoint {
         log.info("GET /api/v1/locations/?" +
             "categoryId=" + categoryId + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&hashtag=" + hashtag);
 
-        LocationSearchObject locationSearchObject = new LocationSearchObject(categoryId, latitude, longitude, radius, hashtag);
-        return locationMapper.entityToListDto(locationService.find(locationSearchObject));
+        LocationFilter locationFilter = new LocationFilter(categoryId, latitude, longitude, radius, hashtag);
+        return locationMapper.entityToListDto(locationService.find(locationFilter));
     }
 
 

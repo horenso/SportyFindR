@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.*;
 
@@ -39,11 +40,11 @@ public interface SpotService {
      * Get all spots within one Location. This list cannot be empty since since a location
      * must contain at least one spot.
      *
-     * @param locationId of the location containing the spots
+     * @param spotFilter with the location, and optionally the hashtag name and the category id
      * @return list of spots
      * @throws ValidationException
      */
-    List<Spot> getSpotsByLocation(Long locationId, String hashtagName) throws ValidationException;
+    List<Spot> getSpotsByLocation(SpotFilter spotFilter) throws ValidationException;
 
     /**
      * Get one spot by spotId

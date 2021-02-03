@@ -2,16 +2,6 @@
   width: 288px;
 }
 
-.buttonCancel {
-  position: absolute;
-  left: 16px;
-}
-
-.buttonConfirm {
-  position: absolute;
-  right: 16px;
-}
-
 .form-item {
   margin-top: 40px;
 }
@@ -51,4 +41,14 @@
 #distance-toggle {
   margin-top: -15px;
   margin-left: 187px;
+}
+
+.noSelect {
+  user-select: none;
+}
+
+.buttonRow {
+  margin: 16px 16px 8px 16px;
+  display: flex;
+  justify-content: space-between;
 }

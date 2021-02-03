@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../global/globals';
 import {Observable} from 'rxjs';
 import {Hashtag} from '../dtos/hashtag';
-import {SimpleHashtag} from '../dtos/simpleHashtag';
+import {SimpleHashtag} from '../dtos/simple-hashtag';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +26,4 @@ export class HashtagService {
       .set('name', str);
     return this.httpClient.get<SimpleHashtag[]>(`${this.hashtagBaseUri}/filter`, {params: params});
   }
-
 }
