@@ -68,6 +68,7 @@ public class CustomUserDetailService implements UserService {
 
             List<Message> messageList = this.messageRepository.findByOwner(user.get());
             for (Message message : messageList) {
+                this.reactionRepository.deleteAllByMessage_Id(message.getId());
                 this.messageRepository.deleteById(message.getId());
             }
 
