@@ -132,9 +132,10 @@ public class UserEndpoint {
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/email/{email}")
     @ApiOperation(value = "Get one user by email", authorizations = {@Authorization(value = "apiKey")})
-    public UserDto getOneByEmail(@RequestParam String email) {
-        log.info("GET /api/v1/users?email={}", email);
+    public UserDto getOneByEmail(@PathVariable("email") String email) {
+        log.info("GET /api/v1/users/byEmail/{}", email);
         try {
             return userMapper.applicationUserToUserDto(userService.getApplicationUserByEmail(email));
         } catch (NotFoundException e) {

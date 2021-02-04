@@ -40,8 +40,8 @@ export class UserService {
   }
 
   getUserByEmail(email: string) {
-    const params = new HttpParams().set('email', email);
-    return this.httpClient.get<User>(this.userBaseUri, {params: params});
+    // const params = new HttpParams().set('email', email);
+    return this.httpClient.get<User>(this.userBaseUri + '/email/' + email);
   }
 
   public search(str: string): Observable<SimpleUser[]> {

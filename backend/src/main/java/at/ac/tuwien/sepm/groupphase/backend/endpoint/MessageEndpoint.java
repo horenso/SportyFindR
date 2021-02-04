@@ -15,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -109,16 +106,15 @@ public class MessageEndpoint {
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
-    public Page<MessageDto> filter(
-        @PageableDefault(size = 20)
-        @SortDefault.SortDefaults({
-            @SortDefault(sort = "id", direction = Sort.Direction.ASC)})
-            Pageable pageable,
-        @RequestParam(required = false) Long categoryId,
-        @RequestParam(required = false) String hashtag,
-        @RequestParam(required = false, defaultValue = "0") String user,
-        @RequestParam(required = false, defaultValue = "1000-01-01")
-        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
+    public Page<MessageDto> filter(@RequestParam(defaultValue = "0", required = false) int page,
+                                   @RequestParam(defaultValue = "5", required = false) int size,
+                                   @RequestParam(required = false) Long categoryId,
+                                   @RequestParam(required = false) String hashtag,
+                                   @RequestParam(required = false, defaultValue = "0") String user,
+                                   @RequestParam(required = false)
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user=&time={}", categoryId, hashtag, user, time);
         MessageFilter messageFilter = new MessageFilter(categoryId, hashtag, user, time.atStartOfDay());

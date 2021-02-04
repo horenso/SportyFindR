@@ -51,7 +51,7 @@ export class HashtagComponent implements OnInit {
   }
 
   private getMessages(): void {
-    this.messageService.filterMessage({hashtag: this.hashtagName}).subscribe(result => {
+    this.messageService.filterMessage({hashtag: this.hashtagName, user: null, page: 0, size: 10}).subscribe(result => {
       this.messageList = result.content;
     });
   }
