@@ -1,17 +1,15 @@
-<div *ngIf="error" class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Authentication problems!</strong> {{ errorMessage }}
-  <button (click)="vanishError()" aria-label="Close" class="close" data-dismiss="alert" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-
 <img
   src="assets/login/sunset_skaters.jpg"
   class="backgroundImage"
   alt="A concert in germany"
 />
-<h1>Register</h1>
 
+<div class="register-form-flex">
+  <mat-card id="register">
+    <mat-card-title class="title">
+      Register
+    </mat-card-title>
+    <mat-card-content>
 <form (ngSubmit)="register()" [formGroup]="registerForm" class="form">
   <!-- Username -->
   <div>
@@ -26,25 +24,6 @@
       </div>
     </mat-form-field>
   </div>
-<div class="register-form-flex">
-  <mat-card id="register">
-    <mat-card-title class="title">
-      Register
-    </mat-card-title>
-    <mat-card-content>
-      <form (ngSubmit)="register()" [formGroup]="registerForm" class="form">
-        <!-- Username -->
-        <div>
-          <mat-form-field appearance="outline" class="form-element">
-            <mat-label>Username</mat-label>
-            <label for="inputUsername"></label>
-            <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
-                   name="username" type="text">
-            <div *ngIf="submitted && registerForm.controls.username.errors" class="error">
-              <mat-error *ngIf="registerForm.controls.username.errors.required">Your username is required!</mat-error>
-            </div>
-          </mat-form-field>
-        </div>
 
   <!-- E-Mail -->
   <div>
