@@ -134,6 +134,27 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     ));
   }
 
+  onLoadMore(): void {
+    const messageArea = this.messageArea.nativeElement;
+    const scrollOffset = messageArea.scrollHeight + messageArea.scrollTop;
+    this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
+      result => {
+        result.content.forEach(message => {
+          this.messageList.unshift(message);
+        });
+        this.lastPage = result.last;
+        this.currentPage++;
+
+        setTimeout(() => {
+          messageArea.scrollTop = messageArea.scrollHeight - scrollOffset;
+        });
+
+        // setTimeout(() => this.messageArea.nativeElement.scrollTop = height);
+        // messageArea.scrollTop = messageArea.height - scroll;
+      }
+    ));
+  }
+
   onGoBack(): void {
     this.router.navigate(['locations', this.locationId]);
   }
@@ -203,8 +224,9 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private getMessagesAndStartEventHandling(): void {
     this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
       result => {
-        this.messageList = result.content;
+        this.messageList = result.content.reverse();
         this.lastPage = result.last;
+        this.currentPage++;
         console.log(`Loaded ${result.size} messages.`);
         setTimeout(() => {
           this.scrollMessageAreaBottom();

@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -44,7 +47,7 @@ public class MessageEndpoint {
 
         log.info("GET /api/v1/messages?spotId={} page: (size: {}, page: {})", spotId, size, page);
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("publishedAt").descending());
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.findBySpotPaged(spotId, pageable));
@@ -107,15 +110,13 @@ public class MessageEndpoint {
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
-    public Page<MessageDto> filter(@RequestParam(defaultValue = "0", required = false) int page,
-                                   @RequestParam(defaultValue = "5", required = false) int size,
+    public Page<MessageDto> filter(@PageableDefault(size = 20) @SortDefault.SortDefaults({
+        @SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable,
                                    @RequestParam(required = false) Long categoryId,
                                    @RequestParam(required = false) String hashtag,
                                    @RequestParam(required = false, defaultValue = "0") String user,
                                    @RequestParam(required = false, defaultValue = "1000-01-01")
                                    @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
-
-        Pageable pageable = PageRequest.of(page, size);
 
         LocalDateTime localDate = null;
         if (time != null) {
