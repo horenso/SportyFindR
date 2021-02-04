@@ -28,7 +28,8 @@ public class SimpleHashtagService implements HashtagService {
         if (name == null || name.isEmpty() || name.isBlank()) {
             throw new ValidationException("Hashtag must have a name");
         }
-        return hashtagRepository.getHashtagByNameEquals(name);
+        Hashtag h =hashtagRepository.getHashtagByNameEquals(name);
+    return h;
     }
 
     @Override

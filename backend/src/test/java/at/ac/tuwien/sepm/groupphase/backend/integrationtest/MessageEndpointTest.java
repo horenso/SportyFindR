@@ -180,7 +180,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(messageDto)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isBadRequest());
         }
     }
 
@@ -196,7 +196,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(messageDto)))
-            .andExpect(status().isUnprocessableEntity());
+            .andExpect(status().isBadRequest());
 
         assertTrue(this.messageRepository.findAll().size() == 0);
     }
@@ -363,7 +363,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
         hashtagRepository.save(hashtag);
 
         MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_FILTER_URI)
-            .queryParam("categoryMes", category.getId().toString())
+            .queryParam("categoryId", category.getId().toString())
             .queryParam("hashtag", hashtag.getName())
             .queryParam("user", user1.getName())
             .queryParam("time", "1000-01-01")

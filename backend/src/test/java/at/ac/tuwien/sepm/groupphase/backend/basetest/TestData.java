@@ -64,4 +64,13 @@ public interface TestData {
     String EMAIL3 = "user3@email.com";
     String USERNAME3 = "user3";
     String PASSWORD3 = "password3";
+    String EMAIL4 = "user4@email.com";
+    String USERNAME4 = "user4";
+    String PASSWORD4 = "password4";
+    String EMAIL5 = "user5@email.com";
+    String USERNAME5 = "user5";
+    String PASSWORD5 = "password5";
+    String EMAIL6 = "user6@email.com";
+    String USERNAME6 = "user6";
+    String PASSWORD6 = "password6";
 }
