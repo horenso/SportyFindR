@@ -11,7 +11,7 @@
       <span id="expirationDate">here until {{message.expirationDate | messageDate}}</span>
     </div>
     <div id="bottomRow">
-      <div id="ratingButtons" *ngIf="!filteredMessage">
+      <div id="ratingButtons" *ngIf="!filteredMessage && authService.isLoggedIn()">
         <button mat-icon-button class="iconButton" (click)='onUpVote()' *ngIf="authService.isLoggedIn()"
           [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
