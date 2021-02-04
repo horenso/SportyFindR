@@ -12,15 +12,15 @@
     </div>
     <div id="bottomRow">
       <div id="ratingButtons" *ngIf="!filteredMessage">
-        <button mat-icon-button class="iconButton" (click)='onUpVote()'
+        <button mat-icon-button class="iconButton" (click)='onUpVote()' *ngIf="authService.isLoggedIn()"
           [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
-        <button mat-icon-button class="iconButton" (click)='onDownVote()'
+        <button mat-icon-button class="iconButton" (click)='onDownVote()' *ngIf="authService.isLoggedIn()"
           [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
         {{getDownVoteCountString()}}
       </div>
       <div id="deleteButton" *ngIf="!filteredMessage">
-      <button mat-icon-button class="iconButton" (click)='onDelete()' *ngIf="authService.currentUserEmail()==message.owner.email||authService.isUserAdmin()">
+      <button mat-icon-button class="iconButton" (click)='onDelete()' *ngIf="showControlItems()">
         <mat-icon>delete</mat-icon>
       </button>
       </div>

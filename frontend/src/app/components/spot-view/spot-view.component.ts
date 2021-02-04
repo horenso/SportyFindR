@@ -274,4 +274,12 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private scrollMessageAreaBottom(): void {
     this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
   }
+
+  showControlItems(): boolean {
+    if (this.authService.isLoggedIn()) {
+      if (this.authService.isUserAdmin() || (this.spot.owner != null && this.authService.currentUserEmail() == this.spot.owner.email)) {
+        return true;
+      }
+    } else { return false; }
+  }
 }
