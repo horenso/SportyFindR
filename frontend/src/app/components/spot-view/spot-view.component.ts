@@ -11,6 +11,8 @@ import {MapService} from 'src/app/services/map.service';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
+import { lowerFirst } from 'lodash';
+import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-spot-view',
@@ -88,7 +90,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.spotService.closeConnection();
-    this.subs.unsubscribe();
+    this.subs?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -108,14 +110,16 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitDialog(): void {
+    console.log(this.expirationDate);
     if (this.newMessage?.length < 1 || /^\s*$/.test(this.newMessage)) {
       this.notificationService.error('Message must not be Empty!');
       return;
     }
-    if (this.expirationDate) {
+    if (this.expirationDate != null) {
       this.expirationDate.setHours(this.expirationDate.getHours() + 1);
     }
-    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
+    let newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
+    newMessage.expirationDate = this.expirationDate;
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
         this.addMessage(result);
@@ -126,6 +130,27 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
       }, error => {
         this.notificationService.error(error.error.message);
         console.error(error);
+      }
+    ));
+  }
+
+  onLoadMore(): void {
+    const messageArea = this.messageArea.nativeElement;
+    const scrollOffset = messageArea.scrollHeight + messageArea.scrollTop;
+    this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
+      result => {
+        result.content.forEach(message => {
+          this.messageList.unshift(message);
+        });
+        this.lastPage = result.last;
+        this.currentPage++;
+
+        setTimeout(() => {
+          messageArea.scrollTop = messageArea.scrollHeight - scrollOffset;
+        });
+
+        // setTimeout(() => this.messageArea.nativeElement.scrollTop = height);
+        // messageArea.scrollTop = messageArea.height - scroll;
       }
     ));
   }
@@ -199,8 +224,9 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private getMessagesAndStartEventHandling(): void {
     this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
       result => {
-        this.messageList = result.content;
+        this.messageList = result.content.reverse();
         this.lastPage = result.last;
+        this.currentPage++;
         console.log(`Loaded ${result.size} messages.`);
         setTimeout(() => {
           this.scrollMessageAreaBottom();

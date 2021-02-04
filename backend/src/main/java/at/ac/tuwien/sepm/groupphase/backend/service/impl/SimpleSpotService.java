@@ -1,15 +1,27 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.exception.*;
-import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.*;
+
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
+import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.CategoryRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.SpotRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
+import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
+import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +39,6 @@ public class SimpleSpotService implements SpotService {
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
 
 
     /**
@@ -71,15 +82,15 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot update(Spot spot) throws NotFoundException2, ValidationException, WrongUserException {
+    public Spot update(Spot spot) throws NotFoundException, ValidationException, WrongUserException {
         var optionalSpot = spotRepository.findById(spot.getId());
-        if (optionalSpot.isEmpty()){
-            throw new NotFoundException2("Spot does not Exist");
-        }else{
-            if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-                if(optionalSpot.get().getOwner()==null){
+        if (optionalSpot.isEmpty()) {
+            throw new NotFoundException("Spot does not Exist");
+        } else {
+            if (!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                if (optionalSpot.get().getOwner() == null) {
                     throw new WrongUserException("You can only edit your own spots");
-                }else if(!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+                } else if (!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
                     throw new WrongUserException("You can only edit your own spots");
                 }
             }
@@ -98,6 +109,7 @@ public class SimpleSpotService implements SpotService {
         hashtagService.acquireHashtags(spot);
         return spotRepository.save(spot);
     }
+
     @Override
     public boolean deleteById(Long id) throws ValidationException, ServiceException, WrongUserException {
         log.debug("Delete Spot with id {}", id);
@@ -116,7 +128,7 @@ public class SimpleSpotService implements SpotService {
             for (Message message : messages) {
                 messageService.deleteByIdWithoutAuthentication(message.getId());
             }
-        }catch (NotFoundException2 e){
+        } catch (NotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
         hashtagService.deleteSpotInHashtags(spotRepository.findById(id).get());
@@ -130,32 +142,39 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public List<Spot> getSpotsByLocation(Long locationId) throws ValidationException {
-        //Message message;
-        Optional<Location> optionalLocation = locationRepository.getOneById(locationId);
-        if (optionalLocation.isEmpty()) {
-            throw new ValidationException("Location with ID " + locationId + " cannot be found!");
-        } else {
-            return spotRepository.getSpotsByLocationId(locationId);
+    public List<Spot> findSpots(SpotFilter spotFilter) throws ValidationException {
+        if (spotFilter.getLocationId() != null) {
+            if (locationRepository.getOneById(spotFilter.getLocationId()).isEmpty()) {
+                throw new ValidationException("Location with ID " + spotFilter.getLocationId() + " cannot be found!");
+            }
         }
+
+        if (spotFilter.getCategoryId() != null) {
+            if (categoryRepository.getOneById(spotFilter.getCategoryId()).isEmpty()) {
+                throw new ValidationException("Category with ID " + spotFilter.getCategoryId() + " cannot be found!");
+            }
+        }
+
+        return spotRepository.filter(spotFilter.getLocationId(), spotFilter.getCategoryId(),
+            spotFilter.getHashtagName());
     }
 
     @Override
-    public Spot getOneById(Long spotId) throws NotFoundException2{
+    public Spot getOneById(Long spotId) throws NotFoundException {
         Optional<Spot> spotOptional = this.spotRepository.getOneById(spotId);
         if (spotOptional.isEmpty()) {
-            throw new NotFoundException2("Spot with ID " + spotId + " cannot be found!");
+            throw new NotFoundException("Spot with ID " + spotId + " cannot be found!");
         }
         return spotOptional.get();
     }
 
     @Override
-    public List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2 {
+    public List<Spot> findSpotsByUserId(Long userId) throws NotFoundException {
         Optional<ApplicationUser> owner = this.userRepository.findApplicationUserById(userId);
         if (owner.isPresent()) {
             return this.spotRepository.findByOwner(owner.get());
         } else {
-            throw new NotFoundException2("User with ID " + userId + " cannot be found!");
+            throw new NotFoundException("User with ID " + userId + " cannot be found!");
         }
     }
 }

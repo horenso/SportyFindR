@@ -68,10 +68,24 @@ export class SpotService {
   /**
    * Get a list of all spots from one location
    * @param locationId of the location
+   * @param hashtag name of a hashtag that the description must contain
    * @returns list of spots, this can never be empty because every location has at least on spot
    */
-  getByLocationId(locationId: number): Observable<MLocSpot[]> {
-    const params = new HttpParams().set('location', locationId.toString());
+  getByLocationId(locationId?: number, hashtag?: string, categoryId?: number): Observable<MLocSpot[]> {
+    let params = new HttpParams();
+    
+    if (locationId != null) {
+      params = params.set('locationId', locationId.toString());
+    }
+    if (hashtag != null) {
+      params = params.set('hashtag', hashtag);
+    }
+    if (categoryId != null) {
+      params = params.set('categoryId', categoryId.toString());
+    }
+
+    console.log("Get spot by location with params: " + params.toString());
+
     return this.httpClient.get<Spot[]>(this.spotBaseUri, {params: params}).pipe(
       map(
         (spots: Spot[]) => this.translateToMLocSpots(spots)

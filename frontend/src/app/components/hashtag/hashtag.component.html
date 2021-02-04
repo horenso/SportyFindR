@@ -1,39 +1,33 @@
-<div>
-  <div class="row">
-    <div class="col-auto backButton">
+<div class="inSidebar">
+  <div class="sidebarTopRow">
+    <div class="backButton">
       <button mat-icon-button color="primary" class="icon" (click)='onClose()'>
         <mat-icon>close</mat-icon>
       </button>
     </div>
-
-    <div class="col title">
-      <h2 class="heading">Hashtag #{{hashtag.name}}</h2>
-    </div>
-
-    <div class="col-auto spacer">
-    </div>
+    <div class="sidebarTitle">#{{hashtagName}}</div>
   </div>
+  <!-- <div class="sidebarScrollableSection"> -->
+  <mat-tab-group animationDuration="0ms" mat-align-tabs="center" class="sidebarScrollableSection">
+    <mat-tab label="{{getSpotTab()}}">
 
-  <div>
-    <a mat-raised-button class="spots-btn" (click)="spotsFlag == true ? hideBoth() : showSpots()">Spots</a>
-    <a mat-raised-button class="messages-btn" (click)="messagesFlag == true ? hideBoth() : showMessages()">Messages</a>
-  </div>
+        <button *ngFor="let spot of spotList"
+          class="spotButton"
+          mat-flat-button
+          color='primary'
+          (click)='goToSpot(spot)'><mat-icon class="spot-icon">{{spot.category.icon ? spot.category.icon : "wc"}}</mat-icon>{{spot.name}}</button>
+    </mat-tab>
 
-  <div *ngIf="spotsFlag"> Spots of this hashtag:
-    <div *ngFor="let spot of hashtag.spotsList">
-      <button mat-flat-button color="primary" (click)='goToSpot(spot)'>
-        <mat-icon class="spot-icon">sports_basketball</mat-icon>
-        {{spot.name}}
-      </button>
-    </div>
-  </div>
+    <mat-tab label="{{getMessageTab()}}">
 
-  <div *ngIf="messagesFlag"> Messages of this hashtag:
-    <div *ngFor="let message of messageList" class="message">
-      <app-message
-        (deleteMessage)='deleteOneMessage($event)'
-        [message]='message'></app-message>
-    </div>
-  </div>
-
+        <div *ngFor="let message of messageList" class="message">
+          <app-message
+            [message]='message'
+            [filteredMessage]='true'
+            [canReact]='false'
+            [canDelete]='false'
+          ></app-message>
+        </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -29,7 +29,7 @@ public class SpotServiceTest implements TestData {
     @Test
     public void spotServiceCreate_withoutValidCategory_doesNotCreateSpot() {
         Category category = Category.builder()
-            .id(ID)
+            .id(1L)
             .build();
         Location location = Location.builder()
             .latitude(LAT)

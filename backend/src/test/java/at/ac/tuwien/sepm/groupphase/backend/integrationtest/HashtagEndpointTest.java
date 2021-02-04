@@ -1,15 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
-import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
-import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.HashtagEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -17,64 +10,41 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-public class HashtagEndpointTest implements TestData {
-    @Autowired
-    private HashtagRepository hashtagRepository;
-    @Autowired
-    private HashtagEndpoint hashtagEndpoint;
-    @Autowired
-    private SpotRepository spotRepository;
-    @Autowired
-    private LocationRepository locationRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private MessageRepository messageRepository;
-    @Autowired
-    private JwtTokenizer jwtTokenizer;
-    @Autowired
-    private SecurityProperties securityProperties;
-    @Autowired
-    private MockMvc mockMvc;
+public class HashtagEndpointTest extends BaseIntegrationTest {
 
-
-    @AfterEach
-    public void afterEach(){
-        hashtagRepository.deleteAll();
-        messageRepository.deleteAll();
-        spotRepository.deleteAll();
-        locationRepository.deleteAll();
-        categoryRepository.deleteAll();
-        userRepository.deleteAll();
-    }
     @Test
-    @WithMockUser(roles = "ADMIN")
-    public void getHashtagById() {
-        Hashtag hashtag = Hashtag.builder()
-            .name(HASHTAG_NAME)
-            .build();
-        hashtagRepository.save(hashtag);
-        hashtagEndpoint.getById(hashtag.getName());
+    public void getHashtagByName() throws Exception {
+        List<Hashtag> hashtagList = List.of(
+            hashtagRepository.save(Hashtag.builder().name("wow").build()),
+            hashtagRepository.save(Hashtag.builder().name("spot").build()),
+            hashtagRepository.save(Hashtag.builder().name("championship").build())
+        );
+
+        for (Hashtag hashtag : hashtagList) {
+            mockMvc.perform(
+                get(HASHTAG_BASE_URI + "/" + hashtag.getName())
+                    .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(hashtag.getId()))
+                .andExpect(jsonPath("$.name").value(hashtag.getName()));
+        }
     }
 
     @Test
@@ -106,8 +76,8 @@ public class HashtagEndpointTest implements TestData {
         Message message = Message.builder()
             .owner(user)
             .spot(spot)
-            .downVotes(ZERO)
-            .upVotes(ZERO)
+            .downVotes(0)
+            .upVotes(0)
             .content(MESSAGE_CONTENT)
             .publishedAt(DATE)
             .build();

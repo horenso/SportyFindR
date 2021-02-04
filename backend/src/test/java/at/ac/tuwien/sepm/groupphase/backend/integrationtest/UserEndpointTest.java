@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.config.properties.SecurityProperties;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.MessageEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.ReactionEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.SpotEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.UserEndpoint;
@@ -24,18 +23,17 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.test.web.servlet.MockMvc;
-
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -456,6 +454,7 @@ public class UserEndpointTest implements TestData {
         SpotDto initSpotDto = SpotDto.builder()
             .owner(this.simpleUserMapper.userToSimpleUserDto(foundUser))
             .name(NAME)
+            .description(DESCRIPTION)
             .location(locationDto)
             .build();
         initSpotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));

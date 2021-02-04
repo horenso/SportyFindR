@@ -7,6 +7,7 @@ import {SpotService} from 'src/app/services/spot.service';
 import {MLocSpot} from 'src/app/util/m-loc-spot';
 import {parsePositiveInteger} from 'src/app/util/parse-int';
 import {SubSink} from 'subsink';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-edit-spot',
@@ -52,7 +53,7 @@ export class EditSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.unsubscribe();
+    this.subs?.unsubscribe();
   }
 
   onCancel(): void {

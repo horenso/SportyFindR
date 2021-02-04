@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class DeletedSpotResponseDto {
+public class SpotDeletionResponseDto {
     boolean deletedLocation;
 }

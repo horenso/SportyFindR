@@ -57,7 +57,7 @@ export class CreateNewSpotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.unsubscribe();
+    this.subs?.unsubscribe();
   }
 
   saveSpot(newSpot: MLocSpot) {

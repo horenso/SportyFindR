@@ -1,9 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/messages")
-@CrossOrigin
 @Slf4j
 public class MessageEndpoint {
 
@@ -40,7 +39,6 @@ public class MessageEndpoint {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @CrossOrigin
     @ApiOperation(value = "Get page of messages without details by spot", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> findBySpot(
         @RequestParam Long spotId,
@@ -49,11 +47,11 @@ public class MessageEndpoint {
 
         log.info("GET /api/v1/messages?spotId={} page: (size: {}, page: {})", spotId, size, page);
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("publishedAt").descending());
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.findBySpotPaged(spotId, pageable));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -70,7 +68,7 @@ public class MessageEndpoint {
             newMessage = messageMapper.messageToMessageDto(
                 messageService.create(messageMapper.messageDtoToMessage(messageDto)));
             return newMessage;
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (ValidationException e) {
@@ -86,11 +84,12 @@ public class MessageEndpoint {
         log.info("GET /api/v1/messages/{}", id);
         try {
             return messageMapper.messageToMessageDto(messageService.getById(id));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
@@ -99,37 +98,39 @@ public class MessageEndpoint {
         log.info("DELETE /api/v1/messages/{}", id);
         try {
             messageService.deleteById(id);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException | ServiceException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
+        } catch (WrongUserException e) {
             log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
+
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
-    public Page<MessageDto> filter(
-        @PageableDefault(size = 20)
-        @SortDefault.SortDefaults({
-            @SortDefault(sort ="id", direction = Sort.Direction.ASC)})
-            Pageable pageable,
-        @RequestParam(required = false) Long categoryMes,
-        @RequestParam(required = false) String hashtag,
-        @RequestParam(required = false, defaultValue = "0") String user,
-        @RequestParam(required = false, defaultValue = "1000-01-01") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
+    public Page<MessageDto> filter(@PageableDefault(size = 20) @SortDefault.SortDefaults({
+        @SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable,
+                                   @RequestParam(required = false) Long categoryId,
+                                   @RequestParam(required = false) String hashtag,
+                                   @RequestParam(required = false, defaultValue = "0") String user,
+                                   @RequestParam(required = false, defaultValue = "1000-01-01")
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
-        log.info("GET /api/v1/messages/filter?" + "categoryMes=" + categoryMes + "&hashtag=" + hashtag + "&user=" + user + "&time=" + time);
-
-        MessageSearchObject messageSearchObject = new MessageSearchObject(categoryMes, hashtag, user, time.atStartOfDay());
-
-        try {
-            return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageSearchObject, pageable));
-        } catch (ServiceException e) {
-            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        LocalDateTime localDate = null;
+        if (time != null) {
+            localDate = time.atStartOfDay();
         }
+
+        log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user=&time={}", categoryId, hashtag, user, time);
+        MessageFilter messageFilter = MessageFilter.builder()
+            .categoryId(categoryId)
+            .hashtagName(hashtag)
+            .time(localDate)
+            .user(user).build();
+
+        return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageFilter, pageable));
     }
 
 }

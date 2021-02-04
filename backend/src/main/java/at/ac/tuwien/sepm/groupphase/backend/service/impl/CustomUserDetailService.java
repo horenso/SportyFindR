@@ -1,17 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
-import at.ac.tuwien.sepm.groupphase.backend.service.SpotService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -63,7 +58,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void deleteApplicationUserById(Long id) throws NotFoundException2 {
+    public void deleteApplicationUserById(Long id) throws NotFoundException {
         Optional<ApplicationUser> user = userRepository.findApplicationUserById(id);
         if (user.isPresent()) {
             List<Reaction> reactionList = this.reactionRepository.findByOwner(user.get());
@@ -73,6 +68,7 @@ public class CustomUserDetailService implements UserService {
 
             List<Message> messageList = this.messageRepository.findByOwner(user.get());
             for (Message message : messageList) {
+                this.reactionRepository.deleteAllByMessage_Id(message.getId());
                 this.messageRepository.deleteById(message.getId());
             }
 
@@ -90,7 +86,7 @@ public class CustomUserDetailService implements UserService {
 
             this.userRepository.delete(user.get());
         } else {
-            throw new NotFoundException2("User not found.");
+            throw new NotFoundException("User not found.");
         }
     }
 
@@ -101,7 +97,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser update(ApplicationUser user) throws NotFoundException2, ValidationException {
+    public ApplicationUser update(ApplicationUser user) throws NotFoundException, ValidationException {
         if (user.getId() == null) {
             throw new ValidationException("Id must not be null for updated user.");
         }
@@ -128,7 +124,7 @@ public class CustomUserDetailService implements UserService {
             this.userRepository.save(user);
             return getApplicationUserById(user.getId());
         } else {
-            throw new NotFoundException2("User cannot be updated as user does not exist.");
+            throw new NotFoundException("User cannot be updated as user does not exist.");
         }
     }
 
@@ -144,40 +140,40 @@ public class CustomUserDetailService implements UserService {
                 grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
             }
             return new User(applicationUser.getEmail(), applicationUser.getPassword(), grantedAuthorities);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage(), e);
         }
     }
 
     @Override
-    public ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException2 {
+    public ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException {
         log.debug("Find application user by email");
         Optional<ApplicationUser> oApplicationUser = userRepository.findApplicationUserByEmail(email);
         if (oApplicationUser.isPresent()) {
             return oApplicationUser.get();
         } else {
-            throw new NotFoundException2(String.format("Could not find the user with the email address %s", email));
+            throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
         }
     }
 
     @Override
-    public ApplicationUser getApplicationUserById(Long id) throws NotFoundException2 {
+    public ApplicationUser getApplicationUserById(Long id) throws NotFoundException {
         log.debug("Get application user by id");
         Optional<ApplicationUser> optionalApplicationUser = userRepository.findApplicationUserById(id);
         if (optionalApplicationUser.isPresent()) {
             return optionalApplicationUser.get();
         } else {
-            throw new NotFoundException2(String.format("Could not find the user with the id %s", id));
+            throw new NotFoundException(String.format("Could not find the user with the id %s", id));
         }
     }
 
     @Override
-    public List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2 {
+    public List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException {
         log.debug("Get application users by role id");
         if (roleRepository.findRoleById(roleId).isPresent()) {
             return userRepository.findApplicationUsersByRolesId(roleId);
         } else {
-            throw new NotFoundException2(String.format("Could not find the role with the id %s", roleId));
+            throw new NotFoundException(String.format("Could not find the role with the id %s", roleId));
         }
     }
 

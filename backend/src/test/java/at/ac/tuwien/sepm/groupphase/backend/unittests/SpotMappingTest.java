@@ -7,7 +7,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.CategoryMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

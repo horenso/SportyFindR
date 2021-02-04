@@ -3,7 +3,7 @@ import {Globals} from '../global/globals';
 import {User} from "../dtos/user";
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from "rxjs";
-import {SimpleUser} from '../dtos/simpleUser';
+import {SimpleUser} from '../dtos/simple-user';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,8 @@ export class UserService {
   }
 
   getUserByEmail(email: string) {
-    return this.httpClient.get<User>(this.userBaseUri + '/byEmail/' + email);
+    // const params = new HttpParams().set('email', email);
+    return this.httpClient.get<User>(this.userBaseUri + '/email/' + email);
   }
 
   public search(str: string): Observable<SimpleUser[]> {

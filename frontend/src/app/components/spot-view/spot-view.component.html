@@ -18,6 +18,9 @@
   </div>
 
   <div #messageArea class="sidebarScrollableSection messageArea">
+    <div id="loadMoreButton" *ngIf="!lastPage">
+      <button type="button" (click)="onLoadMore()">Load more</button>
+    </div>
     <div *ngFor="let message of messageList" class="message">
       <app-message
         (deleteMessage)='deleteOneMessage($event)'

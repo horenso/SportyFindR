@@ -11,9 +11,10 @@
     <button *ngFor="let spot of spots"
       class="spotButton"
       mat-flat-button
-      color="primary"
+      color={{buttonColor}}
       (click)='onSelectedSpot(spot)'><mat-icon class="spot-icon">{{spot.category.icon ? spot.category.icon : "wc"}}</mat-icon>{{spot.name}}</button>
   </div>
+  <!-- {{filterActive}} {{getButtonColor()}} -->
 </div>
 
 <button id="addButton" mat-fab color="accent" (click)="onCreateSpot()">

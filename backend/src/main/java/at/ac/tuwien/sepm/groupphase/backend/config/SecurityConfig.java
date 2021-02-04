@@ -7,7 +7,6 @@ import at.ac.tuwien.sepm.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

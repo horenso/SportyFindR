@@ -62,7 +62,7 @@ public class LocationEndpointTest implements TestData {
             .longitude(LONG2)
             .build();
         locationRepository.save(location2);
-        List<LocationDto> locationDtos = locationEndpoint.find(null, null, null, null);
+        List<LocationDto> locationDtos = locationEndpoint.find(null, null, null, null, null);
         assertAll(
             () -> assertEquals(locationDtos.size(), 2),
             () -> assertEquals(locationDtos.get(0).getId(), location.getId()),
@@ -86,7 +86,7 @@ public class LocationEndpointTest implements TestData {
             .longitude(LONG2)
             .build();
         locationRepository.save(location2);
-        locationEndpoint.find(null, null, null, null);
+        locationEndpoint.find(null, null, null, null, null);
         LocationDto locationDto = locationEndpoint.getOneById(location.getId());
         assertAll(
             () -> assertEquals(locationDto.getId(), location.getId()),
@@ -98,7 +98,7 @@ public class LocationEndpointTest implements TestData {
     @WithMockUser(roles = "ADMIN")
     public void getAllLocationsWhenThereAreNoLocations() {
         assertAll(
-            () -> assertTrue(locationEndpoint.find(null, null, null, null).isEmpty())
+            () -> assertTrue(locationEndpoint.find(null, null, null, null, null).isEmpty())
         );
     }
     @Test
@@ -144,7 +144,7 @@ public class LocationEndpointTest implements TestData {
         locationRepository.save(location2);
         spotRepository.save(spot);
         spotRepository.save(spot2);
-        List<LocationDto> locationDtos = locationEndpoint.find(category.getId(),null,null,null);
+        List<LocationDto> locationDtos = locationEndpoint.find(category.getId(), null, null, null, null);
         assertAll(
             () -> assertEquals(locationDtos.size(), 1),
             () -> assertEquals(locationDtos.get(0).getId(), location.getId()),
@@ -195,7 +195,7 @@ public class LocationEndpointTest implements TestData {
         locationRepository.save(location2);
         spotRepository.save(spot);
         spotRepository.save(spot2);
-        List<LocationDto> locationDtos = locationEndpoint.find(null,LAT,LONG,RADIUS);
+        List<LocationDto> locationDtos = locationEndpoint.find(null, LAT, LONG, RADIUS, null);
         assertAll(
             () -> assertEquals(locationDtos.size(), 1),
             () -> assertEquals(locationDtos.get(0).getId(), location.getId()),
@@ -270,7 +270,7 @@ public class LocationEndpointTest implements TestData {
         spotRepository.save(spot2);
         spotRepository.save(spot3);
         spotRepository.save(spot4);
-        List<LocationDto> locationDtos = locationEndpoint.find(category2.getId(), LAT,LONG,RADIUS);
+        List<LocationDto> locationDtos = locationEndpoint.find(category2.getId(), LAT, LONG, RADIUS, null);
         assertAll(
             () -> assertEquals(locationDtos.size(), 1),
             () -> assertEquals(locationDtos.get(0).getId(), location4.getId()),

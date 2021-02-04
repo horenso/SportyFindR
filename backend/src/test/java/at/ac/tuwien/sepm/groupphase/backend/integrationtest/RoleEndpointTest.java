@@ -20,12 +20,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -58,7 +61,7 @@ public class RoleEndpointTest implements TestData {
         RoleDto roleDto = RoleDto.builder()
             .name("TestRole")
             .build();
-        RoleDto createdRole =  roleEndpoint.create(roleDto);
+        RoleDto createdRole = roleEndpoint.create(roleDto);
         Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
         assertAll(
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), createdRole.getName()),
@@ -74,7 +77,7 @@ public class RoleEndpointTest implements TestData {
         RoleDto roleDto = RoleDto.builder()
             .name("TestRole")
             .build();
-        RoleDto createdRole =  roleEndpoint.create(roleDto);
+        RoleDto createdRole = roleEndpoint.create(roleDto);
         List<RoleDto> foundRoleDtos = roleEndpoint.getAll();
         assertAll(
             () -> assertThat(foundRoleDtos, hasItems(createdRole))
@@ -88,7 +91,7 @@ public class RoleEndpointTest implements TestData {
             .name("TestRole")
             .userIds(null)
             .build();
-        RoleDto createdRole =  roleEndpoint.create(roleDto);
+        RoleDto createdRole = roleEndpoint.create(roleDto);
         Role foundRole = roleRepository.findRoleById(createdRole.getId()).get();
         assertAll(
             () -> assertEquals(roleDto.getName().toUpperCase(Locale.ROOT), createdRole.getName()),
