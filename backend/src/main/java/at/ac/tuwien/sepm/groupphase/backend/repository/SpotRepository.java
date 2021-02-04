@@ -22,15 +22,19 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
         "WHERE l.id = :locationId")
     List<Location> findLocationWithSpot(@Param("locationId") Long locationId);
 
-    List<Spot> getSpotsByLocationId(Long locationId);
-
     @Transactional
     void deleteById(Long id);
 
     List<Spot> findByOwner(ApplicationUser owner);
 
-    @Query (value = "SELECT DISTINCT s FROM Location l JOIN Spot s ON l.id = s.location.id " +
+    @Query(value = "SELECT DISTINCT s FROM Location l JOIN Spot s ON l.id = s.location.id " +
         "JOIN s.hashtagList h WHERE l.id = :locationId and h.name=:hashtag")
-    List<Spot> getSpotsByLocationId(@Param("locationId") Long locationId,
-                                    @Param("hashtag")String hashtag);
+    List<Spot> findSpotsByLocationIdAndHashtag(@Param("locationId") Long locationId, @Param("hashtag") String hashtag);
+
+    List<Spot> findSpotsByLocationId(Long locationId);
+
+    @Query(value = "SELECT DISTINCT s FROM Spot s JOIN s.hashtagList h WHERE h.name=:hashtag")
+    List<Spot> findByHashtag(@Param("hashtag") String hashtag);
+
+//    List<Spot> findByCategoryId(Long )
 }

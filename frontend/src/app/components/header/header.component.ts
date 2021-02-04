@@ -32,6 +32,10 @@ export class HeaderComponent implements OnInit {
         console.log(this.loggedUser);
       });
     }
+
+    this.authService.currentUser.subscribe(result => {
+      this.loggedUser = result;
+    })
   }
 
   deleteUser() {

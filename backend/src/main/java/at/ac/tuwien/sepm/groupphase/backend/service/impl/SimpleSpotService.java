@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -144,17 +143,32 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public List<Spot> getSpotsByLocation(SpotFilter spotFilter) throws ValidationException {
-        //Message message;
-        Optional<Location> optionalLocation = locationRepository.getOneById(spotFilter.getLocationId());
-        if (optionalLocation.isEmpty()) {
-            throw new ValidationException("Location with ID " + spotFilter.getLocationId() + " cannot be found!");
-        }
+    public List<Spot> findSpots(SpotFilter spotFilter) throws ValidationException {
         List<Spot> spotList;
-        if (spotFilter.getHashtagName() != null && spotFilter.getHashtagName() != "") {
-            spotList = spotRepository.getSpotsByLocationId(spotFilter.getLocationId(), spotFilter.getHashtagName());
+
+        if (spotFilter.getLocationId() != null) {
+            if (locationRepository.getOneById(spotFilter.getLocationId()).isEmpty()) {
+                throw new ValidationException("Location with ID " + spotFilter.getLocationId() + " cannot be found!");
+            }
+        }
+
+        if (spotFilter.getCategoryId() != null) {
+            if (categoryRepository.getOneById(spotFilter.getCategoryId()).isEmpty()) {
+                throw new ValidationException("Category with ID " + spotFilter.getCategoryId() + " cannot be found!");
+            }
+        }
+
+        if (spotFilter.getLocationId() != null) {
+            spotList = spotRepository.findAll();
         } else {
-            spotList = spotRepository.getSpotsByLocationId(spotFilter.getLocationId());
+
+        }
+
+        if (spotFilter.getHashtagName() != null && spotFilter.getHashtagName() != "") {
+            spotList = spotRepository.findSpotsByLocationIdAndHashtag(spotFilter.getLocationId(),
+                spotFilter.getHashtagName());
+        } else {
+            spotList = spotRepository.findSpotsByLocationId(spotFilter.getLocationId());
         }
         if (spotFilter.getCategoryId() != null) {
             spotList = spotList.stream().filter(spot -> spot.getCategory().getId() == spotFilter.getCategoryId())

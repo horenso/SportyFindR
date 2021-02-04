@@ -40,14 +40,13 @@ public interface SpotService {
     boolean deleteById(Long id) throws ValidationException, ServiceException, WrongUserException;
 
     /**
-     * Get all spots within one Location. This list cannot be empty since since a location
-     * must contain at least one spot.
+     * Get all spots with certain criteria.
      *
-     * @param spotFilter with the location, and optionally the hashtag name and the category id
+     * @param spotFilter with the location id, the hashtag name and the category id
      * @return list of spots
-     * @throws ValidationException
+     * @throws ValidationException if a location id is specified but the location doesn't exist, same with the category
      */
-    List<Spot> getSpotsByLocation(SpotFilter spotFilter) throws ValidationException;
+    List<Spot> findSpots(SpotFilter spotFilter) throws ValidationException;
 
     /**
      * Get one spot by spotId

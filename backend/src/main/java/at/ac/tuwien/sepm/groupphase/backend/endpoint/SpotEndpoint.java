@@ -105,16 +105,16 @@ public class SpotEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     @ApiOperation(value = "Get list of spots for a specific location", authorizations = {@Authorization(value = "apiKey")})
-    public List<SpotDto> getSpotsByLocation(@RequestParam Long locationId,
-                                            @RequestParam(required = false, name = "hashtag") String hashtagName,
-                                            @RequestParam(required = false) Long categoryId) {
+    public List<SpotDto> findAll(@RequestParam(required = false) Long locationId,
+                                 @RequestParam(required = false, name = "hashtag") String hashtagName,
+                                 @RequestParam(required = false) Long categoryId) {
         log.info("GET /api/v1/spots?location={}&hashtag={}&categoryId={}", locationId, hashtagName, categoryId);
         try {
             SpotFilter spotFilter = SpotFilter.builder()
                 .locationId(locationId)
                 .hashtagName(hashtagName)
                 .categoryId(categoryId).build();
-            List<Spot> spots = spotService.getSpotsByLocation(spotFilter);
+            List<Spot> spots = spotService.findSpots(spotFilter);
             return spotMapper.entityToListDto(spots);
         } catch (ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
