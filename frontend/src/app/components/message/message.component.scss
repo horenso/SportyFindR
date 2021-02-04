@@ -20,9 +20,18 @@ $light-text: #BEC3E1;
 
 .themMessage {
   justify-self: start;
-  background-color: #44a023;
+  background-color: darkgray;
   border-radius: 14px 14px 14px 0px;
 }
+
+.buttonEnabled #upVote {
+  color: lightskyblue;
+}
+
+.buttonEnabled #downVote {
+  color: palevioletred;
+}
+
 
 #messageBody {
   color: #FFFFFF;

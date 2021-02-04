@@ -25,7 +25,7 @@ public class ApplicationUser {
     private String name;
 
     @Column(nullable = false, unique = true)
-    @Length(min = 6, max = 30)
+    @Length(min = 6, max = 40)
     private String email;
 
     @Column(nullable = false)

@@ -1,34 +1,50 @@
+<img
+  src="assets/login/sunset_skaters.jpg"
+  class="backgroundImage"
+  alt="A concert in germany"
+/>
+
 <h1>Login</h1>
 
-<form (ngSubmit)="loginUser()" [formGroup]="loginForm" class="form">
-  <!-- Username -->
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Email Address</mat-label>
-      <label for="inputUsername"></label>
-      <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
-              name="username" type="text">
-      <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
-        <mat-error *ngIf="loginForm.controls.username.errors.required">Your e-mail is required!</mat-error>
-      </div>
-    </mat-form-field>
-  </div>
+<div class="login-form-flex">
+  <mat-card id="login">
+    <mat-card-title class="title">
+      Login
+    </mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="loginUser()" [formGroup]="loginForm" class="form">
+        <!-- Username -->
+        <div>
+          <mat-form-field appearance="outline" class="form-element">
+            <mat-label>Email Address</mat-label>
+            <label for="inputUsername"></label>
+            <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
+                   name="username" type="text">
+            <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
+              <mat-error *ngIf="loginForm.controls.username.errors.required">Your username is required!</mat-error>
+            </div>
+          </mat-form-field>
+        </div>
 
-  <!-- Password -->
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
-      <label for="password"></label>
-      <input matInput formControlName="password" id="password"
-              name="password" type="password">
-      <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
-        <mat-error *ngIf="loginForm.controls.password.errors.required">Your password is required!</mat-error>
-        <mat-error *ngIf="loginForm.controls.password.errors.minlength">Your password must be at least 7 characters long!</mat-error>
-      </div>
-    </mat-form-field>
-  </div>
+        <!-- Password -->
+        <div>
+          <mat-form-field appearance="outline" class="form-element">
+            <mat-label>Password</mat-label>
+            <label for="password"></label>
+            <input matInput formControlName="password" id="password"
+                   name="password" type="password">
+            <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
+              <mat-error *ngIf="loginForm.controls.password.errors.required">Your password is required!</mat-error>
+              <mat-error *ngIf="loginForm.controls.password.errors.minlength">Your password must be at least 7 characters long!</mat-error>
+            </div>
+          </mat-form-field>
+        </div>
 
-  <button mat-raised-button color="accent" [disabled]="loginForm.invalid" (click)="loginUser()" class="float-right loginButton">Login</button>
+        <button mat-raised-button color="accent" [disabled]="loginForm.invalid" (click)="loginUser()" class="float-right loginButton">Login</button>
 
-</form>
+      </form>
+    </mat-card-content>
+
+    </mat-card>
+</div>
 
