@@ -8,6 +8,8 @@ import {parsePositiveInteger} from '../../util/parse-int';
 import {IconType} from 'src/app/util/m-location';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
+import { FilterService } from 'src/app/services/filter.service';
+import { FilterLocation } from 'src/app/dtos/filter-location';
 
 @Component({
   selector: 'app-location-view',
@@ -16,15 +18,20 @@ import {SubSink} from 'subsink';
 })
 export class LocationViewComponent implements OnInit, OnDestroy {
 
-  locationId: number = null;
-
   public spots: MLocSpot[] = [];
+
+  private locationId: number = null;
+
+  private currentFilter: FilterLocation;
+
+  public buttonColor: string;
 
   private subs = new SubSink();
 
   constructor(
     private spotService: SpotService,
     private sidebarService: SidebarService,
+    private filterService: FilterService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService) {
@@ -38,20 +45,16 @@ export class LocationViewComponent implements OnInit, OnDestroy {
       if (isNaN(this.locationId)) {
         this.notificationService.navigateHomeAndShowError(NotificationService.locIdNotInt);
       } else {
-        this.subs.add(this.spotService.getByLocationId(this.locationId).subscribe(
-          result => {
-            this.spots = result;
-          },
-          error => {
-            this.notificationService.navigateHomeAndShowError('Error loading location!');
-          }
-        ));
+        this.subs.add(this.filterService.filterLocationObservable.subscribe(filter => {
+          this.currentFilter = filter;
+          this.getSpots();
+        }));
       }
     }));
   }
 
-  ngOnDestroy() {
-    this.subs.unsubscribe();
+  ngOnDestroy(): void {
+    this.subs?.unsubscribe();
   }
 
   onClose(): void {
@@ -60,11 +63,38 @@ export class LocationViewComponent implements OnInit, OnDestroy {
     this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 
-  onSelectedSpot(spot: Spot) {
+  onSelectedSpot(spot: Spot): void {
     this.router.navigate(['locations', this.locationId, 'spots', spot.id]);
   }
 
-  onCreateSpot() {
+  onCreateSpot(): void {
     this.router.navigate(['locations', this.locationId, 'spots', 'new']);
+  }
+
+  isFilterActive(): boolean {
+    return ;
+  }
+
+  updateButtonColor(): string {
+    if (this.currentFilter.hashtag != null || this.currentFilter.categoryId != null) {
+      return 'warn';
+    } else {
+      return 'primary';
+    }
+  }
+
+  private getSpots(): void {
+    this.subs.add(this.spotService.getByLocationId(
+      this.locationId,
+      this.filterService.currentFilterLocation.hashtag,
+      this.filterService.currentFilterLocation.categoryId).subscribe(
+      result => {
+        this.buttonColor = this.updateButtonColor();
+        this.spots = result;
+      },
+      error => {
+        this.notificationService.navigateHomeAndShowError('Error loading location!');
+      }
+    ));
   }
 }

@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.RoleRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
@@ -51,13 +51,13 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
-    public Role findRoleByName(String name) throws NotFoundException2 {
+    public Role findRoleByName(String name) throws NotFoundException {
         String uCaseName = name.toUpperCase(Locale.ROOT);
         Optional<Role> role = this.roleRepository.findRoleByName(uCaseName);
         if (role.isPresent()) {
             return role.get();
         } else {
-            throw new NotFoundException2("Role not found.");
+            throw new NotFoundException("Role not found.");
         }
     }
 
@@ -68,7 +68,7 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException2, ValidationException {
+    public void deleteById(Long id) throws ValidationException, NotFoundException {
         if (roleExistsById(id)) {
             Role role = this.getById(id);
             List<ApplicationUser> userList = this.userService.getApplicationUserByRoleId(id);
@@ -77,13 +77,13 @@ public class SimpleRoleService implements RoleService {
                 try {
                     this.userService.update(user);
                 } catch (ValidationException e) {
-                    throw new ValidationException("Error deleting role from user " + user.getId() + ". " + e.getMessage(),e.getCause());
+                    throw new ValidationException("Error deleting role from user " + user.getId() + ". " + e.getMessage(), e.getCause());
                 }
             }
 
             this.roleRepository.deleteById(id);
         } else {
-            throw new NotFoundException2("Role cannot be found.");
+            throw new NotFoundException("Role cannot be found.");
         }
     }
 
@@ -94,12 +94,12 @@ public class SimpleRoleService implements RoleService {
     }
 
     @Override
-    public Role getById(Long id) throws NotFoundException2 {
+    public Role getById(Long id) throws NotFoundException {
         Optional<Role> role = roleRepository.findRoleById(id);
         if (role.isPresent()) {
             return role.get();
         } else {
-            throw new NotFoundException2("Role with ID " + id + "does not exist.");
+            throw new NotFoundException("Role with ID " + id + "does not exist.");
         }
     }
 

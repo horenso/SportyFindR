@@ -41,9 +41,14 @@ public class HashtagEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/filter")
     @ApiOperation(value = "Get hashtag list by name", authorizations = {@Authorization(value = "apiKey")})
-    public List<HashtagDto> searchByName(@RequestParam(required = false) String name) {
-        log.info("GET /api/v1/hashtags/filter/{}", name);
-        return hashtagMapper.entityToListDto(hashtagService.searchByName(name));
+    public List<HashtagDto> searchByPartialName(@RequestParam(required = false) String name) {
+        log.info("GET /api/v1/hashtags/filter?name={}", name);
+
+        List<HashtagDto> h = hashtagMapper.entityToListDto(hashtagService.searchByName(name));
+        h.forEach(a -> {
+            log.info(a.toString());
+        });
+        return h;
     }
 
 
@@ -53,6 +58,10 @@ public class HashtagEndpoint {
     @ApiOperation(value = "Get all hashtags", authorizations = {@Authorization(value = "apiKey")})
     public List<HashtagDto> getAll() {
         log.info("GET /api/v1/hashtags");
-        return hashtagMapper.entityToListDto((hashtagService.findAll()));
+        List<HashtagDto> hashtagDtoList = hashtagMapper.entityToListDto((hashtagService.findAll()));
+        for (HashtagDto hashtagDto : hashtagDtoList) {
+            log.info(hashtagDto.toString());
+        }
+        return hashtagDtoList;
     }
 }

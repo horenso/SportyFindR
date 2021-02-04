@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.validator;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;

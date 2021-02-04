@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,17 +29,18 @@ public interface UserService extends UserDetailsService {
      *
      * @param email the email address
      * @return an application user
-     * @throws NotFoundException2 if the user does not exist
+     * @throws NotFoundException if the user does not exist
      */
-    ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException2;
+    ApplicationUser getApplicationUserByEmail(String email) throws NotFoundException;
 
     /**
      * Find an Application user based on the id
+     *
      * @param id user id
      * @return the application user that has been found
-     * @throws NotFoundException2 if application user does not exist
+     * @throws NotFoundException if application user does not exist
      */
-    ApplicationUser getApplicationUserById(Long id) throws NotFoundException2;
+    ApplicationUser getApplicationUserById(Long id) throws NotFoundException;
 
     /**
      * Creates a new Application UserEndpoint
@@ -50,10 +51,11 @@ public interface UserService extends UserDetailsService {
 
     /**
      * Deletes the user with id id
+     *
      * @param id of the user to delete
-     * @throws NotFoundException2 if user was not found
+     * @throws NotFoundException if user was not found
      */
-    void deleteApplicationUserById(Long id) throws NotFoundException2;
+    void deleteApplicationUserById(Long id) throws NotFoundException;
 
     /**
      * finds all Application Users
@@ -66,18 +68,18 @@ public interface UserService extends UserDetailsService {
      *
      * @param user application user to update
      * @return updated ApplicationUser
-     * @throws NotFoundException2  if the user was not found
-     * @throws ValidationException if the user id is null
+     * @throws NotFoundException if the user was not found
      */
-    ApplicationUser update(ApplicationUser user) throws NotFoundException2, ValidationException;
+    ApplicationUser update(ApplicationUser user) throws NotFoundException, ValidationException;
 
     /**
      * find users having to a certain role
+     *
      * @param roleId of the role to search for
      * @return List of Application Users having the role
-     * @throws NotFoundException2 if the role was not found
+     * @throws NotFoundException if the role was not found
      */
-    List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException2;
+    List<ApplicationUser> getApplicationUserByRoleId(Long roleId) throws NotFoundException;
 
     /**
      * check if user with email exists

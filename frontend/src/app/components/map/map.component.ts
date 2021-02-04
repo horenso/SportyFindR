@@ -7,6 +7,7 @@ import {MLocation} from '../../util/m-location';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
 import {FilterLocation} from 'src/app/dtos/filter-location';
+import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-map',
@@ -39,9 +40,9 @@ export class MapComponent implements OnInit, OnDestroy {
   private locMarkerGroup: LayerGroup<MLocation> = new LayerGroup<MLocation>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
-//  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
+ private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
 // high def but jpg, so no background layer is possible
-  private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
+  // private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
 
 
   layers: Layer[] = [
@@ -64,6 +65,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private locationService: LocationService,
     private mapService: MapService,
     private sidebarService: SidebarService,
+    private filterService: FilterService,
     public authService: AuthService) {
   }
 
@@ -71,7 +73,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.unsubscribe();
+    this.subs?.unsubscribe();
   }
 
   onMapReady(map: Map) {
@@ -97,7 +99,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.changeVisibilityAndFocus(change);
     }));
 
-    this.subs.add(this.mapService.filterLocationObservable.subscribe(filterLocation => {
+    this.subs.add(this.filterService.filterLocationObservable.subscribe(filterLocation => {
       this.onFilterChanged(filterLocation);
     }));
 
@@ -132,6 +134,12 @@ export class MapComponent implements OnInit, OnDestroy {
     let drawCircles = false;
     let reloadRequired = false;
 
+    console.log(change.hashtag);
+    if (this.filter.hashtag !== change.hashtag) {
+      this.filter.hashtag = change.hashtag;
+      console.log('MAH HASH' + change.hashtag);
+      reloadRequired = true;
+    }
     if (this.filter.categoryId !== change.categoryId) {
       this.filter.categoryId = change.categoryId;
       reloadRequired = true;
@@ -186,7 +194,7 @@ export class MapComponent implements OnInit, OnDestroy {
       radius: radius,
       radiusEnabled: false,
       radiusBuffered: false,
-    }
+    };
   }
 
   private getLocationsAndConvertToLayerGroup() {

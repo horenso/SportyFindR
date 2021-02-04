@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ReactionDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.ReactionMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
@@ -39,10 +38,10 @@ public class ReactionEndpoint {
         try {
             return reactionMapper.reactionToReactionDto(
                 reactionService.create(reactionMapper.reactionDtoToReaction(reactionDto)));
-        }catch (NotFoundException2 e){
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (ValidationException e){
+        } catch (ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -57,7 +56,7 @@ public class ReactionEndpoint {
             List<ReactionDto> reactionDtoList = new ArrayList<>();
             reactions.forEach(reaction -> reactionDtoList.add(reactionMapper.reactionToReactionDto(reaction)));
             return reactionDtoList;
-        }catch (NotFoundException2 e){
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -70,10 +69,10 @@ public class ReactionEndpoint {
         log.info("PATCH /api/v1/reactions body: {}", reactionDto);
         try {
             return reactionService.change(reactionMapper.reactionDtoToReaction(reactionDto));
-        }catch (NotFoundException2 e){
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
+        } catch (WrongUserException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -86,10 +85,10 @@ public class ReactionEndpoint {
         log.info("DELETE /api/v1/reaction/{}", id);
         try {
             reactionService.deleteById(id);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
+        } catch (WrongUserException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

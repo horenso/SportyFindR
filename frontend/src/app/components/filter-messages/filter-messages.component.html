@@ -6,6 +6,8 @@
     <div class="sidebarTitle">Message Filter</div>
   </div>
 
+  <div id="countMessage">Number of messages found: <span id="count">{{numberMessagesFiltered}}</span></div>
+
   <div #messageArea class="sidebarScrollableSection messageArea">
     <div *ngFor="let message of messageList" class="message">
       <app-message

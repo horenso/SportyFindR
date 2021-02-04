@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -60,19 +60,19 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * Find messages that match the filter criteria
      *
      * @param categoryId of spots contained in location
-     * @param user ... with the owner of the message equaling the stated user
-     * @param time ... messages not older than stated time
-     * @param messageIds ... list of messages after hashtag check
+     * @param user       ... with the owner of the message equaling the stated user
+     * @param time       ... messages not older than stated time
+     * @param hashtag    ... is the name of the hashtag that is being looked for
      * @return Page of messages that match the filter criteria
      */
+
     @EntityGraph("message-with-spots-and-owner")
-    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id WHERE (s.category.id = :cat OR :cat = 0L) AND (m.owner.name LIKE :user OR :user = '0') AND m.publishedAt >= :time AND m.id IN :list")
+    @Query(value = "SELECT DISTINCT m FROM Message m LEFT JOIN Spot s ON s.id = m.spot.id JOIN m.hashtagList h WHERE (s.category.id = :cat OR :cat = 0L) AND (m.owner.name LIKE :user OR :user = '0') AND m.publishedAt >= :time AND h.name=:hashtag")
     Page<Message> filterHash(@Param("cat") Long categoryId,
                              @Param("user") String user,
                              @Param("time") LocalDateTime time,
-                             @Param("list") List<Long> messageIds,
+                             @Param("hashtag") String hashtag,
                              Pageable pageable);
-
 
     List<Message> findAllBySpot_Id(Long spotId);
 
@@ -80,11 +80,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     /**
      * finds all Messages owned by the user
+     *
      * @param user that owns the messages
      * @return List of messages owned by that user
-     * @throws NotFoundException2 if the User cannot be
+     * @throws NotFoundException if the User cannot be
      */
-    List<Message> findByOwner(ApplicationUser user) throws NotFoundException2;
+    List<Message> findByOwner(ApplicationUser user) throws NotFoundException;
 
     @Transactional
     List<Message> deleteAllByExpirationDateBefore(LocalDateTime time);

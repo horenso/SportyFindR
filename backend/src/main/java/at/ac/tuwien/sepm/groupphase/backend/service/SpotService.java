@@ -1,7 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -26,10 +27,10 @@ public interface SpotService {
      * @param spot to be updated, id determines what spot gets updated
      * @return spot as it is saved in the system
      * @throws ValidationException if the spot entity is not valid
-     * @throws WrongUserException if the wrong user is trying to update the spot
-     * @throws NotFoundException2 if the spot does not exist
+     * @throws WrongUserException  if the wrong user is trying to update the spot
+     * @throws NotFoundException   if the spot does not exist
      */
-    Spot update(Spot spot) throws NotFoundException2, ValidationException, WrongUserException;
+    Spot update(Spot spot) throws NotFoundException, ValidationException, WrongUserException;
 
 
     /**
@@ -45,29 +46,30 @@ public interface SpotService {
     boolean deleteById(Long id) throws ValidationException, ServiceException, WrongUserException;
 
     /**
-     * Get all spots within one Location. This list should not be empty since since a location
+     * Get all spots within one Location. This list cannot be empty since since a location
      * must contain at least one spot.
      *
      * @param locationId of the location containing the spots
      * @return list of spots
-     * @throws ValidationException if the location does not exist
+     * @throws ValidationException if a location id is specified but the location doesn't exist, same with the category
      */
-    List<Spot> getSpotsByLocation(Long locationId) throws ValidationException;
+    List<Spot> findSpots(SpotFilter spotFilter) throws ValidationException;
 
     /**
      * Get one spot by spotId
      *
      * @param spotId of the spot
      * @return the spot entity
-     * @throws NotFoundException2 if the spot was not found
+     * @throws NotFoundException if the spot was not found
      */
-    Spot getOneById(Long spotId) throws NotFoundException2;
+    Spot getOneById(Long spotId) throws NotFoundException;
 
     /**
      * Find all Spots by User ID of their owner
+     *
      * @param userId of the owner
-     * @return list of spots from owner
-     * @throws NotFoundException2 if the user id cannot be found
+     * @return list of spots
+     * @throws NotFoundException if the user id cannot be found
      */
-    List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2;
+    List<Spot> findSpotsByUserId(Long userId) throws NotFoundException;
 }

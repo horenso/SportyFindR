@@ -15,9 +15,6 @@ export class MessageService {
 
   private messageBaseUri: string = `${this.globals.backendUri}/messages`;
 
-  private updateMessageFilterSubject = new Subject<FilterMessage>();
-  public updateMessageFilterObservable = this.updateMessageFilterSubject.asObservable();
-
   constructor(
     private httpClient: HttpClient,
     private globals: Globals,
@@ -34,7 +31,7 @@ export class MessageService {
     const params = new HttpParams()
       .set('spotId', spotId.toString())
       .set('page', page.toString())
-      .set('size', size.toString())
+      .set('size', size.toString());
     return this.httpClient.get<MessagePage>(this.messageBaseUri, {params: params});
   }
 
@@ -67,39 +64,28 @@ export class MessageService {
     return this.httpClient.delete<Message>(`${this.messageBaseUri}/${id}`);
   }
 
-  public updateMessageFilter(filterMessage: FilterMessage): void {
-    this.updateMessageFilterSubject.next(filterMessage);
-  }
-
   /**
    * Searches messages from the backend according to search parameters
    * @param filterMessage containing the search parameters
    */
   filterMessage(filterMessage: FilterMessage): Observable<Page<Message>> {
-    let time = filterMessage.time;
-    let hashtag = filterMessage.hashtag;
-    let user = filterMessage.user;
-    const page = filterMessage.page;
-    const size = filterMessage.size;
+    let params = new HttpParams()
+      .set('page', filterMessage.page.toString())
+      .set('size', filterMessage.size.toString());
+    
+    if (filterMessage.categoryId != null) {
+      params = params.set('categoryId', filterMessage.categoryId.toString());
+    }
+    if (filterMessage.hashtag != null) {
+      params = params.set('hashtag', filterMessage.hashtag.toString());
+    }
+    if (filterMessage.user != null) {
+      params = params.set('user', filterMessage.user.toString());
+    }
+    if (filterMessage.time != null) {
+      params = params.set('time', this.datePipe.transform(filterMessage.time, 'yyyy-MM-dd'));
+    }
 
-//    time = this.datePipe.transform(time, 'yyyy-MM-dd');
-    if (time == null) {
-      time = '1000-01-01';
-    }
-    if (hashtag == null) {
-      hashtag = '';
-    }
-    if (user == null) {
-      user = '';
-    }
-
-    const params = new HttpParams()
-      .set('categoryMes', filterMessage.categoryMes.toString())
-      .set('hashtag', hashtag.toString())
-      .set('user', user.toString())
-      .set('time', time.toString())
-      .set('page', page.toString())
-      .set('size', size.toString());
     console.log(params.toString());
     return this.httpClient.get<Page<Message>>(`${this.messageBaseUri}/filter`, {params: params});
   }

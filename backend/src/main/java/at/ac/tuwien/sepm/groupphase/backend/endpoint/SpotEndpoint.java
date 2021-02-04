@@ -1,10 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.DeletedSpotResponseDto;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDeletionResponseDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -21,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,7 +42,7 @@ public class SpotEndpoint {
         log.info("GET /api/v1/spots/{}", id);
         try {
             return spotMapper.spotToSpotDto(spotService.getOneById(id));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -61,14 +61,15 @@ public class SpotEndpoint {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
+
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}")
     @ApiOperation(value = "Delete a spot", authorizations = {@Authorization(value = "apiKey")})
-    public DeletedSpotResponseDto delete(@PathVariable("id") Long id) {
+    public SpotDeletionResponseDto delete(@PathVariable("id") Long id) {
         log.info("DELETE /api/v1/spots/{}", id);
         try {
-            return DeletedSpotResponseDto.builder().deletedLocation(spotService.deleteById(id)).build();
+            return SpotDeletionResponseDto.builder().deletedLocation(spotService.deleteById(id)).build();
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -94,7 +95,7 @@ public class SpotEndpoint {
         } catch (WrongUserException e) {
             log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -104,14 +105,18 @@ public class SpotEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     @ApiOperation(value = "Get list of spots for a specific location", authorizations = {@Authorization(value = "apiKey")})
-    public List<SpotDto> getSpotsByLocation(@RequestParam(name = "location") Long locationId) {
-        log.info("GET /api/v1/spots?location={}", locationId);
+    public List<SpotDto> findAll(@RequestParam(required = false) Long locationId,
+                                 @RequestParam(required = false, name = "hashtag") String hashtagName,
+                                 @RequestParam(required = false) Long categoryId) {
+        log.info("GET /api/v1/spots?location={}&hashtag={}&categoryId={}", locationId, hashtagName, categoryId);
         try {
-            List<Spot> spots = spotService.getSpotsByLocation(locationId);
-            List<SpotDto> spotDtos = new ArrayList<>();
-            spots.forEach(spot -> spotDtos.add(spotMapper.spotToSpotDto(spot)));
-            return spotDtos;
-        }catch (ValidationException e){
+            SpotFilter spotFilter = SpotFilter.builder()
+                .locationId(locationId)
+                .hashtagName(hashtagName)
+                .categoryId(categoryId).build();
+            List<Spot> spots = spotService.findSpots(spotFilter);
+            return spotMapper.entityToListDto(spots);
+        } catch (ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

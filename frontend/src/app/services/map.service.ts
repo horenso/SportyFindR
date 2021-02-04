@@ -22,9 +22,6 @@ export class MapService {
   private removeMarkerLocSubject = new Subject<number>();
   public removeMarkerLocObservable = this.removeMarkerLocSubject.asObservable();
 
-  private filterLocationSubject = new Subject<FilterLocation>();
-  public filterLocationObservable = this.filterLocationSubject.asObservable();
-
   constructor(
     private sidebarService: SidebarService,
     private ngZone: NgZone,
@@ -100,9 +97,5 @@ export class MapService {
     this.sidebarService.markerLocation = markerLocation;
 
     this.ngZone.run(() => this.router.navigate(['locations', markerLocation.id]));
-  }
-
-  public updateFilterLocation(filterLocation: FilterLocation): void {
-    this.filterLocationSubject.next(filterLocation);
   }
 }

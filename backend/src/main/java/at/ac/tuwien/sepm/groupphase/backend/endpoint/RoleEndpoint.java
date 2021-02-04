@@ -4,7 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.RoleDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.RoleMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
@@ -59,7 +59,7 @@ public class RoleEndpoint {
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
@@ -73,7 +73,7 @@ public class RoleEndpoint {
         log.info("DELETE /api/v1/roles id: {}", id);
         try {
             roleService.deleteById(id);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (ValidationException e) {
@@ -82,13 +82,13 @@ public class RoleEndpoint {
         }
     }
 
-    private Set<ApplicationUser> enrichUserSet(Set<ApplicationUser> users) throws NotFoundException2 {
+    private Set<ApplicationUser> enrichUserSet(Set<ApplicationUser> users) throws NotFoundException {
         Set<ApplicationUser> returnUsers = new HashSet<>();
         for (ApplicationUser user : users) {
             if (user.getName() == null || user.getEmail() == null) {
                 try {
                     returnUsers.add(this.userService.getApplicationUserById(user.getId()));
-                } catch (NotFoundException2 e) {
+                } catch (NotFoundException e) {
                     throw e;
                 }
             } else {

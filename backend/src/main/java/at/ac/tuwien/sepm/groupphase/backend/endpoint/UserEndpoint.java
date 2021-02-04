@@ -7,7 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SimpleUserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
@@ -50,7 +50,7 @@ public class UserEndpoint {
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
@@ -73,7 +73,7 @@ public class UserEndpoint {
         } catch (ValidationException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
@@ -87,7 +87,7 @@ public class UserEndpoint {
         log.info("DELETE /api/v1/users id {}", id);
         try {
             userService.deleteApplicationUserById(id);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -110,7 +110,7 @@ public class UserEndpoint {
         log.info("GET /api/v1/users/byRole/{}", id);
         try {
             return userMapper.applicationUserListToUserDtoList(userService.getApplicationUserByRoleId(id));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -124,7 +124,7 @@ public class UserEndpoint {
         log.info("GET /api/v1/users/{}", id);
         try {
             return userMapper.applicationUserToUserDto(userService.getApplicationUserById(id));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -132,13 +132,12 @@ public class UserEndpoint {
 
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/byEmail/{email}")
     @ApiOperation(value = "Get one user by email", authorizations = {@Authorization(value = "apiKey")})
-    public UserDto getOneByEmail(@PathVariable("email") String email) {
-        log.info("GET /api/v1/users/byEmail/{}", email);
+    public UserDto getOneByEmail(@RequestParam String email) {
+        log.info("GET /api/v1/users?email={}", email);
         try {
             return userMapper.applicationUserToUserDto(userService.getApplicationUserByEmail(email));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -148,18 +147,18 @@ public class UserEndpoint {
     @GetMapping(value = "/filter")
     @ApiOperation(value = "Get user list by name", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleUserDto> searchByName(@RequestParam(required = false) String name) {
-        log.info("GET /api/v1/users/filter/{}", name);
+        log.info("GET /api/v1/users/filter?name={}", name);
         return simpleUserMapper.entityToListDto(userService.searchByName(name));
     }
 
 
-    private Set<Role> enrichRoleSet(Set<Role> roles) throws NotFoundException2 {
+    private Set<Role> enrichRoleSet(Set<Role> roles) throws NotFoundException {
         Set<Role> returnRoles = new HashSet<>();
         for (Role role : roles) {
             if (role.getName() == null) {
                 try {
                     returnRoles.add(this.roleService.getById(role.getId()));
-                } catch (NotFoundException2 e) {
+                } catch (NotFoundException e) {
                     throw e;
                 }
             } else {

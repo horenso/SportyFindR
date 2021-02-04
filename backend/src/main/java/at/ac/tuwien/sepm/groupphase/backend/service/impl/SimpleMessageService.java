@@ -1,11 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageSearchObject;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Hashtag;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -25,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,9 +40,9 @@ public class SimpleMessageService implements MessageService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Message> findBySpot(Long spotId) throws NotFoundException2 {
+    public List<Message> findBySpot(Long spotId) throws NotFoundException {
         if (spotRepository.findById(spotId).isEmpty()) {
-            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
+            throw new NotFoundException(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
 
@@ -56,9 +54,9 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2 {
+    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException {
         if (spotRepository.findById(spotId).isEmpty()) {
-            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
+            throw new NotFoundException(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
 
@@ -70,13 +68,13 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message create(Message message) throws NotFoundException2, ValidationException {
+    public Message create(Message message) throws NotFoundException, ValidationException {
         log.debug("create message in spot with id {}", message.getSpot().getId());
 
         MessageValidation.validateNewMessage(message);
 
         if (spotRepository.findById(message.getSpot().getId()).isEmpty()) {
-            throw new NotFoundException2("Spot does not Exist");
+            throw new NotFoundException("Spot does not Exist");
         }
         message.setPublishedAt(LocalDateTime.now());
         message.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
@@ -87,12 +85,12 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message getById(Long id) throws NotFoundException2 {
+    public Message getById(Long id) throws NotFoundException {
         log.debug("get message with id {}", id);
         deleteExpiredMessages();
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2("No messages found");
+            throw new NotFoundException("No messages found");
         }
         Message message = messageOptional.get();
         setReactions(message);
@@ -100,10 +98,10 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException2, WrongUserException, ServiceException {
+    public void deleteById(Long id) throws NotFoundException, WrongUserException, ServiceException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2(String.format("No message with id %d found!", id));
+            throw new NotFoundException(String.format("No message with id %d found!", id));
         } else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName()) && !SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new WrongUserException("You can only delete your own messages");
         }
@@ -118,10 +116,10 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, ServiceException {
+    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException, ServiceException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2(String.format("No message with id %d found!", id));
+            throw new NotFoundException(String.format("No message with id %d found!", id));
         }
         try {
             hashtagService.deleteMessageInHashtags(messageOptional.get());
@@ -152,38 +150,21 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> filter(MessageSearchObject messageSearchObject, Pageable pageable) throws ServiceException {
-        log.debug("Searching for messages of spots belonging to the category " + messageSearchObject.getCategoryId() + ", not older than: " + messageSearchObject.getTime());
+    public Page<Message> filter(MessageFilter messageFilter, Pageable pageable) {
+        log.debug("Searching for messages of spots belonging to the category " + messageFilter.getCategoryId() + ", not older than: " + messageFilter.getTime());
 
-        if (messageSearchObject.getCategoryId() == null) {
-            messageSearchObject.setCategoryId(0L);
+        if (messageFilter.getCategoryId() == null) {
+            messageFilter.setCategoryId(0L);
         }
 
-        if (messageSearchObject.getTime() == null) {
-            messageSearchObject.setTime(LocalDateTime.MIN);
+        if (messageFilter.getTime() == null) {
+            messageFilter.setTime(LocalDateTime.MIN);
         }
 
-        if (messageSearchObject.getHashtagName() != null && !messageSearchObject.getHashtagName().equals("")) {
-            String hashtagName = messageSearchObject.getHashtagName();
-            try {
-                Hashtag hashtag = hashtagService.getByName(hashtagName);
-
-                if (hashtag != null) {
-                    List<Message> messageList = hashtag.getMessagesList();
-                    List<Long> messageIds = new LinkedList<>();
-
-                    for (Message m : messageList) {
-                        messageIds.add(m.getId());
-                    }
-                    return messageRepository.filterHash(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), messageIds, pageable);
-                } else {
-                    throw new ServiceException("Invalid hashtag name.");
-                }
-            } catch (ValidationException e) {
-                throw new ServiceException(e);
-            }
+        if (messageFilter.getHashtagName() != null && !messageFilter.getHashtagName().equals("")) {
+            return messageRepository.filterHash(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), messageFilter.getHashtagName(), pageable);
         }
-        return messageRepository.filter(messageSearchObject.getCategoryId(), messageSearchObject.getUser(), messageSearchObject.getTime(), pageable);
+        return messageRepository.filter(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), pageable);
     }
 
 
@@ -197,14 +178,12 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findByOwner(Long userId) throws NotFoundException2 {
+    public List<Message> findByOwner(Long userId) throws NotFoundException {
         Optional<ApplicationUser> owner = this.userRepository.findById(userId);
         if (owner.isPresent()) {
             return this.messageRepository.findByOwner(owner.get());
         } else {
-            throw new NotFoundException2("User with ID " + userId + " not found.");
+            throw new NotFoundException("User with ID " + userId + " not found.");
         }
     }
-
-
 }

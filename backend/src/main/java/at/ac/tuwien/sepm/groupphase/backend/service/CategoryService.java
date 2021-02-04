@@ -1,8 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import org.hibernate.service.spi.ServiceException;
 
 import java.util.List;
 
@@ -14,22 +15,21 @@ public interface CategoryService {
      *
      * @param category to create
      * @return created category entry
-     * @throws ValidationException is thrown when the category is not valid
      */
-    Category create(Category category) throws ValidationException;
+    Category create(Category category) throws ServiceException, ValidationException;
 
     /**
      * Delete a Category entry
      *
      * @param id of category to delete
-     * @throws NotFoundException2 is throw when the category that should be deleted does not exist
      */
-    void deleteById(Long id) throws NotFoundException2;
+    void deleteById(Long id) throws NotFoundException;
 
     /**
      * Get all existing categories from database.
      *
-     * @return all categories
+     * @throws RuntimeException  if something goes wrong during data processing.
+     * @throws NotFoundException if no categories could be found in the system.
      */
     List<Category> findAll();
 }

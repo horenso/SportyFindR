@@ -3,14 +3,12 @@ package at.ac.tuwien.sepm.groupphase.backend.unittests;
 import at.ac.tuwien.sepm.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.ReactionService;
-import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleReactionService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +16,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -103,7 +100,7 @@ public class ReactionServiceTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void reactionCreateReturnsReaction() throws NotFoundException2, ValidationException {
+    public void reactionCreateReturnsReaction() throws NotFoundException, ValidationException {
 
         Reaction rct = Reaction.builder()
             .owner(user)
@@ -124,7 +121,7 @@ public class ReactionServiceTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void reactionFindReactionByMessageId() throws NotFoundException2, ValidationException {
+    public void reactionFindReactionByMessageId() throws NotFoundException, ValidationException {
 
         Reaction rct = Reaction.builder()
             .owner(user)
@@ -146,7 +143,7 @@ public class ReactionServiceTest implements TestData {
 
     @Test
     @WithMockUser(username = EMAIL, password = PASSWORD, roles = "USER")
-    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException2, ValidationException {
+    public void reactionThrowExceptionByIncorrectMessageId() throws NotFoundException, ValidationException {
 
         Reaction rct = Reaction.builder()
             .owner(user)
@@ -159,7 +156,7 @@ public class ReactionServiceTest implements TestData {
 
         reactionService.create(rct);
         assertAll(
-            () -> assertThrows(NotFoundException2.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
+            () -> assertThrows(NotFoundException.class, () -> reactionService.getReactionsByMessageId(msgId + 10000).get(0))
         );
     }
 }

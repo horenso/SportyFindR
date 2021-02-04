@@ -6,6 +6,10 @@
   border-top: 1px solid lightgrey;
 }
 
-cdk-virtual-scroll-viewport {
-  flex: 1 1 auto;
+#count {
+  font-weight: bold;
+}
+
+#countMessage {
+  text-align: center;
 }

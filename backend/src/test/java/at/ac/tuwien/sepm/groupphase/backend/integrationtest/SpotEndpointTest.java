@@ -282,7 +282,7 @@ public class SpotEndpointTest implements TestData {
         locationRepository.save(location);
         spotRepository.save(spot);
         spotRepository.save(spot2);
-        List<SpotDto> spots = spotEndpoint.getSpotsByLocation(location.getId());
+        List<SpotDto> spots = spotEndpoint.findAll(location.getId(), null, null);
         assertAll(
             () -> assertEquals(spots.size(), 2),
             () -> assertEquals(spots.get(0).getId(), spot.getId()),
@@ -632,7 +632,7 @@ public class SpotEndpointTest implements TestData {
         spotRepository.save(spot);
         spotRepository.save(spot2);
         Long id = spot.getLocation().getId() + 1;
-        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.getSpotsByLocation(id));
+        Throwable e = assertThrows(ResponseStatusException.class, () -> spotEndpoint.findAll(id, null, null));
         assertAll(
             () -> assertEquals(e.getMessage(), "404 NOT_FOUND \"Location with ID " + id + " cannot be found!\"")
         );

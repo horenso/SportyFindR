@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
@@ -34,7 +34,7 @@ public class DefaultLoginGenerator {
     }
 
     @PostConstruct
-    private void generateAdminLogin() throws ValidationException, NotFoundException2 {
+    private void generateAdminLogin() throws ValidationException, NotFoundException {
         try {
             Role adminRole = this.generateRole(ADMIN_ROLE_NAME);
             Role userRole = this.generateRole(USER_ROLE_NAME);
@@ -46,12 +46,12 @@ public class DefaultLoginGenerator {
             this.generateAdminUser(roles);
         } catch (ValidationException e) {
             throw new ValidationException(e);
-        } catch (NotFoundException2 e) {
-            throw new NotFoundException2(e);
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e);
         }
     }
 
-    private Role generateRole(String roleName) throws ValidationException, NotFoundException2 {
+    private Role generateRole(String roleName) throws ValidationException, NotFoundException {
         if (!roleService.roleExistsByName(roleName)) {
             try {
                 Role role = Role.builder()
@@ -65,13 +65,13 @@ public class DefaultLoginGenerator {
             log.info("Role " + roleName + " was already created");
             try {
                 return roleService.findRoleByName(roleName);
-            } catch (NotFoundException2 e) {
-                throw new NotFoundException2(roleName +" role not found", e);
+            } catch (NotFoundException e) {
+                throw new NotFoundException(roleName + " role not found", e);
             }
         }
     }
 
-    private void generateAdminUser(HashSet<Role> roles) throws ValidationException, NotFoundException2 {
+    private void generateAdminUser(HashSet<Role> roles) throws ValidationException, NotFoundException {
         if (!userService.userExistsByEmail(ADMIN_EMAIL)) {
             try {
                 ApplicationUser user = ApplicationUser.builder()
@@ -95,8 +95,8 @@ public class DefaultLoginGenerator {
                 user.setEnabled(true);
                 user.setRoles(roles);
                 userService.update(user);
-            } catch (NotFoundException2 e) {
-                throw new NotFoundException2("Couldn't find Admin User", e);
+            } catch (NotFoundException e) {
+                throw new NotFoundException("Couldn't find Admin User", e);
             }
         }
     }

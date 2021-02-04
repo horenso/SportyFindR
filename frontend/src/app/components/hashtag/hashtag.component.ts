@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HashtagService} from '../../services/hashtag.service';
 import {Spot} from '../../dtos/spot';
 import {Message} from '../../dtos/message';
-import {Hashtag} from '../../dtos/hashtag';
 import {IconType} from '../../util/m-location';
 import {MessageService} from '../../services/message.service';
+import {Hashtag} from 'src/app/dtos/hashtag';
+import { SpotService } from 'src/app/services/spot.service';
+import { MLocSpot } from 'src/app/util/m-loc-spot';
+import { result } from 'lodash';
 
 @Component({
   selector: 'app-hashtag',
@@ -16,16 +19,17 @@ import {MessageService} from '../../services/message.service';
 })
 export class HashtagComponent implements OnInit {
 
-  hashtag: {} = {};
+  hashtag: Hashtag;
   hashtagName: string;
   spotsFlag: boolean = false;
   messagesFlag: boolean = false;
   public messageList: Message[] = [];
+  public spotList: MLocSpot[] = [];
 
   constructor(
     public authService: AuthService,
     private router: Router,
-    private hashtagService: HashtagService,
+    private spotService: SpotService,
     private activedRoute: ActivatedRoute,
     private sidebarService: SidebarService,
     private messageService: MessageService) {
@@ -35,29 +39,22 @@ export class HashtagComponent implements OnInit {
     this.activedRoute.params.subscribe(params => {
       this.hashtagName = params.hashtagName;
       console.log(this.hashtagName);
-      });
-    this.hashtagService.getHashtagByName(this.hashtagName).subscribe(result => {
-      console.log(result);
-      this.hashtag = result;
-      this.messageList = result.messagesList;
+      this.getSpots();
+      this.getMessages();
     });
-    }
-
-  showSpots(): void {
-    this.spotsFlag = true;
-    this.messagesFlag = false;
   }
 
-  showMessages(): void {
-    this.spotsFlag = false;
-    this.messagesFlag = true;
+  private getSpots(): void {
+    this.spotService.getByLocationId(null, this.hashtagName, null).subscribe(result => {
+      this.spotList = result;
+    });
   }
 
-  hideBoth(): void {
-    this.spotsFlag = false;
-    this.messagesFlag = false;
+  private getMessages(): void {
+    this.messageService.filterMessage({hashtag: this.hashtagName}).subscribe(result => {
+      this.messageList = result.content;
+    });
   }
-
 
   goToSpot(spot: Spot) {
     this.router.navigate(['locations', spot.location.id, 'spots', spot.id]);
@@ -67,11 +64,5 @@ export class HashtagComponent implements OnInit {
     this.router.navigate(['..']);
     this.sidebarService.markerLocation?.changeIcon(IconType.Default);
     this.sidebarService.changeVisibilityAndFocus({isVisible: false});
-  }
-
-  deleteOneMessage(message: Message): void {
-    this.messageService.deleteById(message.id).subscribe(result => {
-    this.messageList = this.messageList.filter(m => message.id !== m.id);
-    });
   }
 }
