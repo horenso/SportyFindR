@@ -57,18 +57,18 @@ public class BaseIntegrationTest implements TestData {
     @BeforeEach
     public void beforeEach() {
         user1 = ApplicationUser.builder()
-            .email(EMAIL)
+            .email(EMAIL4)
             .enabled(true)
-            .name("user1")
-            .password(PASSWORD)
+            .name(USERNAME4)
+            .password(PASSWORD4)
             .build();
         userRepository.save(user1);
 
         user2 = ApplicationUser.builder()
-            .email(EMAIL2)
+            .email(EMAIL5)
             .enabled(true)
-            .name("user2")
-            .password(PASSWORD2)
+            .name(USERNAME5)
+            .password(PASSWORD5)
             .build();
         userRepository.save(user2);
 

@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HashtagEndpointTest extends BaseIntegrationTest {
 
     @Test
-    public void getHashtagById() throws Exception {
+    public void getHashtagByName() throws Exception {
         List<Hashtag> hashtagList = List.of(
             hashtagRepository.save(Hashtag.builder().name("wow").build()),
             hashtagRepository.save(Hashtag.builder().name("spot").build()),
@@ -39,7 +39,7 @@ public class HashtagEndpointTest extends BaseIntegrationTest {
 
         for (Hashtag hashtag : hashtagList) {
             mockMvc.perform(
-                get(HASHTAG_BASE_URI + "/" + hashtag.getId())
+                get(HASHTAG_BASE_URI + "/" + hashtag.getName())
                     .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(hashtag.getId()))

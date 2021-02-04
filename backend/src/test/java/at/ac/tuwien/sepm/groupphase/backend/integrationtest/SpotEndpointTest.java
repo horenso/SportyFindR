@@ -531,6 +531,7 @@ public class SpotEndpointTest implements TestData {
 
         SpotDto spotDto = SpotDto.builder()
             .name("Spot")
+            .description(DESCRIPTION)
             .location(locationMapper.locationToLocationDto(location))
             .category(categoryMapper.categoryToCategoryDto(category)).build();
 
