@@ -69,11 +69,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring()
             .antMatchers(HttpMethod.POST, "/api/v1/users")
-            .antMatchers(HttpMethod.GET, "/api/v1/messages?spotId**")
+            .antMatchers(HttpMethod.GET, "/api/v1/messages")
+            .antMatchers(HttpMethod.GET, "/api/v1/messages/**")
             .antMatchers(HttpMethod.GET, "/api/v1/locations")
-            .antMatchers(HttpMethod.GET, "/api/v1/spots/**")
+            .antMatchers(HttpMethod.GET, "/api/v1/spots?**")
             .antMatchers(HttpMethod.GET, "/api/v1/spots")
+            .antMatchers(HttpMethod.GET, "/api/v1/spots/**")
             .antMatchers(HttpMethod.GET, "/api/v1/categories")
+            .antMatchers("/api/v1/hashtags")
             .requestMatchers(whiteListedRequests);
     }
 
