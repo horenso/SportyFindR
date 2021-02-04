@@ -90,9 +90,9 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .andExpect(jsonPath("$.content", hasSize(5)))
             .andExpect(jsonPath("$.numberOfElements").value(5))
             .andExpect(jsonPath("$.last").value(false))
-            .andExpect(jsonPath("$.content[0].content").value("A"))
-            .andExpect(jsonPath("$.content[1].content").value("B"))
-            .andExpect(jsonPath("$.content[4].content").value("E"));
+            .andExpect(jsonPath("$.content[0].content").value("Z"))
+            .andExpect(jsonPath("$.content[1].content").value("Y"))
+            .andExpect(jsonPath("$.content[4].content").value("V"));
 
         mockMvc
             .perform(get(MESSAGE_BASE_URI)
@@ -105,8 +105,8 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .andExpect(jsonPath("$.content", hasSize(5)))
             .andExpect(jsonPath("$.numberOfElements").value(5))
             .andExpect(jsonPath("$.last").value(false))
-            .andExpect(jsonPath("$.content[0].content").value("F"))
-            .andExpect(jsonPath("$.content[4].content").value("J"));
+            .andExpect(jsonPath("$.content[0].content").value("U"))
+            .andExpect(jsonPath("$.content[4].content").value("Q"));
 
         mockMvc
             .perform(get(MESSAGE_BASE_URI)
@@ -119,7 +119,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .andExpect(jsonPath("$.content", hasSize(1)))
             .andExpect(jsonPath("$.numberOfElements").value(1))
             .andExpect(jsonPath("$.last").value(true))
-            .andExpect(jsonPath("$.content[0].content").value("Z"))
+            .andExpect(jsonPath("$.content[0].content").value("A"))
             .andExpect(jsonPath("$.content[0].owner.name").value(user1.getName()));
     }
 

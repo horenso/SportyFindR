@@ -157,26 +157,29 @@ public class SpotSubscriptionTest extends BaseIntegrationTest {
                 .param("spotId", spot1.getId().toString()))
             .andReturn();
 
-        mockMvc.perform(post(REACTIONS_BASE_URI + "/")
+        MvcResult result1 = mockMvc.perform(post(REACTIONS_BASE_URI + "/")
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(
                 ReactionDto.builder()
                     .messageId(message1.getId())
                     .type(ReactionDto.ReactionDtoType.THUMBS_UP).build())))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated()).andReturn();
+        ReactionDto reactionDto = objectMapper.readValue(result1.getResponse().getContentAsString(), ReactionDto.class);
+
 
         mockMvc.perform(patch(REACTIONS_BASE_URI)
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(
                 ReactionDto.builder()
-                    .id(1L)
+                    .id(reactionDto.getId())
                     .messageId(message1.getId())
                     .type(ReactionDto.ReactionDtoType.THUMBS_DOWN).build())))
             .andExpect(status().isOk());
 
-        mockMvc.perform(post(REACTIONS_BASE_URI + "/")
+
+        MvcResult result2 = mockMvc.perform(post(REACTIONS_BASE_URI + "/")
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user2.getEmail(), USER_ROLES))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(
@@ -184,13 +187,14 @@ public class SpotSubscriptionTest extends BaseIntegrationTest {
                     .messageId(message1.getId())
                     .type(ReactionDto.ReactionDtoType.THUMBS_UP).build())))
             .andExpect(status().isCreated())
-            .andDo(print());
+            .andDo(print()).andReturn();
 
-        mockMvc.perform(delete(REACTIONS_BASE_URI + "/" + 2L)
+        ReactionDto reactionDto2 = objectMapper.readValue(result2.getResponse().getContentAsString(), ReactionDto.class);
+        mockMvc.perform(delete(REACTIONS_BASE_URI + "/" + reactionDto2.getId())
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user2.getEmail(), USER_ROLES)))
             .andExpect(status().isOk());
 
-        mockMvc.perform(delete(REACTIONS_BASE_URI + "/" + 1L)
+        mockMvc.perform(delete(REACTIONS_BASE_URI + "/" + reactionDto.getId())
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES)))
             .andExpect(status().isOk());
 
