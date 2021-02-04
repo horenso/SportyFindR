@@ -9,7 +9,7 @@ export class MessageDatePipe implements PipeTransform {
   static timeFormat = 'HH:mm';
   static dateFormat = 'd/M/y, HH:mm';
 
-  transform(value: string): string {
+  transform(value: Date): string {
     const now = Date.now();
     const then = new Date(value);
 

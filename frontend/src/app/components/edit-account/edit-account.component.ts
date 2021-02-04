@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from '../../dtos/user';
 import {LocalStorageService} from 'ngx-webstorage';
 import {UserService} from '../../services/user.service';
@@ -6,6 +6,9 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NotificationService} from '../../services/notification.service';
 import {Router} from '@angular/router';
 import {HeaderComponent} from '../header/header.component';
+import {AuthRequest} from '../../dtos/auth-request';
+import {Subscription} from 'rxjs';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-edit-account',
@@ -18,12 +21,15 @@ export class EditAccountComponent implements OnInit {
   accountForm: FormGroup;
   error: boolean = false;
   errorMessage: string = '';
+  private subscription: Subscription = null;
 
   constructor(private localStorage: LocalStorageService,
               private userService: UserService,
               private formBuilder: FormBuilder,
+              private authService: AuthService,
               private notificationService: NotificationService,
-              private router: Router) { }
+              private router: Router) {
+  }
 
   ngOnInit(): void {
     this.accountForm = this.formBuilder.group({
@@ -54,18 +60,19 @@ export class EditAccountComponent implements OnInit {
   onConfirm() {
     const val = this.accountForm.value;
     const updatedUser = new User(this.user.id,
-                    this.accountForm.value.username,
-                    this.accountForm.value.email,
-                    this.accountForm.value.password,
-                    true,
-                    this.user.roleIds);
+      this.accountForm.value.username,
+      this.accountForm.value.email,
+      this.accountForm.value.password,
+      true,
+      this.user.roleIds);
 
     this.userService.updateUser(updatedUser).subscribe(() => {
-      this.notificationService.success('Successfully updated user: ' + updatedUser.name);
-      this.localStorage.clear('username');
-      this.localStorage.store('username', val.email);
-      this.router.navigate(['']);
-    },
+        this.localStorage.clear('username');
+        this.localStorage.store('username', val.email);
+        this.router.navigate(['']);
+        const authRequest: AuthRequest = new AuthRequest(updatedUser.email, updatedUser.password);
+        this.authenticateUser(authRequest);
+      },
       error => {
         this.error = true;
         if (typeof error.error === 'object') {
@@ -75,5 +82,31 @@ export class EditAccountComponent implements OnInit {
         }
         this.notificationService.error(this.errorMessage);
       });
+  }
+
+  /**
+   * Send authentication data to the authService. If the authentication was successfully, the user will be forwarded to the message page
+   * @param authRequest authentication data from the user login form
+   */
+  authenticateUser(authRequest: AuthRequest) {
+    console.log('Try to authenticate user: ' + authRequest.email);
+    this.subscription = this.authService.loginUser(authRequest).subscribe(
+      () => {
+        this.notificationService.success('Successfully edited user');
+        this.router.navigate(['']);
+        this.localStorage.store('username', authRequest.email);
+      },
+      error => {
+        console.log('Could not log in due to:');
+        console.log(error);
+        this.error = true;
+        if (typeof error.error === 'object') {
+          this.errorMessage = error.error.error;
+        } else {
+          this.errorMessage = error.error;
+        }
+        this.notificationService.error(this.errorMessage);
+      }
+    );
   }
 }
