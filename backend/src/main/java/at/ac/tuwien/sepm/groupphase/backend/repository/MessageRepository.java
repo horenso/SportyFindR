@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -78,11 +78,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     /**
      * finds all Messages owned by the user
+     *
      * @param user that owns the messages
      * @return List of messages owned by that user
-     * @throws NotFoundException2 if the User cannot be
+     * @throws NotFoundException if the User cannot be
      */
-    List<Message> findByOwner(ApplicationUser user) throws NotFoundException2;
+    List<Message> findByOwner(ApplicationUser user) throws NotFoundException;
 
     @Transactional
     List<Message> deleteAllByExpirationDateBefore(LocalDateTime time);

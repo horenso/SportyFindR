@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import org.springframework.data.domain.Page;
@@ -18,16 +18,16 @@ public interface MessageService {
      * @param spotId id of the spot
      * @return ordered list of al message entries
      */
-    List<Message> findBySpot(Long spotId) throws NotFoundException2;
+    List<Message> findBySpot(Long spotId) throws NotFoundException;
 
     /**
      * Find all message from one spot ordered by published at date (descending).
      *
-     * @param spotId id of the spot
+     * @param spotId   id of the spot
      * @param pageable containing page information
      * @return ordered list of al message entries
      */
-    Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2;
+    Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException;
 
 
     /**
@@ -36,12 +36,13 @@ public interface MessageService {
      * @param message to be saved
      * @return created message entry
      */
-    Message create(Message message) throws NotFoundException2, ValidationException;
+    Message create(Message message) throws NotFoundException, ValidationException;
 
-    Message getById(Long id) throws NotFoundException2;
+    Message getById(Long id) throws NotFoundException;
 
-    void deleteById(Long id) throws NotFoundException2, WrongUserException;
-    void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2, WrongUserException;
+    void deleteById(Long id) throws NotFoundException, WrongUserException;
+
+    void deleteByIdWithoutAuthentication(Long id) throws NotFoundException, WrongUserException;
 
 
     /**
@@ -53,5 +54,5 @@ public interface MessageService {
      */
     Page<Message> filter(MessageFilter messageFilter, Pageable pageable);
 
-    List<Message> findByOwner(Long userId) throws NotFoundException2;
+    List<Message> findByOwner(Long userId) throws NotFoundException;
 }

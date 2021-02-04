@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;

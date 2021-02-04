@@ -4,7 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
@@ -39,9 +39,9 @@ public class SimpleMessageService implements MessageService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Message> findBySpot(Long spotId) throws NotFoundException2{
+    public List<Message> findBySpot(Long spotId) throws NotFoundException {
         if (spotRepository.findById(spotId).isEmpty()) {
-            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
+            throw new NotFoundException(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
 
@@ -53,9 +53,9 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException2 {
+    public Page<Message> findBySpotPaged(Long spotId, Pageable pageable) throws NotFoundException {
         if (spotRepository.findById(spotId).isEmpty()) {
-            throw new NotFoundException2(String.format("Spot with id %d not found.", spotId));
+            throw new NotFoundException(String.format("Spot with id %d not found.", spotId));
         }
         log.debug("Find all messages");
 
@@ -67,13 +67,13 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message create(Message message) throws NotFoundException2, ValidationException {
+    public Message create(Message message) throws NotFoundException, ValidationException {
         log.debug("create message in spot with id {}", message.getSpot().getId());
 
         MessageValidation.validateNewMessage(message);
 
         if (spotRepository.findById(message.getSpot().getId()).isEmpty()) {
-            throw new NotFoundException2("Spot does not Exist");
+            throw new NotFoundException("Spot does not Exist");
         }
         message.setPublishedAt(LocalDateTime.now());
         message.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
@@ -84,12 +84,12 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public Message getById(Long id) throws NotFoundException2 {
+    public Message getById(Long id) throws NotFoundException {
         log.debug("get message with id {}", id);
         deleteExpiredMessages();
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2("No messages found");
+            throw new NotFoundException("No messages found");
         }
         Message message = messageOptional.get();
         setReactions(message);
@@ -97,11 +97,11 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public void deleteById(Long id) throws NotFoundException2, WrongUserException {
+    public void deleteById(Long id) throws NotFoundException, WrongUserException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2(String.format("No message with id %d found!", id));
-        }else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())&&!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
+            throw new NotFoundException(String.format("No message with id %d found!", id));
+        } else if (!messageOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName()) && !SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new WrongUserException("You can only delete your own messages");
         }
         hashtagService.deleteMessageInHashtags(messageOptional.get());
@@ -109,11 +109,12 @@ public class SimpleMessageService implements MessageService {
         messageRepository.deleteById(id);
         spotSubscriptionService.dispatchDeletedMessage(messageOptional.get().getSpot().getId(), id);
     }
+
     @Override
-    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException2 {
+    public void deleteByIdWithoutAuthentication(Long id) throws NotFoundException {
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isEmpty()) {
-            throw new NotFoundException2(String.format("No message with id %d found!", id));
+            throw new NotFoundException(String.format("No message with id %d found!", id));
         }
         hashtagService.deleteMessageInHashtags(messageOptional.get());
         reactionRepository.deleteAllByMessage_Id(id);
@@ -168,12 +169,12 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findByOwner(Long userId) throws NotFoundException2 {
+    public List<Message> findByOwner(Long userId) throws NotFoundException {
         Optional<ApplicationUser> owner = this.userRepository.findById(userId);
         if (owner.isPresent()) {
             return this.messageRepository.findByOwner(owner.get());
         } else {
-            throw new NotFoundException2("User with ID " + userId + " not found.");
+            throw new NotFoundException("User with ID " + userId + " not found.");
         }
     }
 }

@@ -2,7 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.SpotFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 
 import java.util.List;
 
@@ -23,7 +26,7 @@ public interface SpotService {
      * @return spot as it is saved in the system
      * @throws ServiceException if the spot entity is not valid
      */
-    Spot update(Spot spot) throws NotFoundException2, ValidationException, WrongUserException;
+    Spot update(Spot spot) throws NotFoundException, ValidationException, WrongUserException;
 
 
     /**
@@ -53,13 +56,14 @@ public interface SpotService {
      * @return the spot entity
      * @throws NotFoundException if the spot was not found
      */
-    Spot getOneById(Long spotId) throws NotFoundException2;
+    Spot getOneById(Long spotId) throws NotFoundException;
 
     /**
      * Find all Spots by User ID of their owner
+     *
      * @param userId of the owner
      * @return list of spots
-     * @throws NotFoundException2 if the user id cannot be found
+     * @throws NotFoundException if the user id cannot be found
      */
-    List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2;
+    List<Spot> findSpotsByUserId(Long userId) throws NotFoundException;
 }

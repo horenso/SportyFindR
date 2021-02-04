@@ -71,13 +71,15 @@ export class SpotService {
    * @param hashtag name of a hashtag that the description must contain
    * @returns list of spots, this can never be empty because every location has at least on spot
    */
-  getByLocationId(locationId: number, hashtag?: string, categoryId?: number): Observable<MLocSpot[]> {
-    let params = new HttpParams().set('locationId', locationId.toString());
-
+  getByLocationId(locationId?: number, hashtag?: string, categoryId?: number): Observable<MLocSpot[]> {
+    let params = new HttpParams();
+    
+    if (locationId != null) {
+      params = params.set('locationId', locationId.toString());
+    }
     if (hashtag != null) {
       params = params.set('hashtag', hashtag);
     }
-
     if (categoryId != null) {
       params = params.set('categoryId', categoryId.toString());
     }

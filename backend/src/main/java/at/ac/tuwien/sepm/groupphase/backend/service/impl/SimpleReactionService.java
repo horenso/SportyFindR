@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
@@ -32,14 +31,14 @@ public class SimpleReactionService implements ReactionService {
     private final UserRepository userRepository;
 
     @Override
-    public Reaction create(Reaction reaction) throws NotFoundException2, ValidationException{
+    public Reaction create(Reaction reaction) throws NotFoundException, ValidationException {
         log.debug("Create new Reaction {}", reaction);
-        if(messageRepository.findById(reaction.getMessage().getId()).isEmpty()){
-            throw new NotFoundException2("Message does not Exist");
+        if (messageRepository.findById(reaction.getMessage().getId()).isEmpty()) {
+            throw new NotFoundException("Message does not Exist");
         }
         reaction.setPublishedAt(LocalDateTime.now());
         reaction.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
-        if(!reactionRepository.getReactionByOwner(reaction.getOwner().getId(),reaction.getMessage().getId()).isEmpty()){
+        if (!reactionRepository.getReactionByOwner(reaction.getOwner().getId(), reaction.getMessage().getId()).isEmpty()) {
             throw new ValidationException("Already reacted to Message");
         }
         Reaction newReaction = reactionRepository.save(reaction);
@@ -48,22 +47,22 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException2 {
+    public List<Reaction> getReactionsByMessageId(Long messageId) throws NotFoundException {
         log.debug("Get reactions for message with id {}", messageId);
         Optional<Message> optionalMessage = messageRepository.findById(messageId);
         if (optionalMessage.isEmpty()) {
-            throw new NotFoundException2("Message with ID " + messageId + " cannot be found!");
+            throw new NotFoundException("Message with ID " + messageId + " cannot be found!");
         } else {
             return reactionRepository.getReactionsByMessageId(messageId);
         }
     }
 
     @Override
-    public void deleteById(Long reactionId) throws NotFoundException2, WrongUserException {
+    public void deleteById(Long reactionId) throws NotFoundException, WrongUserException {
         Optional<Reaction> reactionOptional = reactionRepository.findById(reactionId);
         if (reactionOptional.isEmpty()) {
-            throw new NotFoundException2(String.format("Reaction with id %d not found.", reactionId));
-        }else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new NotFoundException(String.format("Reaction with id %d not found.", reactionId));
+        } else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
             throw new WrongUserException("You can only delete your own messages");
         }
         Reaction reaction = reactionOptional.get();
@@ -72,11 +71,11 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public Reaction change(Reaction reaction) throws NotFoundException2, WrongUserException{
+    public Reaction change(Reaction reaction) throws NotFoundException, WrongUserException {
         Optional<Reaction> reactionOptional = reactionRepository.findById(reaction.getId());
         if (reactionOptional.isEmpty()) {
-            throw new NotFoundException2(String.format("Reaction with id %d not found.", reaction.getId()));
-        }else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new NotFoundException(String.format("Reaction with id %d not found.", reaction.getId()));
+        } else if (!reactionOptional.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
             throw new WrongUserException("You can only delete your own messages");
         }
         reactionRepository.updateReaction(reaction.getId(), reaction.getType());
@@ -85,12 +84,12 @@ public class SimpleReactionService implements ReactionService {
     }
 
     @Override
-    public List<Reaction> findReactionsByOwner(Long userId) throws NotFoundException2 {
+    public List<Reaction> findReactionsByOwner(Long userId) throws NotFoundException {
         Optional<ApplicationUser> owner = this.userRepository.findById(userId);
         if (owner.isPresent()) {
             return this.reactionRepository.findByOwner(owner.get());
         } else {
-            throw new NotFoundException2("User with ID " + userId + " cannot be found.");
+            throw new NotFoundException("User with ID " + userId + " cannot be found.");
         }
     }
 }

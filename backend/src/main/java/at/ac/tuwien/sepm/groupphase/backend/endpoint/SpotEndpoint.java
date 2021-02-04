@@ -5,7 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDeletionResponseDto
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.SpotDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.SpotMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -42,7 +42,7 @@ public class SpotEndpoint {
         log.info("GET /api/v1/spots/{}", id);
         try {
             return spotMapper.spotToSpotDto(spotService.getOneById(id));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -95,7 +95,7 @@ public class SpotEndpoint {
         } catch (WrongUserException e) {
             log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

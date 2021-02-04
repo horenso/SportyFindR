@@ -5,7 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
@@ -84,15 +84,15 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot update(Spot spot) throws NotFoundException2, ValidationException, WrongUserException {
+    public Spot update(Spot spot) throws NotFoundException, ValidationException, WrongUserException {
         var optionalSpot = spotRepository.findById(spot.getId());
-        if (optionalSpot.isEmpty()){
-            throw new NotFoundException2("Spot does not Exist");
-        }else{
-            if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-                if(optionalSpot.get().getOwner()==null){
+        if (optionalSpot.isEmpty()) {
+            throw new NotFoundException("Spot does not Exist");
+        } else {
+            if (!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                if (optionalSpot.get().getOwner() == null) {
                     throw new WrongUserException("You can only edit your own spots");
-                }else if(!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+                } else if (!optionalSpot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
                     throw new WrongUserException("You can only edit your own spots");
                 }
             }
@@ -130,7 +130,7 @@ public class SimpleSpotService implements SpotService {
             for (Message message : messages) {
                 messageService.deleteByIdWithoutAuthentication(message.getId());
             }
-        }catch (NotFoundException2 e){
+        } catch (NotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
         hashtagService.deleteSpotInHashtags(spotRepository.findById(id).get());
@@ -164,21 +164,21 @@ public class SimpleSpotService implements SpotService {
     }
 
     @Override
-    public Spot getOneById(Long spotId) throws NotFoundException2{
+    public Spot getOneById(Long spotId) throws NotFoundException {
         Optional<Spot> spotOptional = this.spotRepository.getOneById(spotId);
         if (spotOptional.isEmpty()) {
-            throw new NotFoundException2("Spot with ID " + spotId + " cannot be found!");
+            throw new NotFoundException("Spot with ID " + spotId + " cannot be found!");
         }
         return spotOptional.get();
     }
 
     @Override
-    public List<Spot> findSpotsByUserId(Long userId) throws NotFoundException2 {
+    public List<Spot> findSpotsByUserId(Long userId) throws NotFoundException {
         Optional<ApplicationUser> owner = this.userRepository.findApplicationUserById(userId);
         if (owner.isPresent()) {
             return this.spotRepository.findByOwner(owner.get());
         } else {
-            throw new NotFoundException2("User with ID " + userId + " cannot be found!");
+            throw new NotFoundException("User with ID " + userId + " cannot be found!");
         }
     }
 }

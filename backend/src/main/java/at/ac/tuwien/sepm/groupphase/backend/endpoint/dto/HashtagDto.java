@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
+
 import lombok.*;
 
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor

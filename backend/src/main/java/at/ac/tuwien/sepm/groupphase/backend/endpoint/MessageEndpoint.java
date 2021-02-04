@@ -3,7 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.WrongUserException;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
@@ -49,7 +49,7 @@ public class MessageEndpoint {
 
         try {
             return messageMapper.messagePageToMessageDtoPage(messageService.findBySpotPaged(spotId, pageable));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -66,7 +66,7 @@ public class MessageEndpoint {
             newMessage = messageMapper.messageToMessageDto(
                 messageService.create(messageMapper.messageDtoToMessage(messageDto)));
             return newMessage;
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (ValidationException e) {
@@ -82,7 +82,7 @@ public class MessageEndpoint {
         log.info("GET /api/v1/messages/{}", id);
         try {
             return messageMapper.messageToMessageDto(messageService.getById(id));
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -96,7 +96,7 @@ public class MessageEndpoint {
         log.info("DELETE /api/v1/messages/{}", id);
         try {
             messageService.deleteById(id);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (WrongUserException e) {

@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import org.hibernate.service.spi.ServiceException;
 
@@ -24,7 +23,7 @@ public interface CategoryService {
      *
      * @param id of category to delete
      */
-    void deleteById(Long id) throws NotFoundException2;
+    void deleteById(Long id) throws NotFoundException;
 
     /**
      * Get all existing categories from database.

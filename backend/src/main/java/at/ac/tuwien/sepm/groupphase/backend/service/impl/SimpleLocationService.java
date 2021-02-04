@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.LocationFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
@@ -25,10 +25,10 @@ public class SimpleLocationService implements LocationService {
     private final HashtagService hashtagService;
 
     @Override
-    public Location getOneById(Long locationId) throws NotFoundException2 {
+    public Location getOneById(Long locationId) throws NotFoundException {
         Optional<Location> locationOptional = locationRepository.getOneById(locationId);
         if (locationOptional.isEmpty()) {
-            throw new NotFoundException2("Location with ID " + locationId + " cannot be found!");
+            throw new NotFoundException("Location with ID " + locationId + " cannot be found!");
         }
         return locationOptional.get();
     }
