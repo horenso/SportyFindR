@@ -370,7 +370,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(DEFAULT_USER, USER_ROLES)))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id.totalElements").value(1))
+            .andExpect(jsonPath("$.totalElements").value(1))
             .andReturn();
     }
 }
