@@ -147,15 +147,6 @@ public class SecurityTest implements TestData {
         );
     }
 
-    @Test
-    public void givenNoOneLoggedIn_whenFindAll_then401() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(get(MESSAGE_BASE_URI))
-            .andDo(print())
-            .andReturn();
-        MockHttpServletResponse response = mvcResult.getResponse();
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
-    }
 
     @Test
     public void givenAdminLoggedIn_whenPost_then201() throws Exception {
