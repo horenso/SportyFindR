@@ -23,6 +23,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule}
 from '@angular-material-components/datetime-picker';
+import {MatChipsModule} from '@angular/material/chips';
 
 const MaterialComponents = [
   MatButtonModule,
@@ -48,6 +49,7 @@ const MaterialComponents = [
   MatSlideToggleModule,
   MatPaginatorModule,
   MatAutocompleteModule,
+  MatChipsModule,
 
   // Date time picker:
   NgxMatDatetimePickerModule,

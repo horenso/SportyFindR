@@ -1,22 +1,26 @@
-<div *ngIf="error" class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Authentication problems!</strong> {{ errorMessage }}
-  <button (click)="vanishError()" aria-label="Close" class="close" data-dismiss="alert" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+<img
+  src="assets/login/sunset_skaters.jpg"
+  class="backgroundImage"
+  alt="A concert in germany"
+/>
 
-<h1>Register</h1>
-
+<div class="register-form-flex">
+  <mat-card id="register">
+    <mat-card-title class="title">
+      Register
+    </mat-card-title>
+    <mat-card-content>
 <form (ngSubmit)="register()" [formGroup]="registerForm" class="form">
   <!-- Username -->
   <div>
     <mat-form-field appearance="outline">
       <mat-label>Username</mat-label>
-      <label for="inputUsername"></label>
-      <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
-             name="username" type="text">
-      <div *ngIf="submitted && registerForm.controls.username.errors" class="error">
-        <mat-error *ngIf="registerForm.controls.username.errors.required">Your username is required!</mat-error>
+      <label for="username"></label>
+      <input matInput formControlName='username' id="username">
+      <div *ngIf="registerForm.controls.username.errors && registerForm.controls.username.touched" class="error">
+        <mat-error *ngIf="registerForm.controls.username.errors.minlength">Username must be at least 3 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.username.errors.maxlength">Username must be at most 30 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.username.errors.required">Username is required!</mat-error>
       </div>
     </mat-form-field>
   </div>
@@ -25,11 +29,13 @@
   <div>
     <mat-form-field appearance="outline">
       <mat-label>E-Mail</mat-label>
-      <label for="inputEmail"></label>
-      <input matInput aria-describedby="emailHelp" formControlName="email" id="inputEmail"
-             name="email" type="text">
-      <div *ngIf="submitted && registerForm.controls.email.errors" class="error">
-        <mat-error *ngIf="registerForm.controls.email.errors.required">Your e-mail is required!</mat-error>
+      <label for="email"></label>
+      <input matInput formControlName='email' id="email">
+      <div *ngIf="registerForm.controls.email.errors && registerForm.controls.email.touched" class="error">
+        <mat-error *ngIf="registerForm.controls.email.errors.minlength">E-mail must be at least 6 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.email.errors.maxlength">E-mail must be at most 30 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.email.errors.required">E-mail is required!</mat-error>
+        <mat-error *ngIf="registerForm.controls.email.errors.email">E-mail format incorrect!</mat-error>
       </div>
     </mat-form-field>
   </div>
@@ -41,9 +47,10 @@
       <mat-label>Password</mat-label>
       <label for="password"></label>
       <input matInput placeholder="New password" formControlName="password" required type="password" id="password">
-      <mat-error *ngIf="myForm.hasError('required', 'password')">
-        Please enter your new password
-      </mat-error>
+      <div *ngIf="myForm.controls.password.errors && myForm.controls.password.touched" class="error">
+        <mat-error *ngIf="myForm.controls.password.errors.minlength">Password must be at least 7 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.email.errors.required">Password is required!</mat-error>
+      </div>
     </mat-form-field>
     </div>
 
@@ -52,15 +59,19 @@
       <mat-label>Confirm password</mat-label>
       <label for="confirmPassword"></label>
       <input matInput formControlName="confirmPassword" [errorStateMatcher]="matcher" type="password" id="confirmPassword">
-      <mat-error *ngIf="myForm.hasError('notSame')">
-        Passwords do not match
-      </mat-error>
+      <div *ngIf="myForm.hasError('notSame') && myForm.controls.confirmPassword.touched" class="error">
+        <mat-error *ngIf="myForm.controls.confirmPassword.touched">Passwords don't match!</mat-error>
+      </div>
     </mat-form-field>
     </div>
   </form>
 
 
-  <button mat-raised-button color="accent" class="float-right loginButton">Register</button>
+  <button mat-raised-button color="accent" class="float-right loginButton" [disabled]="registerForm.invalid">Register</button>
 
-</form>
+      </form>
+    </mat-card-content>
+
+  </mat-card>
+</div>
 
