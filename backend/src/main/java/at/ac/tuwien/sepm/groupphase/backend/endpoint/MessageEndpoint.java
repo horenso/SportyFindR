@@ -97,10 +97,10 @@ public class MessageEndpoint {
         log.info("DELETE /api/v1/messages/{}", id);
         try {
             messageService.deleteById(id);
-        } catch (NotFoundException2 e) {
+        } catch (NotFoundException2 | ServiceException e) {
             log.error(HttpStatus.NOT_FOUND + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (WrongUserException e) {
+        } catch (WrongUserException e) {
             log.error(HttpStatus.FORBIDDEN + " " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }

@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException2;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
-import org.aspectj.weaver.ast.Not;
 
 import java.util.List;
 
@@ -20,8 +18,10 @@ public interface RoleService {
 
     /**
      * find role by (unique) role name
+     *
      * @param name Role Name to find
      * @return found role
+     * @throws NotFoundException2 if the role can not be found
      */
     Role findRoleByName(String name) throws NotFoundException2;
 
@@ -48,31 +48,34 @@ public interface RoleService {
     void deleteById(Long id) throws NotFoundException2, ValidationException;
 
     /**
-     * deletes a Role by name and removes the role from all users having it
-     * @param name of the role to delete
-     * @throws NotFoundException2 if role does not exist
-     * @throws ValidationException if updating user does not work
-     */
-    void deleteByName(String name) throws NotFoundException2, ValidationException;
-
-    /**
      * find all roles
      * @return List of Roles
      */
     List<Role> findAll();
 
     /**
-     * finds all roles associated with the provided user
-     * @param applicationUser user to search for
-     * @return list of roles associated with the user
-     */
-    List<Role> findRolesByUser(ApplicationUser applicationUser);
-
-    /**
      * Finds a Role by id
+     *
      * @param id role to search for
      * @return Role
      * @throws NotFoundException2 if role does not exist
      */
     Role getById(Long id) throws NotFoundException2;
+
+//    /**
+//     * deletes a Role by name and removes the role from all users having it
+//     * @param name of the role to delete
+//     * @throws NotFoundException2 if role does not exist
+//     * @throws ValidationException if updating user does not work
+//     */
+    // not needed
+    // void deleteByName(String name) throws NotFoundException2, ValidationException;
+
+//    /**
+//     * finds all roles associated with the provided user
+//     * @param applicationUser user to search for
+//     * @return list of roles associated with the user
+//     */
+    // not needed
+    // List<Role> findRolesByUser(ApplicationUser applicationUser);
 }

@@ -99,6 +99,7 @@ public class SpotEndpointTest implements TestData {
         SpotDto spotDto = SpotDto.builder()
             .owner(simpleUserMapper.userToSimpleUserDto(user))
             .name(NAME)
+            .description(DESCRIPTION)
             .location(locationDto)
             .build();
         spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));
@@ -136,6 +137,7 @@ public class SpotEndpointTest implements TestData {
         SpotDto spotDto = SpotDto.builder()
             .owner(simpleUserMapper.userToSimpleUserDto(user))
             .name(NAME)
+            .description(DESCRIPTION)
             .location(locationDto)
             .build();
         spotDto.setCategory(categoryMapper.categoryToCategoryDto(categoryRepository.save(categoryMapper.categoryDtoToCategory(categoryDto))));

@@ -28,7 +28,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      * Find locations that match the filter criteria
      *
      * @param categoryId of spots contained in location
-     * @return List of locations that match the filter criteria
+     * @return List of locations that contain a spot with the given category
      */
     @Query(value = "SELECT DISTINCT l FROM Location l LEFT JOIN Spot s ON s.location.id = l.id WHERE s.category.id = :cat")
     List<Location> filter(@Param("cat") Long categoryId);

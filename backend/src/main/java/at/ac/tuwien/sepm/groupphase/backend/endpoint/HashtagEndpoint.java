@@ -2,14 +2,15 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.HashtagDto;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.mapper.HashtagMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.HashtagService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,9 +28,14 @@ public class HashtagEndpoint {
     @GetMapping(value = "/{name}")
     @CrossOrigin
     @ApiOperation(value = "Get a hashtag by name", authorizations = {@Authorization(value = "apiKey")})
-    public HashtagDto getById(@PathVariable("name") String name) {
+    public HashtagDto getByName(@PathVariable("name") String name) {
         log.info("GET /api/v1/hashtags/{}", name);
-        return hashtagMapper.hashtagToHashtagDto(hashtagService.getByName(name));
+        try {
+            return hashtagMapper.hashtagToHashtagDto(hashtagService.getByName(name));
+        } catch (ValidationException e) {
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @ResponseStatus(HttpStatus.OK)

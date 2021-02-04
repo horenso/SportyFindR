@@ -17,6 +17,12 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
 
     Optional<Spot> getOneById(Long spotId);
 
+    /**
+     * gives a location with a certain Id if it contains a spot
+     *
+     * @param locationId is the id of the location that will be returned (if it has at least one spot)
+     * @return a location with id locationId if it contains a spot
+     */
     @Transactional
     @Query(value = "SELECT DISTINCT l FROM Location l JOIN Spot s ON l.id = s.location.id " +
         "WHERE l.id = :locationId")
