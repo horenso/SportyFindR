@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -144,8 +143,6 @@ public class SimpleSpotService implements SpotService {
 
     @Override
     public List<Spot> findSpots(SpotFilter spotFilter) throws ValidationException {
-        List<Spot> spotList;
-
         if (spotFilter.getLocationId() != null) {
             if (locationRepository.getOneById(spotFilter.getLocationId()).isEmpty()) {
                 throw new ValidationException("Location with ID " + spotFilter.getLocationId() + " cannot be found!");
@@ -158,23 +155,8 @@ public class SimpleSpotService implements SpotService {
             }
         }
 
-        if (spotFilter.getLocationId() != null) {
-            spotList = spotRepository.findAll();
-        } else {
-
-        }
-
-        if (spotFilter.getHashtagName() != null && spotFilter.getHashtagName() != "") {
-            spotList = spotRepository.findSpotsByLocationIdAndHashtag(spotFilter.getLocationId(),
-                spotFilter.getHashtagName());
-        } else {
-            spotList = spotRepository.findSpotsByLocationId(spotFilter.getLocationId());
-        }
-        if (spotFilter.getCategoryId() != null) {
-            spotList = spotList.stream().filter(spot -> spot.getCategory().getId() == spotFilter.getCategoryId())
-                .collect(Collectors.toList());
-        }
-        return spotList;
+        return spotRepository.filter(spotFilter.getLocationId(), spotFilter.getCategoryId(),
+            spotFilter.getHashtagName());
     }
 
     @Override
