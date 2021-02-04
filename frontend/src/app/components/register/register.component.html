@@ -12,11 +12,13 @@
   <div>
     <mat-form-field appearance="outline">
       <mat-label>Username</mat-label>
-      <label for="inputUsername"></label>
-      <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
+      <label for="username"></label>
+      <input matInput aria-describedby="username" formControlName="username" id="username"
              name="username" type="text">
       <div *ngIf="submitted && registerForm.controls.username.errors" class="error">
-        <mat-error *ngIf="registerForm.controls.username.errors.required">Your username is required!</mat-error>
+        <mat-error *ngIf="registerForm.controls.username.errors.minlength">Username must be at least 3 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.username.errors.maxlength">Username must be at most 30 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.username.errors.required">Username is required!</mat-error>
       </div>
     </mat-form-field>
   </div>
@@ -25,11 +27,14 @@
   <div>
     <mat-form-field appearance="outline">
       <mat-label>E-Mail</mat-label>
-      <label for="inputEmail"></label>
-      <input matInput aria-describedby="emailHelp" formControlName="email" id="inputEmail"
+      <label for="email"></label>
+      <input matInput aria-describedby="email" formControlName="email" id="email"
              name="email" type="text">
       <div *ngIf="submitted && registerForm.controls.email.errors" class="error">
-        <mat-error *ngIf="registerForm.controls.email.errors.required">Your e-mail is required!</mat-error>
+        <mat-error *ngIf="registerForm.hasError('minlength', 'email')">E-mail must be at least 6 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.hasError('maxlength', 'email')">E-mail must be at most 30 chars long!</mat-error>
+        <mat-error *ngIf="registerForm.hasError('required', 'email')">E-mail is required!</mat-error>
+        <mat-error *ngIf="registerForm.hasError('email', 'email')">E-mail format incorrect!</mat-error>
       </div>
     </mat-form-field>
   </div>
@@ -42,7 +47,10 @@
       <label for="password"></label>
       <input matInput placeholder="New password" formControlName="password" required type="password" id="password">
       <mat-error *ngIf="myForm.hasError('required', 'password')">
-        Please enter your new password
+        Please set your password
+      </mat-error>
+      <mat-error *ngIf="myForm.hasError('minlength', 'password')">
+        Password must be at least 7 chars long!
       </mat-error>
     </mat-form-field>
     </div>
@@ -60,7 +68,7 @@
   </form>
 
 
-  <button mat-raised-button color="accent" class="float-right loginButton">Register</button>
+  <button mat-raised-button color="accent" class="float-right loginButton" [disabled]="registerForm.invalid">Register</button>
 
 </form>
 
