@@ -47,8 +47,12 @@ export class AuthService {
     }
   }
 
-  public currentUserEmail(): String {
-    return this.currentUserSubject.value['sub'];
+  public currentUserEmail(): string {
+    if (this.getToken() != null) {
+      return this.currentUserSubject.value['sub'];
+    } else {
+      return null;
+    }
   }
 
   public isUserAdmin(): Boolean {

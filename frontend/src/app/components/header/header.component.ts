@@ -48,12 +48,14 @@ export class HeaderComponent implements OnInit {
   }
 
   retrieveUsername(): void {
-    if (this.authService.isLoggedIn()) {
-      this.username = this.localStorage.retrieve('username');
-      this.userService.getUserByEmail(this.username).subscribe(result => {
-        this.loggedUser = result;
-        console.log(this.loggedUser);
-      });
-    }
+    this.authService.currentUser.subscribe(result => {
+      if (this.authService.currentUserEmail() != null) {
+        this.userService.getUserByEmail(this.authService.currentUserEmail()).subscribe(
+          result => {
+            this.loggedUser = result;
+          }
+        );
+      }
+    });
   }
 }
