@@ -2,6 +2,35 @@
   display: block;
 }
 
+.backgroundImage {
+  background-repeat: no-repeat;
+  width: 100%;
+  position: fixed;
+}
+
+.login-form-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: 50px;
+}
+
+#login {
+  padding-top: 25px;
+  height: 250px;
+  width: 340px;
+  text-align: center
+}
+
+.form-element {
+  margin-bottom: 10px;
+}
+
+.title {
+  margin-bottom: 30px;
+}
+
 .loginButton {
   text-decoration: none;
   border: none;

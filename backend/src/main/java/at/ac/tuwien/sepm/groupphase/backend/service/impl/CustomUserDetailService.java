@@ -52,6 +52,7 @@ public class CustomUserDetailService implements UserService {
         }
 
         ApplicationUser newUser = new ApplicationUser(null, user.getName(), user.getEmail(), this.passwordEncoder.encode(user.getPassword()), user.getEnabled(), null);
+        log.info(newUser.toString());
         newUser = userRepository.save(newUser);
         newUser.setRoles(user.getRoles());
         return this.userRepository.save(newUser);
@@ -187,7 +188,7 @@ public class CustomUserDetailService implements UserService {
         if (!user.getEmail().matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")) {
             return new ValidationException("Email address is not valid.");
         }
-        if (user.getName().length() < 3 || user.getName().length() > 30) {
+        if (user.getName().length() < 3 || user.getName().length() > 40) {
             return new ValidationException("User name must be at least 3 and at most 30 characters.");
         }
         if (user.getPassword() != null) {

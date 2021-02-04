@@ -1,12 +1,15 @@
-/*package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import com.github.javafaker.Faker;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,9 +18,9 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Slf4j
-@Profile("generateDefaultLogin")
+@Profile("datagen")
 @Component
-public class DefaultLoginGenerator {
+public class DataGen {
 
     // Parameters
     private static final String ADMIN_ROLE_NAME = "ADMIN";
@@ -32,19 +35,28 @@ public class DefaultLoginGenerator {
     private final Faker faker;
     private final PasswordEncoder passwordEncoder;
 
-
     private static final HashMap<String, String[]> CREW = createCrew();
     private static final HashMap<String, String> CATEGORIES = createMap();
 
-
-
     private final UserService userService;
     private final RoleService roleService;
+    private final CategoryService categoryService;
 
-    public DefaultLoginGenerator(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public DataGen(UserService userService,
+                   RoleService roleService,
+                   CategoryService categoryService,
+                   PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.roleService = roleService;
+        this.categoryService = categoryService;
+        faker = new Faker(new Locale("es"));
+    }
+
+    @PostConstruct
+    private void generateData() throws NotFoundException, ValidationException {
+        generateAdminUserLogin();
+        generateCategories();
     }
 
     private static HashMap<String, String []> createCrew() {
@@ -54,7 +66,7 @@ public class DefaultLoginGenerator {
         crew.put("Victoria Leskoschek", new String[] {"viciLeskoschek", "vici@sportyfindr.com"});
         crew.put("Simon Linder", new String[] {"simonLinder", "simon@sportyfindr.com"});
         crew.put("Fisnik Miftari", new String[] {"fisnikMiftari", "fisnik@sportyfindr.com"});
-        crew.put("Florian Mold", new String[] {"florianMold", "fisnik@sportyfindr.com"});
+        crew.put("Florian Mold", new String[] {"florianMold", "florian@sportyfindr.com"});
         return crew;
     }
 
@@ -87,7 +99,7 @@ public class DefaultLoginGenerator {
     // 1. ROLES
     // 1.1 ADMIN
     @PostConstruct
-    private void generateAdminLogin() throws ValidationException, NotFoundException {
+    private void generateAdminUserLogin() throws ValidationException, NotFoundException {
         try {
             Role adminRole = this.generateRole(ADMIN_ROLE_NAME);
             Role userRole = this.generateRole(USER_ROLE_NAME);
@@ -147,7 +159,7 @@ public class DefaultLoginGenerator {
             } else {
                 log.info("Admin User was already created, updating admin user.");
                 try {
-                    ApplicationUser user = userService.getApplicationUserByEmail(ADMIN_EMAIL);
+                    ApplicationUser user = userService.getApplicationUserByEmail(value[1]);
                     user.setName(key);
                     user.setEmail(value[1]);
                     user.setPassword(value[0]);
@@ -165,29 +177,47 @@ public class DefaultLoginGenerator {
     private void generateUsers(HashSet<Role> roles) throws ValidationException, NotFoundException {
         Set<String> emails = new HashSet<>();
 
-        String currEmail = faker.internet().emailAddress();
-        while (emails.contains(currEmail)) {
-            currEmail = faker.internet().emailAddress();
-        }
-        emails.add(currEmail);
-
         for (int i = 1; i <= NUMBER_OF_USERS; i++) {
-                try {
-                    ApplicationUser user = ApplicationUser.builder()
-                        .name(faker.name().firstName() + " " + faker.name().lastName())
-                        .email(currEmail)
-                        .password(passwordEncoder.encode("password"))
-                        .enabled(true)
-                        .roles(roles)
-                        .build();
-                    userService.createApplicationUser(user);
-                } catch (ValidationException e) {
-                    throw new ValidationException("Couldn't create Admin User", e);
-                }
+            String currEmail = faker.internet().emailAddress();
+            while (emails.contains(currEmail)) {
+                currEmail = faker.internet().emailAddress();
+            }
+            emails.add(currEmail);
+            try {
+                ApplicationUser user = ApplicationUser.builder()
+                    .name(faker.name().firstName() + " " + faker.name().lastName())
+                    .email(currEmail)
+                    .password(passwordEncoder.encode("password"))
+                    .enabled(true)
+                    .roles(roles)
+                    .build();
+                userService.createApplicationUser(user);
+            } catch (ValidationException e) {
+                throw new ValidationException("Couldn't create User", e);
+            }
         }
     }
 
-    //
-}
+    // 3. CATEGORIES
+    private void generateCategories() throws ValidationException {
+        try {
+            for (Map.Entry<String, String> mapElement : CATEGORIES.entrySet()) {
+                String key = mapElement.getKey();
+                String value = mapElement.getValue();
+                Category cat = Category.builder()
+                    .name(key)
+                    .icon(value)
+                    .build();
+                categoryService.create(cat);
+            }
+        } catch (ValidationException e) {
+            throw new ValidationException("Couldn't create Category", e);
+        }
+    }
 
- */
+    // 4. LOCATIONS
+
+    // 5. SPOTS
+
+    // 6. MESSAGES
+}
