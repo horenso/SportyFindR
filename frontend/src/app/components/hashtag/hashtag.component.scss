@@ -1,79 +1,26 @@
-.mat-flat-button {
-  width: 368px;
+.spotButton {
+  display: inline-block;
+  width: stretch;
   height: 55px;
-  margin-bottom: 15px;
-  font-size: 18px;
+  margin: 0.5em 1em 0.5em 1em;
+  font-size: large;
   text-align: left;
   border: none;
   outline: none;
 }
 
-.spot-icon {
-  margin-right: 20px;
+#tab-group{
+  height: 100%;
 }
 
-.mat-fab {
-  position: absolute;
-  bottom: 32px;
-  right: 16px;
-  border: none;
-  outline:none;
+#tab-group mat-tab-body {
+  flex: 1 1 auto;
 }
 
-.title {
-  font-weight: bold;
-  text-align: center;
+.message {
+  margin: 0.5em;
 }
 
-.heading {
-  margin-top: 5px;
-  vertical-align: middle;
-}
-
-.icon {
-  vertical-align: middle;
-  border: none;
-  outline: none;
-  display: inline;
-}
-
-.backButton {
-  padding:0
-}
-
-.spacer {
-  width: 40px;
-  height: 53px;
-}
-
-
-.row {
-  margin-left: 0;
-}
-
-.spots-btn{
-  width: 174px;
-  align-content: center;
-  border: none;
-  outline: none;
-  text-decoration: none;
-}
-
-.messages-btn{
-  width: 174px;
-  align-content: center;
-  border: none;
-  outline: none;
-  text-decoration: none;
-}
-
-// ############################################################################
-
-#list {
-  width: 100%;
-}
-
-.mat-tab-labels {
-  display: flex;
-  justify-content: space-around;
+.sidebarBottomRow {
+  border-top: 2px solid lightgray;
 }

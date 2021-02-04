@@ -161,10 +161,10 @@ public class SimpleMessageService implements MessageService {
             messageFilter.setTime(LocalDateTime.MIN);
         }
 
-        if (messageFilter.getHashtagName() != null && !messageFilter.getHashtagName().equals("")) {
-            return messageRepository.filterHash(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), messageFilter.getHashtagName(), pageable);
+        if (messageFilter.getHashtagName() == null || messageFilter.getHashtagName().isEmpty()) {
+            return messageRepository.filter(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), pageable);
         }
-        return messageRepository.filter(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), pageable);
+        return messageRepository.filterHash(messageFilter.getCategoryId(), messageFilter.getUser(), messageFilter.getTime(), messageFilter.getHashtagName(), pageable);
     }
 
 

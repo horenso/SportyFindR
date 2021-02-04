@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -111,13 +112,22 @@ public class MessageEndpoint {
                                    @RequestParam(required = false) Long categoryId,
                                    @RequestParam(required = false) String hashtag,
                                    @RequestParam(required = false, defaultValue = "0") String user,
-                                   @RequestParam(required = false)
+                                   @RequestParam(required = false, defaultValue = "1000-01-01")
                                    @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
         Pageable pageable = PageRequest.of(page, size);
 
+        LocalDateTime localDate = null;
+        if (time != null) {
+            localDate = time.atStartOfDay();
+        }
+
         log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user=&time={}", categoryId, hashtag, user, time);
-        MessageFilter messageFilter = new MessageFilter(categoryId, hashtag, user, time.atStartOfDay());
+        MessageFilter messageFilter = MessageFilter.builder()
+            .categoryId(categoryId)
+            .hashtagName(hashtag)
+            .time(localDate)
+            .user(user).build();
 
         return messageMapper.messagePageToMessageDtoPage(messageService.filter(messageFilter, pageable));
     }

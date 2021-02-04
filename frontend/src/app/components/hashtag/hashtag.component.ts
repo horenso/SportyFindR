@@ -19,7 +19,6 @@ import { result } from 'lodash';
 })
 export class HashtagComponent implements OnInit {
 
-  hashtag: Hashtag;
   hashtagName: string;
   spotsFlag: boolean = false;
   messagesFlag: boolean = false;
@@ -53,7 +52,17 @@ export class HashtagComponent implements OnInit {
   private getMessages(): void {
     this.messageService.filterMessage({hashtag: this.hashtagName, user: null, page: 0, size: 10}).subscribe(result => {
       this.messageList = result.content;
+      console.log('hashtag got: ');
+      console.log(this.messageList);
     });
+  }
+
+  public getSpotTab(): string {
+    return `Spots (${this.spotList.length})`;
+  }
+
+  public getMessageTab(): string {
+    return `Messages (${this.messageList.length})`;
   }
 
   goToSpot(spot: Spot) {
