@@ -16,14 +16,15 @@
   <a mat-raised-button color="accent" class="admin-button" *ngIf="authService.isLoggedIn()&&this.router.url=='/user-admin'"
      routerLink="/" routerLinkActive="active">Back to Map</a>
 
-  <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
-     (click)="authService.logoutUser()" routerLink="/">Logout</a>
-
   <a mat-raised-button color="accent" [matMenuTriggerFor]="menu" *ngIf="authService.isLoggedIn()"
     class="nav">
     <mat-icon>perm_identity</mat-icon>
     {{this.loggedUser?.name}}
   </a>
+
+  <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
+     (click)="authService.logoutUser()" routerLink="/">Logout</a>
+
   <mat-menu #menu="matMenu">
     <button mat-menu-item routerLink="/account">
       <mat-icon>info</mat-icon>

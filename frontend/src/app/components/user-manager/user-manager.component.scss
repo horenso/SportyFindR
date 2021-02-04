@@ -2,12 +2,24 @@ table {
   width: 100%;
 }
 
+.user-manager-box {
+  padding: 30px;
+}
+
 .form-field-full-width {
   width: 100%;
 }
 
-.user-manager-margin {
-  margin: 15px;
+.cancel-btn {
+  margin-right: 20px;
+}
+
+#create-user {
+  margin-bottom: 40px;
+}
+
+#userList {
+  margin-bottom: 40px;
 }
 
 #role-form {

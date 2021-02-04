@@ -13,10 +13,10 @@
     <div id="bottomRow">
       <div id="ratingButtons" *ngIf="!filteredMessage">
         <button mat-icon-button class="iconButton" (click)='onUpVote()'
-          [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
+          [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true id="upVote">thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
         <button mat-icon-button class="iconButton" (click)='onDownVote()'
-          [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
+          [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true id="downVote">thumb_down</mat-icon></button>
         {{getDownVoteCountString()}}
       </div>
       <div id="deleteButton" *ngIf="!filteredMessage">
