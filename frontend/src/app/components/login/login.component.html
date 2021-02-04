@@ -9,7 +9,7 @@
       <input matInput aria-describedby="usernameHelp" formControlName="username" id="inputUsername"
               name="username" type="text">
       <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
-        <mat-error *ngIf="loginForm.controls.username.errors.required">Your username is required!</mat-error>
+        <mat-error *ngIf="loginForm.controls.username.errors.required">Your e-mail is required!</mat-error>
       </div>
     </mat-form-field>
   </div>
