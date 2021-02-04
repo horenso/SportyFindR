@@ -140,4 +140,12 @@ export class MessageComponent implements OnInit, OnDestroy {
       this.subs.add(this.reactionService.change(this.reaction).subscribe(result => this.reaction.id = result.id));
     }
   }
+
+  showControlItems(): boolean {
+    if (this.authService.isLoggedIn()) {
+      if (this.authService.currentUserEmail() == this.message.owner.email || this.authService.isUserAdmin()) {
+        return true;
+      }
+    } else { return false; }
+  }
 }

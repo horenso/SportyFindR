@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping(value = "/api/v1/messages")
 @Slf4j
 public class MessageEndpoint {

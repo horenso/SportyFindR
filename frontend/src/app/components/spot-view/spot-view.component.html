@@ -6,7 +6,7 @@
     </button>
     <div class="sidebarTitle">{{spot.name}}</div>
     <button mat-icon-button color="primary" class="icon" [matMenuTriggerFor]="menu"
-            *ngIf="authService.isUserAdmin()||(spot.owner!=null&&authService.currentUserEmail()==spot.owner.email)">
+            *ngIf="showControlItems()">
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>
@@ -59,7 +59,8 @@
     </div>
     <div class="inputRow">
       <mat-form-field appearance="outline">
-        <mat-label>New message</mat-label>
+        <mat-label *ngIf="authService.isLoggedIn()">New message</mat-label>
+        <mat-label *ngIf="!authService.isLoggedIn()">Log in to write messages</mat-label>
         <textarea matInput #messageInput
                   id="messageInput"
                   (keydown)="keydown($event)"
@@ -70,10 +71,10 @@
                   autocomplete="off"></textarea>
       </mat-form-field>
       <button mat-icon-button color="primary"
-              (click)="enableExpirationDate()" [disabled]="includeExpirationDate">
+              (click)="enableExpirationDate()" [disabled]="includeExpirationDate || !authService.isLoggedIn()">
         <mat-icon>alarm</mat-icon>
       </button>
-      <button mat-icon-button color="primary" (click)="submitDialog()">
+      <button mat-icon-button color="primary" (click)="submitDialog()" [disabled]="!authService.isLoggedIn()">
         <mat-icon>send</mat-icon>
       </button>
     </div>

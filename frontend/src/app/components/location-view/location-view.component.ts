@@ -10,6 +10,7 @@ import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
 import { FilterService } from 'src/app/services/filter.service';
 import { FilterLocation } from 'src/app/dtos/filter-location';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-location-view',
@@ -34,7 +35,8 @@ export class LocationViewComponent implements OnInit, OnDestroy {
     private filterService: FilterService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    private authService: AuthService) {
   }
 
   ngOnInit(): void {

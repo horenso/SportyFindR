@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -136,16 +137,20 @@ public class SimpleMessageService implements MessageService {
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_UP));
         message.setDownVotes(
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_DOWN));
-        List<Reaction> reaction = reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(), message.getId());
-        if (reaction == null || reaction.size() == 0) {
-            message.setOwnerReaction(null);
-            message.setOwnerReactionId(null);
-        } else if (reaction.get(0).getType().equals(Reaction.ReactionType.THUMBS_DOWN)) {
-            message.setOwnerReaction(Reaction.ReactionType.THUMBS_DOWN);
-            message.setOwnerReactionId(reaction.get(0).getId());
-        } else {
-            message.setOwnerReaction(Reaction.ReactionType.THUMBS_UP);
-            message.setOwnerReactionId(reaction.get(0).getId());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth!=null) {
+            List<Reaction> reaction = reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(), message.getId());
+            if (reaction == null || reaction.size() == 0) {
+                message.setOwnerReaction(null);
+                message.setOwnerReactionId(null);
+            } else if (reaction.get(0).getType().equals(Reaction.ReactionType.THUMBS_DOWN)) {
+                message.setOwnerReaction(Reaction.ReactionType.THUMBS_DOWN);
+                message.setOwnerReactionId(reaction.get(0).getId());
+            } else {
+                message.setOwnerReaction(Reaction.ReactionType.THUMBS_UP);
+                message.setOwnerReactionId(reaction.get(0).getId());
+            }
         }
     }
 

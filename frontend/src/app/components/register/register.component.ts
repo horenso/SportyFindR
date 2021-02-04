@@ -40,11 +40,11 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
-      email: ['', [Validators.required]],
+      username: [, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      email: [, [Validators.required, Validators.minLength(6), Validators.maxLength(30), Validators.email]],
       passwords: this.myForm = this.formBuilder.group({
-        password: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', [Validators.required, Validators.minLength(8)]]
+        password: [, [Validators.required, Validators.minLength(7)]],
+        confirmPassword: [, [Validators.required, Validators.minLength(7)]]
       },  {validator: this.checkPasswords
       })
     });
@@ -66,19 +66,13 @@ export class RegisterComponent implements OnInit {
   register() {
     this.user = new User(null, this.registerForm.controls.username.value, this.registerForm.controls.email.value, this.myForm.controls.password.value, true, [2] );
     this.userService.createUser(this.user).subscribe(() => {
-        this.notificationService.success('Successfully registered user: ' + this.user.name);
+        this.notificationService.success('Successfully registered, you can log in now.');
         this.router.navigate(['/login']);
       },
       error => {
         console.log('Could not register user due to:');
         console.log(error);
-        this.error = true;
-        if (typeof error.error === 'object') {
-          this.errorMessage = error.error.error;
-        } else {
-          this.errorMessage = error.error;
-        }
-        this.notificationService.error(this.errorMessage);
+        this.notificationService.error('Could not register user.');
       });
   }
 }

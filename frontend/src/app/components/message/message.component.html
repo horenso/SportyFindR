@@ -11,16 +11,16 @@
       <span id="expirationDate">here until {{message.expirationDate | messageDate}}</span>
     </div>
     <div id="bottomRow">
-      <div id="ratingButtons" *ngIf="!filteredMessage">
-        <button mat-icon-button class="iconButton" (click)='onUpVote()'
-          [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true id="upVote">thumb_up</mat-icon></button>
+      <div id="ratingButtons" *ngIf="!filteredMessage && authService.isLoggedIn()">
+        <button mat-icon-button class="iconButton" (click)='onUpVote()' *ngIf="authService.isLoggedIn()"
+          [ngClass]="getUpVoteButtonClass()"><mat-icon inline=true>thumb_up</mat-icon></button>
         {{getUpvoteCountString()}}
-        <button mat-icon-button class="iconButton" (click)='onDownVote()'
-          [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true id="downVote">thumb_down</mat-icon></button>
+        <button mat-icon-button class="iconButton" (click)='onDownVote()' *ngIf="authService.isLoggedIn()"
+          [ngClass]="getDownVoteButtonClass()"><mat-icon inline=true>thumb_down</mat-icon></button>
         {{getDownVoteCountString()}}
       </div>
       <div id="deleteButton" *ngIf="!filteredMessage">
-      <button mat-icon-button class="iconButton" (click)='onDelete()' *ngIf="authService.currentUserEmail()==message.owner.email||authService.isUserAdmin()">
+      <button mat-icon-button class="iconButton" (click)='onDelete()' *ngIf="showControlItems()">
         <mat-icon>delete</mat-icon>
       </button>
       </div>

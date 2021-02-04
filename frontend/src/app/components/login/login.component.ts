@@ -67,20 +67,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     console.log('Try to authenticate user: ' + authRequest.email);
     this.subscription = this.authService.loginUser(authRequest).subscribe(
       () => {
-        this.notificationService.success('Successfully logged in user: ' + authRequest.email);
+        this.notificationService.success('You successfully logged in.');
         this.router.navigate(['']);
         this.localStorage.store('username', authRequest.email);
       },
       error => {
         console.log('Could not log in due to:');
         console.log(error);
-        this.error = true;
-        if (typeof error.error === 'object') {
-          this.errorMessage = error.error.error;
-        } else {
-          this.errorMessage = error.error;
-        }
-        this.notificationService.error(this.errorMessage);
+        this.notificationService.error('Could not log in user.');
       }
     );
   }

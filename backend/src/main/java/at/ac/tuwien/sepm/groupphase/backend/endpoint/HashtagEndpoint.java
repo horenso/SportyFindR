@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/api/v1/hashtags")
+@CrossOrigin
 @RequiredArgsConstructor
 public class HashtagEndpoint {
 

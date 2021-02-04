@@ -17,6 +17,6 @@
   <!-- {{filterActive}} {{getButtonColor()}} -->
 </div>
 
-<button id="addButton" mat-fab color="accent" (click)="onCreateSpot()">
+<button id="addButton" mat-fab color="accent" (click)="onCreateSpot()" [disabled]="!authService.isLoggedIn()">
   <mat-icon>add</mat-icon>
 </button>
