@@ -1,4 +1,4 @@
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
+import {Injectable, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {AuthRequest} from '../dtos/auth-request';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
@@ -7,6 +7,9 @@ import jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
 import {LocalStorageService} from 'ngx-webstorage';
 import {User} from '../dtos/user';
+import { Router } from '@angular/router';
+import { MapService } from './map.service';
+import { SidebarService } from './sidebar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +23,8 @@ export class AuthService {
   constructor(
     private httpClient: HttpClient,
     private globals: Globals,
-    private localStorage: LocalStorageService) {
+    private localStorage: LocalStorageService,
+    private sidebarService: SidebarService) {
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.retrieve('currentUser')));
     this.setUser();
     this.currentUser = this.currentUserSubject.asObservable();
@@ -57,7 +61,6 @@ export class AuthService {
 
   public isUserAdmin(): Boolean {
     return !!this.currentUserSubject.value['rol'].some(x => x === 'ROLE_ADMIN');
-
   }
 
   /**
@@ -71,6 +74,7 @@ export class AuthService {
     console.log('Logout');
     this.localStorage.clear('username');
     localStorage.removeItem('authToken');
+    this.sidebarService.changeVisibilityAndFocus({isVisible: false});
   }
 
   getToken() {
