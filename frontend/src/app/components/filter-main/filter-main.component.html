@@ -108,7 +108,7 @@
           </mat-list-item>
 
           <!-- Username -->
-          <mat-list-item class="form-item">
+          <mat-list-item class="form-item" *ngIf="authService.isLoggedIn()">
             <mat-form-field appearance="outline">
               <mat-label>Username</mat-label>
               <label for="User"></label>
