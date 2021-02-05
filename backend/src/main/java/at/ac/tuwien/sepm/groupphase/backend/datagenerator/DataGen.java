@@ -26,20 +26,19 @@ public class DataGen {
     // Parameters
     private static final String ADMIN_ROLE_NAME = "ADMIN";
     private static final String USER_ROLE_NAME = "USER";
-    private static final int NUMBER_OF_USERS = 50;
+    private static final int NUMBER_OF_USERS = 5;
     private static final int NUMBER_OF_LOCATIONS = 186;
-    private static final int NUMBER_OF_SPOTS = NUMBER_OF_LOCATIONS * 5;
-    private static final int NUMBER_OF_MESSAGES = NUMBER_OF_SPOTS * 5;
+    private static final int NUMBER_OF_SPOTS = NUMBER_OF_LOCATIONS * 2;
+    private static final int NUMBER_OF_MESSAGES = NUMBER_OF_SPOTS * 2;
+
     private static final Random random = new Random();
+    private final static String COMMA_DELIMITER = ",";
     private final Faker faker;
     private final PasswordEncoder passwordEncoder;
-    private final static String COMMA_DELIMITER = ",";
 
 
     private static final HashMap<String, String[]> CREW = createCrew();
     private static final HashMap<String, String> CATEGORIES = createMap();
-
-    private static final String handsPath = "locations-datagen/locations.csv";
 
     private final UserService userService;
     private final RoleService roleService;
@@ -49,8 +48,7 @@ public class DataGen {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
-    private final MessageService messageService;
-    private final SpotService spotService;
+    private final HashtagService hashtagService;
 
     public DataGen(UserService userService,
                    RoleService roleService,
@@ -61,8 +59,7 @@ public class DataGen {
                    CategoryRepository categoryRepository,
                    UserRepository userRepository,
                    MessageRepository messageRepository,
-                   MessageService messageService,
-                   SpotService spotService
+                   HashtagService hashtagService
                    ) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
@@ -73,8 +70,7 @@ public class DataGen {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
-        this.messageService = messageService;
-        this.spotService = spotService;
+        this.hashtagService = hashtagService;
         faker = new Faker(new Locale("es"));
     }
 
@@ -228,6 +224,12 @@ public class DataGen {
 
     // 3. CATEGORIES
     private void generateCategories() throws ValidationException {
+
+        if (categoryRepository.findAll().size() > 0) {
+            log.debug("Already categories in the repository.");
+            return;
+        }
+
         try {
             for (Map.Entry<String, String> mapElement : CATEGORIES.entrySet()) {
                 String key = mapElement.getKey();
@@ -247,13 +249,14 @@ public class DataGen {
     private void generateLocations() throws IOException {
 
         if (locationRepository.findAll().size() > 0) {
-            log.debug("Already spots or locations in the repositories.");
+            log.debug("Already locations in the repository.");
             return;
         }
 
         log.info("generating {} location entries", NUMBER_OF_LOCATIONS);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(handsPath))) {
+        //Generator
+        try (BufferedReader br = new BufferedReader(new FileReader("locations-datagen/locations.csv"))) {
 
             List<List<String>> result = new ArrayList<>();
             String line;
@@ -262,22 +265,43 @@ public class DataGen {
                 result.add(Arrays.asList(values));
             }
 
-            System.out.println(result);
 
             for (int i = 0; i <= NUMBER_OF_LOCATIONS-1; i++) {
                 Location location = Location.builder()
                     .latitude(Double.parseDouble(result.get(i).get(0)))
                     .longitude(Double.parseDouble(result.get(i).get(1)))
                     .build();
-                log.info("saving location {}", location);
+                System.out.print("Generating location.. " + i + "\r");
                 locationRepository.save(location);
             }
         }
 
+        //Vienna
+        try (BufferedReader br = new BufferedReader(new FileReader("locations-datagen/locations-vienna.csv"))) {
+
+            List<List<String>> resultVie = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(COMMA_DELIMITER);
+                resultVie.add(Arrays.asList(values));
+            }
+
+
+            for (int i = 0; i < 5; i++) {
+                Location location = Location.builder()
+                    .latitude(Double.parseDouble(resultVie.get(i).get(0)))
+                    .longitude(Double.parseDouble(resultVie.get(i).get(1)))
+                    .build();
+                System.out.print("Generating location.. " + i + "\r");
+                locationRepository.save(location);
+            }
+        }
+
+
     }
 
     // 5. SPOTS
-    private void generateSpots() throws ValidationException, ServiceException {
+    private void generateSpots() throws ValidationException {
 
         if (spotRepository.findAll().size() > 0) {
             log.debug("Already spots in the repository.");
@@ -289,7 +313,7 @@ public class DataGen {
         List<ApplicationUser> userList = userRepository.findAll();
 
             log.debug("generating {} spot entries", NUMBER_OF_SPOTS);
-            for (int i = 0; i < NUMBER_OF_SPOTS/2; i++) {
+            for (int i = 0; i < (NUMBER_OF_SPOTS/2); i++) {
 
                 String description = faker.harryPotter().location();
                 while (description.length() > 20) {
@@ -301,14 +325,14 @@ public class DataGen {
                     .name(description)
                     .description(faker.harryPotter().spell())
                     .location(locationList.get(i % NUMBER_OF_LOCATIONS))
-                    .owner(userList.get(i & (NUMBER_OF_USERS + 6)))
+                    .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
                     .category(categoryList.get(id))
                     .build();
-                log.debug("saving spot {}", spot);
-                spotService.create(spot);
+                System.out.print("Generating spots.. " + i + "\r");
+                spotRepository.save(spot);
             }
 
-        for (int i = 0; i < NUMBER_OF_SPOTS/2; i++) {
+        for (int i = (NUMBER_OF_SPOTS/2); i < NUMBER_OF_SPOTS; i++) {
 
             String name = faker.harryPotter().location();
             while (name.length() > 20) {
@@ -323,13 +347,16 @@ public class DataGen {
                 .owner(userList.get(i & (NUMBER_OF_USERS + 6)))
                 .category(categoryList.get(id))
                 .build();
-            log.debug("saving spot {}", spot);
-            spotService.create(spot);
+            System.out.print("Generating spots.. " + i + "\r");
+            spotRepository.save(spot);
+            hashtagService.acquireHashtags(spot);
         }
+
+
     }
 
     // 6. MESSAGES
-    private void generateMessages() throws ValidationException, NotFoundException {
+    private void generateMessages() throws ValidationException {
         if (messageRepository.findAll().size() > 0) {
             log.info("Already messages in the repository.");
             return;
@@ -353,11 +380,11 @@ public class DataGen {
                     .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
                     .spot(spotList.get(i % NUMBER_OF_SPOTS))
                     .build();
-                log.info("saving message {}", message);
-                messageService.create(message);
+                System.out.print("Generating messages.. " + i + "\r");
+                messageRepository.save(message);
             }
 
-            for (int i = (NUMBER_OF_MESSAGES / 2); i < NUMBER_OF_MESSAGES; i++) {
+            for (int i = (NUMBER_OF_MESSAGES / 2); i < NUMBER_OF_MESSAGES - 1; i++) {
                 int hoursVariance = 48 + random.nextInt(24 * 7 * 4 * 12);
                 int down = random.nextInt(5);
                 int up = random.nextInt(5);
@@ -371,8 +398,11 @@ public class DataGen {
                     .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
                     .spot(spotList.get(i % NUMBER_OF_SPOTS))
                     .build();
-                log.info("saving message {}", message);
-                messageService.create(message);
+                System.out.print("Generating messages.. " + i + "\r");
+                messageRepository.save(message);
+                hashtagService.acquireHashtags(message);
             }
+
+
     }
 }
