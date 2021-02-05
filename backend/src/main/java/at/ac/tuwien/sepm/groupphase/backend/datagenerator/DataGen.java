@@ -2,11 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
-import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
-import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import at.ac.tuwien.sepm.groupphase.backend.service.*;
 import com.github.javafaker.App;
 import lombok.extern.slf4j.Slf4j;
 import com.github.javafaker.Faker;
@@ -50,6 +49,8 @@ public class DataGen {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final MessageService messageService;
+    private final SpotService spotService;
 
     public DataGen(UserService userService,
                    RoleService roleService,
@@ -59,7 +60,9 @@ public class DataGen {
                    SpotRepository spotRepository,
                    CategoryRepository categoryRepository,
                    UserRepository userRepository,
-                   MessageRepository messageRepository
+                   MessageRepository messageRepository,
+                   MessageService messageService,
+                   SpotService spotService
                    ) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
@@ -70,11 +73,13 @@ public class DataGen {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.messageService = messageService;
+        this.spotService = spotService;
         faker = new Faker(new Locale("es"));
     }
 
     @PostConstruct
-    private void generateData() throws NotFoundException, ValidationException, IOException {
+    private void generateData() throws NotFoundException, ValidationException, IOException, ServiceException {
         generateAdminUserLogin();
         generateCategories();
         generateLocations();
@@ -272,7 +277,7 @@ public class DataGen {
     }
 
     // 5. SPOTS
-    private void generateSpots() throws ValidationException {
+    private void generateSpots() throws ValidationException, ServiceException {
 
         if (spotRepository.findAll().size() > 0) {
             log.debug("Already spots in the repository.");
@@ -284,7 +289,7 @@ public class DataGen {
         List<ApplicationUser> userList = userRepository.findAll();
 
             log.debug("generating {} spot entries", NUMBER_OF_SPOTS);
-            for (int i = 0; i < NUMBER_OF_SPOTS; i++) {
+            for (int i = 0; i < NUMBER_OF_SPOTS/2; i++) {
 
                 String description = faker.harryPotter().location();
                 while (description.length() > 20) {
@@ -300,12 +305,31 @@ public class DataGen {
                     .category(categoryList.get(id))
                     .build();
                 log.debug("saving spot {}", spot);
-                spotRepository.save(spot);
+                spotService.create(spot);
             }
+
+        for (int i = 0; i < NUMBER_OF_SPOTS/2; i++) {
+
+            String name = faker.harryPotter().location();
+            while (name.length() > 20) {
+                name = faker.harryPotter().location();
+            }
+            String description = ("#" + faker.harryPotter().spell()).trim();
+            int id = random.nextInt(20);
+            Spot spot = Spot.builder()
+                .name(name)
+                .description(description)
+                .location(locationList.get(i % NUMBER_OF_LOCATIONS))
+                .owner(userList.get(i & (NUMBER_OF_USERS + 6)))
+                .category(categoryList.get(id))
+                .build();
+            log.debug("saving spot {}", spot);
+            spotService.create(spot);
+        }
     }
 
     // 6. MESSAGES
-    private void generateMessages() throws ValidationException {
+    private void generateMessages() throws ValidationException, NotFoundException {
         if (messageRepository.findAll().size() > 0) {
             log.info("Already messages in the repository.");
             return;
@@ -330,7 +354,7 @@ public class DataGen {
                     .spot(spotList.get(i % NUMBER_OF_SPOTS))
                     .build();
                 log.info("saving message {}", message);
-                messageRepository.save(message);
+                messageService.create(message);
             }
 
             for (int i = (NUMBER_OF_MESSAGES / 2); i < NUMBER_OF_MESSAGES; i++) {
@@ -338,17 +362,17 @@ public class DataGen {
                 int down = random.nextInt(5);
                 int up = random.nextInt(5);
                 LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
-                String hashtag = "#" + faker.superhero().power();
+                String hashtag = ("#" + faker.superhero().power()).trim();
                 Message message = Message.builder()
                     .publishedAt(dateTime)
-                    .content(hashtag.trim())
+                    .content(hashtag)
                     .downVotes(down)
                     .upVotes(up)
                     .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
                     .spot(spotList.get(i % NUMBER_OF_SPOTS))
                     .build();
                 log.info("saving message {}", message);
-                messageRepository.save(message);
+                messageService.create(message);
             }
     }
 }
