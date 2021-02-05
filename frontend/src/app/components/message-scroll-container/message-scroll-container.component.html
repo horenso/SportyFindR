@@ -1,0 +1,13 @@
+<div id="loadMore" *ngIf="showLoadMoreButton">
+  <button  mat-stroked-button id="loadMoreButton" type="button" (click)="onLoadMore.emit()">Load more</button>
+</div>
+<div *ngFor="let message of messages" class="message">
+  <app-message
+    [canReact]="canReact"
+    [canDelete]="canDelete"
+    [filteredMessage]="filteredMessages"
+    (deleteMessage)="onDelete.emit(message)"
+    (goToSpot)='onGoToLocation'
+    [message]='message'>
+  </app-message>
+</div>

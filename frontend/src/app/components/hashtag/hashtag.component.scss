@@ -1,3 +1,11 @@
+:host {
+  height: auto;
+}
+
+mat-tab-group {
+  min-height: auto;
+}
+
 .spotButton {
   display: inline-block;
   width: stretch;
