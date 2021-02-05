@@ -22,7 +22,7 @@ export class TextWithHashtagsComponent implements OnInit, AfterViewInit {
   showAll: boolean = false;
 
   ngOnInit(): void {
-    const words = this.text.split(' ');
+    const words = this.text.split(/\s+/);
     words.forEach(word => {
       this.tokens.push(word);
       this.tokens.push(' ');
