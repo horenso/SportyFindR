@@ -1,4 +1,4 @@
-/*package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
@@ -8,11 +8,10 @@ import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.HashSet;
 
 @Slf4j
 @Profile("generateDefaultLogin")
@@ -22,70 +21,18 @@ public class DefaultLoginGenerator {
     // Parameters
     private static final String ADMIN_ROLE_NAME = "ADMIN";
     private static final String USER_ROLE_NAME = "USER";
+    private static final String ADMIN_USER_NAME = "defaultAdmin";
     private static final String ADMIN_EMAIL = "admin@sportyfindr.at";
     private static final String ADMIN_PASSWORD = "sp0rtiF1ndM3";
-    private static final int NUMBER_OF_USERS = 50;
-    private static final int NUMBER_OF_LOCATIONS = 100;
-    private static final int NUMBER_OF_SPOTS = NUMBER_OF_LOCATIONS * 5;
-    private static final int NUMBER_OF_MESSAGES = 200;
-    private static final Random RANDOM = new Random();
-    private final Faker faker;
-    private final PasswordEncoder passwordEncoder;
-
-
-    private static final HashMap<String, String[]> CREW = createCrew();
-    private static final HashMap<String, String> CATEGORIES = createMap();
-
-
 
     private final UserService userService;
     private final RoleService roleService;
 
-    public DefaultLoginGenerator(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    public DefaultLoginGenerator(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
-    private static HashMap<String, String []> createCrew() {
-        HashMap<String, String[]> crew = new HashMap<>();
-        crew.put("Jannis Adamek", new String[] {"jannisAdamek", "jannis@sportyfindr.com"});
-        crew.put("Marcel Jira", new String[] {"marcelJira", "marcel@sportyfindr.com"});
-        crew.put("Victoria Leskoschek", new String[] {"viciLeskoschek", "vici@sportyfindr.com"});
-        crew.put("Simon Linder", new String[] {"simonLinder", "simon@sportyfindr.com"});
-        crew.put("Fisnik Miftari", new String[] {"fisnikMiftari", "fisnik@sportyfindr.com"});
-        crew.put("Florian Mold", new String[] {"florianMold", "fisnik@sportyfindr.com"});
-        return crew;
-    }
-
-    private static HashMap<String, String> createMap() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("Baseball", "sports_baseball");
-        map.put("Basketball", "sports_basketball");
-        map.put("Cricket", "sports_cricket");
-        map.put("Football", "sports_football");
-        map.put("Golf", "sports_golf");
-        map.put("Handball", "sports_handball");
-        map.put("Hiking", "hiking");
-        map.put("Hockey", "sports_hockey");
-        map.put("Ice Skating", "ice_skating");
-        map.put("Kabaddi", "sports_kabaddi");
-        map.put("Kitesurfing", "kitesurfing");
-        map.put("Meditation", "self_improvement");
-        map.put("Motorsports", "sports_motorsports");
-        map.put("Nordic Walking", "nordic_walking");
-        map.put("Rugby", "sports_rugby");
-        map.put("Soccer", "sports_soccer");
-        map.put("Skateboarding", "skateboarding");
-        map.put("Skiing", "downhill_skiing");
-        map.put("Tennis", "sports_tennis");
-        map.put("Volleyball", "sports_volleyball");
-        return map;
-    }
-
-
-    // 1. ROLES
-    // 1.1 ADMIN
     @PostConstruct
     private void generateAdminLogin() throws ValidationException, NotFoundException {
         try {
@@ -93,10 +40,10 @@ public class DefaultLoginGenerator {
             Role userRole = this.generateRole(USER_ROLE_NAME);
 
             HashSet<Role> roles = new HashSet<>();
-            roles.add(userRole);
-            this.generateUsers(roles); // only user role
             roles.add(adminRole);
-            this.generateAdmins(roles); // user + admin role
+            roles.add(userRole);
+
+            this.generateAdminUser(roles);
         } catch (ValidationException e) {
             throw new ValidationException(e);
         } catch (NotFoundException e) {
@@ -104,7 +51,6 @@ public class DefaultLoginGenerator {
         }
     }
 
-    // 1.2 USER
     private Role generateRole(String roleName) throws ValidationException, NotFoundException {
         if (!roleService.roleExistsByName(roleName)) {
             try {
@@ -113,7 +59,7 @@ public class DefaultLoginGenerator {
                     .build();
                 return roleService.create(role);
             } catch (ValidationException e) {
-                throw new ValidationException("Couldn't create User Role", e);
+                throw new ValidationException("Couldn't create Admin Role", e);
             }
         } else {
             log.info("Role " + roleName + " was already created");
@@ -125,69 +71,33 @@ public class DefaultLoginGenerator {
         }
     }
 
-    // 2. USER
-    // 2.1 ADMIN USERS
-    private void generateAdmins(HashSet<Role> roles) throws ValidationException, NotFoundException {
-        for (Map.Entry<String, String[]> mapElement : CREW.entrySet()) {
-            String key = mapElement.getKey();
-            String[] value = mapElement.getValue();
-            if (!userService.userExistsByEmail(value[1])) {
-                try {
-                    ApplicationUser user = ApplicationUser.builder()
-                        .name(key)
-                        .email(value[1])
-                        .password(value[0])
-                        .enabled(true)
-                        .roles(roles)
-                        .build();
-                    userService.createApplicationUser(user);
-                } catch (ValidationException e) {
-                    throw new ValidationException("Couldn't create Admin User", e);
-                }
-            } else {
-                log.info("Admin User was already created, updating admin user.");
-                try {
-                    ApplicationUser user = userService.getApplicationUserByEmail(ADMIN_EMAIL);
-                    user.setName(key);
-                    user.setEmail(value[1]);
-                    user.setPassword(value[0]);
-                    user.setEnabled(true);
-                    user.setRoles(roles);
-                    userService.update(user);
-                } catch (NotFoundException e) {
-                    throw new NotFoundException("Couldn't find Admin User", e);
-                }
+    private void generateAdminUser(HashSet<Role> roles) throws ValidationException, NotFoundException {
+        if (!userService.userExistsByEmail(ADMIN_EMAIL)) {
+            try {
+                ApplicationUser user = ApplicationUser.builder()
+                    .name(ADMIN_USER_NAME)
+                    .email(ADMIN_EMAIL)
+                    .password(ADMIN_PASSWORD)
+                    .enabled(true)
+                    .roles(roles)
+                    .build();
+                userService.createApplicationUser(user);
+            } catch (ValidationException e) {
+                throw new ValidationException("Couldn't create Admin User", e);
+            }
+        } else {
+            log.info("Admin User was already created, updating admin user.");
+            try {
+                ApplicationUser user = userService.getApplicationUserByEmail(ADMIN_EMAIL);
+                user.setName(ADMIN_USER_NAME);
+                user.setEmail(ADMIN_EMAIL);
+                user.setPassword(ADMIN_PASSWORD);
+                user.setEnabled(true);
+                user.setRoles(roles);
+                userService.update(user);
+            } catch (NotFoundException e) {
+                throw new NotFoundException("Couldn't find Admin User", e);
             }
         }
     }
-
-    // 2.2 SIMPLE USER
-    private void generateUsers(HashSet<Role> roles) throws ValidationException, NotFoundException {
-        Set<String> emails = new HashSet<>();
-
-        String currEmail = faker.internet().emailAddress();
-        while (emails.contains(currEmail)) {
-            currEmail = faker.internet().emailAddress();
-        }
-        emails.add(currEmail);
-
-        for (int i = 1; i <= NUMBER_OF_USERS; i++) {
-                try {
-                    ApplicationUser user = ApplicationUser.builder()
-                        .name(faker.name().firstName() + " " + faker.name().lastName())
-                        .email(currEmail)
-                        .password(passwordEncoder.encode("password"))
-                        .enabled(true)
-                        .roles(roles)
-                        .build();
-                    userService.createApplicationUser(user);
-                } catch (ValidationException e) {
-                    throw new ValidationException("Couldn't create Admin User", e);
-                }
-        }
-    }
-
-    //
 }
-
- */

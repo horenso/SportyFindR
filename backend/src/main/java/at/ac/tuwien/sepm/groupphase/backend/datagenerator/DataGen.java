@@ -306,7 +306,7 @@ public class DataGen {
 
     // 6. MESSAGES
     private void generateMessages() throws ValidationException {
-        if (spotRepository.findAll().size() > 0) {
+        if (messageRepository.findAll().size() > 0) {
             log.info("Already messages in the repository.");
             return;
         }
@@ -338,9 +338,10 @@ public class DataGen {
                 int down = random.nextInt(5);
                 int up = random.nextInt(5);
                 LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
+                String hashtag = "#" + faker.superhero().power();
                 Message message = Message.builder()
                     .publishedAt(dateTime)
-                    .content("#" + faker.superhero().name())
+                    .content(hashtag.trim())
                     .downVotes(down)
                     .upVotes(up)
                     .owner(userList.get(i % (NUMBER_OF_USERS + 6)))

@@ -16,12 +16,14 @@ $light-text: #BEC3E1;
   justify-self: end;
   background-color: #4051B6;
   border-radius: 14px 14px 0 14px;
+  color: #FFFFFF;
 }
 
 .themMessage {
   justify-self: start;
-  background-color: darkgray;
-  border-radius: 14px 14px 14px 0px;
+  background-color: #E5E5EB;
+  border-radius: 14px 14px 14px 0;
+  color: #222222;
 }
 
 .buttonEnabled #upVote {
@@ -32,9 +34,7 @@ $light-text: #BEC3E1;
   color: palevioletred;
 }
 
-
 #messageBody {
-  color: #FFFFFF;
   padding: 9px 14px;
 }
 
@@ -42,9 +42,21 @@ $light-text: #BEC3E1;
   margin-bottom: 1em;
 }
 
+#author {
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.youMessage #date {
+  color: $light-text;
+}
+
 #date {
   margin-left: 1em;
-  color: $light-text;
+}
+
+.themMessage #date {
+  color: #9B9B9B;
 }
 
 #bottomRow {
@@ -64,14 +76,22 @@ $light-text: #BEC3E1;
   color: rgb(218, 68, 98);
 }
 
-#expirationDate {
+.youMessage #expirationDate {
   color: $light-text;
+}
+
+.themMessage #expirationDate {
+  color: #9B9B9B;
 }
 
 .buttonEnabled {
   color: lightskyblue;
 }
 
-.buttonDisabled {
+.youMessage .buttonDisabled {
   color: lightgray;
+}
+
+.themMessage .buttonDisabled {
+  color: #EFEFEF;
 }
