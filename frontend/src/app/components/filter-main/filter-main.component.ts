@@ -15,6 +15,7 @@ import {SimpleUser} from '../../dtos/simple-user';
 import {UserService} from '../../services/user.service';
 import { FilterService } from 'src/app/services/filter.service';
 import { now } from 'lodash';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-filter-main',
@@ -46,7 +47,8 @@ export class FilterMainComponent implements OnInit {
     private filterService: FilterService,
     private notificationService: NotificationService,
     private router: Router,
-    private userService: UserService) {
+    private userService: UserService,
+    private authService: AuthService) {
   }
 
   ngOnInit(): void {

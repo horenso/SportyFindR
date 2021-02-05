@@ -31,6 +31,10 @@ export class UserService {
     return this.httpClient.post<User>(this.userBaseUri, user);
   }
 
+  public registerUser(user: User): Observable<User> {
+    return this.httpClient.post<User>(this.userBaseUri + '/register', user);
+  }
+
   public updateUser(user: User): Observable<User> {
     return this.httpClient.put<User>(this.userBaseUri, user);
   }

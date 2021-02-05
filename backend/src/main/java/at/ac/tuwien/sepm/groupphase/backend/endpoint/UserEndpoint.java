@@ -38,6 +38,7 @@ public class UserEndpoint {
     private final RoleService roleService;
 
 
+    @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @ApiOperation(value = "Create a new user", authorizations = {@Authorization(value = "apiKey")})
@@ -46,6 +47,27 @@ public class UserEndpoint {
         try {
             ApplicationUser newUser = userMapper.userDtoToApplicationUser(newUserDto);
             newUser.setRoles(this.enrichRoleSet(newUser.getRoles()));
+            return userMapper.applicationUserToUserDto(userService.createApplicationUser(newUser));
+        } catch (ServiceException | ValidationException e) {
+            log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NotFoundException e) {
+            log.error(HttpStatus.UNPROCESSABLE_ENTITY + " " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/register")
+    @ApiOperation(value = "Register a new user", authorizations = {@Authorization(value = "apiKey")})
+    public UserDto register(@Valid @RequestBody NewUserDto newUserDto) {
+        log.info("POST /api/v1/users/register body: {}", newUserDto);
+        try {
+            ApplicationUser newUser = userMapper.userDtoToApplicationUser(newUserDto);
+            Role userRole = roleService.findRoleByName("USER");
+            Set<Role> roles = new HashSet<>();
+            roles.add(userRole);
+            newUser.setRoles(roles);
             return userMapper.applicationUserToUserDto(userService.createApplicationUser(newUser));
         } catch (ServiceException | ValidationException e) {
             log.error(HttpStatus.BAD_REQUEST + " " + e.getMessage());

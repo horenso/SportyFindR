@@ -68,15 +68,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-            .antMatchers(HttpMethod.POST, "/api/v1/users")
-            .antMatchers(HttpMethod.GET, "/api/v1/messages")
-            .antMatchers(HttpMethod.GET, "/api/v1/messages/**")
-            .antMatchers(HttpMethod.GET, "/api/v1/locations")
-            .antMatchers(HttpMethod.GET, "/api/v1/spots?**")
-            .antMatchers(HttpMethod.GET, "/api/v1/spots")
-            .antMatchers(HttpMethod.GET, "/api/v1/spots/**")
-            .antMatchers(HttpMethod.GET, "/api/v1/categories")
-            .antMatchers("/api/v1/hashtags")
+            .antMatchers(HttpMethod.POST, "/api/v1/users/register") // user registration
+            .antMatchers(HttpMethod.GET, "/api/v1/messages") // load messages
+            .antMatchers(HttpMethod.GET, "/api/v1/messages/**") // load messages for spot
+            .antMatchers(HttpMethod.GET, "/api/v1/locations") // load all locations
+            .antMatchers(HttpMethod.GET, "/api/v1/spots?**") // load spots for specific filters
+            .antMatchers(HttpMethod.GET, "/api/v1/spots") // load all spots
+            .antMatchers(HttpMethod.GET, "/api/v1/spots/**") // load spot by id
+            .antMatchers(HttpMethod.GET, "/api/v1/categories") // load all categories
+            .antMatchers("/api/v1/hashtags") // load hashtags
             .requestMatchers(whiteListedRequests);
     }
 
