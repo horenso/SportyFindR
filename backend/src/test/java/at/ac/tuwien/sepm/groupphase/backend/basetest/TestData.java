@@ -73,4 +73,6 @@ public interface TestData {
     String EMAIL6 = "user6@email.com";
     String USERNAME6 = "user6";
     String PASSWORD6 = "password6";
+    String DESCRIPTION_WITH_HASHTAGS = "The #best spot in town!";
+    String DESCRIPTION_WITH_HASHTAGS2 = "The #secondBest spot in town!";
 }

@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.MessageDto;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -108,6 +109,4 @@ public class HashtagEndpointTest extends BaseIntegrationTest {
         assertTrue(response.getContentAsString().contains("\"id\":"+hashtag2.getId()+",\"name\":\"testomato\""));
     }
 
-
-    //TODO: continue the test (add messages)
 }
