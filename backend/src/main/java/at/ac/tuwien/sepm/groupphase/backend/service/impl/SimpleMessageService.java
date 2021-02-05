@@ -139,7 +139,7 @@ public class SimpleMessageService implements MessageService {
             reactionRepository.countReactionByMessage_IdAndType(message.getId(), Reaction.ReactionType.THUMBS_DOWN));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth!=null) {
+        if (auth != null) {
             List<Reaction> reaction = reactionRepository.getReactionByOwnerEmail(SecurityContextHolder.getContext().getAuthentication().getName(), message.getId());
             if (reaction == null || reaction.size() == 0) {
                 message.setOwnerReaction(null);

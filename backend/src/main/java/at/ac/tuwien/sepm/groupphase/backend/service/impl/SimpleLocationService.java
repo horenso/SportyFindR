@@ -58,6 +58,7 @@ public class SimpleLocationService implements LocationService {
         } else {
             if (locationFilter.getHashtag() != null) {
                 locations = locationRepository.filter(locationFilter.getHashtag());
+                log.info("locations liste {} for hashtag {}", locations, locationFilter.getHashtag());
             } else {
                 locations = locationRepository.findAll();   // find all locations
             }

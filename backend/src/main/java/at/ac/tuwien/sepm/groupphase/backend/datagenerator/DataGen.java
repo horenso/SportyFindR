@@ -48,7 +48,6 @@ public class DataGen {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
-    private final HashtagService hashtagService;
 
     public DataGen(UserService userService,
                    RoleService roleService,
@@ -58,9 +57,8 @@ public class DataGen {
                    SpotRepository spotRepository,
                    CategoryRepository categoryRepository,
                    UserRepository userRepository,
-                   MessageRepository messageRepository,
-                   HashtagService hashtagService
-                   ) {
+                   MessageRepository messageRepository
+    ) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.roleService = roleService;
@@ -70,12 +68,11 @@ public class DataGen {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
-        this.hashtagService = hashtagService;
         faker = new Faker(new Locale("es"));
     }
 
     @PostConstruct
-    private void generateData() throws NotFoundException, ValidationException, IOException, ServiceException {
+    private void generateData() throws NotFoundException, ValidationException, IOException {
         generateAdminUserLogin();
         generateCategories();
         generateLocations();
@@ -83,14 +80,14 @@ public class DataGen {
         generateMessages();
     }
 
-    private static HashMap<String, String []> createCrew() {
+    private static HashMap<String, String[]> createCrew() {
         HashMap<String, String[]> crew = new HashMap<>();
-        crew.put("Jannis Adamek", new String[] {"jannisAdamek", "jannis@sportyfindr.com"});
-        crew.put("Marcel Jira", new String[] {"marcelJira", "marcel@sportyfindr.com"});
-        crew.put("Victoria Leskoschek", new String[] {"viciLeskoschek", "vici@sportyfindr.com"});
-        crew.put("Simon Linder", new String[] {"simonLinder", "simon@sportyfindr.com"});
-        crew.put("Fisnik Miftari", new String[] {"fisnikMiftari", "fisnik@sportyfindr.com"});
-        crew.put("Florian Mold", new String[] {"florianMold", "florian@sportyfindr.com"});
+        crew.put("Jannis Adamek", new String[]{"jannisAdamek", "jannis@sportyfindr.com"});
+        crew.put("Marcel Jira", new String[]{"marcelJira", "marcel@sportyfindr.com"});
+        crew.put("Victoria Leskoschek", new String[]{"viciLeskoschek", "vici@sportyfindr.com"});
+        crew.put("Simon Linder", new String[]{"simonLinder", "simon@sportyfindr.com"});
+        crew.put("Fisnik Miftari", new String[]{"fisnikMiftari", "fisnik@sportyfindr.com"});
+        crew.put("Florian Mold", new String[]{"florianMold", "florian@sportyfindr.com"});
         return crew;
     }
 
@@ -266,7 +263,7 @@ public class DataGen {
             }
 
 
-            for (int i = 0; i <= NUMBER_OF_LOCATIONS-1; i++) {
+            for (int i = 0; i <= NUMBER_OF_LOCATIONS - 1; i++) {
                 Location location = Location.builder()
                     .latitude(Double.parseDouble(result.get(i).get(0)))
                     .longitude(Double.parseDouble(result.get(i).get(1)))
@@ -296,8 +293,6 @@ public class DataGen {
                 locationRepository.save(location);
             }
         }
-
-
     }
 
     // 5. SPOTS
@@ -312,47 +307,25 @@ public class DataGen {
         List<Category> categoryList = categoryRepository.findAll();
         List<ApplicationUser> userList = userRepository.findAll();
 
-            log.debug("generating {} spot entries", NUMBER_OF_SPOTS);
-            for (int i = 0; i < (NUMBER_OF_SPOTS/2); i++) {
+        log.debug("generating {} spot entries", NUMBER_OF_SPOTS);
+        for (int i = 0; i < (NUMBER_OF_SPOTS ); i++) {
 
-                String description = faker.harryPotter().location();
-                while (description.length() > 20) {
-                    description = faker.harryPotter().location();
-                }
-
-                int id = random.nextInt(20);
-                Spot spot = Spot.builder()
-                    .name(description)
-                    .description(faker.harryPotter().spell())
-                    .location(locationList.get(i % NUMBER_OF_LOCATIONS))
-                    .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
-                    .category(categoryList.get(id))
-                    .build();
-                System.out.print("Generating spots.. " + i + "\r");
-                spotRepository.save(spot);
+            String description = faker.harryPotter().location();
+            while (description.length() > 20) {
+                description = faker.harryPotter().location();
             }
 
-        for (int i = (NUMBER_OF_SPOTS/2); i < NUMBER_OF_SPOTS; i++) {
-
-            String name = faker.harryPotter().location();
-            while (name.length() > 20) {
-                name = faker.harryPotter().location();
-            }
-            String description = ("#" + faker.harryPotter().spell()).trim();
             int id = random.nextInt(20);
             Spot spot = Spot.builder()
-                .name(name)
-                .description(description)
+                .name(description)
+                .description(faker.harryPotter().spell())
                 .location(locationList.get(i % NUMBER_OF_LOCATIONS))
-                .owner(userList.get(i & (NUMBER_OF_USERS + 6)))
+                .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
                 .category(categoryList.get(id))
                 .build();
             System.out.print("Generating spots.. " + i + "\r");
             spotRepository.save(spot);
-            hashtagService.acquireHashtags(spot);
         }
-
-
     }
 
     // 6. MESSAGES
@@ -365,44 +338,24 @@ public class DataGen {
         List<Spot> spotList = spotRepository.findAll();
         List<ApplicationUser> userList = userRepository.findAll();
 
-            log.info("generating {} message entries", NUMBER_OF_MESSAGES);
+        log.info("generating {} message entries", NUMBER_OF_MESSAGES);
 
-            for (int i = 0; i < (NUMBER_OF_MESSAGES / 2); i++) {
-                int hoursVariance = 48 + random.nextInt(24 * 7 * 4 * 12);
-                int down = random.nextInt(5);
-                int up = random.nextInt(5);
-                LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
-                Message message = Message.builder()
-                    .publishedAt(dateTime)
-                    .content(faker.yoda().quote())
-                    .downVotes(down)
-                    .upVotes(up)
-                    .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
-                    .spot(spotList.get(i % NUMBER_OF_SPOTS))
-                    .build();
-                System.out.print("Generating messages.. " + i + "\r");
-                messageRepository.save(message);
-            }
-
-            for (int i = (NUMBER_OF_MESSAGES / 2); i < NUMBER_OF_MESSAGES - 1; i++) {
-                int hoursVariance = 48 + random.nextInt(24 * 7 * 4 * 12);
-                int down = random.nextInt(5);
-                int up = random.nextInt(5);
-                LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
-                String hashtag = ("#" + faker.superhero().power()).trim();
-                Message message = Message.builder()
-                    .publishedAt(dateTime)
-                    .content(hashtag)
-                    .downVotes(down)
-                    .upVotes(up)
-                    .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
-                    .spot(spotList.get(i % NUMBER_OF_SPOTS))
-                    .build();
-                System.out.print("Generating messages.. " + i + "\r");
-                messageRepository.save(message);
-                hashtagService.acquireHashtags(message);
-            }
-
+        for (int i = 0; i < (NUMBER_OF_MESSAGES ); i++) {
+            int hoursVariance = 48 + random.nextInt(24 * 7 * 4 * 12);
+            int down = random.nextInt(5);
+            int up = random.nextInt(5);
+            LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
+            Message message = Message.builder()
+                .publishedAt(dateTime)
+                .content(faker.yoda().quote())
+                .downVotes(down)
+                .upVotes(up)
+                .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
+                .spot(spotList.get(i % NUMBER_OF_SPOTS))
+                .build();
+            System.out.print("Generating messages.. " + i + "\r");
+            messageRepository.save(message);
+        }
 
     }
 }
