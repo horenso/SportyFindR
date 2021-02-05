@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Globals} from "../global/globals";
-import {Observable} from "rxjs";
-import {Role} from "../dtos/role";
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Globals} from '../global/globals';
+import {Observable} from 'rxjs';
+import {Role} from '../dtos/role';
 
 @Injectable({
   providedIn: 'root'

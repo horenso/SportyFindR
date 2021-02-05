@@ -73,7 +73,7 @@ export class SpotService {
    */
   getByLocationId(locationId?: number, hashtag?: string, categoryId?: number): Observable<MLocSpot[]> {
     let params = new HttpParams();
-    
+
     if (locationId != null) {
       params = params.set('locationId', locationId.toString());
     }
@@ -84,7 +84,7 @@ export class SpotService {
       params = params.set('categoryId', categoryId.toString());
     }
 
-    console.log("Get spot by location with params: " + params.toString());
+    console.log('Get spot by location with params: ' + params.toString());
 
     return this.httpClient.get<Spot[]>(this.spotBaseUri, {params: params}).pipe(
       map(

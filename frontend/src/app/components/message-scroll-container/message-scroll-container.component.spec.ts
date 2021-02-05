@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MessageScrollContainerComponent } from './message-scroll-container.component';
+import {MessageScrollContainerComponent} from './message-scroll-container.component';
 
 describe('MessageScrollContainerComponent', () => {
   let component: MessageScrollContainerComponent;

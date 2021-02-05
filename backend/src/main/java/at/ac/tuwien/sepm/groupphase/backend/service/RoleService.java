@@ -10,6 +10,7 @@ public interface RoleService {
 
     /**
      * Creates a new role
+     *
      * @param role to create
      * @return created Role
      * @throws ValidationException if the role is not valid
@@ -27,6 +28,7 @@ public interface RoleService {
 
     /**
      * determines if a role exists by name
+     *
      * @param name Role Name to find
      * @return true if role exists
      */
@@ -34,6 +36,7 @@ public interface RoleService {
 
     /**
      * determine if a role exists by id
+     *
      * @param id Role ID to find
      * @return true if role exists
      */

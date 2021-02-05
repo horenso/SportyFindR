@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FilterMessagesComponent } from './filter-messages.component';
+import {FilterMessagesComponent} from './filter-messages.component';
 
 describe('FilterMessagesComponent', () => {
   let component: FilterMessagesComponent;

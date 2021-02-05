@@ -1,4 +1,4 @@
-/* "Barrel" of Http Interceptors */
+/* 'Barrel' of Http Interceptors */
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 
 import {AuthInterceptor} from './auth-interceptor';

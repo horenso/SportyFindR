@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -40,7 +40,7 @@ public class HashtagEndpointTest extends BaseIntegrationTest {
         for (Hashtag hashtag : hashtagList) {
             mockMvc.perform(
                 get(HASHTAG_BASE_URI + "/" + hashtag.getName())
-                    .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work)
+                    .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(hashtag.getId()))
                 .andExpect(jsonPath("$.name").value(hashtag.getName()));
@@ -84,14 +84,14 @@ public class HashtagEndpointTest extends BaseIntegrationTest {
         messageRepository.save(message);
         Hashtag hashtag = Hashtag.builder()
             .name("test")
-            .messagesList(Arrays.asList(message))
-            .spotsList(Arrays.asList(spot))
+            .messagesList(Collections.singletonList(message))
+            .spotsList(Collections.singletonList(spot))
             .build();
         hashtagRepository.save(hashtag);
         Hashtag hashtag2 = Hashtag.builder()
             .name("testomato")
-            .messagesList(Arrays.asList(message))
-            .spotsList(Arrays.asList(spot))
+            .messagesList(Collections.singletonList(message))
+            .spotsList(Collections.singletonList(spot))
             .build();
         hashtagRepository.save(hashtag2);
 
@@ -107,7 +107,4 @@ public class HashtagEndpointTest extends BaseIntegrationTest {
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertTrue(response.getContentAsString().contains("\"id\":"+hashtag2.getId()+",\"name\":\"testomato\""));
     }
-
-
-    //TODO: continue the test (add messages)
 }

@@ -2,17 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {SidebarService} from '../../services/sidebar.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {HashtagService} from '../../services/hashtag.service';
-import {Spot} from '../../dtos/spot';
 import {Message} from '../../dtos/message';
 import {IconType} from '../../util/m-location';
 import {MessageService} from '../../services/message.service';
-import {Hashtag} from 'src/app/dtos/hashtag';
-import { SpotService } from 'src/app/services/spot.service';
-import { MLocSpot } from 'src/app/util/m-loc-spot';
-import { result } from 'lodash';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { Observable, Subject } from 'rxjs';
+import {SpotService} from 'src/app/services/spot.service';
+import {MLocSpot} from 'src/app/util/m-loc-spot';
+import {MatTabChangeEvent} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-hashtag',
@@ -33,9 +28,6 @@ export class HashtagComponent implements OnInit {
 
   messageCount: number = 0;
 
-  private scrollDownSubject: Subject<{}> = new Subject();
-  public scrollDownObservable: Observable<{}> = this.scrollDownSubject.asObservable();
-
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -48,7 +40,6 @@ export class HashtagComponent implements OnInit {
   ngOnInit(): void {
     this.activedRoute.params.subscribe(params => {
       this.hashtagName = params.hashtagName;
-      console.log(this.hashtagName);
       this.getSpots();
       this.getMessages();
     });
@@ -68,10 +59,7 @@ export class HashtagComponent implements OnInit {
       this.messageCount = result.totalElements;
       this.messageList = [].concat(this.messageList);
       this.lastPage = result.last;
-      console.log(result);
       this.currentPage++;
-      console.log('hashtag got: ');
-      console.log(this.messageList);
     });
   }
 
@@ -84,15 +72,12 @@ export class HashtagComponent implements OnInit {
   }
 
   public tabChanged(tabChange: MatTabChangeEvent): void {
-    if (tabChange.tab.textLabel.startsWith("Message")){
-      this.scrollDownSubject.next();
+    if (tabChange.tab.textLabel.startsWith('Message')) {
+      console.log('tab changed');
     }
   }
 
   goToSpot(spot: MLocSpot) {
-    console.log('given spot:');
-    console.log(spot);
-
     this.router.navigate(['locations', spot.markerLocation.id, 'spots', spot.id]);
   }
 

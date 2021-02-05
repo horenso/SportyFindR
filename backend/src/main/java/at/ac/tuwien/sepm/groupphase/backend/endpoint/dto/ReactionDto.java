@@ -20,6 +20,7 @@ public class ReactionDto {
     private Long messageId;
 
     private SimpleUserDto owner;
+
     public enum ReactionDtoType {
         THUMBS_UP,
         THUMBS_DOWN

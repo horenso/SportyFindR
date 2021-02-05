@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/categories")
-public class  CategoryEndpoint {
+public class CategoryEndpoint {
 
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;

@@ -1,7 +1,7 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { SidebarService } from './sidebar.service';
+import {Injectable, NgZone} from '@angular/core';
+import {Router} from '@angular/router';
+import {ToastrService} from 'ngx-toastr';
+import {SidebarService} from './sidebar.service';
 
 @Injectable({
   providedIn: 'root'

@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
 import {MessageService} from 'src/app/services/message.service';
@@ -11,8 +11,6 @@ import {MapService} from 'src/app/services/map.service';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
-import { lowerFirst } from 'lodash';
-import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-spot-view',
@@ -95,8 +93,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.messageInput != null) {
       this.messageInput.nativeElement.focus();
-    } else {
-      console.log(this.messageInput);
     }
     this.cdr.detectChanges();
   }
@@ -109,7 +105,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitDialog(): void {
-    console.log(this.expirationDate);
     if (this.newMessage?.length < 1 || /^\s*$/.test(this.newMessage)) {
       this.notificationService.error('Message must not be Empty!');
       return;
@@ -117,7 +112,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.expirationDate != null) {
       this.expirationDate.setHours(this.expirationDate.getHours() + 1);
     }
-    let newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
+    const newMessage = new Message(null, this.newMessage, null, null, this.spot.id, null, null);
     newMessage.expirationDate = this.expirationDate;
     this.subs.add(this.messageService.create(newMessage).subscribe(
       result => {
@@ -150,8 +145,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteOneMessage(message: Message): void {
-    console.log('delete one message!');
-
     this.subs.add(this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
       this.messageList = [].concat(this.messageList);
@@ -193,8 +186,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
       result => {
         this.messageList = result.content.reverse();
         this.lastPage = result.last;
-        console.log('lastPage: ' + this.lastPage);
-
         this.currentPage++;
         console.log(`Loaded ${result.size} messages.`);
       }, error => {
@@ -237,7 +228,7 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   showControlItems(): boolean {
     if (this.authService.isLoggedIn()) {
-      if (this.authService.isUserAdmin() || (this.spot.owner != null && this.authService.currentUserEmail() == this.spot.owner.email)) {
+      if (this.authService.isUserAdmin() || (this.spot.owner != null && this.authService.currentUserEmail() === this.spot.owner.email)) {
         return true;
       }
     } else { return false; }

@@ -47,8 +47,8 @@ public class ApplicationUser {
     )
     @JoinTable(
         name = "applicationusers_roles",
-        joinColumns = { @JoinColumn(name = "applicationuser_id", referencedColumnName = "id") },
-        inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
+        joinColumns = {@JoinColumn(name = "applicationuser_id", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
 //    @Fetch(value = FetchMode.JOIN)
     private Set<Role> roles = new HashSet<>();

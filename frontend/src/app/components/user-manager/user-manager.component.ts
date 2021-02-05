@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {User} from '../../dtos/user';
 import {UserService} from '../../services/user.service';
 import {Role} from '../../dtos/role';

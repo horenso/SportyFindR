@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {control, Layer, LayerGroup, Map, tileLayer, Point, latLng, LatLng, LatLngBounds, Circle, layerGroup} from 'leaflet';
+import {Circle, control, LatLng, Layer, LayerGroup, Map, Point, tileLayer} from 'leaflet';
 import {LocationService} from 'src/app/services/location.service';
 import {MapService} from 'src/app/services/map.service';
 import {SidebarService, VisibilityFocusChange} from 'src/app/services/sidebar.service';
@@ -7,7 +7,7 @@ import {MLocation} from '../../util/m-location';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
 import {FilterLocation} from 'src/app/dtos/filter-location';
-import { FilterService } from 'src/app/services/filter.service';
+import {FilterService} from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-map',
@@ -47,7 +47,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
   layers: Layer[] = [
     // tileLayer(this.worldMap, {
-    //   attribution: 'World Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    //   attribution: 'World Map tiles by <a href='http://stamen.com'>Stamen Design</a>,
+    // <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy;
+    // <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors',
     //   subdomains: 'abcd',
     //   minZoom: 1,
     //   maxZoom: 16,
@@ -55,7 +57,7 @@ export class MapComponent implements OnInit, OnDestroy {
     tileLayer(this.basemap, {
       minZoom: 1,
       maxZoom: 20,
-      attribution: 'Data Source Austria: <a href="https://www.basemap.at">basemap.at</a>',
+      attribution: 'Data Source Austria: <a "href="https://www.basemap.at">basemap.at</a>',
       subdomains: ['', '1', '2', '3', '4'],
       bounds: [[46.35877, 8.782379], [49.037872, 17.189532]]
     })
@@ -109,16 +111,12 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private onMapMoved() {
-    console.log('map moved');
-
     if (this.filter.radiusEnabled) {
       return;
     }
     const newFilter = this.filterLocationFromMapView();
 
     if (!this.isNewFilterWithinCurrentFilter(newFilter)) {
-      console.log('New filter:');
-      console.log(this.filter);
       const oldCategoryId = this.filter.categoryId;
       this.filter = newFilter;
       newFilter.categoryId = oldCategoryId;
@@ -128,23 +126,16 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private onFilterChanged(change: FilterLocation): void {
-    console.log('New filter received:');
-    console.log(change);
-
     let drawCircles = false;
     let reloadRequired = false;
 
-    console.log(change.hashtag);
     if (this.filter.hashtag !== change.hashtag) {
       this.filter.hashtag = change.hashtag;
-      console.log('MAH HASH' + change.hashtag);
       reloadRequired = true;
     }
     if (this.filter.categoryId !== change.categoryId) {
       this.filter.categoryId = change.categoryId;
       reloadRequired = true;
-      console.log('BLABLA: ' + reloadRequired);
-      console.log('newFilter.radiusEnabled:' + change.radiusEnabled);
     }
     if (change.radiusEnabled) {
       drawCircles = true;
@@ -152,8 +143,6 @@ export class MapComponent implements OnInit, OnDestroy {
         && !reloadRequired
         && this.filter.radius === change.radius
         && this.filter.coordinates.distanceTo(this.map.getCenter()) < 20) {
-
-        console.log('filter is the same as the previous filter.');
         return;
       }
 
@@ -171,12 +160,14 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     if (reloadRequired) {
-      console.log('reload required');
+      console.log('reload of locations');
       this.removeCircle();
       if (drawCircles) {
         this.circle = new Circle(this.map.getCenter(), this.filter.radius).addTo(this.map);
       }
       this.getLocationsAndConvertToLayerGroup();
+    } else {
+      console.log('no reload of locations required');
     }
   }
 
@@ -241,7 +232,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addBufferToFilterRadius(): void {
-    console.log('add buffer');
     if (!this.isFilterBuffered) {
       const center: LatLng = this.map.getCenter();
       const northEast: LatLng = this.map.getBounds().getNorthEast();
@@ -252,9 +242,8 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private isNewFilterWithinCurrentFilter(newFilter: FilterLocation): boolean {
-    let distance = this.filter.coordinates.distanceTo(newFilter.coordinates) + newFilter.radius;
-    let result = distance < this.filter.radius;
-    console.log("isNewFilterWithinCurrentFilter:" + result);
+    const distance = this.filter.coordinates.distanceTo(newFilter.coordinates) + newFilter.radius;
+    const result = distance < this.filter.radius;
     return result;
   }
 

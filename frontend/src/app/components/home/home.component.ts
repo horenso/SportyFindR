@@ -4,7 +4,6 @@ import {SidebarService} from '../../services/sidebar.service';
 import {Router} from '@angular/router';
 import {MLocation} from '../../util/m-location';
 import {Subscription} from 'rxjs';
-import {HashtagService} from 'src/app/services/hashtag.service';
 
 @Component({
   selector: 'app-home',

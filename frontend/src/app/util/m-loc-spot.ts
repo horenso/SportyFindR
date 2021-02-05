@@ -13,7 +13,10 @@ export class MLocSpot {
 
   constructor(id: number, name: string, description: string, category: Category, markerLocation: MLocation, user: User)
   constructor(spot: Spot)
-  constructor(spotOrId?: Spot | number, name?: string, description?: string, category?: Category, markerLocation?: MLocation, owner?: User) {
+  constructor(
+    spotOrId?: Spot | number, name?: string,
+    description?: string, category?: Category,
+    markerLocation?: MLocation, owner?: User) {
     // This is not very elegant but atm we only have two cases so let's use that to our advantage
     // Problem is, that type checking only works for primitive types but not for self defined classes
     // Also instanceof does only work if the constructor is used
