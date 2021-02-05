@@ -88,7 +88,7 @@ export class EditAccountComponent implements OnInit {
       error => {
         this.error = true;
         if (typeof error.error === 'object') {
-          this.errorMessage = error.error.error;
+          this.errorMessage = error.error.message;
         } else {
           this.errorMessage = error.error;
         }
