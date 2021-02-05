@@ -27,7 +27,7 @@ export class RegisterComponent implements OnInit {
   error: boolean = false;
   errorMessage: string = '';
   user: User;
-  myForm: FormGroup;
+  passwordForm: FormGroup;
   matcher = new MyErrorStateMatcher();
   passwordsMatch = false;
 
@@ -41,8 +41,8 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: [, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
-      email: [, [Validators.required, Validators.minLength(6), Validators.maxLength(30), Validators.email]],
-      passwords: this.myForm = this.formBuilder.group({
+      email: [, [Validators.required, Validators.minLength(6), Validators.maxLength(40), Validators.email]],
+      passwords: this.passwordForm = this.formBuilder.group({
         password: [, [Validators.required, Validators.minLength(7)]],
         confirmPassword: [, [Validators.required, Validators.minLength(7)]]
       },  {validator: this.checkPasswords
@@ -64,7 +64,8 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    this.user = new User(null, this.registerForm.controls.username.value, this.registerForm.controls.email.value, this.myForm.controls.password.value, true, [2] );
+    this.user = new User(null, this.registerForm.controls.username.value, this.registerForm.controls.email.value,
+      this.passwordForm.controls.password.value, true, [2] );
     this.userService.createUser(this.user).subscribe(() => {
         this.notificationService.success('Successfully registered, you can log in now.');
         this.router.navigate(['/login']);

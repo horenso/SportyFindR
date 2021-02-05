@@ -1,61 +1,84 @@
 <div class="edit-form-flex">
   <mat-card id="edit">
     <mat-card-title class="title">
-      Account Details
+      Edit your Account
     </mat-card-title>
     <mat-card-content>
-        <form class="form" [formGroup]="accountForm">
-          <h2> Edit your account details </h2>
+      <form class="form" [formGroup]="accountForm">
 
-  <!-- Name -->
-  <div>
-  <mat-form-field appearance="outline" class="form-element">
-    <mat-label>Username</mat-label>
-    <label for="username"></label>
-    <input matInput formControlName='username' id="username">
-    <div *ngIf="accountForm.controls.username.errors" class="error">
-      <mat-error *ngIf="accountForm.controls.username.errors.minlength">Username must be at least 3 chars long!</mat-error>
-      <mat-error *ngIf="accountForm.controls.username.errors.maxlength">Username must be at most 30 chars long!</mat-error>
-      <mat-error *ngIf="accountForm.controls.username.errors.required">Username is required!</mat-error>
-    </div>
-  </mat-form-field>
-  </div>
+        <!-- Name -->
+        <div>
+          <mat-form-field appearance="outline" class="form-element">
+            <mat-label>Username</mat-label>
+            <label for="username"></label>
+            <input matInput formControlName='username' id="username">
+            <div *ngIf="accountForm.controls.username.errors && accountForm.controls.username.touched" class="error">
+              <mat-error *ngIf="accountForm.controls.username.errors.minlength">Username must be at least 3 chars
+                long!
+              </mat-error>
+              <mat-error *ngIf="accountForm.controls.username.errors.maxlength">Username must be at most 30 chars
+                long!
+              </mat-error>
+              <mat-error *ngIf="accountForm.controls.username.errors.required">Username is required!</mat-error>
+            </div>
+          </mat-form-field>
+        </div>
 
-  <!-- Email -->
-  <div>
-  <mat-form-field appearance="outline" class="form-element">
-    <mat-label>E-Mail</mat-label>
-    <label for="email"></label>
-    <input matInput formControlName='email' id="email">
-    <div *ngIf="accountForm.controls.email.errors" class="error">
-      <mat-error *ngIf="accountForm.controls.email.errors.minlength">E-mail must be at least 6 chars long!</mat-error>
-      <mat-error *ngIf="accountForm.controls.email.errors.maxlength">E-mail must be at most 30 chars long!</mat-error>
-      <mat-error *ngIf="accountForm.controls.email.errors.required">E-mail is required!</mat-error>
-      <mat-error *ngIf="accountForm.controls.email.errors.email">E-mail format incorrect!</mat-error>
-    </div>
-  </mat-form-field>
-  </div>
+        <!-- Email -->
+        <div>
+          <mat-form-field appearance="outline" class="form-element">
+            <mat-label>E-Mail</mat-label>
+            <label for="email"></label>
+            <input matInput formControlName='email' id="email">
+            <div *ngIf="accountForm.controls.email.errors && accountForm.controls.email.touched" class="error">
+              <mat-error *ngIf="accountForm.controls.email.errors.minlength">E-mail must be at least 6 chars long!
+              </mat-error>
+              <mat-error *ngIf="accountForm.controls.email.errors.maxlength">E-mail must be at most 40 chars long!
+              </mat-error>
+              <mat-error *ngIf="accountForm.controls.email.errors.required">E-mail is required!</mat-error>
+              <mat-error *ngIf="accountForm.controls.email.errors.email">E-mail format incorrect!</mat-error>
+            </div>
+          </mat-form-field>
+        </div>
 
-  <!-- Password -->
-  <div>
-  <mat-form-field appearance="outline" class="form-element">
-    <mat-label>New password</mat-label>
-    <label for="password"></label>
-    <input type="password" matInput formControlName='password' id="password">
-    <div *ngIf="accountForm.controls.password.errors" class="error">
-      <mat-error *ngIf="accountForm.controls.password.errors.minlength">Password must be at least 7 chars long!</mat-error>
-    </div>
-  </mat-form-field>
-  </div>
-
-          <div id="buttons">
-            <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
-            <a mat-raised-button id="buttonLogin" class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
-               [disabled]="accountForm.invalid">Update</a>
+        <!-- Password -->
+        <form [formGroup]="passwordForm">
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <label for="password"></label>
+              <input matInput placeholder="New password" formControlName="password" required type="password"
+                     id="password">
+              <div *ngIf="passwordForm.controls.password.errors && passwordForm.controls.password.touched"
+                   class="error">
+                <mat-error *ngIf="passwordForm.controls.password.errors.minlength">Password must be at least 7 chars
+                  long!
+                </mat-error>
+                <mat-error *ngIf="passwordForm.controls.password.errors.required">Password is required!</mat-error>
+              </div>
+            </mat-form-field>
           </div>
 
-</form>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Confirm password</mat-label>
+              <label for="confirmPassword"></label>
+              <input matInput formControlName="confirmPassword" [errorStateMatcher]="matcher" type="password"
+                     id="confirmPassword">
+              <div *ngIf="passwordForm.hasError('notSame') && passwordForm.controls.confirmPassword.touched"
+                   class="error">
+                <mat-error *ngIf="passwordForm.controls.confirmPassword.touched">Passwords don't match!</mat-error>
+              </div>
+            </mat-form-field>
+          </div>
+        </form>
 
+        <a mat-raised-button id="buttonCancel" class="button cancel-btn" (click)="onCancel()">Cancel</a>
+        <a mat-raised-button id="buttonLogin" class="button buttonConfirm create-btn" color="accent" (click)="onConfirm()"
+           [disabled]="accountForm.invalid">Update</a>
+
+      </form>
     </mat-card-content>
+
   </mat-card>
 </div>

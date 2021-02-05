@@ -9,6 +9,7 @@ import {HeaderComponent} from '../header/header.component';
 import {AuthRequest} from '../../dtos/auth-request';
 import {Subscription} from 'rxjs';
 import {AuthService} from '../../services/auth.service';
+import {MyErrorStateMatcher} from '../register/register.component';
 
 @Component({
   selector: 'app-edit-account',
@@ -17,6 +18,8 @@ import {AuthService} from '../../services/auth.service';
 })
 export class EditAccountComponent implements OnInit {
 
+  matcher = new MyErrorStateMatcher();
+  passwordForm: FormGroup;
   user: User;
   accountForm: FormGroup;
   error: boolean = false;
@@ -34,8 +37,12 @@ export class EditAccountComponent implements OnInit {
   ngOnInit(): void {
     this.accountForm = this.formBuilder.group({
       username: [, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
-      email: [, [Validators.required, Validators.minLength(6), Validators.maxLength(30), Validators.email]],
-      password: [, Validators.minLength(7)]
+      email: [, [Validators.required, Validators.minLength(6), Validators.maxLength(40), Validators.email]],
+      passwords: this.passwordForm = this.formBuilder.group({
+        password: [, [Validators.required, Validators.minLength(7)]],
+        confirmPassword: [, [Validators.required, Validators.minLength(7)]]
+      },  {validator: this.checkPasswords
+      })
     });
 
     this.userService.getUserByEmail(this.localStorage.retrieve('username')).subscribe(
@@ -48,13 +55,19 @@ export class EditAccountComponent implements OnInit {
     );
   }
 
+  checkPasswords(group: FormGroup) { // here we have the 'passwords' group
+    const pass = group.controls.password.value;
+    const confirmPass = group.controls.confirmPassword.value;
+    return pass === confirmPass ? null : { notSame: true};
+  }
+
   private setValues(): void {
     this.accountForm.controls.username.setValue(this.user.name);
     this.accountForm.controls.email.setValue(this.user.email);
   }
 
   onCancel() {
-    return null;
+    this.router.navigate(['']);
   }
 
   onConfirm() {
@@ -62,14 +75,13 @@ export class EditAccountComponent implements OnInit {
     const updatedUser = new User(this.user.id,
       this.accountForm.value.username,
       this.accountForm.value.email,
-      this.accountForm.value.password,
+      this.passwordForm.value.password,
       true,
       this.user.roleIds);
 
     this.userService.updateUser(updatedUser).subscribe(() => {
         this.localStorage.clear('username');
         this.localStorage.store('username', val.email);
-        this.router.navigate(['']);
         const authRequest: AuthRequest = new AuthRequest(updatedUser.email, updatedUser.password);
         this.authenticateUser(authRequest);
       },

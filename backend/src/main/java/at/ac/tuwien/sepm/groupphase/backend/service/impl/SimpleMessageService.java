@@ -109,7 +109,7 @@ public class SimpleMessageService implements MessageService {
         try {
             hashtagService.deleteMessageInHashtags(messageOptional.get());
         } catch (ValidationException e) {
-            throw new ServiceException(e);
+            throw new ServiceException(e.getMessage());
         }
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);
@@ -125,7 +125,7 @@ public class SimpleMessageService implements MessageService {
         try {
             hashtagService.deleteMessageInHashtags(messageOptional.get());
         } catch (ValidationException e) {
-            throw new ServiceException(e);
+            throw new ServiceException(e.getMessage());
         }
         reactionRepository.deleteAllByMessage_Id(id);
         messageRepository.deleteById(id);
