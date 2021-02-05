@@ -12,10 +12,10 @@
     <app-message-scroll-container
       [messages]="messageList"
       [showLoadMoreButton]="!lastPage"
-      (onLoadMore)="loadMore()"
       [filteredMessages]=true
       [canReact]=false
-      [canDelete]=false>
+      [canDelete]=false
+      (loadMore)="loadMore()">
     </app-message-scroll-container>
   </div>
 </div>

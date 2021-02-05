@@ -8,8 +8,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import com.github.javafaker.Faker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -32,12 +32,10 @@ public class DataGen {
     private static final int NUMBER_OF_SPOTS = NUMBER_OF_LOCATIONS * 5;
     private static final int NUMBER_OF_MESSAGES = 200;
     private static final Random RANDOM = new Random();
-    private final Faker faker;
-    private final PasswordEncoder passwordEncoder;
-
     private static final HashMap<String, String[]> CREW = createCrew();
     private static final HashMap<String, String> CATEGORIES = createMap();
-
+    private final Faker faker;
+    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final RoleService roleService;
     private final CategoryService categoryService;
@@ -53,20 +51,14 @@ public class DataGen {
         faker = new Faker(new Locale("es"));
     }
 
-    @PostConstruct
-    private void generateData() throws NotFoundException, ValidationException {
-        generateAdminUserLogin();
-        generateCategories();
-    }
-
-    private static HashMap<String, String []> createCrew() {
+    private static HashMap<String, String[]> createCrew() {
         HashMap<String, String[]> crew = new HashMap<>();
-        crew.put("Jannis Adamek", new String[] {"jannisAdamek", "jannis@sportyfindr.com"});
-        crew.put("Marcel Jira", new String[] {"marcelJira", "marcel@sportyfindr.com"});
-        crew.put("Victoria Leskoschek", new String[] {"viciLeskoschek", "vici@sportyfindr.com"});
-        crew.put("Simon Linder", new String[] {"simonLinder", "simon@sportyfindr.com"});
-        crew.put("Fisnik Miftari", new String[] {"fisnikMiftari", "fisnik@sportyfindr.com"});
-        crew.put("Florian Mold", new String[] {"florianMold", "florian@sportyfindr.com"});
+        crew.put("Jannis Adamek", new String[]{"jannisAdamek", "jannis@sportyfindr.com"});
+        crew.put("Marcel Jira", new String[]{"marcelJira", "marcel@sportyfindr.com"});
+        crew.put("Victoria Leskoschek", new String[]{"viciLeskoschek", "vici@sportyfindr.com"});
+        crew.put("Simon Linder", new String[]{"simonLinder", "simon@sportyfindr.com"});
+        crew.put("Fisnik Miftari", new String[]{"fisnikMiftari", "fisnik@sportyfindr.com"});
+        crew.put("Florian Mold", new String[]{"florianMold", "florian@sportyfindr.com"});
         return crew;
     }
 
@@ -95,6 +87,11 @@ public class DataGen {
         return map;
     }
 
+    @PostConstruct
+    private void generateData() throws NotFoundException, ValidationException {
+        generateAdminUserLogin();
+        generateCategories();
+    }
 
     // 1. ROLES
     // 1.1 ADMIN
@@ -174,7 +171,7 @@ public class DataGen {
     }
 
     // 2.2 SIMPLE USER
-    private void generateUsers(HashSet<Role> roles) throws ValidationException, NotFoundException {
+    private void generateUsers(HashSet<Role> roles) throws ValidationException {
         Set<String> emails = new HashSet<>();
 
         for (int i = 1; i <= NUMBER_OF_USERS; i++) {

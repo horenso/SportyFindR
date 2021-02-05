@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../dtos/message';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
 import {Page} from '../models/page.model';
 import {FilterMessage} from '../dtos/filter-message';
@@ -72,7 +72,6 @@ export class MessageService {
     let params = new HttpParams()
       .set('page', filterMessage.page.toString())
       .set('size', filterMessage.size.toString());
-    
     if (filterMessage.categoryId != null) {
       params = params.set('categoryId', filterMessage.categoryId.toString());
     }

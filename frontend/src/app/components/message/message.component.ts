@@ -6,7 +6,6 @@ import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
 import {SpotService} from '../../services/spot.service';
 import {Spot} from '../../dtos/spot';
-import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
 
 @Component({
@@ -38,7 +37,7 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log(this.canDelete);
-    
+
     if (this.message.ownerReaction == null) {
       this.message.ownerReaction = ReactionType.NEUTRAL;
     }
@@ -94,8 +93,6 @@ export class MessageComponent implements OnInit, OnDestroy {
   }
 
   public onDelete(): void {
-    console.log('on delete message in message');
-
     this.deleteMessage.emit(this.message);
   }
 
@@ -147,7 +144,7 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   showControlItems(): boolean {
     if (this.authService.isLoggedIn()) {
-      if (this.authService.currentUserEmail() == this.message.owner.email || this.authService.isUserAdmin()) {
+      if (this.authService.currentUserEmail() === this.message.owner.email || this.authService.isUserAdmin()) {
         return true;
       }
     } else { return false; }

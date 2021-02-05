@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
-import {User} from "../dtos/user";
+import {User} from '../dtos/user';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
 import {SimpleUser} from '../dtos/simple-user';
 
 @Injectable({

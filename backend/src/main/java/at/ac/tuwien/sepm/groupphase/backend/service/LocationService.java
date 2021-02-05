@@ -25,7 +25,7 @@ public interface LocationService {
      * @return created location entry
      * @throws ValidationException if the location is not valid
      */
-    Location create(Location location) throws  ValidationException;
+    Location create(Location location) throws ValidationException;
 
     /**
      * Finds locations containing spots that match the filter criteria

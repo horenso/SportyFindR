@@ -1,13 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { Subscriber } from 'rxjs';
-import { NotificationService } from 'src/app/services/notification.service';
+import {NotificationService} from 'src/app/services/notification.service';
 import {SidebarService} from 'src/app/services/sidebar.service';
 import {SpotService} from 'src/app/services/spot.service';
 import {MLocSpot} from 'src/app/util/m-loc-spot';
 import {parsePositiveInteger} from 'src/app/util/parse-int';
 import {SubSink} from 'subsink';
-import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-edit-spot',

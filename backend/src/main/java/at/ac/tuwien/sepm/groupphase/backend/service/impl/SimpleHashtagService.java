@@ -28,8 +28,7 @@ public class SimpleHashtagService implements HashtagService {
         if (name == null || name.isEmpty() || name.isBlank()) {
             throw new ValidationException("Hashtag must have a name");
         }
-        Hashtag h =hashtagRepository.getHashtagByNameEquals(name);
-    return h;
+        return hashtagRepository.getHashtagByNameEquals(name);
     }
 
     @Override
@@ -123,7 +122,7 @@ public class SimpleHashtagService implements HashtagService {
 
     @Override
     public List<Hashtag> findAll() {
-       log.debug("Get all hashtags.");
+        log.debug("Get all hashtags.");
         return hashtagRepository.findAll();
     }
 

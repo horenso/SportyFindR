@@ -80,6 +80,7 @@ public class CategoryEndpointTest implements TestData{
     @Test
     @WithMockUser(roles = "ADMIN")
     public void deleteCategory() {
+        categoryRepository.deleteAll();
         Category category = Category.builder()
             .name(CAT_NAME)
             .build();

@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FilterMainComponent } from './filter-main.component';
+import {FilterMainComponent} from './filter-main.component';
 
 describe('FilterMainComponent', () => {
   let component: FilterMainComponent;

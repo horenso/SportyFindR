@@ -55,6 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         LOGGER.warn("Database error", ex);
         return handleExceptionInternal(ex, "Database error", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+
     @ExceptionHandler(value = {EmptyResultDataAccessException.class})
     protected ResponseEntity<Object> sqlResultEmpty(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Could not be found in database", ex);

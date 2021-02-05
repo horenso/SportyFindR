@@ -1,10 +1,9 @@
 import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {IconType, MLocation} from '../util/m-location';
 import {SidebarService} from './sidebar.service';
 import {Map, Marker, Point} from 'leaflet';
 import {Router} from '@angular/router';
-import {FilterLocation} from '../dtos/filter-location';
 
 @Injectable({
   providedIn: 'root'

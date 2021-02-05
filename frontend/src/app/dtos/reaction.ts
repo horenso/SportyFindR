@@ -1,5 +1,3 @@
-import {User} from './user';
-
 export enum ReactionType {
   THUMBS_UP = 'THUMBS_UP',
   THUMBS_DOWN = 'THUMBS_DOWN',

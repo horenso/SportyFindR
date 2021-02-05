@@ -11,7 +11,7 @@ import {LocationViewComponent} from './components/location-view/location-view.co
 import {HashtagComponent} from './components/hashtag/hashtag.component';
 import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
 import {UserManagerComponent} from './components/user-manager/user-manager.component';
-import {RoleAdminGuardGuard} from "./services/role-admin-guard.guard";
+import {RoleAdminGuardGuard} from './services/role-admin-guard.guard';
 import {RegisterComponent} from './components/register/register.component';
 import {UserAccountComponent} from './components/user-account/user-account.component';
 import {EditAccountComponent} from './components/edit-account/edit-account.component';

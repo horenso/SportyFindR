@@ -5,7 +5,6 @@ import {AuthService} from '../../services/auth.service';
 import {AuthRequest} from '../../dtos/auth-request';
 import {NotificationService} from 'src/app/services/notification.service';
 import {Subscription} from 'rxjs';
-import {Globals} from '../../global/globals';
 import {LocalStorageService} from 'ngx-webstorage';
 
 @Component({

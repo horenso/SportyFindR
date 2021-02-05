@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TextWithHashtagsComponent } from './text-with-hashtags.component';
+import {TextWithHashtagsComponent} from './text-with-hashtags.component';
 
 describe('TextWithHashtagsComponent', () => {
   let component: TextWithHashtagsComponent;

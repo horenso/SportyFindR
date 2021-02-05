@@ -117,14 +117,14 @@ public class MessageEndpoint {
                                    @RequestParam(required = false) String hashtag,
                                    @RequestParam(required = false, defaultValue = "0") String user,
                                    @RequestParam(required = false, defaultValue = "1000-01-01")
-                                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time) {
 
         LocalDateTime localDate = null;
         if (time != null) {
             localDate = time.atStartOfDay();
         }
 
-        log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user=&time={}", categoryId, hashtag, user, time);
+        log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user={}&time={}", categoryId, hashtag, user, time);
         MessageFilter messageFilter = MessageFilter.builder()
             .categoryId(categoryId)
             .hashtagName(hashtag)

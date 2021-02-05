@@ -35,11 +35,11 @@ public class Role {
 //            CascadeType.MERGE,
         },
         fetch = FetchType.EAGER
-        )
+    )
     @JoinTable(
         name = "applicationusers_roles",
-        joinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") },
-        inverseJoinColumns = { @JoinColumn(name = "applicationuser_id", referencedColumnName = "id") }
+        joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "applicationuser_id", referencedColumnName = "id")}
     )
 //    @Fetch(value = FetchMode.JOIN)
     private Set<ApplicationUser> applicationUsers = new HashSet<>();

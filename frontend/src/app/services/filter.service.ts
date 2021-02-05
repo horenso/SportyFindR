@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { FilterLocation } from '../dtos/filter-location';
-import { FilterMessage } from '../dtos/filter-message';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {FilterLocation} from '../dtos/filter-location';
+import {FilterMessage} from '../dtos/filter-message';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FilterService {
 
-  public currentFilterMessage: FilterMessage = {};
+  public currentFilterMessage: FilterMessage = {categoryId: null, hashtag: null, user: null, time: null, page: 0, size: 10};
   public currentFilterLocation: FilterLocation = {radiusEnabled: false, radiusBuffered: false};
 
   private updateMessageFilterSubject = new BehaviorSubject<FilterMessage>(this.currentFilterMessage);

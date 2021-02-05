@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { HashtagComponent } from './hashtag.component';
+import {HashtagComponent} from './hashtag.component';
 
 describe('HashtagComponent', () => {
   let component: HashtagComponent;

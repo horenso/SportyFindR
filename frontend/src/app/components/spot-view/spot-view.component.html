@@ -30,8 +30,8 @@
   <app-message-scroll-container
     [messages]="messageList"
     [showLoadMoreButton]="!lastPage"
-    (onLoadMore)="onLoadMore()"
-    (onDelete)="deleteOneMessage($event)">
+    (loadMore)="onLoadMore()"
+    (deleteMessage)="deleteOneMessage($event)">
   </app-message-scroll-container>
 
   <div class="sidebarBottomRow">

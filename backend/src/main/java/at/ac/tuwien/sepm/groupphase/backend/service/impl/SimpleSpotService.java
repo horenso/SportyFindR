@@ -74,7 +74,7 @@ public class SimpleSpotService implements SpotService {
         if (owner.isEmpty()) {
             throw new ValidationException("User not present!");
         } else {
-            spot.setOwner(userRepository.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get());
+            spot.setOwner(owner.get());
             Spot savedSpot = spotRepository.save(spot);
             hashtagService.acquireHashtags(spot);
             return savedSpot;
@@ -116,10 +116,10 @@ public class SimpleSpotService implements SpotService {
         var spot = spotRepository.findById(id);
         if (spot.isEmpty()) {
             throw new ValidationException("Spot does not exist");
-        }else if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-            if(spot.get().getOwner()==null){
+        } else if (!SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            if (spot.get().getOwner() == null) {
                 throw new WrongUserException("You can only edit your own spots");
-            }else if(!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            } else if (!spot.get().getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
                 throw new WrongUserException("You can only edit your own spots");
             }
         }

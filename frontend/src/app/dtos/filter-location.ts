@@ -1,4 +1,4 @@
-import { LatLng } from 'leaflet';
+import {LatLng} from 'leaflet';
 
 export interface FilterLocation {
   coordinates?: LatLng;

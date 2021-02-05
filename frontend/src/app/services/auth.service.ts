@@ -1,4 +1,4 @@
-import {Injectable, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AuthRequest} from '../dtos/auth-request';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
@@ -7,9 +7,7 @@ import jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
 import {LocalStorageService} from 'ngx-webstorage';
 import {User} from '../dtos/user';
-import { Router } from '@angular/router';
-import { MapService } from './map.service';
-import { SidebarService } from './sidebar.service';
+import {SidebarService} from './sidebar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +17,22 @@ export class AuthService {
   private authBaseUri: string = this.globals.backendUri + '/authentication';
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
+
+  private static setToken(authResponse: string) {
+    localStorage.setItem('authToken', authResponse);
+  }
+
+  private static getTokenExpirationDate(token: string): Date {
+
+    const decoded: any = jwt_decode(token);
+    if (decoded.exp === undefined) {
+      return null;
+    }
+
+    const date = new Date(0);
+    date.setUTCSeconds(decoded.exp);
+    return date;
+  }
 
   constructor(
     private httpClient: HttpClient,
@@ -91,21 +105,5 @@ export class AuthService {
       return authInfo;
     }
     return 'UNDEFINED';
-  }
-
-  private static setToken(authResponse: string) {
-    localStorage.setItem('authToken', authResponse);
-  }
-
-  private static getTokenExpirationDate(token: string): Date {
-
-    const decoded: any = jwt_decode(token);
-    if (decoded.exp === undefined) {
-      return null;
-    }
-
-    const date = new Date(0);
-    date.setUTCSeconds(decoded.exp);
-    return date;
   }
 }

@@ -44,6 +44,7 @@ public interface UserService extends UserDetailsService {
 
     /**
      * Creates a new Application UserEndpoint
+     *
      * @param applicationUser Application applicationUser
      * @return returns the applicationUser that has been created
      */
@@ -59,6 +60,7 @@ public interface UserService extends UserDetailsService {
 
     /**
      * finds all Application Users
+     *
      * @return a List of all Application Users
      */
     List<ApplicationUser> findAll();
@@ -83,6 +85,7 @@ public interface UserService extends UserDetailsService {
 
     /**
      * check if user with email exists
+     *
      * @param email of user to search
      * @return true if user exists
      */
