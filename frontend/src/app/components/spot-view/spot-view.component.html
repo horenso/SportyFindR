@@ -30,11 +30,14 @@
   <app-message-scroll-container
     [messages]="messageList"
     [showLoadMoreButton]="!lastPage"
-    (onLoadMore)="onLoadMore()"
-    (onDelete)="deleteOneMessage($event)">
+    (loadMore)="onLoadMore()"
+    (deleteMessage)="deleteOneMessage($event)">
   </app-message-scroll-container>
 
   <div class="sidebarBottomRow">
+    <div id="logInToWriteMessages" *ngIf="!authService.isLoggedIn(); else writeMessage">
+      Log in to write messages
+    </div>
     <div class="inputRow">
       <div *ngIf="includeExpirationDate" id="expirationDatePicker">
         <mat-form-field>
@@ -53,27 +56,28 @@
         </button>
       </div>
     </div>
-    <div class="inputRow">
-      <mat-form-field appearance="outline">
-        <mat-label *ngIf="authService.isLoggedIn()">New message</mat-label>
-        <mat-label *ngIf="!authService.isLoggedIn()">Log in to write messages</mat-label>
-        <textarea matInput #messageInput
-                  id="messageInput"
-                  (keydown)="keydown($event)"
-                  [(ngModel)]='newMessage'
-                  cdkTextareaAutosize
-                  cdkAutosizeMinRows="1"
-                  cdkAutosizeMaxRows="10"
-                  autocomplete="off"></textarea>
-      </mat-form-field>
-      <button mat-icon-button color="primary"
-              (click)="enableExpirationDate()" [disabled]="includeExpirationDate || !authService.isLoggedIn()">
-        <mat-icon>alarm</mat-icon>
-      </button>
-      <button mat-icon-button color="primary" (click)="submitDialog()" [disabled]="!authService.isLoggedIn()">
-        <mat-icon>send</mat-icon>
-      </button>
-    </div>
+    <ng-template #writeMessage>
+      <div class="inputRow">
+        <mat-form-field appearance="outline">
+          <mat-label>New message</mat-label>
+          <textarea matInput #messageInput
+                    id="messageInput"
+                    (keydown)="keydown($event)"
+                    [(ngModel)]='newMessage'
+                    cdkTextareaAutosize
+                    cdkAutosizeMinRows="1"
+                    cdkAutosizeMaxRows="10"
+                    autocomplete="off"></textarea>
+        </mat-form-field>
+        <button mat-icon-button color="primary"
+                (click)="enableExpirationDate()" [disabled]="includeExpirationDate || !authService.isLoggedIn()">
+          <mat-icon>alarm</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" (click)="submitDialog()" [disabled]="!authService.isLoggedIn()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </ng-template>
   </div>
   <mat-menu #menu="matMenu" xPosition="before" yPosition="below">
     <button mat-menu-item (click)="editSpot()">

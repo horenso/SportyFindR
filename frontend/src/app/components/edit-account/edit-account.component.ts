@@ -5,7 +5,6 @@ import {UserService} from '../../services/user.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NotificationService} from '../../services/notification.service';
 import {Router} from '@angular/router';
-import {HeaderComponent} from '../header/header.component';
 import {AuthRequest} from '../../dtos/auth-request';
 import {Subscription} from 'rxjs';
 import {AuthService} from '../../services/auth.service';

@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.Filter.MessageFilter;
 import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Reaction;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Spot;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
@@ -74,7 +75,9 @@ public class SimpleMessageService implements MessageService {
 
         MessageValidation.validateNewMessage(message);
 
-        if (spotRepository.findById(message.getSpot().getId()).isEmpty()) {
+        Optional<Spot> spot = spotRepository.findById(message.getSpot().getId());
+
+        if (spot.isEmpty()) {
             throw new NotFoundException("Spot does not Exist");
         }
         message.setPublishedAt(LocalDateTime.now());

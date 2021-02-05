@@ -8,8 +8,8 @@ import {parsePositiveInteger} from '../../util/parse-int';
 import {IconType} from 'src/app/util/m-location';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
-import { FilterService } from 'src/app/services/filter.service';
-import { FilterLocation } from 'src/app/dtos/filter-location';
+import {FilterService} from 'src/app/services/filter.service';
+import {FilterLocation} from 'src/app/dtos/filter-location';
 import {AuthService} from '../../services/auth.service';
 
 @Component({

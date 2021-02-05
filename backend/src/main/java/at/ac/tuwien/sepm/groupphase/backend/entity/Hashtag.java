@@ -49,19 +49,19 @@ public class Hashtag {
         this.name = name;
     }
 
-    public void addMessage(Message message){
+    public void addMessage(Message message) {
         this.messagesList.add(message);
     }
 
-    public void deleteMessage(Long messageId){
+    public void deleteMessage(Long messageId) {
         messagesList.removeIf(message -> message.getId().equals(messageId));
     }
 
-    public void addSpot(Spot spot){
+    public void addSpot(Spot spot) {
         this.spotsList.add(spot);
     }
 
-    public void deleteSpot(Long spotId){
+    public void deleteSpot(Long spotId) {
         spotsList.removeIf(spot -> spot.getId().equals(spotId));
     }
 

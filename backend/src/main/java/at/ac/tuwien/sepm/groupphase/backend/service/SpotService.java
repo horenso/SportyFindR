@@ -40,8 +40,8 @@ public interface SpotService {
      * @param id of the spot that should be deleted
      * @return true if the host location was deleted, otherwise false
      * @throws ValidationException if no spot with this id is known
-     * @throws ServiceException if the associated messages can not be deleted
-     * @throws WrongUserException if the wrong user is trying to delete the message
+     * @throws ServiceException    if the associated messages can not be deleted
+     * @throws WrongUserException  if the wrong user is trying to delete the message
      */
     boolean deleteById(Long id) throws ValidationException, ServiceException, WrongUserException;
 
@@ -49,8 +49,8 @@ public interface SpotService {
      * Get all spots within one Location. This list cannot be empty since since a location
      * must contain at least one spot.
      *
-     * @param locationId of the location containing the spots
-     * @return list of spots
+     * @param spotFilter filter containing the locations properties
+     * @return list of spots matching the filter
      * @throws ValidationException if a location id is specified but the location doesn't exist, same with the category
      */
     List<Spot> findSpots(SpotFilter spotFilter) throws ValidationException;

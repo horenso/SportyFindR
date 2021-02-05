@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-text-with-hashtags [text]',
@@ -30,7 +30,7 @@ export class TextWithHashtagsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const lineHeight = parseInt(window.getComputedStyle(this.textAreaElement.nativeElement).lineHeight);
+    const lineHeight = parseInt(window.getComputedStyle(this.textAreaElement.nativeElement).lineHeight, 10);
     const elementHeight = this.textAreaElement.nativeElement.scrollHeight;
 
     setTimeout(() => this.textTooLong = (elementHeight / lineHeight) >= this.maxRows);

@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -40,7 +40,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .perform(get(MESSAGE_BASE_URI)
                 .param("spotId", "200")
                 .queryParam("size", "26")
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andExpect(status().isNotFound());
 
         mockMvc
@@ -71,7 +71,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .perform(get(MESSAGE_BASE_URI)
                 .param("spotId", spot1.getId().toString())
                 .queryParam("size", "26")
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(26)))
@@ -84,7 +84,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
                 .param("spotId", spot1.getId().toString())
                 .queryParam("size", "5")
                 .queryParam("page", "0")
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(5)))
@@ -99,7 +99,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
                 .param("spotId", spot1.getId().toString())
                 .queryParam("size", "5")
                 .queryParam("page", "1")
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(5)))
@@ -113,7 +113,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
                 .param("spotId", spot1.getId().toString())
                 .queryParam("size", "5")
                 .queryParam("page", "5")
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(1)))
@@ -198,14 +198,14 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .content(objectMapper.writeValueAsString(messageDto)))
             .andExpect(status().isBadRequest());
 
-        assertTrue(this.messageRepository.findAll().size() == 0);
+        assertEquals(0, this.messageRepository.findAll().size());
     }
 
     @Test
     public void getById_nonexistentId() throws Exception {
         mockMvc
             .perform(get(MESSAGE_BASE_URI + "/1")
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andExpect(status().isNotFound());
     }
 
@@ -220,7 +220,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
 
         mockMvc
             .perform(get(MESSAGE_BASE_URI + "/" + message.getId())
-                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES))) // TODO: remove when guest work
+                .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(EMAIL, USER_ROLES)))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(message.getId()))
@@ -262,7 +262,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
                 .header(securityProperties.getAuthHeader(), jwtTokenizer.getAuthToken(user1.getEmail(), USER_ROLES)))
             .andExpect(status().isNotFound());
 
-        assertTrue(messageRepository.findAll().size() == 1);
+        assertEquals(1, messageRepository.findAll().size());
     }
 
     @Test
@@ -357,8 +357,8 @@ public class MessageEndpointTest extends BaseIntegrationTest {
         messageRepository.save(message2);
         Hashtag hashtag = Hashtag.builder()
             .name("test")
-            .messagesList(Arrays.asList(message))
-            .spotsList(Arrays.asList(spot1))
+            .messagesList(Collections.singletonList(message))
+            .spotsList(Collections.singletonList(spot1))
             .build();
         hashtagRepository.save(hashtag);
 

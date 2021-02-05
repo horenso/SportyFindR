@@ -20,7 +20,7 @@ public class Reaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // TODO: Do we need this?
+    @Column(nullable = false)
     private LocalDateTime publishedAt;
 
     @Column(nullable = false)
@@ -33,10 +33,9 @@ public class Reaction {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private ApplicationUser owner;
+
     public enum ReactionType {
         THUMBS_UP,
         THUMBS_DOWN
     }
-
-    //TODO Add userID once applicationUsers are implemented
 }

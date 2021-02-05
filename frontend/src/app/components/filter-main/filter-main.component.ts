@@ -5,17 +5,15 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../services/category.service';
 import {NotificationService} from '../../services/notification.service';
 import {Router} from '@angular/router';
-import {MessageService} from '../../services/message.service';
 import {HashtagService} from '../../services/hashtag.service';
 import {SidebarService} from '../../services/sidebar.service';
-import {MapService} from '../../services/map.service';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {SimpleHashtag} from '../../dtos/simple-hashtag';
 import {SimpleUser} from '../../dtos/simple-user';
 import {UserService} from '../../services/user.service';
-import { FilterService } from 'src/app/services/filter.service';
 import { now } from 'lodash';
 import {AuthService} from '../../services/auth.service';
+import {FilterService} from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-filter-main',

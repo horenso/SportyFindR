@@ -112,7 +112,7 @@ public class MessageEndpoint {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Filter messages by hashtag, username, time and category", authorizations = {@Authorization(value = "apiKey")})
     public Page<MessageDto> filter(@PageableDefault(size = 20) @SortDefault.SortDefaults({
-        @SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable,
+        @SortDefault(sort = "id", direction = Sort.Direction.DESC)}) Pageable pageable,
                                    @RequestParam(required = false) Long categoryId,
                                    @RequestParam(required = false) String hashtag,
                                    @RequestParam(required = false, defaultValue = "0") String user,
@@ -124,7 +124,7 @@ public class MessageEndpoint {
             localDate = time.atStartOfDay();
         }
 
-        log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user=&time={}", categoryId, hashtag, user, time);
+        log.info("GET /api/v1/messages/filter?categoryId={}&hashtag={}&user={}&time={}", categoryId, hashtag, user, time);
         MessageFilter messageFilter = MessageFilter.builder()
             .categoryId(categoryId)
             .hashtagName(hashtag)
