@@ -80,8 +80,8 @@
           <mat-list-item class="form-item">
             <mat-form-field appearance="outline">
               <mat-label>Category</mat-label>
-              <label for="CategoryLoc"></label>
-              <mat-select id="CategoryLoc" formControlName="categoryId">
+              <label for="CategoryMes"></label>
+              <mat-select id="CategoryMes" formControlName="categoryId">
                 <mat-option>-- None --</mat-option>
                 <mat-option *ngFor="let category of categories" [value]="category?.id"
                 >{{category.name}}</mat-option>

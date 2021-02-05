@@ -1,13 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Category;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Role;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.CategoryService;
 import at.ac.tuwien.sepm.groupphase.backend.service.RoleService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import com.github.javafaker.App;
 import lombok.extern.slf4j.Slf4j;
 import com.github.javafaker.Faker;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -25,38 +27,59 @@ public class DataGen {
     // Parameters
     private static final String ADMIN_ROLE_NAME = "ADMIN";
     private static final String USER_ROLE_NAME = "USER";
-    private static final String ADMIN_EMAIL = "admin@sportyfindr.at";
-    private static final String ADMIN_PASSWORD = "sp0rtiF1ndM3";
     private static final int NUMBER_OF_USERS = 50;
-    private static final int NUMBER_OF_LOCATIONS = 100;
+    private static final int NUMBER_OF_LOCATIONS = 186;
     private static final int NUMBER_OF_SPOTS = NUMBER_OF_LOCATIONS * 5;
-    private static final int NUMBER_OF_MESSAGES = 200;
-    private static final Random RANDOM = new Random();
+    private static final int NUMBER_OF_MESSAGES = NUMBER_OF_SPOTS * 5;
+    private static final Random random = new Random();
     private final Faker faker;
     private final PasswordEncoder passwordEncoder;
+    private final static String COMMA_DELIMITER = ",";
+
 
     private static final HashMap<String, String[]> CREW = createCrew();
     private static final HashMap<String, String> CATEGORIES = createMap();
 
+    private static final String handsPath = "locations-datagen/locations.csv";
+
     private final UserService userService;
     private final RoleService roleService;
     private final CategoryService categoryService;
+    private final LocationRepository locationRepository;
+    private final SpotRepository spotRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     public DataGen(UserService userService,
                    RoleService roleService,
                    CategoryService categoryService,
-                   PasswordEncoder passwordEncoder) {
+                   PasswordEncoder passwordEncoder,
+                   LocationRepository locationRepository,
+                   SpotRepository spotRepository,
+                   CategoryRepository categoryRepository,
+                   UserRepository userRepository,
+                   MessageRepository messageRepository
+                   ) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.roleService = roleService;
         this.categoryService = categoryService;
+        this.locationRepository = locationRepository;
+        this.spotRepository = spotRepository;
+        this.categoryRepository = categoryRepository;
+        this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
         faker = new Faker(new Locale("es"));
     }
 
     @PostConstruct
-    private void generateData() throws NotFoundException, ValidationException {
+    private void generateData() throws NotFoundException, ValidationException, IOException {
         generateAdminUserLogin();
         generateCategories();
+        generateLocations();
+        generateSpots();
+        generateMessages();
     }
 
     private static HashMap<String, String []> createCrew() {
@@ -216,8 +239,115 @@ public class DataGen {
     }
 
     // 4. LOCATIONS
+    private void generateLocations() throws IOException {
+
+        if (locationRepository.findAll().size() > 0) {
+            log.debug("Already spots or locations in the repositories.");
+            return;
+        }
+
+        log.info("generating {} location entries", NUMBER_OF_LOCATIONS);
+
+        try (BufferedReader br = new BufferedReader(new FileReader(handsPath))) {
+
+            List<List<String>> result = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(COMMA_DELIMITER);
+                result.add(Arrays.asList(values));
+            }
+
+            System.out.println(result);
+
+            for (int i = 0; i <= NUMBER_OF_LOCATIONS-1; i++) {
+                Location location = Location.builder()
+                    .latitude(Double.parseDouble(result.get(i).get(0)))
+                    .longitude(Double.parseDouble(result.get(i).get(1)))
+                    .build();
+                log.info("saving location {}", location);
+                locationRepository.save(location);
+            }
+        }
+
+    }
 
     // 5. SPOTS
+    private void generateSpots() throws ValidationException {
+
+        if (spotRepository.findAll().size() > 0) {
+            log.debug("Already spots in the repository.");
+            return;
+        }
+
+        List<Location> locationList = locationRepository.findAll();
+        List<Category> categoryList = categoryRepository.findAll();
+        List<ApplicationUser> userList = userRepository.findAll();
+
+            log.debug("generating {} spot entries", NUMBER_OF_SPOTS);
+            for (int i = 0; i < NUMBER_OF_SPOTS; i++) {
+
+                String description = faker.harryPotter().location();
+                while (description.length() > 20) {
+                    description = faker.harryPotter().location();
+                }
+
+                int id = random.nextInt(20);
+                Spot spot = Spot.builder()
+                    .name(description)
+                    .description(faker.harryPotter().spell())
+                    .location(locationList.get(i % NUMBER_OF_LOCATIONS))
+                    .owner(userList.get(i & (NUMBER_OF_USERS + 6)))
+                    .category(categoryList.get(id))
+                    .build();
+                log.debug("saving spot {}", spot);
+                spotRepository.save(spot);
+            }
+    }
 
     // 6. MESSAGES
+    private void generateMessages() throws ValidationException {
+        if (spotRepository.findAll().size() > 0) {
+            log.info("Already messages in the repository.");
+            return;
+        }
+
+        List<Spot> spotList = spotRepository.findAll();
+        List<ApplicationUser> userList = userRepository.findAll();
+
+            log.info("generating {} message entries", NUMBER_OF_MESSAGES);
+
+            for (int i = 0; i < (NUMBER_OF_MESSAGES / 2); i++) {
+                int hoursVariance = 48 + random.nextInt(24 * 7 * 4 * 12);
+                int down = random.nextInt(5);
+                int up = random.nextInt(5);
+                LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
+                Message message = Message.builder()
+                    .publishedAt(dateTime)
+                    .content(faker.yoda().quote())
+                    .downVotes(down)
+                    .upVotes(up)
+                    .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
+                    .spot(spotList.get(i % NUMBER_OF_SPOTS))
+                    .build();
+                log.info("saving message {}", message);
+                messageRepository.save(message);
+            }
+
+            for (int i = (NUMBER_OF_MESSAGES / 2); i < NUMBER_OF_MESSAGES; i++) {
+                int hoursVariance = 48 + random.nextInt(24 * 7 * 4 * 12);
+                int down = random.nextInt(5);
+                int up = random.nextInt(5);
+                LocalDateTime dateTime = LocalDateTime.now().minusHours(hoursVariance);
+                Message message = Message.builder()
+                    .publishedAt(dateTime)
+                    .content("#" + faker.superhero().name())
+                    .downVotes(down)
+                    .upVotes(up)
+                    .owner(userList.get(i % (NUMBER_OF_USERS + 6)))
+                    .spot(spotList.get(i % NUMBER_OF_SPOTS))
+                    .build();
+                log.info("saving message {}", message);
+                messageRepository.save(message);
+            }
+    }
 }

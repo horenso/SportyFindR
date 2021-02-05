@@ -20,10 +20,8 @@
     class="nav">
     <mat-icon>perm_identity</mat-icon>
     {{this.loggedUser?.name}}
+    <mat-icon>arrow_drop_down</mat-icon>
   </a>
-
-  <a mat-raised-button color="secondary" *ngIf="authService.isLoggedIn()"
-     (click)="authService.logoutUser()" routerLink="/">Logout</a>
 
   <mat-menu #menu="matMenu">
     <button mat-menu-item routerLink="/account">
@@ -37,6 +35,10 @@
     <button mat-menu-item (click)="openDialog()">
       <mat-icon>delete</mat-icon>
       <span>Delete account</span>
+    </button>
+    <button mat-menu-item (click)="authService.logoutUser()">
+      <mat-icon>logout</mat-icon>
+      <span>Log out</span>
     </button>
   </mat-menu>
 
