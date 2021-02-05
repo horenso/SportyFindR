@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from 'src/app/dtos/message';
 import {MessageService} from 'src/app/services/message.service';
@@ -11,8 +11,6 @@ import {MapService} from 'src/app/services/map.service';
 import {NotificationService} from 'src/app/services/notification.service';
 import {SubSink} from 'subsink';
 import {AuthService} from '../../services/auth.service';
-import { lowerFirst } from 'lodash';
-import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-spot-view',

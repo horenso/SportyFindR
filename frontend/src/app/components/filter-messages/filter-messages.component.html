@@ -9,13 +9,13 @@
   <div id="countMessage">Number of messages found: <span id="count">{{numberMessagesFiltered}}</span></div>
 
   <div #messageArea class="sidebarScrollableSection messageArea">
-    <div *ngFor="let message of messageList" class="message">
-      <app-message
-        [message]='message'
-        [filteredMessage]='true'
-        [canReact]='false'
-        [canDelete]='false'
-      ></app-message>
-    </div>
+    <app-message-scroll-container
+      [messages]="messageList"
+      [showLoadMoreButton]="!lastPage"
+      (onLoadMore)="loadMore()"
+      [filteredMessages]=true
+      [canReact]=false
+      [canDelete]=false>
+    </app-message-scroll-container>
   </div>
 </div>

@@ -7,6 +7,7 @@ import {SidebarService} from '../../services/sidebar.service';
 import {SubSink} from 'subsink';
 import {NotificationService} from '../../services/notification.service';
 import { FilterService } from 'src/app/services/filter.service';
+import { FilterMessage } from 'src/app/dtos/filter-message';
 
 @Component({
   selector: 'app-filter-messages',
@@ -41,10 +42,10 @@ export class FilterMessagesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getMessageList();
+    this.getMessages();
   }
 
-  private getMessageList() {
+  public loadMore() {
     this.subs.add(this.filterService.updateMessageFilterObservable.subscribe(change => {
       this.messageService.filterMessage({
         categoryId: change.categoryId,
@@ -54,13 +55,16 @@ export class FilterMessagesComponent implements OnInit {
         page: this.currentPage,
         size: this.pageSize
       }).subscribe(result => {
-        this.messageList = result.content;
-        this.numberMessagesFiltered = result.totalElements;
-        this.lastPage = result.last;
-        console.log(`Loaded ${result.size} messages.`);
-        setTimeout(() => {
-          this.scrollMessageAreaBottom();
+        this.messageList = [];
+        result.content.forEach(message => {
+          this.messageList.unshift(message);
         });
+        this.messageList = [].concat(this.messageList);
+        this.lastPage = result.last;
+        this.currentPage = result.number + 1;
+        console.log(`Loaded ${result.size} messages.`);
+        console.log(this.messageList);
+        
       }, error => {
         this.notificationService.error('Error loading messages!');
         console.log(error);
@@ -68,8 +72,29 @@ export class FilterMessagesComponent implements OnInit {
     }));
   }
 
-  private scrollMessageAreaBottom(): void {
-    this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
+  public getMessages() {
+    this.subs.add(this.filterService.updateMessageFilterObservable.subscribe(change => {
+      this.messageService.filterMessage({
+        categoryId: change.categoryId,
+        user: change.user,
+        hashtag: change.hashtag,
+        time: change.time,
+        page: 0,
+        size: this.pageSize
+      }).subscribe(result => {
+        this.messageList = result.content.reverse();
+        this.messageList = [].concat(this.messageList);
+        this.numberMessagesFiltered = result.totalElements;
+        this.lastPage = result.last;
+        this.currentPage = result.number + 1;
+        console.log(`Loaded ${result.size} messages.`);
+        console.log('result:');
+        console.log(this.messageList);
+      }, error => {
+        this.notificationService.error('Error loading messages!');
+        console.log(error);
+      });
+    }));
   }
 
   onClose(): void {

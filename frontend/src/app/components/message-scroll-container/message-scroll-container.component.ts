@@ -24,7 +24,9 @@ export class MessageScrollContainerComponent implements OnInit, OnChanges {
 
   private previousLength: number = 0;
 
-  constructor(private elementRef: ElementRef) {
+  constructor(
+    private elementRef: ElementRef,
+    private changeDetectorRef: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
