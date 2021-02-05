@@ -30,7 +30,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   public messageList: Message[] = [];
   public newMessage: string = '';
 
-  @ViewChild('messageArea') private messageArea: ElementRef;
   @ViewChild('messageInput') private messageInput: ElementRef;
 
   private subs = new SubSink();
@@ -126,7 +125,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this.newMessage = '';
         this.expirationDate = null;
         this.includeExpirationDate = false;
-        setTimeout(() => this.scrollMessageAreaBottom());
       }, error => {
         this.notificationService.error(error.error.message);
         console.error(error);
@@ -135,22 +133,14 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onLoadMore(): void {
-    const messageArea = this.messageArea.nativeElement;
-    const scrollOffset = messageArea.scrollHeight + messageArea.scrollTop;
     this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
       result => {
         result.content.forEach(message => {
           this.messageList.unshift(message);
         });
+        this.messageList = [].concat(this.messageList); // It needs a new reference to detect changes
         this.lastPage = result.last;
         this.currentPage++;
-
-        setTimeout(() => {
-          messageArea.scrollTop = messageArea.scrollHeight - scrollOffset;
-        });
-
-        // setTimeout(() => this.messageArea.nativeElement.scrollTop = height);
-        // messageArea.scrollTop = messageArea.height - scroll;
       }
     ));
   }
@@ -160,8 +150,11 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteOneMessage(message: Message): void {
+    console.log('delete one message!');
+
     this.subs.add(this.messageService.deleteById(message.id).subscribe(result => {
       this.messageList = this.messageList.filter(m => message.id !== m.id);
+      this.messageList = [].concat(this.messageList);
     }));
   }
 
@@ -182,32 +175,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['locations', this.locationId, 'spots', this.spotId, 'edit']);
   }
 
-  onScroll(): void {
-    console.log(this.messageArea.nativeElement.scrollTop);
-    console.log('hi');
-    if (this.lastPage) {
-      return;
-    }
-    const messageArea = this.messageArea.nativeElement;
-    const scrollOffset = messageArea.scrollHeight + messageArea.scrollTop;
-    this.currentPage++;
-    this.subs.add(this.messageService.getBySpotId(this.spot.id, this.currentPage, this.pageSize).subscribe(
-      result => {
-        result.content.forEach(message => {
-          this.messageList.unshift(message);
-        });
-        this.lastPage = result.last;
-
-        setTimeout(() => {
-          messageArea.scrollTop = messageArea.scrollHeight - scrollOffset;
-        });
-
-        // setTimeout(() => this.messageArea.nativeElement.scrollTop = height);
-        // messageArea.scrollTop = messageArea.height - scroll;
-      }
-    ));
-  }
-
   enableExpirationDate(): void {
     this.expirationDate = new Date();
     this.expirationDate.setHours(this.expirationDate.getHours() + 1);
@@ -226,13 +193,10 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
       result => {
         this.messageList = result.content.reverse();
         this.lastPage = result.last;
+        console.log('lastPage: ' + this.lastPage);
+
         this.currentPage++;
         console.log(`Loaded ${result.size} messages.`);
-        setTimeout(() => {
-          this.scrollMessageAreaBottom();
-          console.log(this.messageArea.nativeElement.scrollHeight);
-          console.log(this.messageArea.nativeElement.scrollTop);
-        });
       }, error => {
         this.notificationService.error('Error loading messages!');
         console.log(error);
@@ -269,10 +233,6 @@ export class SpotViewComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     }));
-  }
-
-  private scrollMessageAreaBottom(): void {
-    this.messageArea.nativeElement.scrollTop = this.messageArea.nativeElement.scrollHeight;
   }
 
   showControlItems(): boolean {

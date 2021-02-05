@@ -11,6 +11,8 @@ import {Hashtag} from 'src/app/dtos/hashtag';
 import { SpotService } from 'src/app/services/spot.service';
 import { MLocSpot } from 'src/app/util/m-loc-spot';
 import { result } from 'lodash';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-hashtag',
@@ -22,8 +24,17 @@ export class HashtagComponent implements OnInit {
   hashtagName: string;
   spotsFlag: boolean = false;
   messagesFlag: boolean = false;
+
   public messageList: Message[] = [];
   public spotList: MLocSpot[] = [];
+
+  private currentPage: number = 0;
+  public lastPage: boolean = false;
+
+  messageCount: number = 0;
+
+  private scrollDownSubject: Subject<{}> = new Subject();
+  public scrollDownObservable: Observable<{}> = this.scrollDownSubject.asObservable();
 
   constructor(
     public authService: AuthService,
@@ -49,9 +60,16 @@ export class HashtagComponent implements OnInit {
     });
   }
 
-  private getMessages(): void {
-    this.messageService.filterMessage({hashtag: this.hashtagName, user: null, page: 0, size: 10}).subscribe(result => {
-      this.messageList = result.content;
+  public getMessages(): void {
+    this.messageService.filterMessage({hashtag: this.hashtagName, user: null, page: this.currentPage, size: 10}).subscribe(result => {
+      result.content.forEach(message => {
+        this.messageList.unshift(message);
+      });
+      this.messageCount = result.totalElements;
+      this.messageList = [].concat(this.messageList);
+      this.lastPage = result.last;
+      console.log(result);
+      this.currentPage++;
       console.log('hashtag got: ');
       console.log(this.messageList);
     });
@@ -62,11 +80,20 @@ export class HashtagComponent implements OnInit {
   }
 
   public getMessageTab(): string {
-    return `Messages (${this.messageList.length})`;
+    return `Messages (${this.messageCount})`;
   }
 
-  goToSpot(spot: Spot) {
-    this.router.navigate(['locations', spot.location.id, 'spots', spot.id]);
+  public tabChanged(tabChange: MatTabChangeEvent): void {
+    if (tabChange.tab.textLabel.startsWith("Message")){
+      this.scrollDownSubject.next();
+    }
+  }
+
+  goToSpot(spot: MLocSpot) {
+    console.log('given spot:');
+    console.log(spot);
+
+    this.router.navigate(['locations', spot.markerLocation.id, 'spots', spot.id]);
   }
 
   onClose(): void {

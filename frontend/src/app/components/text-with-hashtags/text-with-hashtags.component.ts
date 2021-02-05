@@ -27,7 +27,6 @@ export class TextWithHashtagsComponent implements OnInit, AfterViewInit {
       this.tokens.push(word);
       this.tokens.push(' ');
     });
-    console.log(this.tokens);
   }
 
   ngAfterViewInit(): void {
