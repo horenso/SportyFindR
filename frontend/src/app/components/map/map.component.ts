@@ -40,20 +40,18 @@ export class MapComponent implements OnInit, OnDestroy {
   private locMarkerGroup: LayerGroup<MLocation> = new LayerGroup<MLocation>();
 
   private worldMap = 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg';
- private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
+//  private basemap = 'https://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpg';
 // high def but jpg, so no background layer is possible
-  // private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
+  private basemap = 'https://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png';
 
 
   layers: Layer[] = [
-    // tileLayer(this.worldMap, {
-    //   attribution: 'World Map tiles by <a href='http://stamen.com'>Stamen Design</a>,
-    // <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy;
-    // <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors',
-    //   subdomains: 'abcd',
-    //   minZoom: 1,
-    //   maxZoom: 16,
-    // }),
+    tileLayer(this.worldMap, {
+      attribution: "World Map tiles by <a href='http://stamen.com'>Stamen Design</a>, <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      subdomains: 'abcd',
+      minZoom: 1,
+      maxZoom: 16,
+    }),
     tileLayer(this.basemap, {
       minZoom: 1,
       maxZoom: 20,
