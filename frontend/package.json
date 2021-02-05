@@ -30,7 +30,6 @@
     "jwt-decode": "3.0.0",
     "leaflet": "^1.7.1",
     "lodash": "4.17.20",
-    "ngx-infinite-scroll": "^10.0.1",
     "ngx-toastr": "^13.2.0",
     "ngx-webstorage": "^7.0.1",
     "rxjs": "6.6.3",

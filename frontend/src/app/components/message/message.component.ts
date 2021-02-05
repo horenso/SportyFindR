@@ -19,7 +19,7 @@ export class MessageComponent implements OnInit, OnDestroy {
   @Input() message: Message;
   @Input() canReact: boolean = true; // whether the component shows reaction buttons
   @Input() canDelete: boolean = true; // whether the component shows a delete button
-  @Input() filteredMessage: boolean = false;
+  @Input() filteredMessage: boolean = false; // whether the component can navigate to the containing location
 
   @Output() deleteMessage = new EventEmitter();
 
@@ -37,6 +37,8 @@ export class MessageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.log(this.canDelete);
+    
     if (this.message.ownerReaction == null) {
       this.message.ownerReaction = ReactionType.NEUTRAL;
     }
@@ -92,6 +94,8 @@ export class MessageComponent implements OnInit, OnDestroy {
   }
 
   public onDelete(): void {
+    console.log('on delete message in message');
+
     this.deleteMessage.emit(this.message);
   }
 

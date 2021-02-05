@@ -27,22 +27,22 @@ import {TextWithHashtagsComponent} from './components/text-with-hashtags/text-wi
 import {MaterialModule} from './material/material.module';
 import {HashtagComponent} from './components/hashtag/hashtag.component';
 import {ToastrModule} from 'ngx-toastr';
-import { FilterMainComponent } from './components/filter-main/filter-main.component';
-import { UserManagerComponent } from './components/user-manager/user-manager.component';
+import {FilterMainComponent} from './components/filter-main/filter-main.component';
+import {UserManagerComponent} from './components/user-manager/user-manager.component';
 import {RegisterComponent} from './components/register/register.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {FilterMessagesComponent} from './components/filter-messages/filter-messages.component';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {DistancePipe} from './pipes/distance.pipe';
 import {DatePipe} from '@angular/common';
-import { UserAccountComponent } from './components/user-account/user-account.component';
+import {UserAccountComponent} from './components/user-account/user-account.component';
 import {NgxWebstorageModule} from 'ngx-webstorage';
-import { EditAccountComponent } from './components/edit-account/edit-account.component';
-import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import {EditAccountComponent} from './components/edit-account/edit-account.component';
+import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
+import {MessageScrollContainerComponent} from './components/message-scroll-container/message-scroll-container.component';
 
 
 const toastrSettings = {
@@ -79,6 +79,7 @@ const toastrSettings = {
     RegisterComponent,
     FilterMainComponent,
     FilterMessagesComponent,
+    MessageScrollContainerComponent,
     DistancePipe
   ],
   imports: [
@@ -87,7 +88,6 @@ const toastrSettings = {
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    InfiniteScrollModule,
     FormsModule,
     LeafletModule,
     MaterialModule,
